@@ -1,0 +1,13 @@
+.nexus-logo {
+  background: linear-gradient(135deg, 
+    #6e00ff, 
+    #95c2d3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+}
+
+.authBgColor{
+  background-color: #ffe9d1;
+}
