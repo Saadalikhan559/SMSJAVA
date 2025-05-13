@@ -1,30 +1,46 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
+import { fetchRoles } from "../../services/api/Api";
 
 export const Register = () => {
-  const { RegisterUser, allRoles } = useContext(AuthContext);
+  const { RegisterUser } = useContext(AuthContext);
+  const [allRoles, setAllRoles] = useState([]);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [roleId, setRoleId] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const userData = {
-      firstName,
-      lastName,
-      email,
-      password,
-      role,
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      password: password,
+      role: roleId,
     };
     RegisterUser(userData);
   };
 
+  useEffect(() => {
+    const getRoles = async () => {
+      try {
+        const roles = await fetchRoles();
+        setAllRoles(roles);
+      } catch (err) {
+        console.log("Failed to load roles. Please try again.");
+      }
+    };
+    getRoles();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="hidden md:block md:w-2/3 authBgColor">
+      <div className="hidden md:block md:w-2/3 formBgColor">
         <img
           src={image}
           alt="Authentication"
@@ -100,13 +116,13 @@ export const Register = () => {
             </label>
             <select
               className="select select-bordered w-full"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+              value={roleId}
+              onChange={(e) => setRoleId(e.target.value)}
               required
             >
               <option value="">Select Role</option>
               {allRoles.map((roleItem) => (
-                <option key={roleItem.id} value={roleItem.name}>
+                <option key={roleItem.id} value={roleItem.id}>
                   {roleItem.name}
                 </option>
               ))}

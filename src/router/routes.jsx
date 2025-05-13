@@ -1,3 +1,4 @@
+import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
 import { NotFound } from "../components/NotFound";
 import { Login } from "../screens/Auth/Login";
 import { Register } from "../screens/Auth/Register";
@@ -16,6 +17,10 @@ export const routes = [
   {
     path: allRouterLink.loginUser,
     element: <Login />,
+  },
+  {
+    path: allRouterLink.admissionForm,
+    element: <AdmissionForm />,
   },
   {
     path: "*",
