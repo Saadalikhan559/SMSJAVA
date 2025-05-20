@@ -2,5 +2,8 @@ export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
     loginUser: "/login",
-    admissionForm: "/admissionForm"
+    admissionForm: "/admissionForm",
+    unAuthorized: '/unauthorized',
+    notFound: "*"
+
 }

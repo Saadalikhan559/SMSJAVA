@@ -1,18 +1,33 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { fetchSchoolYear, fetchYearLevels, handleAdmissionForm } from "../../services/api/Api";
+import { constants } from "../../global/constants";
+
+
 
 export const AdmissionForm = () => {
   const { RegisterUser, allRoles } = useContext(AuthContext);
   const [yearLevel, setYearLevel] = useState([]);
   const [schoolYears, setSchoolYear] = useState([]);
+  const [showPassword, setShowPassword] = useState(true);
+  const [showGuardianPassword, setShowGuardianPassword] = useState(true);
+
+  
+
+    const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+   const handleShowGuardianPassword = () => {
+    setShowGuardianPassword(!showGuardianPassword);
+  };
   const [formData, setFormData] = useState({
     student: {
       first_name: "",
       middle_name: "",
       last_name: "",
-      password: "",
       email: "",
+      password: "",
       classes: [],
       date_of_birth: "",
       gender: "",
@@ -37,7 +52,6 @@ export const AdmissionForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Check if the field belongs to student or guardian
     if (name.startsWith("student_")) {
       const fieldName = name.replace("student_", "");
       setFormData(prev => ({
@@ -67,7 +81,6 @@ export const AdmissionForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleAdmissionForm(formData);
-    console.log(formData);
   };
 
   const getYearLevels = async () => {
@@ -94,8 +107,10 @@ export const AdmissionForm = () => {
   }, []);
 
   return (
-    <form
-      className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm"
+    <>
+    <style>{constants.hideEdgeRevealStyle}</style>
+      <form
+      className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
       onSubmit={handleSubmit}
     >
       <h1 className="text-3xl font-bold text-center mb-8">
@@ -119,7 +134,7 @@ export const AdmissionForm = () => {
               type="text"
               name="student_first_name"
               placeholder="First Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.student.first_name}
               onChange={handleChange}
@@ -138,7 +153,7 @@ export const AdmissionForm = () => {
               type="text"
               name="student_middle_name"
               placeholder="Middle Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               value={formData.student.middle_name}
               onChange={handleChange}
             />
@@ -156,7 +171,7 @@ export const AdmissionForm = () => {
               type="text"
               name="student_last_name"
               placeholder="Last Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.student.last_name}
               onChange={handleChange}
@@ -177,7 +192,7 @@ export const AdmissionForm = () => {
               type="email"
               name="student_email"
               placeholder="student@example.com"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.student.email}
               onChange={handleChange}
@@ -185,7 +200,7 @@ export const AdmissionForm = () => {
           </div>
 
           {/* Student Password */}
-          <div className="form-control">
+          <div className="form-control relative">
             <label className="label">
               <span className="label-text flex items-center gap-2">
                 <i className="fa-solid fa-lock text-sm"></i>
@@ -193,14 +208,21 @@ export const AdmissionForm = () => {
               </span>
             </label>
             <input
-              type="password"
+              type={`${showPassword===true?"password":"text"}`}
               name="student_password"
               placeholder="Password"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full pr-10 focus:outline-none"
               required
               value={formData.student.password}
               onChange={handleChange}
             />
+            <button
+              type="button"
+              className="passwordEyes text-gray-500"
+              onClick={handleShowPassword}
+            >
+              <i className={`fa-solid  ${showPassword===true?"fa-eye-slash":"fa-eye"}`}></i>
+            </button>
           </div>
         </div>
 
@@ -216,7 +238,7 @@ export const AdmissionForm = () => {
             <input
               type="date"
               name="student_date_of_birth"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.student.date_of_birth}
               onChange={handleChange}
@@ -233,7 +255,7 @@ export const AdmissionForm = () => {
             </label>
             <select
               name="student_gender"
-              className="select select-bordered w-full"
+              className="select select-bordered w-full focus:outline-none"
               required
               value={formData.student.gender}
               onChange={handleChange}
@@ -257,7 +279,7 @@ export const AdmissionForm = () => {
           <input
             type="date"
             name="student_enrolment_date"
-            className="input input-bordered w-full"
+            className="input input-bordered w-full focus:outline-none"
             required
             value={formData.student.enrolment_date}
             onChange={handleChange}
@@ -282,7 +304,7 @@ export const AdmissionForm = () => {
               type="text"
               name="guardian_first_name"
               placeholder="First Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.guardian.first_name}
               onChange={handleChange}
@@ -301,7 +323,7 @@ export const AdmissionForm = () => {
               type="text"
               name="guardian_middle_name"
               placeholder="Middle Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               value={formData.guardian.middle_name}
               onChange={handleChange}
             />
@@ -319,7 +341,7 @@ export const AdmissionForm = () => {
               type="text"
               name="guardian_last_name"
               placeholder="Last Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.guardian.last_name}
               onChange={handleChange}
@@ -340,7 +362,7 @@ export const AdmissionForm = () => {
               type="email"
               name="guardian_email"
               placeholder="guardian@example.com"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.guardian.email}
               onChange={handleChange}
@@ -348,7 +370,7 @@ export const AdmissionForm = () => {
           </div>
 
           {/* Guardian Password */}
-          <div className="form-control">
+          <div className="form-control relative">
             <label className="label">
               <span className="label-text flex items-center gap-2">
                 <i className="fa-solid fa-lock text-sm"></i>
@@ -356,14 +378,21 @@ export const AdmissionForm = () => {
               </span>
             </label>
             <input
-              type="password"
+              type={`${showGuardianPassword===true?"password":"text"}`}
               name="guardian_password"
               placeholder="Password"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full pr-10 focus:outline-none"
               required
               value={formData.guardian.password}
               onChange={handleChange}
             />
+            <button
+              type="button"
+              className="passwordEyes text-gray-500"
+              onClick={handleShowGuardianPassword}
+            >
+              <i className={`fa-solid  ${showGuardianPassword===true?"fa-eye-slash":"fa-eye"}`}></i>
+            </button>
           </div>
         </div>
 
@@ -379,7 +408,7 @@ export const AdmissionForm = () => {
             type="tel"
             name="guardian_phone_no"
             placeholder="Phone Number"
-            className="input input-bordered w-full"
+            className="input input-bordered w-full focus:outline-none"
             required
             value={formData.guardian.phone_no}
             onChange={handleChange}
@@ -402,7 +431,7 @@ export const AdmissionForm = () => {
             </label>
             <select
               name="year_level"
-              className="select select-bordered w-full"
+              className="select select-bordered w-full focus:outline-none"
               required
               value={formData.year_level}
               onChange={handleChange}
@@ -429,7 +458,7 @@ export const AdmissionForm = () => {
             </label>
             <select
               name="school_year"
-              className="select select-bordered w-full"
+              className="select select-bordered w-full focus:outline-none"
               required
               value={formData.school_year}
               onChange={handleChange}
@@ -457,7 +486,7 @@ export const AdmissionForm = () => {
               type="text"
               name="previous_school_name"
               placeholder="Previous School Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               value={formData.previous_school_name}
               onChange={handleChange}
             />
@@ -475,7 +504,7 @@ export const AdmissionForm = () => {
               type="text"
               name="previous_standard_studied"
               placeholder="Previous Class/Grade"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               value={formData.previous_standard_studied}
               onChange={handleChange}
             />
@@ -494,7 +523,7 @@ export const AdmissionForm = () => {
             <input
               type="date"
               name="admission_date"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={formData.admission_date}
               onChange={handleChange}
@@ -511,7 +540,7 @@ export const AdmissionForm = () => {
             </label>
             <select
               name="tc_letter"
-              className="select select-bordered w-full"
+              className="select select-bordered w-full focus:outline-none"
               required
               value={formData.tc_letter}
               onChange={handleChange}
@@ -527,11 +556,12 @@ export const AdmissionForm = () => {
 
       {/* Submit Button */}
       <div className="flex justify-center mt-10">
-        <button type="submit" className="btn btn-primary px-10 py-3">
+        <button type="submit" className="btn btn-primary px-10 py-3 focus:outline-none">
           <i className="fa-solid fa-paper-plane mr-2"></i>
           Submit
         </button>
       </div>
     </form>
+    </>
   );
 };

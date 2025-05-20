@@ -1,9 +1,24 @@
-import React from "react";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import { constants } from "../global/constants";
+import { allRouterLink } from "../router/AllRouterLinks";
 
 export const Navbar = () => {
+  const { LogoutUser,userRole } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await LogoutUser();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
   return (
     <>
-      <div className="navbar bg-base-100 shadow-sm">
+      <div className="navbar bg-base-100 shadow-sm sticky top-0 z-2">
         <div className="flex-1 flex items-center">
           <label
             htmlFor="my-drawer"
@@ -67,20 +82,23 @@ export const Navbar = () => {
             >
               <li>
                 <a>
-                  {" "}
                   <i className="fa-solid fa-user"></i> Profile
                 </a>
               </li>
               <li>
                 <a>
-                  {" "}
                   <i className="fa-solid fa-gear"></i> Settings
                 </a>
               </li>
-              <li>
+              {userRole == `${constants.roles.director}` && <li>
+                <Link to={`${allRouterLink.registerUser}`}>
+                  <i className="fa-solid fa-user-plus"></i> Create User
+                </Link>
+              </li>}
+              <li onClick={handleLogout}>
                 <a className="text-orange-600">
-                  {" "}
-                  <i className="fa-solid fa-arrow-right-from-bracket"></i>Logout
+                  <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
+                  Logout
                 </a>
               </li>
             </ul>

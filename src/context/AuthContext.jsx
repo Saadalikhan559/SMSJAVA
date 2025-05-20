@@ -1,36 +1,151 @@
 import React, { createContext, useState, useEffect, useMemo } from "react";
-import { constants } from "../global/constants";
 import axios from "axios";
+import { constants } from "../global/constants";
 
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const BASE_URL = constants.baseUrl;
+  const [authTokens, setAuthTokens] = useState(
+    () => JSON.parse(localStorage.getItem("authTokens")) || null
+  );
+  const [userRole, setUserRole] = useState(
+    () => localStorage.getItem("userRole") || ""
+  );
+  const [loading, setLoading] = useState(true);
 
-  const RegisterUser = async (usersDetails) => {
+  const axiosInstance = useMemo(() => {
+    const instance = axios.create({ baseURL: BASE_URL });
+
+    instance.interceptors.request.use((config) => {
+      if (authTokens?.access) {
+        config.headers.Authorization = `Bearer ${authTokens.access}`;
+      }
+      return config;
+    });
+
+    instance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (
+          error.response?.status === 401 &&
+          !originalRequest._retry &&
+          authTokens?.refresh
+        ) {
+          originalRequest._retry = true;
+          try {
+            const response = await axios.post(
+              `${BASE_URL}/auth/token/refresh/`,
+              {
+                refresh: authTokens.refresh,
+              }
+            );
+            const newTokens = {
+              ...authTokens,
+              access: response.data.access,
+            };
+            setAuthTokens(newTokens);
+            localStorage.setItem("authTokens", JSON.stringify(newTokens));
+            originalRequest.headers.Authorization = `Bearer ${newTokens.access}`;
+            return instance(originalRequest);
+          } catch (refreshError) {
+            await LogoutUser();
+            return Promise.reject(refreshError);
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+    return instance;
+  }, [authTokens, BASE_URL]);
+
+  const RegisterUser = async (userDetails) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/auth/users/`,
-        usersDetails
+        userDetails,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authTokens.access}`,
+          },
+        }
       );
-      if (response.status === 201) {
-        return response.message;
+      if (userRole === constants.roles.director) {
+        return response.data;
       }
     } catch (error) {
-      console.log(error);
+      console.error("Registration error:", error);
+      throw error;
     }
   };
 
-  const value = useMemo(
+  const LoginUser = async (userDetails) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
+      const data = response.data;
+
+      if (!data["Access Token"] || !data["Refresh Token"] || !data.Roles) {
+        throw new Error("Invalid login response structure");
+      }
+
+      const tokens = {
+        access: data["Access Token"],
+        refresh: data["Refresh Token"],
+      };
+
+      setAuthTokens(tokens);
+      localStorage.setItem("authTokens", JSON.stringify(tokens));
+
+      const role = data.Roles[0];
+      setUserRole(role);
+      localStorage.setItem("userRole", role);
+
+      return data;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  const LogoutUser = async () => {
+    setAuthTokens(null);
+    setUserRole("");
+    localStorage.removeItem("authTokens");
+    localStorage.removeItem("userRole");
+  };
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      if (authTokens?.access) {
+        try {
+        } catch (error) {
+          await LogoutUser();
+        }
+      }
+      setLoading(false);
+    };
+    verifyAuth();
+  }, [authTokens]);
+
+  const contextValue = useMemo(
     () => ({
-      user,
+      authTokens,
+      isAuthenticated: !!authTokens?.access,
+      userRole,
       loading,
+      axiosInstance,
+      LoginUser,
+      LogoutUser,
       RegisterUser,
     }),
-    [user, loading]
+    [authTokens, userRole, loading, axiosInstance]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };

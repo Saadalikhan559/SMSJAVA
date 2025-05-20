@@ -13,7 +13,7 @@ export const MainLayout = () => {
   const shouldHide = hiddenPaths.includes(location.pathname);
   
   if (!isOnline) {
-    return <Noconnection />;
+    return <Noconnection />; 
   }
 
   return (

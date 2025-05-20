@@ -11,3 +11,11 @@
 .formBgColor{
   background-color: #ffe9d1;
 }
+
+.passwordEyes{
+  position: absolute;
+  top: 35px;
+  right: 15px;
+  cursor: pointer;
+  z-index: 1;
+}

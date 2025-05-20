@@ -1,21 +1,41 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
 import { fetchRoles } from "../../services/api/Api";
+import { constants } from "../../global/constants";
+import { allRouterLink } from "../../router/AllRouterLinks";
+
 
 export const Register = () => {
-  const { RegisterUser } = useContext(AuthContext);
+  const { RegisterUser, userRole } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [allRoles, setAllRoles] = useState([]);
+  const [error, setError] = useState("");
+  const [isDirector, setIsDirector] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
   const [roleId, setRoleId] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
 
-  const handleSubmit = (e) => {
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  useEffect(()=>{
+    userRole === constants.roles.director ? setIsDirector(true) : setIsDirector(false)
+  }, [])
+
+  // console.log(userRole);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const userData = {
       first_name: firstName,
       last_name: lastName,
@@ -23,7 +43,18 @@ export const Register = () => {
       password: password,
       role: roleId,
     };
-    RegisterUser(userData);
+
+    try {
+      const isSuccess = await RegisterUser(userData);
+      if (isSuccess) {
+        navigate(`${allRouterLink.loginUser}`);
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+      // console.log(userData);
+    } catch (err) {
+      setError("Something went wrong. Please try again later.");
+    }
   };
 
   useEffect(() => {
@@ -38,7 +69,15 @@ export const Register = () => {
     getRoles();
   }, []);
 
+
+  const filteredRoles = allRoles.filter((role)=>{
+    return (role.name === "teacher" || role.name === "office staff")
+  })
+
   return (
+    <>
+    <style>{constants.hideEdgeRevealStyle}</style>
+    
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="hidden md:block md:w-2/3 formBgColor">
         <img
@@ -52,7 +91,13 @@ export const Register = () => {
           <h1 className="text-3xl font-bold text-center mb-6">
             Create an Account
           </h1>
-          {/* First Name */}
+
+          {error && (
+            <div className="text-red-500 text-center font-medium">
+              {error}
+            </div>
+          )}
+
           <div className="form-control w-full">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -63,14 +108,13 @@ export const Register = () => {
             <input
               type="text"
               placeholder="First Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
           </div>
 
-          {/* Last Name */}
           <div className="form-control w-full">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -81,14 +125,13 @@ export const Register = () => {
             <input
               type="text"
               placeholder="Last Name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </div>
 
-          {/* Email */}
           <div className="form-control w-full">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -99,14 +142,13 @@ export const Register = () => {
             <input
               type="email"
               placeholder="example@gmail.com"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full focus:outline-none"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
-          {/* Role Dropdown */}
           <div className="form-control w-full">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -115,13 +157,13 @@ export const Register = () => {
               </span>
             </label>
             <select
-              className="select select-bordered w-full"
+              className="select select-bordered w-full focus:outline-none cursor-pointer"
               value={roleId}
               onChange={(e) => setRoleId(e.target.value)}
               required
             >
               <option value="">Select Role</option>
-              {allRoles.map((roleItem) => (
+              {filteredRoles.map((roleItem) => (
                 <option key={roleItem.id} value={roleItem.id}>
                   {roleItem.name}
                 </option>
@@ -129,33 +171,45 @@ export const Register = () => {
             </select>
           </div>
 
-          {/* Password */}
-          <div className="form-control w-full">
+          <div className="form-control w-full relative">
             <label className="label">
               <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-lock text-sm"></i>
-                Password
+                <i className="fa-solid fa-lock text-sm"></i> Password
               </span>
             </label>
             <input
-              type="password"
+              type={`${showPassword===true?"password":"text"}`}
               placeholder="Enter your password"
-              className="input input-bordered w-full"
+              className="input w-full pr-10 focus:outline-none"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <button
+              type="button"
+              className="passwordEyes text-gray-500"
+              onClick={handleShowPassword}
+            >
+              <i className={`fa-solid  ${showPassword===true?"fa-eye-slash":"fa-eye"}`}></i>
+            </button>
           </div>
 
-          {/* Submit Button */}
           <div className="form-control w-full mt-6">
             <button type="submit" className="btn btn-primary w-full">
               <i className="fa-solid fa-user-plus mr-2"></i>
               Register
             </button>
           </div>
+
+          {/* <div className="text-center mt-4">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Login here
+            </Link>
+          </div> */}
         </form>
       </div>
     </div>
+    </>
   );
 };
