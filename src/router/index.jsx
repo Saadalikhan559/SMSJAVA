@@ -11,8 +11,8 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          {routes.map((route) => {
-            return <Route
+          {routes.map((route) => (
+            <Route
               key={route.path}
               path={route.path}
               element={
@@ -25,11 +25,7 @@ export default function AppRouter() {
                 )
               }
             />
-          }
-            
-            
-          )}
-
+          ))}
           <Route path={allRouterLink.notFound} element={<NotFound />} />
         </Route>
       </Routes>

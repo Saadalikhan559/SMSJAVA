@@ -5,7 +5,7 @@ import { constants } from "../global/constants";
 import { allRouterLink } from "../router/AllRouterLinks";
 
 export const Navbar = () => {
-  const { LogoutUser,userRole } = useContext(AuthContext);
+  const { LogoutUser, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -44,7 +44,7 @@ export const Navbar = () => {
           <input
             type="text"
             placeholder="Search"
-            className="input input-bordered w-48 md:w-auto ml-2"
+            className="input input-bordered w-48 md:w-auto ml-2 focus:outline-none"
           />
           <button className="btn btn-ghost btn-circle">
             <div className="indicator">
@@ -63,7 +63,6 @@ export const Navbar = () => {
                   d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                 />{" "}
               </svg>
-              {/* <span className="badge badge-xs badge-primary indicator-item"></span> */}
             </div>
           </button>
           <div className="dropdown dropdown-end">
@@ -90,11 +89,13 @@ export const Navbar = () => {
                   <i className="fa-solid fa-gear"></i> Settings
                 </a>
               </li>
-              {userRole == `${constants.roles.director}` && <li>
-                <Link to={`${allRouterLink.registerUser}`}>
-                  <i className="fa-solid fa-user-plus"></i> Create User
-                </Link>
-              </li>}
+              {userRole == `${constants.roles.director}` && (
+                <li>
+                  <Link to={`${allRouterLink.registerUser}`}>
+                    <i className="fa-solid fa-user-plus"></i> Create User
+                  </Link>
+                </li>
+              )}
               <li onClick={handleLogout}>
                 <a className="text-orange-600">
                   <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}

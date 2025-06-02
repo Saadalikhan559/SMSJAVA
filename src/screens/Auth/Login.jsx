@@ -15,6 +15,8 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(true);
+  const [loading, setLoading] = useState(false);
+
 
   const handleShowPassword = ()=>{
     setShowPassword(!showPassword);
@@ -22,6 +24,7 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
   // console.log('authenticity', isAuthenticated);
 
@@ -39,6 +42,8 @@ export const Login = () => {
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -96,11 +101,13 @@ export const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              
             />
             <button
               type="button"
               className="passwordEyes text-gray-500"
               onClick={handleShowPassword}
+              
             >
               <i className={`fa-solid  ${showPassword===true?"fa-eye-slash":"fa-eye"}`}></i>
             </button>
@@ -108,9 +115,14 @@ export const Login = () => {
 
           {/* Submit Button */}
           <div className="form-control w-full mt-6">
-            <button type="submit" className="btn btn-primary w-full">
-              <i className="fa-solid fa-right-to-bracket mr-2"></i>
-              Login
+            <button type="submit" className="btn btn-primary w-full" >
+               {loading ? (
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                ) : (
+                  <i className="fa-solid fa-right-to-bracket mr-2"></i>
+                )}
+                {loading ? " " : "Login"}
+              
             </button>
           </div>
         </form>

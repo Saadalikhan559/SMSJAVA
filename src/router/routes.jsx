@@ -1,9 +1,12 @@
+import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
 import { NotFound } from "../components/NotFound";
 import { Unauthorized } from "../components/Unauthorized";
 import { constants } from "../global/constants";
+import { SubjectAssignments } from "../screens/Assignments/SubjectAssignments";
 import { Login } from "../screens/Auth/Login";
 import { Register } from "../screens/Auth/Register";
+import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
 
@@ -29,6 +32,24 @@ export const routes = [
     element: <AdmissionForm />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff]
+  },
+  {
+    path: allRouterLink.admissionFees,
+    element: <AdmissionFees />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff]
+  },
+  {
+    path: allRouterLink.documentUpload,
+    element: <DocumentUpload />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff, constants.roles.teacher]
+  },
+  {
+    path: allRouterLink.subjectAssignment,
+    element: <SubjectAssignments />,
+    protected: true,
+    allowedRoles: [constants.roles.director]
   },
   {
     path: allRouterLink.unAuthorized,

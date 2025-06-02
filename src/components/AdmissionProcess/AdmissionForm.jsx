@@ -1,24 +1,34 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { fetchSchoolYear, fetchYearLevels, handleAdmissionForm } from "../../services/api/Api";
+import {
+  fetchGuardianType,
+  fetchSchoolYear,
+  fetchYearLevels,
+  handleAdmissionForm,
+} from "../../services/api/Api";
 import { constants } from "../../global/constants";
-
-
+import { SuccessModal } from "../Modals/SuccessModal";
+import { FailureModal } from "../Modals/FailureModal";
+import { useNavigate } from "react-router-dom";
 
 export const AdmissionForm = () => {
-  const { RegisterUser, allRoles } = useContext(AuthContext);
+  const successModalRef = useRef(null);
+  const failureModalRef = useRef(null);
+  const navigate = useNavigate();
   const [yearLevel, setYearLevel] = useState([]);
   const [schoolYears, setSchoolYear] = useState([]);
+  const [guardianTypes, setGuardianType] = useState([]);
   const [showPassword, setShowPassword] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [selectedGuardianType, setSelectedGuardianType] = useState("");
+
   const [showGuardianPassword, setShowGuardianPassword] = useState(true);
 
-  
-
-    const handleShowPassword = () => {
+  const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-   const handleShowGuardianPassword = () => {
+  const handleShowGuardianPassword = () => {
     setShowGuardianPassword(!showGuardianPassword);
   };
   const [formData, setFormData] = useState({
@@ -27,61 +37,84 @@ export const AdmissionForm = () => {
       middle_name: "",
       last_name: "",
       email: "",
+      user_profile: null,
       password: "",
-      classes: [],
       date_of_birth: "",
       gender: "",
-      enrolment_date: ""
+      enrolment_date: "",
     },
     guardian: {
       first_name: "",
       middle_name: "",
       last_name: "",
       email: "",
+      user_profile: null,
       password: "",
-      students: [],
-      phone_no: ""
+      phone_no: "",
     },
     admission_date: "",
     previous_school_name: "",
     previous_standard_studied: "",
     tc_letter: "",
     year_level: "",
-    school_year: ""
+    school_year: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name.startsWith("student_")) {
-      const fieldName = name.replace("student_", "");
-      setFormData(prev => ({
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    const file = files[0];
+
+    if (name === "student_user_profile") {
+      setFormData((prev) => ({
         ...prev,
         student: {
           ...prev.student,
-          [fieldName]: value
-        }
+          user_profile: file,
+        },
       }));
-    } else if (name.startsWith("guardian_")) {
-      const fieldName = name.replace("guardian_", "");
-      setFormData(prev => ({
+    } else if (name === "guardian_user_profile") {
+      setFormData((prev) => ({
         ...prev,
         guardian: {
           ...prev.guardian,
-          [fieldName]: value
-        }
+          user_profile: file,
+        },
+      }));
+    }
+  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    // console.log("Selected value:", value);
+    if (name.startsWith("student_")) {
+      const fieldName = name.replace("student_", "");
+      setFormData((prev) => ({
+        ...prev,
+        student: {
+          ...prev.student,
+          [fieldName]: value,
+        },
+      }));
+    } else if (name.startsWith("guardian_")) {
+      const fieldName = name.replace("guardian_", "");
+      setFormData((prev) => ({
+        ...prev,
+        guardian: {
+          ...prev.guardian,
+          [fieldName]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleAdmissionForm(formData);
+  const handleGuardianTypeChange = (e) => {
+    setSelectedGuardianType(e.target.value);
   };
+
 
   const getYearLevels = async () => {
     try {
@@ -101,467 +134,647 @@ export const AdmissionForm = () => {
     }
   };
 
+  const getGuardianType = async () => {
+    try {
+      const guardianType = await fetchGuardianType();
+      setGuardianType(guardianType);
+    } catch (error) {
+      console.log("Failed to load guardian type. Please try again.");
+    }
+  };
+
   useEffect(() => {
     getYearLevels();
     getSchoolYears();
+    getGuardianType();
   }, []);
 
+
+  // Submitting the form
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const formDataToSend = new FormData();
+
+    // Append student fields
+    formDataToSend.append("student.first_name", formData.student.first_name);
+    formDataToSend.append("student.middle_name", formData.student.middle_name);
+    formDataToSend.append("student.last_name", formData.student.last_name);
+    formDataToSend.append("student.email", formData.student.email);
+    formDataToSend.append("student.password", formData.student.password);
+    formDataToSend.append(
+      "student.date_of_birth",
+      formData.student.date_of_birth
+    );
+    formDataToSend.append("student.gender", formData.student.gender);
+    formDataToSend.append(
+      "student.enrolment_date",
+      formData.student.enrolment_date
+    );
+    if (formData.student.user_profile) {
+      formDataToSend.append(
+        "student.user_profile",
+        formData.student.user_profile
+      );
+    }
+
+    // Append guardian fields
+    formDataToSend.append("guardian.first_name", formData.guardian.first_name);
+    formDataToSend.append(
+      "guardian.middle_name",
+      formData.guardian.middle_name
+    );
+    formDataToSend.append("guardian.last_name", formData.guardian.last_name);
+    formDataToSend.append("guardian.email", formData.guardian.email);
+    formDataToSend.append("guardian.password", formData.guardian.password);
+    formDataToSend.append("guardian.phone_no", formData.guardian.phone_no);
+    if (formData.guardian.user_profile) {
+      formDataToSend.append(
+        "guardian.user_profile",
+        formData.guardian.user_profile
+      );
+    }
+
+    // Other fields
+    formDataToSend.append("guardian_type", selectedGuardianType);
+    formDataToSend.append("admission_date", formData.admission_date);
+    formDataToSend.append(
+      "previous_school_name",
+      formData.previous_school_name
+    );
+    formDataToSend.append(
+      "previous_standard_studied",
+      formData.previous_standard_studied
+    );
+    formDataToSend.append("tc_letter", formData.tc_letter);
+    formDataToSend.append("year_level", formData.year_level);
+    formDataToSend.append("school_year", formData.school_year);
+
+    try {
+      const response = await handleAdmissionForm(formDataToSend);
+      if (response.status == 200) {
+        alert('created');
+        // navigate('/admissionFees/:id')
+        // successModalRef.current.show();
+      }
+    } catch (error) {
+      console.error("Submission error:", error.response?.data || error.message);
+      // failureModalRef.current.show();
+    } 
+    finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
-    <style>{constants.hideEdgeRevealStyle}</style>
+      <style>{constants.hideEdgeRevealStyle}</style>
       <form
-      className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
-      onSubmit={handleSubmit}
-    >
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Fill your Details <i className="fa-solid fa-graduation-cap ml-2"></i>
-      </h1>
+        className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+        onSubmit={handleSubmit}
+      >
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Fill your Details <i className="fa-solid fa-graduation-cap ml-2"></i>
+        </h1>
 
-      {/* Student Information Section */}
-      <div className="bg-base-200 p-6 rounded-box mb-6">
-        <h2 className="text-2xl font-bold mb-4">Student Information</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* First Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-user text-sm"></i>
-                First Name <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              name="student_first_name"
-              placeholder="First Name"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.student.first_name}
-              onChange={handleChange}
-            />
+        {/* Student Information Section */}
+        <div className="bg-base-200 p-6 rounded-box mb-6">
+          <h2 className="text-2xl font-bold mb-4">Student Information</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* First Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user text-sm"></i>
+                  First Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="student_first_name"
+                placeholder="First Name"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.student.first_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Middle Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user-pen text-sm"></i>
+                  Middle Name
+                </span>
+              </label>
+              <input
+                type="text"
+                name="student_middle_name"
+                placeholder="Middle Name"
+                className="input input-bordered w-full focus:outline-none"
+                value={formData.student.middle_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Last Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user-tag text-sm"></i>
+                  Last Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="student_last_name"
+                placeholder="Last Name"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.student.last_name}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          {/* Middle Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-user-pen text-sm"></i>
-                Middle Name
-              </span>
-            </label>
-            <input
-              type="text"
-              name="student_middle_name"
-              placeholder="Middle Name"
-              className="input input-bordered w-full focus:outline-none"
-              value={formData.student.middle_name}
-              onChange={handleChange}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Student Email */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-envelope text-sm"></i>
+                  Email <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="email"
+                name="student_email"
+                placeholder="student@example.com"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.student.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Student Password */}
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-lock text-sm"></i>
+                  Password <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type={`${showPassword === true ? "password" : "text"}`}
+                name="student_password"
+                placeholder="Password"
+                className="input input-bordered w-full pr-10 focus:outline-none"
+                required
+                value={formData.student.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="passwordEyes text-gray-500"
+                onClick={handleShowPassword}
+              >
+                <i
+                  className={`fa-solid  ${
+                    showPassword === true ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                ></i>
+              </button>
+            </div>
+          </div>
+          {/* Student Profile Photo upload */}
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-camera text-sm"></i>
+                  Student Profile Photo <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="file"
+                name="student_user_profile"
+                accept="image/*"
+                className="file-input file-input-bordered w-full focus:outline-none"
+                required
+                onChange={handleFileChange}
+              />
+              {formData.student.user_profile && (
+                <div className="mt-2 text-sm">
+                  Selected: {formData.student.user_profile.name}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Last Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-user-tag text-sm"></i>
-                Last Name <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              name="student_last_name"
-              placeholder="Last Name"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.student.last_name}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Date of Birth */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-calendar-days text-sm"></i>
+                  Date of Birth <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="date"
+                name="student_date_of_birth"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.student.date_of_birth}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Student Email */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-envelope text-sm"></i>
-                Email <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="email"
-              name="student_email"
-              placeholder="student@example.com"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.student.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Student Password */}
-          <div className="form-control relative">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-lock text-sm"></i>
-                Password <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type={`${showPassword===true?"password":"text"}`}
-              name="student_password"
-              placeholder="Password"
-              className="input input-bordered w-full pr-10 focus:outline-none"
-              required
-              value={formData.student.password}
-              onChange={handleChange}
-            />
-            <button
-              type="button"
-              className="passwordEyes text-gray-500"
-              onClick={handleShowPassword}
-            >
-              <i className={`fa-solid  ${showPassword===true?"fa-eye-slash":"fa-eye"}`}></i>
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Date of Birth */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-calendar-days text-sm"></i>
-                Date of Birth <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="date"
-              name="student_date_of_birth"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.student.date_of_birth}
-              onChange={handleChange}
-            />
+            {/* Gender */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-venus-mars text-sm"></i>
+                  Gender <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                name="student_gender"
+                className="select select-bordered w-full focus:outline-none"
+                required
+                value={formData.student.gender}
+                onChange={handleChange}
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
           </div>
 
-          {/* Gender */}
-          <div className="form-control">
+          {/* Enrolment Date
+          <div className="form-control mt-6 d-none">
             <label className="label">
               <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-venus-mars text-sm"></i>
-                Gender <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              name="student_gender"
-              className="select select-bordered w-full focus:outline-none"
-              required
-              value={formData.student.gender}
-              onChange={handleChange}
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Enrolment Date */}
-        <div className="form-control mt-6">
-          <label className="label">
-            <span className="label-text flex items-center gap-2">
-              <i className="fa-solid fa-calendar-plus text-sm"></i>
-              Enrolment Date <span className="text-error">*</span>
-            </span>
-          </label>
-          <input
-            type="date"
-            name="student_enrolment_date"
-            className="input input-bordered w-full focus:outline-none"
-            required
-            value={formData.student.enrolment_date}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-
-      {/* Guardian Information Section */}
-      <div className="bg-base-200 p-6 rounded-box mb-6">
-        <h2 className="text-2xl font-bold mb-4">Guardian Information</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* First Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-user text-sm"></i>
-                First Name <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              name="guardian_first_name"
-              placeholder="First Name"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.guardian.first_name}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Middle Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-user-pen text-sm"></i>
-                Middle Name
-              </span>
-            </label>
-            <input
-              type="text"
-              name="guardian_middle_name"
-              placeholder="Middle Name"
-              className="input input-bordered w-full focus:outline-none"
-              value={formData.guardian.middle_name}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Last Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-user-tag text-sm"></i>
-                Last Name <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              name="guardian_last_name"
-              placeholder="Last Name"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.guardian.last_name}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Guardian Email */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-envelope text-sm"></i>
-                Email <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="email"
-              name="guardian_email"
-              placeholder="guardian@example.com"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.guardian.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Guardian Password */}
-          <div className="form-control relative">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-lock text-sm"></i>
-                Password <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type={`${showGuardianPassword===true?"password":"text"}`}
-              name="guardian_password"
-              placeholder="Password"
-              className="input input-bordered w-full pr-10 focus:outline-none"
-              required
-              value={formData.guardian.password}
-              onChange={handleChange}
-            />
-            <button
-              type="button"
-              className="passwordEyes text-gray-500"
-              onClick={handleShowGuardianPassword}
-            >
-              <i className={`fa-solid  ${showGuardianPassword===true?"fa-eye-slash":"fa-eye"}`}></i>
-            </button>
-          </div>
-        </div>
-
-        {/* Guardian Phone Number */}
-        <div className="form-control mt-6">
-          <label className="label">
-            <span className="label-text flex items-center gap-2">
-              <i className="fa-solid fa-phone text-sm"></i>
-              Phone Number <span className="text-error">*</span>
-            </span>
-          </label>
-          <input
-            type="tel"
-            name="guardian_phone_no"
-            placeholder="Phone Number"
-            className="input input-bordered w-full focus:outline-none"
-            required
-            value={formData.guardian.phone_no}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-
-      {/* Academic Information Section */}
-      <div className="bg-base-200 p-6 rounded-box mb-6">
-        <h2 className="text-2xl font-bold mb-4">Academic Information</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Year Level */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-graduation-cap text-sm"></i>
-                Year Level <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              name="year_level"
-              className="select select-bordered w-full focus:outline-none"
-              required
-              value={formData.year_level}
-              onChange={handleChange}
-            >
-              <option value="">Select Year Level</option>
-              {yearLevel.map((yearlev) => (
-                <option
-                  value={yearlev.id}
-                  key={yearlev.id}
-                >
-                  {yearlev.level_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* School Year */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-calendar text-sm"></i>
-                School Year <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              name="school_year"
-              className="select select-bordered w-full focus:outline-none"
-              required
-              value={formData.school_year}
-              onChange={handleChange}
-            >
-              <option value="">Select School Year</option>
-              {schoolYears.map((schoolYear) => (
-                <option value={schoolYear.id} key={schoolYear.id}>
-                  {schoolYear.year_name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Previous School Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-school text-sm"></i>
-                Previous School Name
-              </span>
-            </label>
-            <input
-              type="text"
-              name="previous_school_name"
-              placeholder="Previous School Name"
-              className="input input-bordered w-full focus:outline-none"
-              value={formData.previous_school_name}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Previous Standard Studied */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-book text-sm"></i>
-                Previous Class/Grade
-              </span>
-            </label>
-            <input
-              type="text"
-              name="previous_standard_studied"
-              placeholder="Previous Class/Grade"
-              className="input input-bordered w-full focus:outline-none"
-              value={formData.previous_standard_studied}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Admission Date */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-calendar-check text-sm"></i>
-                Admission Date <span className="text-error">*</span>
+                <i className="fa-solid fa-calendar-plus text-sm"></i>
+                Enrolment Date <span className="text-error">*</span>
               </span>
             </label>
             <input
               type="date"
-              name="admission_date"
+              name="student_enrolment_date"
               className="input input-bordered w-full focus:outline-none"
               required
-              value={formData.admission_date}
+              value={formData.student.enrolment_date}
               onChange={handleChange}
             />
+          </div> */}
+        </div>
+
+        {/* Guardian Information Section */}
+        <div className="bg-base-200 p-6 rounded-box mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+            <h2 className="text-2xl font-bold whitespace-nowrap">
+              Guardian Information
+            </h2>
+
+            <div className="form-control w-full md:w-1/3">
+              <input
+                placeholder="Search guardian..."
+                className="input input-bordered w-full focus:outline-none"
+                type="text"
+              />
+            </div>
           </div>
 
-          {/* TC Letter */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-file text-sm"></i>
-                TC Letter
-              </span>
-            </label>
-            <select
-              name="tc_letter"
-              className="select select-bordered w-full focus:outline-none"
-              required
-              value={formData.tc_letter}
-              onChange={handleChange}
-            >
-              <option value="">Select</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-              <option value="not_applicable">Not applicable</option>
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* First Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user text-sm"></i>
+                  First Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="guardian_first_name"
+                placeholder="First Name"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.guardian.first_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Middle Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user-pen text-sm"></i>
+                  Middle Name
+                </span>
+              </label>
+              <input
+                type="text"
+                name="guardian_middle_name"
+                placeholder="Middle Name"
+                className="input input-bordered w-full focus:outline-none"
+                value={formData.guardian.middle_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Last Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user-tag text-sm"></i>
+                  Last Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="guardian_last_name"
+                placeholder="Last Name"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.guardian.last_name}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Guardian Email */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-envelope text-sm"></i>
+                  Email <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="email"
+                name="guardian_email"
+                placeholder="guardian@example.com"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.guardian.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Guardian Password */}
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-lock text-sm"></i>
+                  Password <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type={`${showGuardianPassword === true ? "password" : "text"}`}
+                name="guardian_password"
+                placeholder="Password"
+                className="input input-bordered w-full pr-10 focus:outline-none"
+                required
+                value={formData.guardian.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="passwordEyes text-gray-500"
+                onClick={handleShowGuardianPassword}
+              >
+                <i
+                  className={`fa-solid  ${
+                    showGuardianPassword === true ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                ></i>
+              </button>
+            </div>
+            {/* Guardian Type */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-graduation-cap text-sm"></i>
+                  Guardian Type <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className="select select-bordered w-full focus:outline-none"
+                required
+                value={selectedGuardianType}
+                onChange={handleGuardianTypeChange}
+              >
+                <option value="">Select Guardian Type</option>
+                {guardianTypes.map((guardianTy) => (
+                  <option value={guardianTy.id} key={guardianTy.id}>
+                    {guardianTy.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Guardian Phone Number */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-phone text-sm"></i>
+                  Phone Number <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="tel"
+                name="guardian_phone_no"
+                placeholder="Phone Number"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.guardian.phone_no}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          {/* Guardian Profile Photo upload */}
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-camera text-sm"></i>
+                  Guardian Profile Photo <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="file"
+                name="guardian_user_profile"
+                accept="image/*"
+                className="file-input file-input-bordered w-full focus:outline-none"
+                required
+                onChange={handleFileChange}
+              />
+              {formData.guardian.user_profile && (
+                <div className="mt-2 text-sm">
+                  Selected: {formData.guardian.user_profile.name}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Submit Button */}
-      <div className="flex justify-center mt-10">
-        <button type="submit" className="btn btn-primary px-10 py-3 focus:outline-none">
-          <i className="fa-solid fa-paper-plane mr-2"></i>
-          Submit
-        </button>
-      </div>
-    </form>
+        {/* Academic Information Section */}
+        <div className="bg-base-200 p-6 rounded-box mb-6">
+          <h2 className="text-2xl font-bold mb-4">Academic Information</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Year Level */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-graduation-cap text-sm"></i>
+                  Year Level <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                name="year_level"
+                className="select select-bordered w-full focus:outline-none"
+                required
+                value={formData.year_level}
+                onChange={handleChange}
+              >
+                <option value="">Select Year Level</option>
+                {yearLevel.map((yearlev) => (
+                  <option value={yearlev.id} key={yearlev.id}>
+                    {yearlev.level_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* School Year */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-calendar text-sm"></i>
+                  School Year <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                name="school_year"
+                className="select select-bordered w-full focus:outline-none"
+                required
+                value={formData.school_year}
+                onChange={handleChange}
+              >
+                <option value="">Select School Year</option>
+                {schoolYears.map((schoolYear) => (
+                  <option value={schoolYear.id} key={schoolYear.id}>
+                    {schoolYear.year_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Previous School Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-school text-sm"></i>
+                  Previous School Name
+                </span>
+              </label>
+              <input
+                type="text"
+                name="previous_school_name"
+                placeholder="Previous School Name"
+                className="input input-bordered w-full focus:outline-none"
+                value={formData.previous_school_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Previous Standard Studied */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-book text-sm"></i>
+                  Previous Class/Grade
+                </span>
+              </label>
+              <input
+                type="text"
+                name="previous_standard_studied"
+                placeholder="Previous Class/Grade"
+                className="input input-bordered w-full focus:outline-none"
+                value={formData.previous_standard_studied}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Admission Date */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-calendar-check text-sm"></i>
+                  Admission Date <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="date"
+                name="admission_date"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                value={formData.admission_date}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* TC Letter */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-file text-sm"></i>
+                  TC Letter
+                </span>
+              </label>
+              <select
+                name="tc_letter"
+                className="select select-bordered w-full focus:outline-none"
+                required
+                value={formData.tc_letter}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="not_applicable">Not applicable</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-center mt-10">
+          <button type="submit" className="btn btn-primary w-full">
+            {loading ? (
+              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+            ) : (
+              <i className="fa-solid fa-paper-plane mr-2"></i>
+            )}
+            {loading ? " " : "Register"}
+          </button>
+        </div>
+      </form>
+      {/* Modals */}
+      {/* <SuccessModal ref={successModalRef} />
+      <FailureModal ref={failureModalRef} /> */}
     </>
   );
 };
