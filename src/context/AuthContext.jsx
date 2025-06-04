@@ -120,6 +120,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
   };
+  const ResetPassword = async (userDetails)=>{
+    try {
+      return await axios.post(`${BASE_URL}/auth/reset_password/`, userDetails);
+    } catch (error) {
+     console.log(error) 
+    }
+  }
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -144,6 +151,7 @@ export const AuthProvider = ({ children }) => {
       LoginUser,
       LogoutUser,
       RegisterUser,
+      ResetPassword
     }),
     [authTokens, userRole, loading, axiosInstance]
   );

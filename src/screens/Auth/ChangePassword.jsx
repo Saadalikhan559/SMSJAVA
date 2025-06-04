@@ -3,9 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
-import { allRouterLink } from "../../router/AllRouterLinks";
 
-export const Login = () => {
+export const ChangePassword = () => {
   const { LoginUser, userRole, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -57,7 +56,7 @@ export const Login = () => {
         </div>
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
-            <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
+            <h1 className="text-3xl font-bold text-center mb-6">Change Password</h1>
 
             {/* Error message */}
             {error && (
@@ -126,11 +125,11 @@ export const Login = () => {
             {/* Change Password Link */}
             <div className="text-center mt-4">
               <Link
-                to={`${allRouterLink.forgotPassword}`}
+                to="/change-password"
                 className="text-sm text-blue-600 hover:underline hover:text-blue-800 font-medium"
               >
                 <i className="fa-solid fa-key mr-2"></i>
-                Forgot Password
+                Change Password
               </Link>
             </div>
           </form>
