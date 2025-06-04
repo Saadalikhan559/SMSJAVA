@@ -1,14 +1,9 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { routes } from "./routes";
-import { PrivateRoute } from "../protectedRoutes/PrivateRoute";
+import { ProtectedRoute } from "../protectedRoutes/Protected";
 import { NotFound } from "../components/NotFound";
-import StudentProfile from "../components/Student Dashboard/StudentProfile";
-import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
-import Guardian from "../components/GuardianDashboard/Guardian";
-import OfficestaffProfile from "../components/OfficestaffDashboard/OfficestaffProfile";
-import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
+import { allRouterLink } from "./AllRouterLinks";
 
 export default function AppRouter() {
   return (
@@ -21,19 +16,16 @@ export default function AppRouter() {
               path={route.path}
               element={
                 route.protected ? (
-                  <PrivateRoute>{route.element}</PrivateRoute>
+                  <ProtectedRoute allowedRoles={route.allowedRoles}>
+                    {route.element}
+                  </ProtectedRoute>
                 ) : (
                   route.element
                 )
               }
             />
           ))}
-          <Route path="*" element={<NotFound />} />
-          <Route path="StudentProfile" element={<StudentProfile/>}/>
-          <Route path="TeacherProfile" element={<TeacherProfile/>}/> 
-          <Route path="GuardianProfile" element={<Guardian/>}/> 
-          <Route path="OfficeStaffProfile" element={<OfficestaffProfile/>}/> 
-          <Route path="DirectorProfile" element={<DirectorProfile/>}/> 
+          <Route path={allRouterLink.notFound} element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>

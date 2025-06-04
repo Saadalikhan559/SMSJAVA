@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useForm } from 'react-hook-form';
 
-const Guardian = () => {
+const GuardianProfile = () => {
   // Static guardian data
   const guardianData = {
     "first_name": "John",
@@ -279,4 +279,4 @@ const Guardian = () => {
   );
 };
 
-export default Guardian;
+export default GuardianProfile;

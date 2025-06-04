@@ -1,20 +1,43 @@
 .nexus-logo {
-  background: linear-gradient(135deg, 
-    #6e00ff, 
-    #95c2d3);
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'cursive';
+  background: linear-gradient(135deg, #6e00ff, #95c2d3);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   position: relative;
+  cursor: pointer;
 }
+
 
 .formBgColor{
   background-color: #ffe9d1;
 }
 
-.shadow-top-bottom {
-    box-shadow: 
-        0 -4px 6px -1px rgba(0, 0, 0, 0.1), /* Top shadow */
-        0 4px 6px -1px rgba(0, 0, 0, 0.1);  /* Bottom shadow */
+.passwordEyes{
+  position: absolute;
+  top: 35px;
+  right: 15px;
+  cursor: pointer;
+  z-index: 1;
 }
 
+.bgTheme{
+  background-color: #6e00ff;
+}
+.borderTheme{
+  border: 1px solid #6e00ff;
+}
+.borderTheme-b{
+  border-bottom: 1px solid #6e00ff;
+}
+.borderTheme-t{
+  border-top: 1px solid #6e00ff;
+}
+.borderTheme-r{
+  border-right: 1px solid #6e00ff;
+}
+.borderTheme-l{
+  border-left: 1px solid #6e00ff;
+}
