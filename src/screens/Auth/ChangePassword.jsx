@@ -5,36 +5,43 @@ import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 
 export const ChangePassword = () => {
-  const { LoginUser, userRole, isAuthenticated } = useContext(AuthContext);
+  const { ChangePassword } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [changePassword, setChangePassword] = useState("");
+  const [confirmChangePassword, setConfirmChangePassword] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(true);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate passwords match
+    if (changePassword !== confirmChangePassword) {
+      setError("New password and confirm password do not match");
+      return;
+    }
     setLoading(true);
-
-    // console.log('authenticity', isAuthenticated);
 
     const userData = {
       email,
-      password,
+      current_password: currentPassword,
+      change_password: changePassword,
+      confirm_password: confirmChangePassword,
     };
 
     try {
-      const isSuccess = await LoginUser(userData);
-      if (isSuccess) {
+      const response = await ChangePassword(userData);
+      if (response.status === 200 || response.status === 201) {
+        alert("Password changed successfully!");
         navigate("/");
       } else {
-        setError("Invalid email or password");
+        setError(response.data?.message || "Failed to change password");
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
@@ -82,29 +89,85 @@ export const ChangePassword = () => {
               />
             </div>
 
-            {/* Password */}
+            {/* Current Password */}
             <div className="form-control w-full relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-lock text-sm"></i> Password
+                  <i className="fa-solid fa-lock text-sm"></i> Current Password
                 </span>
               </label>
               <input
-                type={`${showPassword === true ? "password" : "text"}`}
-                placeholder="Enter your password"
+                type={showCurrentPassword ? "text" : "password"}
+                placeholder="Enter current password"
                 className="input w-full pr-10 focus:outline-none"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
               />
               <button
                 type="button"
                 className="passwordEyes text-gray-500"
-                onClick={handleShowPassword}
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
               >
                 <i
-                  className={`fa-solid  ${
-                    showPassword === true ? "fa-eye-slash" : "fa-eye"
+                  className={`fa-solid ${
+                    showCurrentPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                ></i>
+              </button>
+            </div>
+
+            {/* New Password */}
+            <div className="form-control w-full relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-lock text-sm"></i> New Password
+                </span>
+              </label>
+              <input
+                type={showNewPassword ? "text" : "password"}
+                placeholder="Enter new password"
+                className="input w-full pr-10 focus:outline-none"
+                required
+                value={changePassword}
+                onChange={(e) => setChangePassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="passwordEyes text-gray-500"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+              >
+                <i
+                  className={`fa-solid ${
+                    showNewPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                ></i>
+              </button>
+            </div>
+
+            {/* Confirm New Password */}
+            <div className="form-control w-full relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-lock text-sm"></i> Confirm New Password
+                </span>
+              </label>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm new password"
+                className="input w-full pr-10 focus:outline-none"
+                required
+                value={confirmChangePassword}
+                onChange={(e) => setConfirmChangePassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="passwordEyes text-gray-500"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <i
+                  className={`fa-solid ${
+                    showConfirmPassword ? "fa-eye-slash" : "fa-eye"
                   }`}
                 ></i>
               </button>
@@ -116,20 +179,20 @@ export const ChangePassword = () => {
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
-                  <i className="fa-solid fa-right-to-bracket mr-2"></i>
+                  <i className="fa-solid fa-key mr-2"></i>
                 )}
-                {loading ? " " : "Login"}
+                {loading ? "Processing..." : "Change Password"}
               </button>
             </div>
 
-            {/* Change Password Link */}
+            {/* Back to Login Link */}
             <div className="text-center mt-4">
               <Link
-                to="/change-password"
+                to="/login"
                 className="text-sm text-blue-600 hover:underline hover:text-blue-800 font-medium"
               >
-                <i className="fa-solid fa-key mr-2"></i>
-                Change Password
+                <i className="fa-solid fa-arrow-left mr-2"></i>
+                Back to Login
               </Link>
             </div>
           </form>

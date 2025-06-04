@@ -25,7 +25,7 @@ export const ForgotPassword = () => {
     try {
       const response = await axios.post(`${constants.baseUrl}/auth/otp/`, payload);
       if (response.status === 200 || response.status === 201) {
-        alert('OPT is sent to your email successfully');
+        alert('OPT is sent to your email successfully, only valid for 5 mins');
         navigate(`${allRouterLink.resetPassword}`);
       } else {
         setError("OPT was not sent, Please try again");
