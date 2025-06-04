@@ -1,9 +1,9 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { routes } from "./routes";
-import { PrivateRoute } from "../protectedRoutes/PrivateRoute";
+import { ProtectedRoute } from "../protectedRoutes/Protected";
 import { NotFound } from "../components/NotFound";
+import { allRouterLink } from "./AllRouterLinks";
 
 export default function AppRouter() {
   return (
@@ -16,14 +16,16 @@ export default function AppRouter() {
               path={route.path}
               element={
                 route.protected ? (
-                  <PrivateRoute>{route.element}</PrivateRoute>
+                  <ProtectedRoute allowedRoles={route.allowedRoles}>
+                    {route.element}
+                  </ProtectedRoute>
                 ) : (
                   route.element
                 )
               }
             />
           ))}
-          <Route path="*" element={<NotFound />} />
+          <Route path={allRouterLink.notFound} element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>

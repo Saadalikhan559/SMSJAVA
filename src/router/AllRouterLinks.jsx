@@ -2,5 +2,17 @@ export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
     loginUser: "/login",
-    admissionForm: "/admissionForm"
+    admissionForm: "/admissionForm",
+    admissionFees: "/admissionFees/:id",
+    documentUpload: "/documentUpload",
+    subjectAssignment: "/subjectAssignment",
+    allTeacherAssignment: "/allTeacherAssignment",
+    attendance: "/attendance",
+    directorProfile: '/directorProfile',
+    officeStaffProfile: '/officeStaffProfile',
+    guardianProfile: '/guardianProfile',
+    teacherProfile: '/teacherProfile',
+    studentProfile: '/studentProfile',
+    unAuthorized: '/unauthorized',
+    notFound: "*"
 }

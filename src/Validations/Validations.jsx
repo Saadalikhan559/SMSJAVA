@@ -1,309 +1,235 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import image from "../../assets/auth-hero.png";
-import { AuthContext } from "../../context/AuthContext";
-import { fetchRoles } from "../../services/api/Api";
-import { constants } from "../../global/constants";
-import {validfirstname,validlastname,validregisteremail,validregisterpassword} from "../../Validations/Validations";
+// // /------------------------------------Login form validations---------------------------------------------/
 
-export const Register = () => {
-    const { RegisterUser } = useContext(AuthContext);
-    const navigate = useNavigate();
-
-    const [allRoles, setAllRoles] = useState([]);
-    const [error, setError] = useState("");
-    const [registrationSuccess, setRegistrationSuccess] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [roleId, setRoleId] = useState(""); // no default, user must pick
-
-    const [showPassword, setShowPassword] = useState(true);
-
-    const [firstnameError, setFirstnameError] = useState("");
-    const [lastnameError, setLastnameError] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-
-    // Fetch roles on mount
-    useEffect(() => {
-        const getRoles = async () => {
-            try {
-                const roles = await fetchRoles();
-                setAllRoles(roles);
-            } catch (err) {
-                console.log("Failed to load roles. Please try again.");
-            }
-        };
-        getRoles();
-    }, []);
-
-    // Only allow teacher and office staff roles
-    const filteredRoles = allRoles.filter(
-        (role) => role.name === "teacher" || role.name === "office staff"
-    );
-
-    const handleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // Reset errors & error state
-        setFirstnameError("");
-        setLastnameError("");
-        setEmailError("");
-        setPasswordError("");
-        setError("");
-        setLoading(true);
-
-        // Validation checks
-        const firstNameMsg = validfirstname(firstName);
-        const lastNameMsg = validlastname(lastName);
-        const emailMsg = validregisteremail(email);
-        const passwordMsg = validregisterpassword(password);
-
-        let valid = true;
-
-        if (firstNameMsg) {
-            setFirstnameError(firstNameMsg);
-            valid = false;
-        }
-        if (lastNameMsg) {
-            setLastnameError(lastNameMsg);
-            valid = false;
-        }
-        if (emailMsg) {
-            setEmailError(emailMsg);
-            valid = false;
-        }
-        if (passwordMsg) {
-            setPasswordError(passwordMsg);
-            valid = false;
-        }
-
-        if (!roleId) {
-            setError("Please select a role.");
-            valid = false;
-        }
-
-        if (!valid) {
-            setLoading(false);
-            return;
-        }
-
-        const userData = {
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            password,
-            role: roleId,
-        };
-
-        try {
-            const isSuccess = await RegisterUser(userData);
-            if (isSuccess) {
-                setRegistrationSuccess(true);
-                console.log("success");
-
-            } else {
-                setError("Registration failed. Please try again.");
-            }
-        } catch (err) {
-            setError("Something went wrong. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <>
-            <style>{constants.hideEdgeRevealStyle}</style>
-
-            <div className="min-h-screen flex flex-col md:flex-row">
-                <div className="hidden md:block md:w-2/3 formBgColor">
-                    <img
-                        src={image}
-                        alt="Authentication"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-
-                <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
-                    <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
-                        <h1 className="text-3xl font-bold text-center mb-6">
-                            Create an Account
-                        </h1>
-
-                        {error && (
-                            <div className="text-red-500 text-center font-medium">{error}</div>
-                        )}
-
-                        {/* First Name */}
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text flex items-center gap-2">
-                                    <i className="fa-solid fa-user text-sm"></i> First Name
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="First Name"
-                                className="input input-bordered w-full focus:outline-none"
-                                value={firstName}
-                                onChange={(e) => {
-                                    setFirstName(e.target.value);
-                                    setFirstnameError(validfirstname(e.target.value) || "");
-                                }}
-                            />
-                            {firstnameError && (
-                                <span className="text-red-500 text-sm mt-1">{firstnameError}</span>
-                            )}
-                        </div>
-
-                        {/* Last Name */}
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text flex items-center gap-2">
-                                    <i className="fa-solid fa-user text-sm"></i> Last Name
-                                </span>
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Last Name"
-                                className="input input-bordered w-full focus:outline-none"
-                                value={lastName}
-                                onChange={(e) => {
-                                    setLastName(e.target.value);
-                                    setLastnameError(validlastname(e.target.value) || "");
-                                }}
-                            />
-                            {lastnameError && (
-                                <span className="text-red-500 text-sm mt-1">{lastnameError}</span>
-                            )}
-                        </div>
-
-                        {/* Email */}
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text flex items-center gap-2">
-                                    <i className="fa-solid fa-envelope text-sm"></i> Email
-                                </span>
-                            </label>
-                            <input
-                                type="email"
-                                placeholder="example@gmail.com"
-                                className="input input-bordered w-full focus:outline-none"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    setEmailError(validregisteremail(e.target.value) || "");
-                                }}
-                            />
-                            {emailError && (
-                                <span className="text-red-500 text-sm mt-1">{emailError}</span>
-                            )}
-                        </div>
-
-                        {/* Role */}
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text flex items-center gap-2">
-                                    <i className="fa-solid fa-user-shield text-sm"></i> Role
-                                </span>
-                            </label>
-                            <select
-                                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                                value={roleId}
-                                onChange={(e) => setRoleId(e.target.value)}
-                                required
-                            >
-                                <option value="">Select Role</option>
-                                {filteredRoles.map((roleItem) => (
-                                    <option key={roleItem.id} value={roleItem.id}>
-                                        {roleItem.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Password */}
-                        <div className="form-control w-full relative">
-                            <label className="label">
-                                <span className="label-text flex items-center gap-2">
-                                    <i className="fa-solid fa-lock text-sm"></i> Password
-                                </span>
-                            </label>
-                            <input
-                                type={showPassword ? "password" : "text"}
-                                placeholder="Enter your password"
-                                className="input input-bordered w-full pr-10 focus:outline-none"
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                    setPasswordError(validregisterpassword(e.target.value) || "");
-                                }}
-                            />
-                            <button
-                                type="button"
-                                className="absolute right-3 top-9 text-gray-500 passwordEyes"
-                                onClick={handleShowPassword}
-                            >
-                                <i
-                                    className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"
-                                        }`}
-                                ></i>
-                            </button>
-                            {passwordError && (
-                                <span className="text-red-500 text-sm mt-1">{passwordError}</span>
-                            )}
-                        </div>
-
-                        {/* Submit Button */}
-                        <div className="form-control w-full mt-6">
-                            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
-                                {loading ? (
-                                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                                ) : (
-                                    <>
-                                        <i className="fa-solid fa-user-plus mr-2"></i> Register
-                                    </>
-                                )}
-                            </button>
-                        </div>
-
-                        {/* Redirect to Login */}
-                        <p className="text-sm text-center mt-4">
-                            Already have an account?{" "}
-                            <Link to="/login" className="text-blue-500 font-semibold">
-                                Login here
-                            </Link>
-                        </p>
-                    </form>
-                </div>
-            </div>
-
-            {/* Success Modal */}
-            {registrationSuccess && (
-                <div className="modal modal-open">
-                    <div className="modal-box">
-                        <h3 className="font-bold text-lg">Registration Successful!</h3>
-                        <p className="py-4">Your account has been created successfully.</p>
-                        <div className="modal-action">
-                            <button
-                                onClick={() => navigate("/login")}
-                                className="btn btn-primary"
-                            >
-                                Continue to Login
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
-    );
+// -----------------------------------------Email--------------------------------------------------------------
+export const validloginemail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) return "Email is required.";
+    if (!emailRegex.test(email)) return "Enter a valid email address.";
+    return "";
 };
+
+// -------------------------------------------Password----------------------------------------------------------/
+export const validloginpassword = (password) => {
+    if (!password) return "Password is required";
+    if (password.length < 8) return "Password must be at least 8 characters";
+    return "";
+};
+
+// // /------------------------------------Register form validations---------------------------------------------/
+
+
+// -------------------------------------------First Name----------------------------------------------------------
+export const validfirstname = (firstName) => {
+    if (!firstName) return "First name is required";
+    if (firstName.length < 3) return "First name must be at least 3 characters";
+    if (firstName.length > 20) return "First name must be less than 20 characters";
+    const firstnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!firstnameRegex.test(firstName)) {
+        return "First name can only contain letters, spaces, apostrophes, or hyphens";
+    }
+    return "";
+}
+
+// -------------------------------------------------Last Name-------------------------------------------------------
+export const validlastname = (lastName) => {
+    if (!lastName) return "Last name is required";
+    if (lastName.length < 3) return "Last name must be at least 3 characters";
+    if (lastName.length > 30) return "Last name must be less than 30 characters";
+    const lastnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!lastnameRegex.test(lastName)) {
+        return "Last name can only contain letters, spaces, apostrophes, or hyphens";
+    }
+    return "";
+}
+
+// --------------------------------------------------Email----------------------------------------------------------
+export const validregisteremail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email) return "Email is required";
+    if (!emailRegex.test(email)) return "Enter a valid email address";
+    return "";
+};
+
+// -------------------------------------------------Password-----------------------------------------------------------
+export const validregisterpassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!password) return "Password is required";
+    if (!passwordRegex.test(password)) {
+        return "Password must be minimum eight characters, at least one letter, one number and one special character";
+    }
+    return "";
+}
+
+
+// // /------------------------------------Admission form validations---------------------------------------------/
+// ----------------------------------------------Student Information-------------------------------------------------
+// -------------------------------------------Student First Name---------------------------------------------------
+export const validStudentFirstName = (student_first_name) => {
+    if (!student_first_name) return "Student's first name is required";
+    if (student_first_name.length < 3) return "First name must be at least 3 characters";
+    if (student_first_name.length > 20) return "First name must be less than 20 characters";
+    const firstnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!firstnameRegex.test(student_first_name)) return "First name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+// ----------------------------------------------Student Middle Name---------------------------------------------------
+
+export const validStudentMiddleName = (student_middle_name) => {
+    if (!student_middle_name) return "Student's first name is required";
+    if (student_middle_name.length < 3) return "First name must be at least 3 characters";
+    if (student_middle_name.length > 20) return "First name must be less than 20 characters";
+    const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!middlenameRegex.test(student_middle_name)) return "First name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+}
+
+// -------------------------------------------Student Last Name----------------------------------------------------
+export const validStudentLastName = (student_last_name) => {
+    if (!student_last_name) return "Student's last name is required";
+    if (student_last_name.length < 3) return "Last name must be at least 3 characters";
+    if (student_last_name.length > 30) return "Last name must be less than 30 characters";
+    const lastnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!lastnameRegex.test(student_last_name)) return "Last name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+// -------------------------------------------Student Email---------------------------------------------------------
+export const validStudentEmail = (student_email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!student_email) return "Student email is required";
+    if (!emailRegex.test(student_email)) return "Enter a valid student email address";
+    return "";
+};
+
+// -------------------------------------------Student Password------------------------------------------------------
+export const validStudentPassword = (student_password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!student_password) return "Student password is required";
+    if (!passwordRegex.test(student_password)) return "Password must be at least 8 characters, include one letter, one number, and one special character";
+    return "";
+};
+
+// ------------------------------------------- Student Date of Birth-------------------------------------------------------
+export const validDOB = (student_date_of_birth) => {
+    if (!student_date_of_birth) return "Date of Birth is required";
+    const dobDate = new Date(student_date_of_birth);
+    const now = new Date();
+    if (student_date_of_birth >= now) return "Date of Birth must be in the past";
+    return "";
+};
+
+// ------------------------------------------- Student Gender-------------------------------------------------------
+export const validgender = (gender) => {
+    if (!gender) return "gender is required"
+    return ""
+}
+
+// ------------------------------------------- Student enrolment date-------------------------------------------------------
+export const validenrolmentdate = (enrolment_date) => {
+    if (!enrolment_date) return "date is required"
+    return ""
+}
+
+// ----------------------------------------------Guardian Information-------------------------------------------------
+// -------------------------------------------Guardian First Name-------------------------------------------------------
+export const validGuardianFirstName = (guardian_first_name) => {
+    if (!guardian_first_name) return "Guardian's name is required";
+    if (guardian_first_name.length < 3) return "Guardian's name must be at least 3 characters";
+    if (guardian_first_name.length > 50) return "Guardian's name must be less than 50 characters";
+    const firstNameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!firstNameRegex.test(guardian_first_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+
+// -------------------------------------------Guardian Middle Name-------------------------------------------------------
+export const validGuardianMiddlName = (guardian_middle_name) => {
+    if (!guardian_middle_name) return "Guardian's name is required";
+    if (guardian_middle_name.length < 3) return "Guardian's name must be at least 3 characters";
+    if (guardian_middle_name.length > 50) return "Guardian's name must be less than 50 characters";
+    const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!middlenameRegex.test(guardian_middle_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+
+// -------------------------------------------Guardian last Name-------------------------------------------------------
+export const validGuardianlastName = (guardian_last_name) => {
+    if (!guardian_last_name) return "Guardian's name is required";
+    if (guardian_last_name.length < 3) return "Guardian's name must be at least 3 characters";
+    if (guardian_last_name > 50) return "Guardian's name must be less than 50 characters";
+    const lastnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!lastnameRegex.test(guardian_last_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+
+// -------------------------------------------Guardian Email-------------------------------------------------------
+export const validGuardianEmail = (guardian_email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!guardian_email) return "Guardian email is required";
+    if (!emailRegex.test(guardian_email)) return "Enter a valid guardian email address";
+    return "";
+};
+
+// -------------------------------------------Guardian Password----------------------------------------------------
+export const validGuardianPassword = (guardian_password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!guardian_password) return "Guardian password is required";
+    if (!passwordRegex.test(guardian_password)) return "Password must be at least 8 characters, include one letter, one number, and one special character";
+    return "";
+};
+
+// -------------------------------------------Guardian Mobile Number-------------------------------------------------------
+export const validMobileNumber = (guardian_phone_no) => {
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!guardian_phone_no) return "Mobile number is required";
+    if (!mobileRegex.test(guardian_phone_no)) return "Enter a valid 10-digit Indian mobile number starting with 6-9";
+    return "";
+};
+
+
+// ----------------------------------------------Academic Information-------------------------------------------------
+
+// -------------------------------------------------Year level-----------------------------------------------------------
+
+export const validyearlevel = (year_level) => {
+    if (!year_level) return "year level is required"
+    return ""
+}
+
+// -------------------------------------------------school year-----------------------------------------------------------
+
+export const validschoolyear = (school_year) => {
+    if (!school_year) return "year is required"
+    return ""
+}
+
+// -------------------------------------------------previous school name-----------------------------------------------------------
+
+export const validschoolname = (previous_school_name) => {
+    if (!previous_school_name) return "previous school name is required"
+    return ""
+}
+
+// -------------------------------------------------previous school name-----------------------------------------------------------
+
+export const validclass = (previous_standard_studied) => {
+    if (!previous_standard_studied) return "standard/class is required"
+    return ""
+}
+
+// -------------------------------------------------Admission date-----------------------------------------------------------
+
+export const validadmissiondate = (admission_date) => {
+    if (!admission_date) return "date is required"
+    return ""
+}
+
+// -------------------------------------------------TC letter-----------------------------------------------------------
+
+export const validtc = (tc_letter) => {
+    if (!tc_letter) return "tc letter is required"
+    return ""
+}
