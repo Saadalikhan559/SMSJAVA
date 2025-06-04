@@ -232,14 +232,15 @@ export const Register = () => {
 
             {/* Submit */}
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+              <button type="submit" className="btn btn-primary w-full">
+              <button type="submit" className="btn btn-primary w-full">
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
-                  <>
-                    <i className="fa-solid fa-user-plus mr-2"></i> Register
-                  </>
+                  <i className="fa-solid fa-right-to-bracket mr-2"></i>
                 )}
+                {loading ? " " : "Register"}
+              </button>
               </button>
             </div>
 
