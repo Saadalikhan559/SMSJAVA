@@ -3,7 +3,6 @@ import {
   fetchDocumentType,
   fetchGuardians,
   fetchOfficeStaff,
-  fetchStudents,
   fetchStudentYearLevel,
   fetchTeachers,
 } from "../services/api/Api";
@@ -48,7 +47,7 @@ export const DocumentUpload = () => {
   // Add error handling for all fetch functions
   const getStudentsYearLevel = async () => {
     try {
-      const allStudents = await fetchStudentYearLevel();
+      const allStudents = await fetchStudentYearLevel();        
       setStudents(allStudents);
     } catch (error) {
       console.error("Failed to load students:", error);
@@ -192,12 +191,11 @@ export const DocumentUpload = () => {
             name="student"
             className="select select-bordered w-full focus:outline-none"
             onChange={handleChange}
-            value={formData.student}
           >
             <option value="">Select Student</option>
-            {students.map((student) => (
-              <option key={student.id} value={student.id}>
-                {student.first_name} {student.last_name}
+            {students.map((studentObj) => (
+              <option key={studentObj.id} value={studentObj.level.id}>
+                {studentObj.student.first_name} {studentObj.student.last_name}
               </option>
             ))}
           </select>

@@ -82,10 +82,10 @@ export const fetchStudents = async ()=>{
 
 export const fetchStudentYearLevel = async ()=>{
   try {
-    const response = await axios.get(`${BASE_URL}s/studentYearLevel/`);
+    const response = await axios.get(`${BASE_URL}/s/studentYearLevel/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to fetch students:", err);
+    console.error("Failed to fetch all students:", err);
     throw err;
   }
 }
@@ -137,6 +137,16 @@ export const fetchSubjects = async () => {
     return response.data;
   } catch (err) {
     console.error("Failed to fetch subjects:", err);
+    throw err;
+  }
+};
+
+export const fetchAllTeacherAssignments = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/t/teacher/all-teacher-assignments/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to all teacher assignments:", err);
     throw err;
   }
 };

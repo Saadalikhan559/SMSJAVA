@@ -6,6 +6,8 @@ export const allRouterLink = {
     admissionFees: "/admissionFees/:id",
     documentUpload: "/documentUpload",
     subjectAssignment: "/subjectAssignment",
+    allTeacherAssignment: "/allTeacherAssignment",
+    attendance: "/attendance",
     unAuthorized: '/unauthorized',
     notFound: "*"
 

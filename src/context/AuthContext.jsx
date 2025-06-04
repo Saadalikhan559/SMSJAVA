@@ -2,16 +2,21 @@ import React, { createContext, useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { constants } from "../global/constants";
 
+const BASE_URL = constants.baseUrl;
+
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const BASE_URL = constants.baseUrl;
   const [authTokens, setAuthTokens] = useState(
     () => JSON.parse(localStorage.getItem("authTokens")) || null
   );
   const [userRole, setUserRole] = useState(
     () => localStorage.getItem("userRole") || ""
   );
+  const [user, setUser] = useState(
+    () => JSON.parse(localStorage.getItem("user")) || null
+  );
+
   const [loading, setLoading] = useState(true);
 
   const axiosInstance = useMemo(() => {

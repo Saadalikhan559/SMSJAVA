@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { allRouterLink } from "../router/AllRouterLinks";
+import { constants } from "../global/constants";
 
 export const Sidebar = () => {
   const drawerRef = useRef(null);
@@ -34,38 +35,41 @@ export const Sidebar = () => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 text-base-content min-h-full w-75 p-4">
-          {role === "director" && (
-            <li>
-              <Link
-                onClick={(e) =>
-                  handleNavigation(e, allRouterLink.admissionForm)
-                }
-              >
-                Admission Form
-              </Link>
-            </li>
-          )}
-          {role !== "student" && (
-            <li
-              onClick={(e) => handleNavigation(e, allRouterLink.documentUpload)}
-            >
-              <Link>Upload Documents</Link>
-            </li>
-          )}
+<ul className="menu bg-base-200 text-base-content min-h-full w-65 p-4">
+  {role === `${constants.roles.director}` && (
+    <li>
+      <Link
+        onClick={(e) => handleNavigation(e, allRouterLink.admissionForm)}
+      >
+        <i className="fa-solid fa-file-circle-plus mr-2"></i> Admission Form
+      </Link>
+    </li>
+  )}
+  {role !== `${constants.roles.student}` && (
+    <li onClick={(e) => handleNavigation(e, allRouterLink.documentUpload)}>
+      <Link>
+        <i className="fa-solid fa-upload mr-2"></i> Upload Documents
+      </Link>
+    </li>
+  )}
+  {role === `${constants.roles.director}` && (
+    <li>
+      <Link
+        onClick={(e) => handleNavigation(e, allRouterLink.subjectAssignment)}
+      >
+        <i className="fa-solid fa-book-open-reader mr-2"></i> Assign Subjects
+      </Link>
+    </li>
+  )}
+  {role === `${constants.roles.teacher}` && (
+    <li>
+      <Link to={`${allRouterLink.attendance}`}>
+        <i className="fa-solid fa-book mr-2"></i> Attendance
+      </Link>
+    </li>
+  )}
+</ul>
 
-          {role === "director" && (
-            <li>
-              <Link
-                onClick={(e) =>
-                  handleNavigation(e, allRouterLink.subjectAssignment)
-                }
-              >
-                Assign Subjects
-              </Link>
-            </li>
-          )}
-        </ul>
       </div>
     </div>
   );
