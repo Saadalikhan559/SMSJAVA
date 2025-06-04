@@ -17,6 +17,7 @@ export const constants = {
       officeStaff: "office staff",
       // teacher: "teacher",
       teacher: "Teacher",
-      student: "student"
+      student: "student",
+      guardian: "guardian",
     }
 };

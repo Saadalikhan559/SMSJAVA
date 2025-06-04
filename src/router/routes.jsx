@@ -1,7 +1,12 @@
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
+import GuardianProfile from "../components/GuardianDashboard/GuardianProfile";
 import { NotFound } from "../components/NotFound";
+import OfficestaffProfile from "../components/OfficestaffDashboard/OfficestaffProfile";
+import StudentProfile from "../components/Student Dashboard/StudentProfile";
 import { Attendance } from "../components/Teacher/Attendance";
+import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
 import { Unauthorized } from "../components/Unauthorized";
 import { constants } from "../global/constants";
 import { AllTeacherAssignments } from "../screens/Assignments/AllTeacherAssignments";
@@ -64,6 +69,37 @@ export const routes = [
     element: <Attendance />,
     protected: true,
     allowedRoles: [constants.roles.teacher]
+  },
+  // PROFILES
+  {
+    path: allRouterLink.directorProfile,
+    element: <DirectorProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.director]
+  },
+  {
+    path: allRouterLink.officeStaffProfile,
+    element: <OfficestaffProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.officeStaff]
+  },
+  {
+    path: allRouterLink.teacherProfile,
+    element: <TeacherProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.teacher]
+  },
+  {
+    path: allRouterLink.guardianProfile,
+    element: <GuardianProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.guardian]
+  },
+  {
+    path: allRouterLink.studentProfile,
+    element: <StudentProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.student]
   },
   {
     path: allRouterLink.unAuthorized,

@@ -8,7 +8,11 @@ export const allRouterLink = {
     subjectAssignment: "/subjectAssignment",
     allTeacherAssignment: "/allTeacherAssignment",
     attendance: "/attendance",
+    directorProfile: '/directorProfile',
+    officeStaffProfile: '/officeStaffProfile',
+    guardianProfile: '/guardianProfile',
+    teacherProfile: '/teacherProfile',
+    studentProfile: '/studentProfile',
     unAuthorized: '/unauthorized',
     notFound: "*"
-
 }
