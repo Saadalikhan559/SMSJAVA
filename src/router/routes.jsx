@@ -11,8 +11,11 @@ import { Unauthorized } from "../components/Unauthorized";
 import { constants } from "../global/constants";
 import { AllTeacherAssignments } from "../screens/Assignments/AllTeacherAssignments";
 import { SubjectAssignments } from "../screens/Assignments/SubjectAssignments";
+import { ChangePassword } from "../screens/Auth/ChangePassword";
+import { ForgotPassword } from "../screens/Auth/ForgotPassword";
 import { Login } from "../screens/Auth/Login";
 import { Register } from "../screens/Auth/Register";
+import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
@@ -32,6 +35,21 @@ export const routes = [
   {
     path: allRouterLink.loginUser,
     element: <Login />,
+    protected: false,
+  },
+  {
+    path: allRouterLink.changePassword,
+    element: <ChangePassword />,
+    protected: true,
+  },
+  {
+    path: allRouterLink.forgotPassword,
+    element: <ForgotPassword />,
+    protected: false,
+  },
+  {
+    path: allRouterLink.resetPassword,
+    element: <ResetPassword />,
     protected: false,
   },
   {

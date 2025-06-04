@@ -9,7 +9,7 @@ import { allRouterLink } from "../router/AllRouterLinks";
 export const MainLayout = () => {
   const { isOnline } = useContext(NetWorkContext);
   const location = useLocation();
-  const hiddenPaths = [allRouterLink.registerUser, allRouterLink.loginUser];
+  const hiddenPaths = [allRouterLink.registerUser, allRouterLink.loginUser, allRouterLink.changePassword, allRouterLink.forgotPassword, allRouterLink.resetPassword];
   const shouldHide = hiddenPaths.includes(location.pathname);
   
   if (!isOnline) {
