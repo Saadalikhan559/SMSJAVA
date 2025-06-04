@@ -46,8 +46,14 @@ export const validlastname = (lastName) => {
 export const validregisteremail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!email) return "Email is required";
-    if (!emailRegex.test(email)) return "Enter a valid email address";
+    if (!emailRegex.test(email)) return "Please enter a valid email address (e.g., username@example.com).";
     return "";
+};
+
+// --------------------------------------------------Role----------------------------------------------------------
+export const validregisterrole = (roleId) => {
+    if (!roleId) return "Please select a role";
+    return""
 };
 
 // -------------------------------------------------Password-----------------------------------------------------------

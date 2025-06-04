@@ -201,9 +201,11 @@ export const Register = () => {
                   <i className="fa-solid fa-lock text-sm"></i> Password
                 </span>
                 <div className="group relative ml-2 cursor-pointer">
-                  <i className="fa-solid fa-circle-info text-sm"></i>
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-10 w-auto p-2 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                    Password must be at least 8 characters, include one letter, one number, and one special character
+                 <div className="relative group inline-block">
+                    <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
+                      Password must be at least 8 characters, include one letter, one number, and one special character
+                    </div>
                   </div>
                 </div>
               </label>
@@ -269,4 +271,3 @@ export const Register = () => {
     </>
   );
 };
-
