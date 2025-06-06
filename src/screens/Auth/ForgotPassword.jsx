@@ -35,7 +35,6 @@ export const ForgotPassword = () => {
     } finally {
       setLoading(false);
     }
-    
   };
 
   return (

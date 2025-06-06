@@ -33,20 +33,22 @@ export const Register = () => {
   const [passwordError, setPasswordError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  const getRoles = async () => {
+    try {
+      const roles = await fetchRoles();
+      setAllRoles(roles);
+    } catch {
+      console.log("Failed to load roles. Please try again.");
+    }
+  };
   useEffect(() => {
-    const getRoles = async () => {
-      try {
-        const roles = await fetchRoles();
-        setAllRoles(roles);
-      } catch {
-        console.log("Failed to load roles. Please try again.");
-      }
-    };
     getRoles();
   }, []);
 
   const filteredRoles = allRoles.filter(
-    (role) => role.name === "teacher" || role.name === "office staff"
+    (role) =>
+      role.name === `${constants.roles.teacher}` ||
+      role.name === `${constants.roles.officeStaff}`
   );
 
   const handleShowPassword = () => setShowPassword(!showPassword);
@@ -101,14 +103,24 @@ export const Register = () => {
 
       <div className="min-h-screen flex flex-col md:flex-row">
         <div className="hidden md:block md:w-2/3 formBgColor">
-          <img src={image} alt="Authentication" className="w-full h-full object-cover" />
+          <img
+            src={image}
+            alt="Authentication"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
-            <h1 className="text-3xl font-bold text-center mb-6">Create an Account</h1>
+            <h1 className="text-3xl font-bold text-center mb-6">
+              Create an Account
+            </h1>
 
-            {error && <div className="text-red-500 text-center font-medium">{error}</div>}
+            {error && (
+              <div className="text-red-500 text-center font-medium">
+                {error}
+              </div>
+            )}
 
             {/* First Name */}
             <div className="form-control w-full">
@@ -128,7 +140,11 @@ export const Register = () => {
                   if (submitted) setFirstnameError(validfirstname(value) || "");
                 }}
               />
-              {firstnameError && <span className="text-red-500 text-sm mt-1">{firstnameError}</span>}
+              {firstnameError && (
+                <span className="text-red-500 text-sm mt-1">
+                  {firstnameError}
+                </span>
+              )}
             </div>
 
             {/* Last Name */}
@@ -149,7 +165,11 @@ export const Register = () => {
                   if (submitted) setLastnameError(validlastname(value) || "");
                 }}
               />
-              {lastnameError && <span className="text-red-500 text-sm mt-1">{lastnameError}</span>}
+              {lastnameError && (
+                <span className="text-red-500 text-sm mt-1">
+                  {lastnameError}
+                </span>
+              )}
             </div>
 
             {/* Email */}
@@ -170,7 +190,9 @@ export const Register = () => {
                   if (submitted) setEmailError(validregisteremail(value) || "");
                 }}
               />
-              {emailError && <span className="text-red-500 text-sm mt-1">{emailError}</span>}
+              {emailError && (
+                <span className="text-red-500 text-sm mt-1">{emailError}</span>
+              )}
             </div>
 
             {/* Role */}
@@ -203,7 +225,8 @@ export const Register = () => {
                 <div className="group relative ml-2 cursor-pointer">
                   <i className="fa-solid fa-circle-info text-sm"></i>
                   <div className="absolute left-1/2 -translate-x-1/2 -top-10 w-auto p-2 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                    Password must be at least 8 characters, include one letter, one number, and one special character
+                    Password must be at least 8 characters, include one letter,
+                    one number, and one special character
                   </div>
                 </div>
               </label>
@@ -215,7 +238,8 @@ export const Register = () => {
                 onChange={(e) => {
                   const value = e.target.value;
                   setPassword(value);
-                  if (submitted) setPasswordError(validregisterpassword(value) || "");
+                  if (submitted)
+                    setPasswordError(validregisterpassword(value) || "");
                 }}
               />
               <button
@@ -223,22 +247,30 @@ export const Register = () => {
                 className="absolute right-3 top-9 text-gray-500 passwordEyes"
                 onClick={handleShowPassword}
               >
-                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                <i
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                ></i>
               </button>
-              {passwordError && <span className="text-red-500 text-sm mt-1">{passwordError}</span>}
+              {passwordError && (
+                <span className="text-red-500 text-sm mt-1">
+                  {passwordError}
+                </span>
+              )}
             </div>
 
             {/* Submit */}
             <div className="form-control w-full mt-6">
               <button type="submit" className="btn btn-primary w-full">
-              <button type="submit" className="btn btn-primary w-full">
-                {loading ? (
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                ) : (
-                  <i className="fa-solid fa-right-to-bracket mr-2"></i>
-                )}
-                {loading ? " " : "Register"}
-              </button>
+                <button type="submit" className="btn btn-primary w-full">
+                  {loading ? (
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                  ) : (
+                    <i className="fa-solid fa-right-to-bracket mr-2"></i>
+                  )}
+                  {loading ? " " : "Register"}
+                </button>
               </button>
             </div>
 
@@ -260,7 +292,10 @@ export const Register = () => {
             <h3 className="font-bold text-lg">Registration Successful!</h3>
             <p className="py-4">Your account has been created successfully.</p>
             <div className="modal-action">
-              <button onClick={() => navigate("/login")} className="btn btn-primary">
+              <button
+                onClick={() => navigate("/login")}
+                className="btn btn-primary"
+              >
                 Continue to Login
               </button>
             </div>
@@ -270,4 +305,3 @@ export const Register = () => {
     </>
   );
 };
-
