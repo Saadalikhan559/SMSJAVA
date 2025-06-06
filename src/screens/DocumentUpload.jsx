@@ -30,6 +30,11 @@ export const DocumentUpload = () => {
   const [yearLevel, setYearLevel] = useState([]);
   const [yearLevelName, setYearLevelName] = useState("");
 
+  // adding dynamic fields
+  const [uploadFields, setUploadFields] = useState([
+    { file: "", document_type: "" },
+  ]);
+
   const [formData, setFormData] = useState({
     file: "",
     document_type: "",
@@ -90,8 +95,6 @@ export const DocumentUpload = () => {
     }
   };
 
-
-  
   const getTeachers = async () => {
     try {
       const allTeachers = await fetchTeachers();
@@ -120,8 +123,22 @@ export const DocumentUpload = () => {
   };
 
   // HANDLING CHANGES
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, file: e.target.files[0] });
+
+  const handleAddField = () => {
+    setUploadFields([...uploadFields, { file: "", document_type: "" }]);
+  };
+
+  const handleFileChange = (e, index) => {
+    const newFields = [...uploadFields];
+    newFields[index].file = e.target.files[0];
+    setUploadFields(newFields);
+  };
+
+  const handleUploadChange = (e, index) => {
+    const { name, value } = e.target;
+    const newFields = [...uploadFields];
+    newFields[index][name] = value;
+    setUploadFields(newFields);
   };
 
   const handleChange = (e) => {
@@ -214,26 +231,24 @@ export const DocumentUpload = () => {
     getOfficeStaff();
     getRoles();
     getYearLevels();
-    
   }, []);
 
-useEffect(() => {
-  if (formData.year_level && yearLevel.length > 0) {
-    const selected = yearLevel.find(
-      (yl) => yl.id === parseInt(formData.year_level)
-    );
-    if (selected) {
-      setYearLevelName(selected.level_name);
+  useEffect(() => {
+    if (formData.year_level && yearLevel.length > 0) {
+      const selected = yearLevel.find(
+        (yl) => yl.id === parseInt(formData.year_level)
+      );
+      if (selected) {
+        setYearLevelName(selected.level_name);
+      }
     }
-  }
-}, [formData.year_level, yearLevel]);
+  }, [formData.year_level, yearLevel]);
 
-
-useEffect(() => {
-  if (yearLevelName) {
-    getStudentsYearLevel();
-  }
-}, [yearLevelName]);
+  useEffect(() => {
+    if (yearLevelName) {
+      getStudentsYearLevel();
+    }
+  }, [yearLevelName]);
 
   return (
     <form
@@ -285,7 +300,7 @@ useEffect(() => {
               </label>
               <select
                 name="year_level"
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
                 required
                 value={formData.year_level}
                 onChange={handleChange}
@@ -310,49 +325,81 @@ useEffect(() => {
             Upload your documents
             <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
           </h1>
+          {/* Upload Fields Section */}
+          {uploadFields.map((field, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-6 mt-6"
+            >
+              {/* Document Upload */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-file-upload text-sm"></i>
+                    Document Upload <span className="text-error">*</span>
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  name="file"
+                  className="file-input file-input-bordered w-full focus:outline-none"
+                  required
+                  onChange={(e) => handleFileChange(e, index)}
+                />
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Document Upload Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-file-upload text-sm"></i>
-                  Document Upload <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="file"
-                name="document_file"
-                className="file-input file-input-bordered w-full focus:outline-none"
-                required
-                onChange={handleFileChange}
-              />
-            </div>
+              {/* Document Type Selection */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-2">
+                    <i className="fa-solid fa-file-lines text-sm"></i>
+                    Document Type <span className="text-error">*</span>
+                  </span>
+                </label>
+                <select
+                  name="document_type"
+                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  required
+                  value={field.document_type}
+                  onChange={(e) => handleUploadChange(e, index)}
+                >
+                  <option value="">Select Document Type</option>
+                  {documentType.map((doc) => (
+                    <option key={doc.id} value={doc.id}>
+                      {doc.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Document Type Selection */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-file-lines text-sm"></i>
-                  Document Type <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                name="document_type"
-                className="select select-bordered w-full focus:outline-none"
-                required
-                value={formData.document_type}
-                onChange={handleChange}
-              >
-                <option value="">Select Document Type</option>
-                {documentType.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
-                    {doc.name}
-                  </option>
-                ))}
-              </select>
+              {/* Add / Remove Button */}
+              <div className="flex items-end">
+                {index === 0 ? (
+                  <button
+                    type="button"
+                    className="btn btn-primary w-full md:w-24"
+                    onClick={handleAddField}
+                  >
+                    <i className="fa-solid fa-plus mr-2"></i>
+                    Add
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-error w-full md:w-24"
+                    onClick={() =>
+                      setUploadFields(
+                        uploadFields.filter((_, i) => i !== index)
+                      )
+                    }
+                  >
+                    <i className="fa-solid fa-trash mr-2"></i>
+                    Remove
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          ))}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Student Role Field */}
@@ -365,7 +412,7 @@ useEffect(() => {
               </label>
               <select
                 name="student"
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
                 value={formData.student}
                 onChange={handleChange}
                 disabled={role !== constants.roles.student || loadingStudents}
@@ -396,7 +443,7 @@ useEffect(() => {
               </label>
               <select
                 name="teacher"
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
                 value={formData.teacher}
                 onChange={handleChange}
                 disabled={role !== constants.roles.teacher}
@@ -422,7 +469,7 @@ useEffect(() => {
               </label>
               <select
                 name="guardian"
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
                 value={formData.guardian}
                 onChange={handleChange}
                 disabled={role !== constants.roles.guardian}
@@ -446,7 +493,7 @@ useEffect(() => {
               </label>
               <select
                 name="office_staff"
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
                 value={formData.office_staff}
                 onChange={handleChange}
                 disabled={role !== constants.roles.officeStaff}
@@ -464,12 +511,12 @@ useEffect(() => {
       )}
 
       {/* Fixed button container */}
-      <div className="flex justify-between gap-4 p-6">
+      <div className="flex flex-col md:flex-row items-center md:items-stretch justify-between gap-4 p-6">
         <button
           type="button"
           onClick={prev}
           disabled={step === 0}
-          className="btn btn-outline"
+          className="btn btn-outline w-40"
         >
           Back
         </button>
@@ -477,7 +524,7 @@ useEffect(() => {
           <button
             type="button"
             onClick={next}
-            className="btn btn-primary"
+            className="btn btn-primary w-40"
             disabled={
               role.length === 0 ||
               (role === constants.roles.student && !formData.year_level)
@@ -486,7 +533,7 @@ useEffect(() => {
             Next
           </button>
         ) : (
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn btn-primary w-40">
             {loading ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
             ) : (

@@ -262,7 +262,6 @@ export const Register = () => {
 
             {/* Submit */}
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full">
                 <button type="submit" className="btn btn-primary w-full">
                   {loading ? (
                     <i className="fa-solid fa-spinner fa-spin mr-2"></i>
@@ -271,7 +270,6 @@ export const Register = () => {
                   )}
                   {loading ? " " : "Register"}
                 </button>
-              </button>
             </div>
 
             {/* Redirect */}
