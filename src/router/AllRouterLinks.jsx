@@ -3,7 +3,7 @@ export const allRouterLink = {
     registerUser: "/register",
     loginUser: "/login",
     admissionForm: "/admissionForm",
-    admissionFees: "/admissionFees/:id",
+    admissionFees: "/admissionFees/",
     documentUpload: "/documentUpload",
     subjectAssignment: "/subjectAssignment",
     allTeacherAssignment: "/allTeacherAssignment",

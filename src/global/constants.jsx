@@ -15,8 +15,8 @@ export const constants = {
     roles: {
       director: "director",
       officeStaff: "office staff",
-      // teacher: "teacher",
-      teacher: "Teacher",
+      teacher: "teacher",
+      // teacher: "Teacher",
       student: "student",
       guardian: "guardian",
     }
