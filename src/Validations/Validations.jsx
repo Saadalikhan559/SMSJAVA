@@ -11,7 +11,7 @@ export const validloginemail = (email) => {
 // -------------------------------------------Password----------------------------------------------------------/
 export const validloginpassword = (password) => {
     if (!password) return "Password is required";
-    if (password.length < 8) return "Password must be at least 8 characters";
+    if (password.length < 9) return "Password must be at least 8 characters";
     return "";
 };
 
@@ -53,7 +53,7 @@ export const validregisteremail = (email) => {
 // --------------------------------------------------Role----------------------------------------------------------
 export const validregisterrole = (roleId) => {
     if (!roleId) return "Please select a role";
-    return""
+    return ""
 };
 
 // -------------------------------------------------Password-----------------------------------------------------------
@@ -157,7 +157,7 @@ export const validGuardianMiddlName = (guardian_middle_name) => {
     const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
     if (!middlenameRegex.test(guardian_middle_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
     return "";
-};
+};  
 
 
 // -------------------------------------------Guardian last Name-------------------------------------------------------
@@ -239,3 +239,44 @@ export const validtc = (tc_letter) => {
     if (!tc_letter) return "tc letter is required"
     return ""
 }
+
+
+// -----------------------------------------------Change Password validation-------------------------------------------------
+
+// ------------------------------------------------------email----------------------------------------------------------------
+
+export const validCPEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email) return "Email is required."
+    if (!emailRegex.test(email)) return "Invalid email format." 
+    return ""
+};
+
+// ---------------------------------------------------------current password-----------------------------------------------------------
+
+export const validCurrentPassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!password) return "Current password is required."
+    if (!passwordRegex.test(password)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
+    return ""
+};
+
+// ------------------------------------------------------------new password------------------------------------------------------
+
+export const validNewPassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!password) return "New password is required."
+    if (!passwordRegex.test(password)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
+    return ""
+};
+
+// ------------------------------------------------------confirm password------------------------------------------------------------
+
+export const validConfirmPassword = (newPassword, confirmPassword) => {
+  if (!confirmPassword) return "Confirm password is required.";
+  if (newPassword !== confirmPassword) return "Passwords do not match.";
+  return null;
+};
+
+
+

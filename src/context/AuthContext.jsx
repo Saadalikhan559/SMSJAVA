@@ -120,13 +120,30 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
   };
-  const ResetPassword = async (userDetails)=>{
+  const ResetPassword = async (userDetails) => {
     try {
       return await axios.post(`${BASE_URL}/auth/reset_password/`, userDetails);
     } catch (error) {
-     console.log(error) 
+      console.log(error);
     }
-  }
+  };
+
+  const ChangePassword = async (userDetails) => {
+    try {
+      return await axios.post(
+        `${BASE_URL}/auth/change_password/`,
+        userDetails,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authTokens.access}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -151,7 +168,8 @@ export const AuthProvider = ({ children }) => {
       LoginUser,
       LogoutUser,
       RegisterUser,
-      ResetPassword
+      ResetPassword,
+      ChangePassword,
     }),
     [authTokens, userRole, loading, axiosInstance]
   );

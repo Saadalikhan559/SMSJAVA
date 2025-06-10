@@ -5,7 +5,7 @@ import { constants } from "../global/constants";
 import { allRouterLink } from "../router/AllRouterLinks";
 
 export const Navbar = () => {
-  const { LogoutUser, userRole } = useContext(AuthContext);
+  const { LogoutUser, userRole, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
 
@@ -133,10 +133,17 @@ export const Navbar = () => {
                 </a>
               </li>
               <li>
-                <a>
+                <Link className="flex items-center gap-2 cursor-pointer">
                   <i className="fa-solid fa-gear"></i> Settings
-                </a>
+                </Link>
               </li>
+              <li>
+                <Link to={allRouterLink.changePassword}>
+                  {" "}
+                  <i className="fa-solid fa-lock"></i> Change Password
+                </Link>
+              </li>
+
               {userRole == `${constants.roles.director}` && (
                 <li>
                   <Link to={`${allRouterLink.registerUser}`}>
@@ -159,12 +166,14 @@ export const Navbar = () => {
                   </Link>
                 </li>
               )}
-              <li onClick={handleLogout}>
-                <a className="text-orange-600">
-                  <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
-                  Logout
-                </a>
-              </li>
+              {isAuthenticated && (
+                <li onClick={handleLogout}>
+                  <a className="text-orange-600">
+                    <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
+                    Logout
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
