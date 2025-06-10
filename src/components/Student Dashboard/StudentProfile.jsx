@@ -11,6 +11,7 @@ import {
   faCalendarDay,
   faSignature
 } from '@fortawesome/free-solid-svg-icons';
+import { constants } from "../../global/constants";
 
 function StudentProfile() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -18,6 +19,8 @@ function StudentProfile() {
   const [classData, setClassData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const BASE_URL = constants.baseUrl;
 
   const {
     register,
@@ -30,11 +33,11 @@ function StudentProfile() {
     const fetchData = async () => {
       try {
         // Fetch student data
-        const studentResponse = await axios.get('https://gl8tx74f-8000.inc1.devtunnels.ms/s/students/1/');
+        const studentResponse = await axios.get(`${BASE_URL}/s/students/1/`);
         setProfileData(studentResponse.data);
         
         // Fetch class data
-        const classResponse = await axios.get('https://gl8tx74f-8000.inc1.devtunnels.ms/d/classPeriod/');
+        const classResponse = await axios.get(`${BASE_URL}/d/classPeriod/`);
         setClassData(classResponse.data);
         
         setLoading(false);
@@ -56,7 +59,7 @@ function StudentProfile() {
   const onSubmit = async (data) => {
     try {
       const response = await axios.put(
-        'https://gl8tx74f-8000.inc1.devtunnels.ms/s/students/1/',
+        `${BASE_URL}/s/students/1/`,
         data,
         {
           headers: {
