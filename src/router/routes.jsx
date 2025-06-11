@@ -62,7 +62,7 @@ export const routes = [
     path: allRouterLink.admissionFees,
     element: <AdmissionFees />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff]
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff , constants.roles.student , constants.roles.teacher , constants.roles.guardian ]
   },
   {
     path: allRouterLink.documentUpload,

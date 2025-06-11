@@ -5,8 +5,8 @@ import { constants } from "../global/constants";
 import { AuthContext } from "../context/AuthContext";
 
 export const Sidebar = () => {
-    const {isAuthenticated } = useContext(AuthContext);
-  
+  const { isAuthenticated } = useContext(AuthContext);
+
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
@@ -76,6 +76,14 @@ export const Sidebar = () => {
             <li>
               <Link to={`${allRouterLink.attendance}`}>
                 <i className="fa-solid fa-book mr-2"></i> Attendance
+              </Link>
+            </li>
+          )}
+
+          {isAuthenticated && (
+            <li>
+              <Link to={`${allRouterLink.admissionFees}`}>
+                <i className="fa-solid fa-money-bill-wave mr-2"></i> Fees Portal
               </Link>
             </li>
           )}
