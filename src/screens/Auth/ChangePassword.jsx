@@ -4,7 +4,10 @@ import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 import {
-  validCPEmail, validCurrentPassword, validNewPassword, validConfirmPassword,
+  validCPEmail,
+  validCurrentPassword,
+  validNewPassword,
+  validConfirmPassword,
 } from "../../Validations/Validations";
 import { useForm } from "react-hook-form";
 
@@ -30,13 +33,6 @@ export const ChangePassword = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     setFormError("");
-
-    const confirmPasswordError = validConfirmPassword(data.newPassword, data.confirmPassword);
-    if (confirmPasswordError) {
-      setFormError(confirmPasswordError);
-      setLoading(false);
-      return;
-    }
 
     const userData = {
       email: data.email,
@@ -68,7 +64,7 @@ export const ChangePassword = () => {
           <img src={image} alt="Authentication" className="w-full h-full object-cover" />
         </div>
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
-          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <form className="w-full max-w-md space-y-2" onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-3xl font-bold text-center mb-6">Change Password</h1>
 
             {formError && (
@@ -88,7 +84,7 @@ export const ChangePassword = () => {
                 className="input input-bordered w-full focus:outline-none"
                 autoComplete="on"
                 {...register("email", {
-                  validate: (val) => validCPEmail(val) || true,
+                  validate: (val) => validCPEmail(val) === "" || validCPEmail(val),
                 })}
               />
               {errors.email && (
@@ -109,7 +105,7 @@ export const ChangePassword = () => {
                 className="input w-full pr-10 focus:outline-none"
                 autoComplete="on"
                 {...register("currentPassword", {
-                  validate: (val) => validCurrentPassword(val) || true,
+                  validate: (val) => validCurrentPassword(val) === "" || validCurrentPassword(val),
                 })}
               />
               <button
@@ -145,7 +141,7 @@ export const ChangePassword = () => {
                 className="input w-full pr-10 focus:outline-none"
                 autoComplete="on"
                 {...register("newPassword", {
-                  validate: (val) => validNewPassword(val) || true,
+                  validate: (val) => validNewPassword(val) === "" || validNewPassword(val),
                 })}
               />
               <button
@@ -173,7 +169,7 @@ export const ChangePassword = () => {
                 className="input w-full pr-10 focus:outline-none"
                 autoComplete="on"
                 {...register("confirmPassword", {
-                  validate: (val) => validConfirmPassword(newPassword, val) || true,
+                  validate: (val) => validConfirmPassword(newPassword, val) === "" || validConfirmPassword(newPassword, val),
                 })}
               />
               <button
@@ -212,3 +208,4 @@ export const ChangePassword = () => {
     </>
   );
 };
+

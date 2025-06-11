@@ -35,41 +35,65 @@ export const Sidebar = () => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-<ul className="menu bg-base-200 text-base-content min-h-full w-65 p-4">
-  {role === `${constants.roles.director}` && (
-    <li>
-      <Link
-        onClick={(e) => handleNavigation(e, allRouterLink.admissionForm)}
-      >
-        <i className="fa-solid fa-file-circle-plus mr-2"></i> Admission Form
-      </Link>
-    </li>
-  )}
-  {role !== `${constants.roles.student}` && (
-    <li onClick={(e) => handleNavigation(e, allRouterLink.documentUpload)}>
-      <Link>
-        <i className="fa-solid fa-upload mr-2"></i> Upload Documents
-      </Link>
-    </li>
-  )}
-  {role === `${constants.roles.director}` && (
-    <li>
-      <Link
-        onClick={(e) => handleNavigation(e, allRouterLink.subjectAssignment)}
-      >
-        <i className="fa-solid fa-book-open-reader mr-2"></i> Assign Subjects
-      </Link>
-    </li>
-  )}
-  {role === `${constants.roles.teacher}` && (
-    <li>
-      <Link to={`${allRouterLink.attendance}`}>
-        <i className="fa-solid fa-book mr-2"></i> Attendance
-      </Link>
-    </li>
-  )}
-</ul>
-
+        <ul className="menu bg-base-200 text-base-content min-h-full w-65 p-4">
+          {role === `${constants.roles.officeStaff}` && (
+            <li>
+              <Link
+                onClick={(e) =>
+                  handleNavigation(e, allRouterLink.admissionForm)
+                }
+              >
+                <i className="fa-solid fa-file-circle-plus mr-2"></i> Admission
+                Form
+              </Link>
+            </li>
+          )}
+          {role !== `${constants.roles.student}` && (
+            <li
+              onClick={(e) => handleNavigation(e, allRouterLink.documentUpload)}
+            >
+              <Link>
+                <i className="fa-solid fa-upload mr-2"></i> Upload Documents
+              </Link>
+            </li>
+          )}
+          {role === `${constants.roles.director}` && (
+            <li>
+              <Link
+                onClick={(e) =>
+                  handleNavigation(e, allRouterLink.subjectAssignment)
+                }
+              >
+                <i className="fa-solid fa-book-open-reader mr-2"></i> Assign
+                Subjects
+              </Link>
+            </li>
+          )}
+          {role === `${constants.roles.teacher}` && (
+            <li>
+              <Link to={`${allRouterLink.attendance}`}>
+                <i className="fa-solid fa-book mr-2"></i> Attendance
+              </Link>
+            </li>
+          )}
+          {[
+            constants.roles.teacher,
+            constants.roles.student,
+            constants.roles.director,
+            constants.roles.officeStaff,
+            constants.roles.guardian,
+          ].includes(role) && (
+            <li>
+              <Link
+                onClick={(e) =>
+                  handleNavigation(e, allRouterLink.admissionFees)
+                }
+              >
+                <i className="fa-solid fa-money-bill-wave mr-2"></i> Fees Portal
+              </Link>
+            </li>
+          )}
+        </ul>
       </div>
     </div>
   );

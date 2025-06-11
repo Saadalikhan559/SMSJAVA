@@ -21,7 +21,6 @@ export const AdmissionForm = () => {
   const [showPassword, setShowPassword] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
-
   const [showGuardianPassword, setShowGuardianPassword] = useState(true);
 
   const handleShowPassword = () => {
@@ -31,6 +30,7 @@ export const AdmissionForm = () => {
   const handleShowGuardianPassword = () => {
     setShowGuardianPassword(!showGuardianPassword);
   };
+
   const [formData, setFormData] = useState({
     student: {
       first_name: "",
@@ -42,6 +42,15 @@ export const AdmissionForm = () => {
       date_of_birth: "",
       gender: "",
       enrolment_date: "",
+      house_number: "",
+      habitation: "",
+      ward_no: "",
+      zone: "",
+      block: "",
+      district: "",
+      division: "",
+      state: "",
+      pin_code: "",
     },
     guardian: {
       first_name: "",
@@ -82,9 +91,9 @@ export const AdmissionForm = () => {
       }));
     }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // console.log("Selected value:", value);
     if (name.startsWith("student_")) {
       const fieldName = name.replace("student_", "");
       setFormData((prev) => ({
@@ -103,6 +112,15 @@ export const AdmissionForm = () => {
           [fieldName]: value,
         },
       }));
+    } else if (name.startsWith("address_")) {
+      const fieldName = name.replace("address_", "");
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [fieldName]: value,
+        },
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -114,7 +132,6 @@ export const AdmissionForm = () => {
   const handleGuardianTypeChange = (e) => {
     setSelectedGuardianType(e.target.value);
   };
-
 
   const getYearLevels = async () => {
     try {
@@ -149,10 +166,7 @@ export const AdmissionForm = () => {
     getGuardianType();
   }, []);
 
-
-  // Submitting the form
-
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const formDataToSend = new FormData();
@@ -196,6 +210,20 @@ export const AdmissionForm = () => {
       );
     }
 
+    // Append address fields
+    formDataToSend.append(
+      "address.house_number",
+      formData.address.house_number
+    );
+    formDataToSend.append("address.habitation", formData.address.habitation);
+    formDataToSend.append("address.ward_no", formData.address.ward_no);
+    formDataToSend.append("address.zone", formData.address.zone);
+    formDataToSend.append("address.block", formData.address.block);
+    formDataToSend.append("address.district", formData.address.district);
+    formDataToSend.append("address.division", formData.address.division);
+    formDataToSend.append("address.state", formData.address.state);
+    formDataToSend.append("address.pin_code", formData.address.pin_code);
+
     // Other fields
     formDataToSend.append("guardian_type", selectedGuardianType);
     formDataToSend.append("admission_date", formData.admission_date);
@@ -213,19 +241,19 @@ export const AdmissionForm = () => {
 
     try {
       const response = await handleAdmissionForm(formDataToSend);
-      if (response.status == 200) {
-        alert('created');
+      if (response.status === 200) {
+        alert("created");
         // navigate('/admissionFees/:id')
         // successModalRef.current.show();
       }
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
       // failureModalRef.current.show();
-    } 
-    finally {
+    } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <style>{constants.hideEdgeRevealStyle}</style>
@@ -240,9 +268,7 @@ export const AdmissionForm = () => {
         {/* Student Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Student Information</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* First Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -260,8 +286,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Middle Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -278,8 +302,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Last Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -298,9 +320,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Student Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -318,8 +338,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Student Password */}
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -328,7 +346,7 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <input
-                type={`${showPassword === true ? "password" : "text"}`}
+                type={showPassword ? "password" : "text"}
                 name="student_password"
                 placeholder="Password"
                 className="input input-bordered w-full pr-10 focus:outline-none"
@@ -342,14 +360,13 @@ export const AdmissionForm = () => {
                 onClick={handleShowPassword}
               >
                 <i
-                  className={`fa-solid  ${
-                    showPassword === true ? "fa-eye-slash" : "fa-eye"
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
                   }`}
                 ></i>
               </button>
             </div>
           </div>
-          {/* Student Profile Photo upload */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
@@ -373,9 +390,7 @@ export const AdmissionForm = () => {
               )}
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Date of Birth */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -392,8 +407,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Gender */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -415,24 +428,6 @@ export const AdmissionForm = () => {
               </select>
             </div>
           </div>
-
-          {/* Enrolment Date
-          <div className="form-control mt-6 d-none">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-calendar-plus text-sm"></i>
-                Enrolment Date <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="date"
-              name="student_enrolment_date"
-              className="input input-bordered w-full focus:outline-none"
-              required
-              value={formData.student.enrolment_date}
-              onChange={handleChange}
-            />
-          </div> */}
         </div>
 
         {/* Guardian Information Section */}
@@ -441,7 +436,6 @@ export const AdmissionForm = () => {
             <h2 className="text-2xl font-bold whitespace-nowrap">
               Guardian Information
             </h2>
-
             <div className="form-control w-full md:w-1/3">
               <input
                 placeholder="Search guardian..."
@@ -450,9 +444,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* First Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -470,8 +462,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Middle Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -488,8 +478,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Last Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -508,9 +496,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Guardian Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -528,8 +514,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Guardian Password */}
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -538,7 +522,7 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <input
-                type={`${showGuardianPassword === true ? "password" : "text"}`}
+                type={showGuardianPassword ? "password" : "text"}
                 name="guardian_password"
                 placeholder="Password"
                 className="input input-bordered w-full pr-10 focus:outline-none"
@@ -552,17 +536,16 @@ export const AdmissionForm = () => {
                 onClick={handleShowGuardianPassword}
               >
                 <i
-                  className={`fa-solid  ${
-                    showGuardianPassword === true ? "fa-eye-slash" : "fa-eye"
+                  className={`fa-solid ${
+                    showGuardianPassword ? "fa-eye-slash" : "fa-eye"
                   }`}
                 ></i>
               </button>
             </div>
-            {/* Guardian Type */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-graduation-cap text-sm"></i>
+                  <i className="fa-solid fa-user-shield text-sm"></i>
                   Guardian Type <span className="text-error">*</span>
                 </span>
               </label>
@@ -580,7 +563,6 @@ export const AdmissionForm = () => {
                 ))}
               </select>
             </div>
-            {/* Guardian Phone Number */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -599,7 +581,6 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-          {/* Guardian Profile Photo upload */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
@@ -628,9 +609,7 @@ export const AdmissionForm = () => {
         {/* Academic Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Academic Information</h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Year Level */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -653,8 +632,6 @@ export const AdmissionForm = () => {
                 ))}
               </select>
             </div>
-
-            {/* School Year */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -678,9 +655,7 @@ export const AdmissionForm = () => {
               </select>
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Previous School Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -697,8 +672,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* Previous Standard Studied */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -716,9 +689,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Admission Date */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -735,8 +706,6 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               />
             </div>
-
-            {/* TC Letter */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -760,6 +729,272 @@ export const AdmissionForm = () => {
           </div>
         </div>
 
+        {/* Address Information Section */}
+        <div className="bg-base-200 p-6 rounded-box mb-6">
+          <h2 className="text-2xl font-bold mb-4">Residential Address</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-home text-sm"></i>
+                  House Number <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_house_number"
+                placeholder="House Number"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.house_number}
+                // onChange={handleChange}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map-location text-sm"></i>
+                  Habitation <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_habitation"
+                placeholder="Habitation"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.habitation}
+                // onChange={handleChange}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map text-sm"></i>
+                  Ward Number <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_ward_no"
+                placeholder="Ward Number"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.ward_no}
+                // onChange={handleChange}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map-pin text-sm"></i>
+                  Zone <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_zone"
+                placeholder="Zone"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.zone}
+                // onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-building text-sm"></i>
+                  Block <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_block"
+                placeholder="Block"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.block}
+                // onChange={handleChange}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-city text-sm"></i>
+                  District <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_district"
+                placeholder="District"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.district}
+                // onChange={handleChange}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map-signs text-sm"></i>
+                  Division <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="address_division"
+                placeholder="Division"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.division}
+                // onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-flag text-sm"></i>
+                  State <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_state"
+                placeholder="State"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.state}
+                // onChange={handleChange}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-mailbox text-sm"></i>
+                  Pin Code <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="address_pin_code"
+                placeholder="Pin Code"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.address.pin_code}
+                // onChange={handleChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Bank Details Section */}
+        <div className="bg-base-200 p-6 rounded-box mb-6">
+          <h2 className="text-2xl font-bold mb-4">Bank Account Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Account Holder Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-user text-sm"></i>
+                  Account Holder Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="bank_account_holder_name"
+                placeholder="Full Name as in Bank"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.bank_details.account_holder_name}
+                onChange={handleChange}
+              />
+            </div>
+
+            {/* Account Number */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-credit-card text-sm"></i>
+                  Account Number <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                name="bank_account_number"
+                placeholder="Account Number"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.bank_details.account_number}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {/* Bank Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-building text-sm"></i>
+                  Bank Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="bank_bank_name"
+                placeholder="Bank Name"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.bank_details.bank_name}
+                // onChange={handleChange}
+              />
+            </div>
+
+            {/* Branch Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-location-dot text-sm"></i>
+                  Branch Name <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="bank_branch_name"
+                placeholder="Branch Name"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.bank_details.branch_name}
+                // onChange={handleChange}
+              />
+            </div>
+            {/* IFSC Code */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-code text-sm"></i>
+                  IFSC Code <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                // name="bank_ifsc_code"
+                placeholder="IFSC Code"
+                className="input input-bordered w-full focus:outline-none"
+                required
+                // value={formData.bank_details.ifsc_code}
+                // onChange={handleChange}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Submit Button */}
         <div className="flex justify-center mt-10">
           <button type="submit" className="btn btn-primary w-full">
@@ -768,7 +1003,7 @@ export const AdmissionForm = () => {
             ) : (
               <i className="fa-solid fa-paper-plane mr-2"></i>
             )}
-            {loading ? " " : "Register"}
+            {loading ? "Submitting..." : "Register"}
           </button>
         </div>
       </form>
