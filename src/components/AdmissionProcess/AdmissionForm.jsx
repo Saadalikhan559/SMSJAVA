@@ -186,6 +186,39 @@ export const AdmissionForm = () => {
   // API fetch functions remain the same
   // ...
 
+  
+  const getYearLevels = async () => {
+    try {
+      const yearLevels = await fetchYearLevels();
+      setYearLevel(yearLevels);
+    } catch (err) {
+      console.log("Failed to load year levels. Please try again.");
+    }
+  };
+
+  const getSchoolYears = async () => {
+    try {
+      const schoolYears = await fetchSchoolYear();
+      setSchoolYear(schoolYears);
+    } catch (err) {
+      console.log("Failed to load school years. Please try again.");
+    }
+  };
+
+  const getGuardianType = async () => {
+    try {
+      const guardianType = await fetchGuardianType();
+      setGuardianType(guardianType);
+    } catch (error) {
+      console.log("Failed to load guardian type. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    getYearLevels();
+    getSchoolYears();
+    getGuardianType();
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -232,10 +265,8 @@ export const AdmissionForm = () => {
     formDataToSend.append('guardian_type', selectedGuardianType);
 
     try {
-      const response = await handleAdmissionForm(formDataToSend);
-      if (response.status === 200) {
-        alert("created");
-      }
+      await handleAdmissionForm(formDataToSend);
+
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
     } finally {
@@ -508,10 +539,10 @@ export const AdmissionForm = () => {
                 onChange={handleChange}
               >
                 <option value="">Select Category</option>
-                <option value="general">General</option>
-                <option value="obc">OBC</option>
-                <option value="sc">SC</option>
-                <option value="st">ST</option>
+                <option value="GEN">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
               </select>
             </div>
               
@@ -818,14 +849,17 @@ export const AdmissionForm = () => {
                   Means of Livelihood
                 </span>
               </label>
-              <input
-                type="text"
+              <select
                 name="guardian_means_of_livelihood"
-                placeholder="Means of Livelihood"
-                className="input input-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
+                required
                 value={formData.guardian.means_of_livelihood}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select</option>
+                <option value="Govt">Government</option>
+                <option value="Non-Govt">Non-Government</option>
+              </select>
             </div>
             
             {/* Qualification */}

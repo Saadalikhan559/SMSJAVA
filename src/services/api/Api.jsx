@@ -33,19 +33,7 @@ export const fetchSchoolYear = async () => {
   }
 };
 
-export const handleAdmissionForm = async (formData) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  } catch (err) {
-    console.error("Failed:", err);
-    throw err;
-  }
-};
+
 
 export const fetchGuardianType = async () => {
   try {
@@ -156,6 +144,29 @@ export const fetchAllTeacherAssignments = async () => {
     return response.data;
   } catch (err) {
     console.error("Failed to all teacher assignments:", err);
+    throw err;
+  }
+};
+
+
+
+// POST APIS
+
+export const handleAdmissionForm = async (formData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200 || response.status === 201) {
+      alert("successfully submitted the form");
+    }
+
+          return response.data;
+
+  } catch (err) {
+    console.error("Failed:", err);
     throw err;
   }
 };
