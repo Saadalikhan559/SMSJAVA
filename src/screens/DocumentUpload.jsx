@@ -16,7 +16,6 @@ export const DocumentUpload = () => {
   const [step, setStep] = useState(0);
   const next = () => setStep((prev) => Math.min(prev + 1, 1));
   const prev = () => setStep((prev) => Math.max(prev - 1, 0));
-  // STEPS ENDS
 
   const [allRoles, setAllRoles] = useState([]);
   const [documentType, setDocumentType] = useState([]);
@@ -30,14 +29,12 @@ export const DocumentUpload = () => {
   const [yearLevel, setYearLevel] = useState([]);
   const [yearLevelName, setYearLevelName] = useState("");
 
-  // adding dynamic fields
+  // Dynamic fields for document uploads
   const [uploadFields, setUploadFields] = useState([
-    { file: "", document_type: "" },
+    { file: null, document_type: "" }, // Initialize file as null
   ]);
 
   const [formData, setFormData] = useState({
-    file: "",
-    document_type: "",
     student: "",
     teacher: "",
     guardian: "",
@@ -45,7 +42,7 @@ export const DocumentUpload = () => {
     year_level: "",
   });
 
-  // API fetch functions
+  // API fetch functions (unchanged)
   const getYearLevels = async () => {
     try {
       const yearLevels = await fetchYearLevels();
@@ -66,10 +63,10 @@ export const DocumentUpload = () => {
 
   const filteredRoles = allRoles.filter(
     (role) =>
-      role.name === `${constants.roles.teacher}` ||
-      role.name === `${constants.roles.officeStaff}` ||
-      role.name === `${constants.roles.student}` ||
-      role.name === `${constants.roles.guardian}`
+      role.name === constants.roles.teacher ||
+      role.name === constants.roles.officeStaff ||
+      role.name === constants.roles.student ||
+      role.name === constants.roles.guardian
   );
 
   const getDocumentTypes = async () => {
@@ -83,11 +80,11 @@ export const DocumentUpload = () => {
 
   const getStudentsYearLevel = async () => {
     if (!formData.year_level) return;
-
     try {
       setLoadingStudents(true);
-      const allStudents = await fetchStudentYearLevelByClass(yearLevelName);
-      setStudents(allStudents);
+      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelName);
+      setStudents(allStudentsByClass);
+      console.log(allStudentsByClass);
     } catch (error) {
       console.error("Failed to load students:", error);
     } finally {
@@ -125,7 +122,7 @@ export const DocumentUpload = () => {
   // HANDLING CHANGES
 
   const handleAddField = () => {
-    setUploadFields([...uploadFields, { file: "", document_type: "" }]);
+    setUploadFields([...uploadFields, { file: null, document_type: "" }]);
   };
 
   const handleFileChange = (e, index) => {
@@ -143,8 +140,6 @@ export const DocumentUpload = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Reset student when year level changes
     if (name === "year_level") {
       setFormData((prev) => ({
         ...prev,
@@ -159,8 +154,6 @@ export const DocumentUpload = () => {
   const handleRoleChange = (e) => {
     const selectedRole = e.target.value;
     setRole(selectedRole);
-
-    // Reset year level and student when role changes
     if (selectedRole !== constants.roles.student) {
       setFormData((prev) => ({
         ...prev,
@@ -170,51 +163,72 @@ export const DocumentUpload = () => {
     }
   };
 
+  // Filter available document types for a specific field
+  const getAvailableDocumentTypes = (currentIndex) => {
+    const selectedDocTypes = uploadFields
+      .map((field, index) =>
+        index !== currentIndex ? field.document_type : null
+      )
+      .filter((type) => type); // Exclude empty and current field's type
+    return documentType.filter(
+      (doc) => !selectedDocTypes.includes(doc.id.toString())
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.file || !formData.document_type) {
-      alert("Please select a file and document type");
-      return;
-    }
     setLoading(true);
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("file", formData.file);
-    formDataToSend.append("document_type", formData.document_type);
-
-    // Append role-specific fields
-    if (formData.student) formDataToSend.append("student", formData.student);
-    if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
-    if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
-    if (formData.office_staff)
-      formDataToSend.append("office_staff", formData.office_staff);
-
     try {
-      const response = await axios.post(
-        `${constants.baseUrl}/d/Document/`,
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      // Iterate through each upload field and submit separately
+      for (const field of uploadFields) {
+        if (!field.file || !field.document_type) {
+          alert("Please select a file and document type for all fields");
+          setLoading(false);
+          return;
         }
-      );
 
-      if (response.status === 200 || response.status === 201) {
-        alert("Document uploaded successfully!");
-        // Reset form after successful upload
-        setFormData({
-          file: "",
-          document_type: "",
-          student: "",
-          teacher: "",
-          guardian: "",
-          office_staff: "",
-          year_level: "",
-        });
-        setRole("");
-        setStep(0);
+        const formDataToSend = new FormData();
+        formDataToSend.append("file", field.file);
+        formDataToSend.append("document_type", field.document_type);
+
+        // Append role-specific fields
+        if (formData.student)
+          formDataToSend.append("student", formData.student);
+        if (formData.teacher)
+          formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian)
+          formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff)
+          formDataToSend.append("office_staff", formData.office_staff);
+
+        const response = await axios.post(
+          `${constants.baseUrl}/d/Document/`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.status !== 200 && response.status !== 201) {
+          throw new Error(response.data?.message || "Upload failed");
+        }
       }
+
+      alert("All documents uploaded successfully!");
+      // Reset form
+      setUploadFields([{ file: null, document_type: "" }]);
+      setFormData({
+        student: "",
+        teacher: "",
+        guardian: "",
+        office_staff: "",
+        year_level: "",
+      });
+      setRole("");
+      setStep(0);
     } catch (error) {
       console.error("Upload failed:", error.response?.data || error.message);
       alert(`Upload failed: ${error.response?.data?.message || error.message}`);
@@ -223,7 +237,7 @@ export const DocumentUpload = () => {
     }
   };
 
-  // SIDE EFFECTS
+  // SIDE EFFECTS (unchanged)
   useEffect(() => {
     getDocumentTypes();
     getTeachers();
@@ -253,7 +267,7 @@ export const DocumentUpload = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+      className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
     >
       <ul className="steps mb-6 w-full">
         <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>
@@ -267,12 +281,10 @@ export const DocumentUpload = () => {
             Select Role
             <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
           </h1>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Select Role */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
+                <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-user-shield text-sm"></i> Role
                 </span>
               </label>
@@ -289,13 +301,11 @@ export const DocumentUpload = () => {
                 ))}
               </select>
             </div>
-
-            {/* Select Year level */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-graduation-cap text-sm"></i>
-                  Student Year Level <span className="text-error">*</span>
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-graduation-cap text-sm"></i> Class{" "}
+                  <span className="text-error">*</span>
                 </span>
               </label>
               <select
@@ -306,7 +316,7 @@ export const DocumentUpload = () => {
                 onChange={handleChange}
                 disabled={role !== constants.roles.student}
               >
-                <option value="">Select Year Level</option>
+                <option value="">Class</option>
                 {yearLevel.map((yearlev) => (
                   <option value={yearlev.id} key={yearlev.id}>
                     {yearlev.level_name}
@@ -325,18 +335,16 @@ export const DocumentUpload = () => {
             Upload your documents
             <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
           </h1>
-          {/* Upload Fields Section */}
           {uploadFields.map((field, index) => (
             <div
               key={index}
               className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-6 mt-6"
             >
-              {/* Document Upload */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text flex items-center gap-1">
-                    <i className="fa-solid fa-file-upload text-sm"></i>
-                    Document Upload <span className="text-error">*</span>
+                    <i className="fa-solid fa-file-upload text-sm"></i> Document
+                    Upload <span className="text-error">*</span>
                   </span>
                 </label>
                 <input
@@ -347,13 +355,11 @@ export const DocumentUpload = () => {
                   onChange={(e) => handleFileChange(e, index)}
                 />
               </div>
-
-              {/* Document Type Selection */}
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text flex items-center gap-2">
-                    <i className="fa-solid fa-file-lines text-sm"></i>
-                    Document Type <span className="text-error">*</span>
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-file text-sm"></i> Document Type{" "}
+                    <span className="text-error">*</span>
                   </span>
                 </label>
                 <select
@@ -364,15 +370,13 @@ export const DocumentUpload = () => {
                   onChange={(e) => handleUploadChange(e, index)}
                 >
                   <option value="">Select Document Type</option>
-                  {documentType.map((doc) => (
+                  {getAvailableDocumentTypes(index).map((doc) => (
                     <option key={doc.id} value={doc.id}>
                       {doc.name}
                     </option>
                   ))}
                 </select>
               </div>
-
-              {/* Add / Remove Button */}
               <div className="flex items-end">
                 {index === 0 ? (
                   <button
@@ -380,8 +384,7 @@ export const DocumentUpload = () => {
                     className="btn btn-primary w-full md:w-24"
                     onClick={handleAddField}
                   >
-                    <i className="fa-solid fa-plus mr-2"></i>
-                    Add
+                    <i className="fa-solid fa-plus mr-1"></i> Add
                   </button>
                 ) : (
                   <button
@@ -393,21 +396,44 @@ export const DocumentUpload = () => {
                       )
                     }
                   >
-                    <i className="fa-solid fa-trash mr-2"></i>
-                    Remove
+                    <i className="fa-solid fa-trash mr-1"></i> Remove
                   </button>
                 )}
               </div>
             </div>
           ))}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Student Role Field */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-user-graduate text-sm"></i>
-                  Student
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-user-graduate text-sm"></i> Student
+                </span>
+              </label>
+              <select
+                name="student"
+                className="select select-bordered w-full focus:outline-none cursor-pointer"
+                value={formData.student}
+                onChange={handleChange}
+                disabled={role !== constants.roles.student || loadingStudents}
+              >
+                <option value="">Select Student</option>
+                {loadingStudents ? (
+                  <option disabled>Loading students...</option>
+                ) : students.length === 0 ? (
+                  <option disabled>No students found</option>
+                ) : (
+                  students.map((studentObj) => (
+                    <option key={studentObj.id} value={studentObj.id}>
+                      {studentObj.student_name}{" "}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+            {/* <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-user-graduate text-sm"></i> Student
                 </span>
               </label>
               <select
@@ -431,13 +457,11 @@ export const DocumentUpload = () => {
                   ))
                 )}
               </select>
-            </div>
-
-            {/* Teacher Role Selection */}
+            </div> */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-chalkboard-user text-sm"></i>
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-chalkboard-teacher text-sm"></i>{" "}
                   Teacher
                 </span>
               </label>
@@ -457,14 +481,11 @@ export const DocumentUpload = () => {
               </select>
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Guardian Role Field */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-user-shield text-sm"></i>
-                  Guardian
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-user-shield text-sm"></i> Guardian
                 </span>
               </label>
               <select
@@ -482,13 +503,10 @@ export const DocumentUpload = () => {
                 ))}
               </select>
             </div>
-
-            {/* Office Role Selection */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-briefcase text-sm"></i>
-                  Office Staff
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-briefcase text-sm"></i> Office Staff
                 </span>
               </label>
               <select
@@ -510,7 +528,6 @@ export const DocumentUpload = () => {
         </div>
       )}
 
-      {/* Fixed button container */}
       <div className="flex flex-col md:flex-row items-center md:items-stretch justify-between gap-4 p-6">
         <button
           type="button"
