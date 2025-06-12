@@ -71,27 +71,6 @@ export const ChangePassword = () => {
               <div className="text-red-500 text-center font-medium">{formError}</div>
             )}
 
-            {/* Email */}
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-envelope text-sm"></i> Email
-                </span>
-              </label>
-              <input
-                type="email"
-                placeholder="example@gmail.com"
-                className="input input-bordered w-full focus:outline-none"
-                autoComplete="on"
-                {...register("email", {
-                  validate: (val) => validCPEmail(val) === "" || validCPEmail(val),
-                })}
-              />
-              {errors.email && (
-                <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>
-              )}
-            </div>
-
             {/* Current Password */}
             <div className="form-control w-full relative">
               <label className="label">

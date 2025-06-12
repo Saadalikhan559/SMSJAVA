@@ -94,6 +94,7 @@ export const Register = () => {
               <input
                 type="text"
                 placeholder="First Name"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("firstName", {
                   validate: (val) => validfirstname(val) === "" || validfirstname(val),
@@ -114,6 +115,7 @@ export const Register = () => {
               <input
                 type="text"
                 placeholder="Last Name"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("lastName", {
                   validate: (val) => validlastname(val) === "" || validlastname(val),
@@ -134,6 +136,7 @@ export const Register = () => {
               <input
                 type="email"
                 placeholder="example@gmail.com"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("email", {
                   validate: (val) => validregisteremail(val) === "" || validregisteremail(val),
@@ -175,10 +178,19 @@ export const Register = () => {
             <div className="form-control w-full relative">
               <label className="label">
                 <span className="label-text">Password</span>
+                <div className="group relative ml-2 cursor-pointer">
+                  <div className="relative group inline-block">
+                    <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
+                      Password must be at least 8 characters, include one letter, one number, and one special character
+                    </div>
+                  </div>
+                </div>
               </label>
               <input
                 type={showPassword ? "password" : "text"}
                 placeholder="Enter your password"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("password", {
                   validate: (val) => validregisterpassword(val) === "" || validregisterpassword(val),
@@ -186,7 +198,7 @@ export const Register = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 top-9 text-gray-500"
+                className="passwordEyes text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
@@ -204,7 +216,7 @@ export const Register = () => {
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
-                  <i className="fa-solid fa-right-to-bracket mr-2"></i>
+                  <i className="fa-solid fa-right-to-bracket mr-2"></i> 
                 )}
                 {loading ? "" : "Register"}
               </button>
