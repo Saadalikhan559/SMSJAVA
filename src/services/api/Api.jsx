@@ -33,8 +33,6 @@ export const fetchSchoolYear = async () => {
   }
 };
 
-
-
 export const fetchGuardianType = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/s/guardian-types/`);
@@ -74,6 +72,7 @@ export const fetchStudentYearLevel = async () => {
     throw err;
   }
 };
+
 export const fetchStudentYearLevelByClass = async (classLevel) => {
   try {
     const response = await axios.get(

@@ -1,11 +1,15 @@
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
 import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
+import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
 import GuardianProfile from "../components/GuardianDashboard/GuardianProfile";
 import { NotFound } from "../components/NotFound";
+import { OfficeStaffDashboard } from "../components/OfficestaffDashboard/OfficeStaffDashboard";
 import OfficestaffProfile from "../components/OfficestaffDashboard/OfficestaffProfile";
 import StudentProfile from "../components/Student Dashboard/StudentProfile";
 import { Attendance } from "../components/Teacher/Attendance";
+import { TeacherDashboard } from "../components/TeacherDashboard/TeacherDashboard";
 import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
 import { Unauthorized } from "../components/Unauthorized";
 import { constants } from "../global/constants";
@@ -56,68 +60,103 @@ export const routes = [
     path: allRouterLink.admissionForm,
     element: <AdmissionForm />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff]
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.admissionFees,
     element: <AdmissionFees />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff , constants.roles.student , constants.roles.teacher , constants.roles.guardian ]
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.officeStaff,
+      constants.roles.student,
+      constants.roles.teacher,
+      constants.roles.guardian,
+    ],
   },
   {
     path: allRouterLink.documentUpload,
     element: <DocumentUpload />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff, constants.roles.teacher]
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.officeStaff,
+      constants.roles.teacher,
+    ],
   },
   {
     path: allRouterLink.subjectAssignment,
     element: <SubjectAssignments />,
     protected: true,
-    allowedRoles: [constants.roles.director]
+    allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.allTeacherAssignment,
     element: <AllTeacherAssignments />,
     protected: true,
-    allowedRoles: [constants.roles.director]
+    allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.attendance,
     element: <Attendance />,
     protected: true,
-    allowedRoles: [constants.roles.teacher]
+    allowedRoles: [constants.roles.teacher],
   },
   // PROFILES
   {
     path: allRouterLink.directorProfile,
     element: <DirectorProfile />,
     protected: true,
-    allowedRoles: [constants.roles.director]
+    allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.officeStaffProfile,
     element: <OfficestaffProfile />,
     protected: true,
-    allowedRoles: [constants.roles.officeStaff]
+    allowedRoles: [constants.roles.officeStaff],
   },
   {
     path: allRouterLink.teacherProfile,
     element: <TeacherProfile />,
     protected: true,
-    allowedRoles: [constants.roles.teacher]
+    allowedRoles: [constants.roles.teacher],
   },
   {
     path: allRouterLink.guardianProfile,
     element: <GuardianProfile />,
     protected: true,
-    allowedRoles: [constants.roles.guardian]
+    allowedRoles: [constants.roles.guardian],
   },
   {
     path: allRouterLink.studentProfile,
     element: <StudentProfile />,
     protected: true,
-    allowedRoles: [constants.roles.student]
+    allowedRoles: [constants.roles.student],
+  },
+  // DASHBOARD
+  {
+    path: allRouterLink.teacherDashboard,
+    element: <TeacherDashboard />,
+    // protected: true,
+    // allowedRoles: [constants.roles.teacher],
+  },
+  {
+    path: allRouterLink.guardianDashboard,
+    element: <GuardianDashboard />,
+    // protected: true,
+    // allowedRoles: [constants.roles.guardian, constants.roles.student],
+  },
+  {
+    path: allRouterLink.officeStaffDashboard,
+    element: <OfficeStaffDashboard />,
+    // protected: true,
+    // allowedRoles: [constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.directorDashboard,
+    element: <DirectorDashboard />,
+    protected: false,
+    // allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.unAuthorized,
