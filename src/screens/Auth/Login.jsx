@@ -1,33 +1,32 @@
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 import { allRouterLink } from "../../router/AllRouterLinks";
+import { validloginemail, validloginpassword } from "../../Validations/Validations";
 
 export const Login = () => {
-  const { LoginUser, userRole, isAuthenticated } = useContext(AuthContext);
+  const { LoginUser } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
-
-    // console.log('authenticity', isAuthenticated);
+    setFormError("");
 
     const userData = {
-      email,
-      password,
+      email: data.email,
+      password: data.password,
     };
 
     try {
@@ -35,10 +34,10 @@ export const Login = () => {
       if (isSuccess) {
         navigate("/");
       } else {
-        setError("Invalid email or password");
+        setFormError("Invalid email or password");
       }
     } catch (err) {
-      setError("Something went wrong. Please try again later.");
+      setFormError("Something went wrong. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -56,13 +55,12 @@ export const Login = () => {
           />
         </div>
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
-          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
-            {/* Error message */}
-            {error && (
+            {formError && (
               <div className="text-red-500 text-center font-medium">
-                {error}
+                {formError}
               </div>
             )}
 
@@ -77,10 +75,16 @@ export const Login = () => {
                 type="email"
                 placeholder="example@gmail.com"
                 className="input input-bordered w-full focus:outline-none"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="on"
+                {...register("email", {
+                  validate: (val) => validloginemail(val) || true,
+                })}
               />
+              {errors.email && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </span>
+              )}
             </div>
 
             {/* Password */}
@@ -91,24 +95,26 @@ export const Login = () => {
                 </span>
               </label>
               <input
-                type={`${showPassword === true ? "password" : "text"}`}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 className="input w-full pr-10 focus:outline-none"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="on"
+                {...register("password", {
+                  validate: (val) => validloginpassword(val) || true,
+                })}
               />
               <button
                 type="button"
                 className="passwordEyes text-gray-500"
-                onClick={handleShowPassword}
+                onClick={() => setShowPassword(!showPassword)}
               >
-                <i
-                  className={`fa-solid  ${
-                    showPassword === true ? "fa-eye-slash" : "fa-eye"
-                  }`}
-                ></i>
+                <i className={`fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
               </button>
+              {errors.password && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </span>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -119,11 +125,11 @@ export const Login = () => {
                 ) : (
                   <i className="fa-solid fa-right-to-bracket mr-2"></i>
                 )}
-                {loading ? " " : "Login"}
+                {loading ? "Processing..." : "Login"}
               </button>
             </div>
 
-            {/* Change Password Link */}
+            {/* Forgot Password Link */}
             <div className="text-center mt-4">
               <Link
                 to={`${allRouterLink.forgotPassword}`}
