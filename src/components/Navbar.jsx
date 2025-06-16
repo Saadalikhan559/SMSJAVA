@@ -18,25 +18,6 @@ export const Navbar = () => {
     }
   };
 
-
-  const getProfileRoute = (role) => {
-    switch (role) {
-      case `${constants.roles.officeStaff}`:
-        return allRouterLink.officeStaffProfile;
-      case `${constants.roles.teacher}`:
-        return allRouterLink.teacherProfile;
-      case `${constants.roles.director}`:
-        return allRouterLink.directorProfile;
-      case `${constants.roles.student}`:
-        return allRouterLink.studentProfile;
-      case `${constants.roles.guardian}`:
-        return allRouterLink.guardianProfile;
-      // Add other cases as needed
-      default:
-        return allRouterLink.notFound;
-    }
-  };
-
   return (
     <>
       <div className="navbar bg-base-100 shadow-sm sticky top-0 z-5 flex flex-wrap md:flex-nowrap py-0">
@@ -205,54 +186,6 @@ export const Navbar = () => {
               to="/login"
               className="btn btn-primary btn-sm md:btn-md text-white normal-case"
             >
-              {/* Search menu item - visible only on mobile */}
-              <li className="md:hidden">
-                <a onClick={() => setShowSearch(true)}>
-                  <i className="fa-solid fa-search"></i> Search
-                </a>
-              </li>
-
-              <li>
-                <Link to={getProfileRoute(userRole)}>
-                  <i className="fa-solid fa-user"></i> Profile
-                </Link>
-              </li>
-              <li>
-                <a>
-                  <i className="fa-solid fa-gear"></i> Settings
-                </a>
-              </li>
-              {userRole == `${constants.roles.director}` && (
-                <li>
-                  <Link to={`${allRouterLink.registerUser}`}>
-                    <i className="fa-solid fa-user-plus"></i> Create User
-                  </Link>
-                </li>
-              )}
-              {userRole == `${constants.roles.director}` && (
-                <li>
-                  <Link to={`${allRouterLink.allTeacherAssignment}`}>
-                    <i className="fa-solid fa-book"></i> Teacher Assignments
-                  </Link>
-                </li>
-              )}
-              {/* Attendance */}
-              {userRole == `${constants.roles.teacher}` && (
-                <li>
-                  <Link to={`${allRouterLink.attendance}`}>
-                    <i className="fa-solid fa-book"></i> Attendance
-                  </Link>
-                </li>
-              )}
-              <li onClick={handleLogout}>
-                <a className="text-orange-600">
-                  <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
-                  Logout
-                </a>
-              </li>
-            </ul>
-          </div>
-
               Login
             </Link>
           )}
