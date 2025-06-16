@@ -74,7 +74,9 @@ export const Sidebar = () => {
           )}
           {role === `${constants.roles.teacher}` && isAuthenticated && (
             <li>
-              <Link to={`${allRouterLink.attendance}`}>
+              <Link
+                onClick={(e) => handleNavigation(e, allRouterLink.attendance)}
+              >
                 <i className="fa-solid fa-book mr-2"></i> Attendance
               </Link>
             </li>
@@ -82,7 +84,11 @@ export const Sidebar = () => {
 
           {isAuthenticated && (
             <li>
-              <Link to={`${allRouterLink.admissionFees}`}>
+              <Link
+                onClick={(e) =>
+                  handleNavigation(e, allRouterLink.admissionFees)
+                }
+              >
                 <i className="fa-solid fa-money-bill-wave mr-2"></i> Fees Portal
               </Link>
             </li>
