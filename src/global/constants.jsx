@@ -6,7 +6,10 @@ export const constants = {
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
   baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
-  baseUrl1: "https://187gwsw1-8000.inc1.devtunnels.ms",
+//   baseUrl1: "https://187gwsw1-8000.inc1.devtunnels.ms",
+//   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
+//   baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
+  // baseUrl: "https://8c1zb9f3-8000.inc1.devtunnels.ms/",
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,
       input[type="password"]::-ms-clear {
@@ -17,8 +20,14 @@ export const constants = {
       director: "director",
       officeStaff: "office staff",
       teacher: "teacher",
-      // teacher: "Teacher",
       student: "student",
       guardian: "guardian",
     }
+    // roles: {
+    //   director: "Director",
+    //   officeStaff: "office staff",
+    //   teacher: "Teacher",
+    //   student: "Student",
+    //   guardian: "Guardian",
+    // }
 };

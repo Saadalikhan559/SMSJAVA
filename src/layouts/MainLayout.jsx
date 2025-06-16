@@ -5,11 +5,14 @@ import { NetWorkContext } from "../context/NetworkContext";
 import { Sidebar } from "../components/Sidebar";
 import Noconnection from "../components/NoConnection";
 import { allRouterLink } from "../router/AllRouterLinks";
+import { AuthContext } from "../context/AuthContext";
 
 export const MainLayout = () => {
   const { isOnline } = useContext(NetWorkContext);
+    const { isAuthenticated } = useContext(AuthContext);
+  
   const location = useLocation();
-  const hiddenPaths = [allRouterLink.registerUser, allRouterLink.loginUser];
+  const hiddenPaths = [allRouterLink.registerUser, allRouterLink.loginUser, allRouterLink.changePassword, allRouterLink.forgotPassword, allRouterLink.resetPassword];
   const shouldHide = hiddenPaths.includes(location.pathname);
   
   if (!isOnline) {
@@ -19,7 +22,7 @@ export const MainLayout = () => {
   return (
     <div>
       {!shouldHide && <Navbar />}
-      {!shouldHide && <Sidebar />}
+      {!shouldHide && isAuthenticated && <Sidebar />}
       <Outlet />
     </div>
   );

@@ -25,8 +25,8 @@ export default function AppRouter() {
               }
             />
           ))}
-          <Route path={allRouterLink.notFound} element={<NotFound />} />
         </Route>
+        <Route path={allRouterLink.notFound} element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

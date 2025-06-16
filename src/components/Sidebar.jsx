@@ -1,9 +1,12 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { allRouterLink } from "../router/AllRouterLinks";
 import { constants } from "../global/constants";
+import { AuthContext } from "../context/AuthContext";
 
 export const Sidebar = () => {
+  const { isAuthenticated } = useContext(AuthContext);
+
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
@@ -36,7 +39,7 @@ export const Sidebar = () => {
           className="drawer-overlay"
         ></label>
         <ul className="menu bg-base-200 text-base-content min-h-full w-65 p-4">
-          {role === `${constants.roles.officeStaff}` && (
+          {role === `${constants.roles.director}` && isAuthenticated && (
             <li>
               <Link
                 onClick={(e) =>
@@ -48,7 +51,7 @@ export const Sidebar = () => {
               </Link>
             </li>
           )}
-          {role !== `${constants.roles.student}` && (
+          {role !== `${constants.roles.student}` && isAuthenticated && (
             <li
               onClick={(e) => handleNavigation(e, allRouterLink.documentUpload)}
             >
@@ -57,7 +60,7 @@ export const Sidebar = () => {
               </Link>
             </li>
           )}
-          {role === `${constants.roles.director}` && (
+          {role === `${constants.roles.director}` && isAuthenticated && (
             <li>
               <Link
                 onClick={(e) =>
@@ -69,20 +72,17 @@ export const Sidebar = () => {
               </Link>
             </li>
           )}
-          {role === `${constants.roles.teacher}` && (
+          {role === `${constants.roles.teacher}` && isAuthenticated && (
             <li>
-              <Link to={`${allRouterLink.attendance}`}>
+              <Link
+                onClick={(e) => handleNavigation(e, allRouterLink.attendance)}
+              >
                 <i className="fa-solid fa-book mr-2"></i> Attendance
               </Link>
             </li>
           )}
-          {[
-            constants.roles.teacher,
-            constants.roles.student,
-            constants.roles.director,
-            constants.roles.officeStaff,
-            constants.roles.guardian,
-          ].includes(role) && (
+
+          {isAuthenticated && (
             <li>
               <Link
                 onClick={(e) =>

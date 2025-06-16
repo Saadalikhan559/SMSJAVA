@@ -1,0 +1,107 @@
+import Chart from "react-apexcharts";
+
+const payload = {
+  staff: "Tanveer khan",
+  current_academic_year: "2025-2026",
+  new_admissions_this_year: 1,
+  admissions_per_year: {
+    2018: 100,
+    2019: 20,
+    2020: 40,
+    2021: 60,
+    2022: 109,
+    2023: 102,
+    2024: 111,
+    2025: 144,
+  },
+};
+
+export const OfficeStaffDashboard = () => {
+  const admissionYears = Object.keys(payload.admissions_per_year);
+  const admissionCounts = Object.values(payload.admissions_per_year);
+
+  const options = {
+    chart: {
+      id: "admissions-line",
+    },
+    toolbar: { show: false },
+    xaxis: {
+      categories: admissionYears,
+    },
+    stroke: {
+      curve: "straight",
+      width: 5,
+    },
+    title: {
+      text: "Yearly Admissions",
+      align: "left",
+    },
+    colors: ["#6e00ff"],
+  };
+
+  const series = [
+    {
+      name: "Admissions",
+      data: admissionCounts,
+    },
+  ];
+
+  return (
+    <div className="p-4 space-y-9">
+      {/* Header */}
+      <h3 className="text-3xl font-bold text-center text-gray-800">
+        {payload.staff}'s Dashboard
+      </h3>
+
+      <div className="grid grid-cols-12 gap-4">
+        {/* Left Column: Full height stretch using flex */}
+        <div className="col-span-12 md:col-span-3 flex flex-col gap-4 h-full">
+          <div className="flex-1 border rounded-lg shadow-md borderTheme bg-white">
+            <div className="p-4 bgTheme text-white rounded-t-lg">
+              <h2 className="text-lg font-bold">Academic Year</h2>
+            </div>
+            <div className="p-6 flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-3xl font-extrabold text-gray-900 tracking-wide">
+                  {payload.current_academic_year}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">Session</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 border rounded-lg shadow-md borderTheme bg-white">
+            <div className="p-4 bgTheme text-white rounded-t-lg">
+              <h2 className="text-lg font-bold">New Admissions This Year</h2>
+            </div>
+            <div className="p-6 flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-3xl font-extrabold text-gray-900 tracking-wide">
+                  {payload.new_admissions_this_year}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">Total Count</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Admissions chart */}
+        <div className="col-span-12 md:col-span-9">
+          <div className="h-full border rounded-lg shadow-md borderTheme bg-white flex flex-col">
+            <div className="p-4 bgTheme text-white rounded-t-lg">
+              <h2 className="text-lg font-bold">Admissions Overview</h2>
+            </div>
+            <div className="p-4 flex-1">
+              <Chart
+                options={options}
+                series={series}
+                type="line"
+                height={350}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

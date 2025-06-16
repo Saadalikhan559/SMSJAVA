@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
@@ -9,6 +10,7 @@ import {
   validlastname,
   validregisteremail,
   validregisterpassword,
+  validregisterrole,
 } from "../../Validations/Validations";
 
 export const Register = () => {
@@ -16,22 +18,16 @@ export const Register = () => {
   const navigate = useNavigate();
 
   const [allRoles, setAllRoles] = useState([]);
-  const [error, setError] = useState("");
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [roleId, setRoleId] = useState("");
   const [showPassword, setShowPassword] = useState(true);
 
-  const [firstnameError, setFirstnameError] = useState("");
-  const [lastnameError, setLastnameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     const getRoles = async () => {
@@ -49,36 +45,16 @@ export const Register = () => {
     (role) => role.name === "teacher" || role.name === "office staff"
   );
 
-  const handleShowPassword = () => setShowPassword(!showPassword);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const onSubmit = async (data) => {
     setError("");
     setLoading(true);
 
-    const firstNameMsg = validfirstname(firstName);
-    const lastNameMsg = validlastname(lastName);
-    const emailMsg = validregisteremail(email);
-    const passwordMsg = validregisterpassword(password);
-
-    setFirstnameError(firstNameMsg || "");
-    setLastnameError(lastNameMsg || "");
-    setEmailError(emailMsg || "");
-    setPasswordError(passwordMsg || "");
-
-    if (firstNameMsg || lastNameMsg || emailMsg || passwordMsg || !roleId) {
-      if (!roleId) setError("Please select a role.");
-      setLoading(false);
-      return;
-    }
-
     const userData = {
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      password,
-      role: roleId,
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      password: data.password,
+      role: data.roleId,
     };
 
     try {
@@ -105,7 +81,7 @@ export const Register = () => {
         </div>
 
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
-          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+          <form className="w-full max-w-md space-y-2" onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-3xl font-bold text-center mb-6">Create an Account</h1>
 
             {error && <div className="text-red-500 text-center font-medium">{error}</div>}
@@ -113,77 +89,76 @@ export const Register = () => {
             {/* First Name */}
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-user text-sm"></i> First Name
-                </span>
+                <span className="label-text">First Name</span>
               </label>
               <input
                 type="text"
                 placeholder="First Name"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
-                value={firstName}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setFirstName(value);
-                  if (submitted) setFirstnameError(validfirstname(value) || "");
-                }}
+                {...register("firstName", {
+                  validate: (val) => validfirstname(val) === "" || validfirstname(val),
+                })}
               />
-              {firstnameError && <span className="text-red-500 text-sm mt-1">{firstnameError}</span>}
+              {errors.firstName && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.firstName.message || errors.firstName}
+                </span>
+              )}
             </div>
 
             {/* Last Name */}
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-user text-sm"></i> Last Name
-                </span>
+                <span className="label-text">Last Name</span>
               </label>
               <input
                 type="text"
                 placeholder="Last Name"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
-                value={lastName}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setLastName(value);
-                  if (submitted) setLastnameError(validlastname(value) || "");
-                }}
+                {...register("lastName", {
+                  validate: (val) => validlastname(val) === "" || validlastname(val),
+                })}
               />
-              {lastnameError && <span className="text-red-500 text-sm mt-1">{lastnameError}</span>}
+              {errors.lastName && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.lastName.message || errors.lastName}
+                </span>
+              )}
             </div>
 
             {/* Email */}
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-envelope text-sm"></i> Email
-                </span>
+                <span className="label-text">Email</span>
               </label>
               <input
                 type="email"
                 placeholder="example@gmail.com"
+                autoComplete="on"
                 className="input input-bordered w-full focus:outline-none"
-                value={email}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setEmail(value);
-                  if (submitted) setEmailError(validregisteremail(value) || "");
-                }}
+                {...register("email", {
+                  validate: (val) => validregisteremail(val) === "" || validregisteremail(val),
+                })}
               />
-              {emailError && <span className="text-red-500 text-sm mt-1">{emailError}</span>}
+              {errors.email && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.email.message || errors.email}
+                </span>
+              )}
             </div>
 
             {/* Role */}
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-user-shield text-sm"></i> Role
-                </span>
+                <span className="label-text">Role</span>
               </label>
               <select
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={roleId}
-                onChange={(e) => setRoleId(e.target.value)}
+                className="select select-bordered w-full focus:outline-none"
+                {...register("roleId", {
+                  validate: (val) => validregisterrole(val) === "" || validregisterrole(val),
+                })}
               >
                 <option value="">Select Role</option>
                 {filteredRoles.map((roleItem) => (
@@ -192,52 +167,58 @@ export const Register = () => {
                   </option>
                 ))}
               </select>
+              {errors.roleId && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.roleId.message || errors.roleId}
+                </span>
+              )}
             </div>
 
             {/* Password */}
             <div className="form-control w-full relative">
               <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-lock text-sm"></i> Password
-                </span>
+                <span className="label-text">Password</span>
                 <div className="group relative ml-2 cursor-pointer">
-                  <i className="fa-solid fa-circle-info text-sm"></i>
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-10 w-auto p-2 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                    Password must be at least 8 characters, include one letter, one number, and one special character
+                  <div className="relative group inline-block">
+                    <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
+                      Password must be at least 8 characters, include one letter, one number, and one special character
+                    </div>
                   </div>
-                </div>
+                </div>
               </label>
               <input
                 type={showPassword ? "password" : "text"}
                 placeholder="Enter your password"
-                className="input input-bordered w-full pr-10 focus:outline-none"
-                value={password}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setPassword(value);
-                  if (submitted) setPasswordError(validregisterpassword(value) || "");
-                }}
+                autoComplete="on"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("password", {
+                  validate: (val) => validregisterpassword(val) === "" || validregisterpassword(val),
+                })}
               />
               <button
                 type="button"
-                className="absolute right-3 top-9 text-gray-500 passwordEyes"
-                onClick={handleShowPassword}
+                className="passwordEyes text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
               >
                 <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
               </button>
-              {passwordError && <span className="text-red-500 text-sm mt-1">{passwordError}</span>}
+              {errors.password && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.password.message || errors.password}
+                </span>
+              )}
             </div>
 
             {/* Submit */}
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+              <button type="submit" className="btn btn-primary w-full">
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
-                  <>
-                    <i className="fa-solid fa-user-plus mr-2"></i> Register
-                  </>
+                  <i className="fa-solid fa-right-to-bracket mr-2"></i> 
                 )}
+                {loading ? "" : "Register"}
               </button>
             </div>
 
@@ -269,4 +250,3 @@ export const Register = () => {
     </>
   );
 };
-
