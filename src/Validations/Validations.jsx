@@ -136,8 +136,6 @@ export const validenrolmentdate = (enrolment_date) => {
     if (!enrolment_date) return "date is required"
     return ""
 }
-
-// ----------------------------------------------Guardian Information-------------------------------------------------
 // -------------------------------------------Guardian Father Name-------------------------------------------------------
 export const validGuardianFatherName = (guardian_Father_name) => {
     if (!guardian_Father_name) return "Father's name is required";
@@ -171,7 +169,7 @@ export const validCategory = (Category) => {
     return ""
 }
 
-
+// ------------------------------------------Guardian Information-------------------------------------------------
 // -------------------------------------------Guardian First Name-------------------------------------------------------
 export const validGuardianFirstName = (guardian_First_name) => {
     if (!guardian_First_name) return "Guardian's First name is required";
@@ -250,7 +248,6 @@ export const ValidLivelihood = (Livelihood) => {
 
 
 // ----------------------------------------------Academic Information-------------------------------------------------
-
 // -------------------------------------------------Year level-----------------------------------------------------------
 
 export const validyearlevel = (year_level) => {
@@ -301,11 +298,11 @@ export const validtc = (tc_letter) => {
 }
 // -------------------------------------------Emergency Mobile Number-------------------------------------------------------
 export const validEmergencyNumber = (Emergency_Number) => {
-    const mobileRegex = /^[6-9]\d{9}$/;
     if (!Emergency_Number) return "Emergency Contact number is required";
-    if (!mobileRegex.test(Emergency_Number)) return "Enter a valid 10-digit Indian mobile number starting with 6-9";
     return "";
 };
+
+
 // -------------------------------------------------House Number-----------------------------------------------------------
 
 export const validHouseNumber = (House_Number) => {
@@ -400,7 +397,7 @@ export const validIFSCcode = (IFSC_code) => {
 
 
 // -------------------------------------------------Reset Password-----------------------------------------------------------
-// -------------------------------------------------Email-----------------------------------------------------------
+// -----------------------------------------------------Email-----------------------------------------------------------
 
 export const validResetEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -409,31 +406,27 @@ export const validResetEmail = (email) => {
     return "";
 }
 
-// -------------------------------------------------Otp-----------------------------------------------------------
+// -------------------------------------------------------Otp-----------------------------------------------------------
 
 export const validOtp =(otp)=>{
     if (!otp) return "OTP is required";
     return "";
 
 }
+// ---------------------------------------------------new password------------------------------------------------------
 
 
-
-// ------------------------------------------------------------new password------------------------------------------------------
 
 export const validNewPassword = (newpassword) => {
-    // const passwordRegex = /^(?=.*[A-Za-z])(?=.\d)(?=.[@$!%#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    if (!newpassword) return "New password is required."
-    // if (!passwordRegex.test(newpassword)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
-    
-    if (newpassword.length<8) return "Password must be at least 8 characters"
-
-    return ""
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!newpassword) return "New Password is required";
+    if (!passwordRegex.test(newpassword)) return "Password must be at least 8 characters, include one letter, one number, and one special character";
+    return "";
 };
 
 
 
-// ------------------------------------------------------confirm password------------------------------------------------------------
+// -------------------------------------------------confirm password------------------------------------------------------------
 
 export const validConfirmPassword = (newPassword, confirmPassword) => {
   if (!confirmPassword) return "Confirm password is required.";
@@ -443,7 +436,7 @@ export const validConfirmPassword = (newPassword, confirmPassword) => {
 
 
 // -------------------------------------------------Forget Password-----------------------------------------------------------
-// -------------------------------------------------Email-----------------------------------------------------------
+// -----------------------------------------------------Email-----------------------------------------------------------
 
 export const validForgetEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
