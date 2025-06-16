@@ -78,16 +78,7 @@ export const validStudentFirstName = (student_first_name) => {
     return "";
 };
 
-// ----------------------------------------------Student Middle Name---------------------------------------------------
 
-export const validStudentMiddleName = (student_middle_name) => {
-    if (!student_middle_name) return "Student's first name is required";
-    if (student_middle_name.length < 3) return "First name must be at least 3 characters";
-    if (student_middle_name.length > 20) return "First name must be less than 20 characters";
-    const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
-    if (!middlenameRegex.test(student_middle_name)) return "First name can only contain letters, spaces, apostrophes, or hyphens";
-    return "";
-}
 
 // -------------------------------------------Student Last Name----------------------------------------------------
 export const validStudentLastName = (student_last_name) => {
@@ -130,11 +121,7 @@ export const validgender = (gender) => {
     return ""
 }
 
-// ------------------------------------------- Student enrolment date-------------------------------------------------------
-export const validenrolmentdate = (enrolment_date) => {
-    if (!enrolment_date) return "date is required"
-    return ""
-}
+
 // -------------------------------------------Guardian Father Name-------------------------------------------------------
 export const validGuardianFatherName = (guardian_Father_name) => {
     if (!guardian_Father_name) return "Father's name is required";
@@ -179,19 +166,6 @@ export const validGuardianFirstName = (guardian_first_name) => {
     if (!firstNameRegex.test(guardian_first_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
     return "";
 };
-
-
-// -------------------------------------------Guardian Middle Name-------------------------------------------------------
-export const validGuardianMiddlName = (guardian_middle_name) => {
-    if (!guardian_middle_name) return "Guardian's name is required";
-    if (guardian_middle_name.length < 3) return "Guardian's name must be at least 3 characters";
-    if (guardian_middle_name.length > 50) return "Guardian's name must be less than 50 characters";
-    const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
-    if (!middlenameRegex.test(guardian_middle_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
-    return "";
-};  
-
-
 // -------------------------------------------Guardian last Name-------------------------------------------------------
 export const validGuardianlastName = (guardian_last_name) => {
     if (!guardian_last_name) return "Guardian's name is required";
@@ -218,6 +192,11 @@ export const validGuardianPassword = (guardian_password) => {
     if (!passwordRegex.test(guardian_password)) return "Password must be at least 8 characters, include one letter, one number, and one special character";
     return "";
 };
+// -------------------------------------------Guardian Type -------------------------------------------------------
+export const ValidGuardianType = (GuardianType) => {
+    if (!GuardianType) return "Guardian Type is required"
+    return ""
+}
 
 // -------------------------------------------Guardian Mobile Number-------------------------------------------------------
 export const validMobileNumber = (guardian_phone_no) => {
@@ -229,38 +208,10 @@ export const validMobileNumber = (guardian_phone_no) => {
 
 
 // ----------------------------------------------Academic Information-------------------------------------------------
-// -------------------------------------------------Year level-----------------------------------------------------------
-
-export const validyearlevel = (year_level) => {
-    if (!year_level) return "year level is required"
-    return ""
-}
-
-// -------------------------------------------------school year-----------------------------------------------------------
-
-export const validschoolyear = (school_year) => {
-    if (!school_year) return "year is required"
-    return ""
-}
-
-// -------------------------------------------------previous school name-----------------------------------------------------------
-
-export const validschoolname = (previous_school_name) => {
-    if (!previous_school_name) return "previous school name is required"
-    return ""
-}
-
-// -------------------------------------------------previous school name-----------------------------------------------------------
-
-export const validclass = (previous_standard_studied) => {
-    if (!previous_standard_studied) return "standard/class is required"
-    return ""
-}
-
 // -------------------------------------------------Admission date-----------------------------------------------------------
 
 export const validadmissiondate = (admission_date) => {
-    if (!admission_date) return "date is required"
+    if (!admission_date) return "Admission Date is required"
     return ""
 }
 
@@ -276,13 +227,8 @@ export const validEmergencyNumber = (Emergency_Number) => {
     return "";
 };
 
+// -------------------------------------------------Residental Address-----------------------------------------------------------
 
-// -------------------------------------------------House Number-----------------------------------------------------------
-
-export const validHouseNumber = (House_Number) => {
-    if (!House_Number) return "House Number is required"
-    return ""
-}
 // -------------------------------------------------Habitation-----------------------------------------------------------
 
 export const validHabitation = (Habitation) => {
@@ -290,17 +236,38 @@ export const validHabitation = (Habitation) => {
 
     return ""
 }
+// -------------------------------------------------District-----------------------------------------------------------
 
-
-// -----------------------------------------------Change Password validation-------------------------------------------------
-
-// ---------------------------------------------------------current password-----------------------------------------------------------
-
-export const validCurrentPassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    if (!password) return "Current password is required."
-    if (!passwordRegex.test(password)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
+export const validDistrict = (District) => {
+    if (!District) return "District is required"
     return ""
+}
+
+
+// -------------------------------------------------State-----------------------------------------------------------
+
+export const validState = (State) => {
+    if (!State) return "State is required"
+    return ""
+}
+// -------------------------------------------------Pin Code-----------------------------------------------------------
+
+export const validPinCode = (Pin_Code) => {
+    if (!Pin_Code) return "Pin Code is required"
+    if (Pin_Code.length < 6) return "Enter a 6 digits valid Pin Code";
+
+    return ""
+}
+// -------------------------------------------Bank Account Details-------------------------------------------------------
+
+// -------------------------------------------Account Holder Name-------------------------------------------------------
+export const validAccountHolderName = (Account_Holder_Name) => {
+    if (!Account_Holder_Name) return "Account Holder name is required";
+    if (Account_Holder_Name.length < 3) return "Account Holder name must be at least 3 characters";
+    if (Account_Holder_Name.length > 50) return "Account Holder name must be less than 50 characters";
+    const AccountnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!AccountnameRegex.test(Account_Holder_Name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
 };
 
 // -------------------------------------------------Account Number-----------------------------------------------------------
@@ -325,6 +292,20 @@ export const validIFSCcode = (IFSC_code) => {
 }
 
 
+// -----------------------------------------------Change Password validation-------------------------------------------------
+
+// ---------------------------------------------------------current password-----------------------------------------------------------
+
+export const validCurrentPassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!password) return "Current password is required."
+    if (!passwordRegex.test(password)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
+    return ""
+};
+
+
+
+
 
 // -------------------------------------------------Reset Password-----------------------------------------------------------
 // -----------------------------------------------------Email-----------------------------------------------------------
@@ -338,7 +319,7 @@ export const validResetEmail = (email) => {
 
 // -------------------------------------------------------Otp-----------------------------------------------------------
 
-export const validOtp =(otp)=>{
+export const validOtp = (otp) => {
     if (!otp) return "OTP is required";
     return "";
 
@@ -359,10 +340,10 @@ export const validNewPassword = (newpassword) => {
 // -------------------------------------------------confirm password------------------------------------------------------------
 
 export const validConfirmPassword = (newPassword, confirmPassword) => {
-  if (!confirmPassword) return "Confirm password is required.";
-  if ( newPassword !== confirmPassword) return "Passwords do not match.";
-  return "";
-};    
+    if (!confirmPassword) return "Confirm password is required.";
+    if (newPassword !== confirmPassword) return "Passwords do not match.";
+    return "";
+};
 
 
 // -------------------------------------------------Forget Password-----------------------------------------------------------
