@@ -204,6 +204,7 @@ export const AdmissionForm = () => {
   // API fetch functions remain the same
   // ...
 
+
   const getYearLevels = async () => {
     try {
       const yearLevels = await fetchYearLevels();
@@ -236,8 +237,9 @@ export const AdmissionForm = () => {
     getSchoolYears();
     getGuardianType();
   }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const onSubmit = async () => {
     setLoading(true);
 
     const values = getValues();
@@ -294,6 +296,7 @@ export const AdmissionForm = () => {
 
     try {
       await handleAdmissionForm(formDataToSend);
+
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
     } finally {
@@ -1020,6 +1023,10 @@ export const AdmissionForm = () => {
               <select
                 name="guardian_means_of_livelihood"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                required
+                value={formData.guardian.means_of_livelihood}
+                onChange={handleChange}
+
 
               >
                 <option value="">Select</option>
