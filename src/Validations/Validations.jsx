@@ -243,15 +243,6 @@ export const validtc = (tc_letter) => {
 
 // -----------------------------------------------Change Password validation-------------------------------------------------
 
-// ------------------------------------------------------email----------------------------------------------------------------
-
-export const validCPEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!email) return "Email is required."
-    if (!emailRegex.test(email)) return "Invalid email format." 
-    return ""
-};
-
 // ---------------------------------------------------------current password-----------------------------------------------------------
 
 export const validCurrentPassword = (password) => {
