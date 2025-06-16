@@ -320,19 +320,7 @@ export const validHabitation = (Habitation) => {
 }
 // -------------------------------------------------Ward Number-----------------------------------------------------------
 
-export const validWardNumber = (Ward_Number) => {
-    if (!Ward_Number) return "Ward Number is required"
-    return ""
-}
 
-// -------------------------------------------------Zone-----------------------------------------------------------
-
-export const validZone = (Zone) => {
-    if (!Zone) return "Zone is required"
-    return ""
-}
-
-// -------------------------------------------------Block-----------------------------------------------------------
 
 export const validBlock = (Block) => {
     if (!Block) return "Block is required"
