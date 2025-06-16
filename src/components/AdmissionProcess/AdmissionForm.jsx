@@ -237,8 +237,7 @@ export const AdmissionForm = () => {
     getSchoolYears();
     getGuardianType();
   }, []);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async () => {
 
     setLoading(true);
 
