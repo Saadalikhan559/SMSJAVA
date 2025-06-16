@@ -18,6 +18,25 @@ export const Navbar = () => {
     }
   };
 
+
+  const getProfileRoute = (role) => {
+    switch (role) {
+      case `${constants.roles.officeStaff}`:
+        return allRouterLink.officeStaffProfile;
+      case `${constants.roles.teacher}`:
+        return allRouterLink.teacherProfile;
+      case `${constants.roles.director}`:
+        return allRouterLink.directorProfile;
+      case `${constants.roles.student}`:
+        return allRouterLink.studentProfile;
+      case `${constants.roles.guardian}`:
+        return allRouterLink.guardianProfile;
+      // Add other cases as needed
+      default:
+        return allRouterLink.notFound;
+    }
+  };
+
   return (
     <>
       <div className="navbar bg-base-100 shadow-sm sticky top-0 z-1 flex flex-wrap md:flex-nowrap py-0">
@@ -128,9 +147,9 @@ export const Navbar = () => {
               </li>
 
               <li>
-                <a>
+                <Link to={getProfileRoute(userRole)}>
                   <i className="fa-solid fa-user"></i> Profile
-                </a>
+                </Link>
               </li>
               <li>
                 <a>
