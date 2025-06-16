@@ -46,14 +46,8 @@ export const validlastname = (lastName) => {
 export const validregisteremail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!email) return "Email is required";
-    if (!emailRegex.test(email)) return "Please enter a valid email address (e.g., username@example.com).";
+    if (!emailRegex.test(email)) return "Enter a valid email address";
     return "";
-};
-
-// --------------------------------------------------Role----------------------------------------------------------
-export const validregisterrole = (roleId) => {
-    if (!roleId) return "Please select a role";
-    return ""
 };
 
 // -------------------------------------------------Password-----------------------------------------------------------
@@ -116,6 +110,12 @@ export const validStudentPassword = (student_password) => {
     return "";
 };
 
+// ------------------------------------------- Student Profile Photo-------------------------------------------------------
+export const validprofilephoto = (profile_photo) => {
+    if (!profile_photo) return "Student Profile Photo is required"
+    return ""
+}
+
 // ------------------------------------------- Student Date of Birth-------------------------------------------------------
 export const validDOB = (student_date_of_birth) => {
     if (!student_date_of_birth) return "Date of Birth is required";
@@ -127,7 +127,7 @@ export const validDOB = (student_date_of_birth) => {
 
 // ------------------------------------------- Student Gender-------------------------------------------------------
 export const validgender = (gender) => {
-    if (!gender) return "gender is required"
+    if (!gender) return "Gender is required"
     return ""
 }
 
@@ -138,33 +138,70 @@ export const validenrolmentdate = (enrolment_date) => {
 }
 
 // ----------------------------------------------Guardian Information-------------------------------------------------
-// -------------------------------------------Guardian First Name-------------------------------------------------------
-export const validGuardianFirstName = (guardian_first_name) => {
-    if (!guardian_first_name) return "Guardian's name is required";
-    if (guardian_first_name.length < 3) return "Guardian's name must be at least 3 characters";
-    if (guardian_first_name.length > 50) return "Guardian's name must be less than 50 characters";
+// -------------------------------------------Guardian Father Name-------------------------------------------------------
+export const validGuardianFatherName = (guardian_Father_name) => {
+    if (!guardian_Father_name) return "Father's name is required";
+    if (guardian_Father_name.length < 3) return "Father's name must be at least 3 characters";
+    if (guardian_Father_name.length > 50) return "Father's name must be less than 50 characters";
     const firstNameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
-    if (!firstNameRegex.test(guardian_first_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    if (!firstNameRegex.test(guardian_Father_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+
+// -------------------------------------------Guardian Mother Name-------------------------------------------------------
+export const validGuardianMotherName = (guardian_mother_name) => {
+    if (!guardian_mother_name) return "Mother's name is required";
+    if (guardian_mother_name.length < 3) return "Mother's name must be at least 3 characters";
+    if (guardian_mother_name.length > 50) return "Mother's name must be less than 50 characters";
+    const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!middlenameRegex.test(guardian_mother_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+// ------------------------------------------- Religion-------------------------------------------------------
+export const validReligion = (Religion) => {
+    if (!Religion) return "Religion is required"
+    return ""
+}
+
+// ------------------------------------------- Category-------------------------------------------------------
+export const validCategory = (Category) => {
+    if (!Category) return "Category is required"
+    return ""
+}
+
+
+// -------------------------------------------Guardian First Name-------------------------------------------------------
+export const validGuardianFirstName = (guardian_First_name) => {
+    if (!guardian_First_name) return "Guardian's First name is required";
+    if (guardian_First_name.length < 3) return "Guardian's First name must be at least 3 characters";
+    if (guardian_First_name.length > 50) return "Guardian's First name must be less than 50 characters";
+    const firstNameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!firstNameRegex.test(guardian_First_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
     return "";
 };
 
 
 // -------------------------------------------Guardian Middle Name-------------------------------------------------------
-export const validGuardianMiddlName = (guardian_middle_name) => {
-    if (!guardian_middle_name) return "Guardian's name is required";
-    if (guardian_middle_name.length < 3) return "Guardian's name must be at least 3 characters";
-    if (guardian_middle_name.length > 50) return "Guardian's name must be less than 50 characters";
-    const middlenameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
-    if (!middlenameRegex.test(guardian_middle_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+export const validGuardianMiddleName = (guardian_Middle_name) => {
+    if (!guardian_Middle_name) return "Guardian's name is required";
+    if (guardian_Middle_name.length < 3) return "Guardian's name must be at least 3 characters";
+    if (guardian_Middle_name.length > 50) return "Guardian's name must be less than 50 characters";
+    const firstNameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!firstNameRegex.test(guardian_Middle_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
     return "";
-};  
+};
+
+
+
 
 
 // -------------------------------------------Guardian last Name-------------------------------------------------------
 export const validGuardianlastName = (guardian_last_name) => {
-    if (!guardian_last_name) return "Guardian's name is required";
-    if (guardian_last_name.length < 3) return "Guardian's name must be at least 3 characters";
-    if (guardian_last_name > 50) return "Guardian's name must be less than 50 characters";
+    if (!guardian_last_name) return "Guardian's Last name is required";
+    if (guardian_last_name.length < 3) return "Guardian's Last name must be at least 3 characters";
+    if (guardian_last_name > 50) return "Guardian's Last name must be less than 50 characters";
     const lastnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
     if (!lastnameRegex.test(guardian_last_name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
     return "";
@@ -187,13 +224,29 @@ export const validGuardianPassword = (guardian_password) => {
     return "";
 };
 
+// -------------------------------------------Guardian Type -------------------------------------------------------
+export const ValidGuardianType = (GuardianType) => {
+    if (!GuardianType) return "Guardian Type is required"
+    return ""
+}
+
 // -------------------------------------------Guardian Mobile Number-------------------------------------------------------
 export const validMobileNumber = (guardian_phone_no) => {
-    const mobileRegex = /^[6-9]\d{9}$/;
     if (!guardian_phone_no) return "Mobile number is required";
-    if (!mobileRegex.test(guardian_phone_no)) return "Enter a valid 10-digit Indian mobile number starting with 6-9";
+    
     return "";
 };
+
+// -------------------------------------------Guardian Profile Photo -------------------------------------------------------
+export const ValidGuardianPhoto = (GuardianPhoto) => {
+    if (!GuardianPhoto) return "Guardian Profile Photo is required"
+    return ""
+}
+// -------------------------------------------Means of Livelihood -------------------------------------------------------
+export const ValidLivelihood = (Livelihood) => {
+    if (!Livelihood) return "Means of Livelihood is required"
+    return ""
+}
 
 
 // ----------------------------------------------Academic Information-------------------------------------------------
@@ -201,14 +254,21 @@ export const validMobileNumber = (guardian_phone_no) => {
 // -------------------------------------------------Year level-----------------------------------------------------------
 
 export const validyearlevel = (year_level) => {
-    if (!year_level) return "year level is required"
+    if (!year_level) return "Year level is required"
     return ""
 }
 
 // -------------------------------------------------school year-----------------------------------------------------------
 
 export const validschoolyear = (school_year) => {
-    if (!school_year) return "year is required"
+    if (!school_year) return "School Year is required"
+    return ""
+}
+
+// -------------------------------------------------Admission Date-----------------------------------------------------------
+
+export const validAdmissiondate = (Admission_date) => {
+    if (!Admission_date) return "Admission Date is required"
     return ""
 }
 
@@ -236,38 +296,146 @@ export const validadmissiondate = (admission_date) => {
 // -------------------------------------------------TC letter-----------------------------------------------------------
 
 export const validtc = (tc_letter) => {
-    if (!tc_letter) return "tc letter is required"
+    if (!tc_letter) return "TC letter is required"
+    return ""
+}
+// -------------------------------------------Emergency Mobile Number-------------------------------------------------------
+export const validEmergencyNumber = (Emergency_Number) => {
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (!Emergency_Number) return "Emergency Contact number is required";
+    if (!mobileRegex.test(Emergency_Number)) return "Enter a valid 10-digit Indian mobile number starting with 6-9";
+    return "";
+};
+// -------------------------------------------------House Number-----------------------------------------------------------
+
+export const validHouseNumber = (House_Number) => {
+    if (!House_Number) return "House Number is required"
+    return ""
+}
+// -------------------------------------------------Habitation-----------------------------------------------------------
+
+export const validHabitation = (Habitation) => {
+    if (!Habitation) return "Habitation is required"
+    return ""
+}
+// -------------------------------------------------Ward Number-----------------------------------------------------------
+
+
+
+export const validBlock = (Block) => {
+    if (!Block) return "Block is required"
+    return ""
+}
+// -------------------------------------------------District-----------------------------------------------------------
+
+export const validDistrict = (District) => {
+    if (!District) return "District is required"
+    return ""
+}
+
+// -------------------------------------------------Division-----------------------------------------------------------
+
+export const validDivision = (Division) => {
+    if (!Division) return "Division is required"
+    return ""
+}
+// -------------------------------------------------State-----------------------------------------------------------
+
+export const validState = (State) => {
+    if (!State) return "State is required"
+    return ""
+}
+// -------------------------------------------------Pin Code-----------------------------------------------------------
+
+export const validPinCode = (Pin_Code) => {
+    if (!Pin_Code) return "Pin Code is required"
+    if (Pin_Code.length < 6) return "Enter a 6 digits valid Pin Code";
+
+    return ""
+}
+
+// -------------------------------------------Account Holder Name-------------------------------------------------------
+export const validAccountHolderName = (Account_Holder_Name) => {
+    if (!Account_Holder_Name) return "Account Holder name is required";
+    if (Account_Holder_Name.length < 3) return "Account Holder name must be at least 3 characters";
+    if (Account_Holder_Name.length > 50) return "Account Holder name must be less than 50 characters";
+    const AccountnameRegex = /^[A-Za-z]+(?:[\s'-][A-Za-z]+)*$/;
+    if (!AccountnameRegex.test(Account_Holder_Name)) return "Name can only contain letters, spaces, apostrophes, or hyphens";
+    return "";
+};
+
+// -------------------------------------------------Account Number-----------------------------------------------------------
+
+export const validAccountNumber = (Account_Number) => {
+    if (!Account_Number) return "Account Number is required"
+    return ""
+}
+
+// -------------------------------------------------Bank Name-----------------------------------------------------------
+
+export const validBankName = (Bank_Name) => {
+    if (!Bank_Name) return "Bank Name is required"
+    return ""
+}
+
+// -------------------------------------------------IFSC Code-----------------------------------------------------------
+
+export const validIFSCcode = (IFSC_code) => {
+    if (!IFSC_code) return "IFSC Code is required"
     return ""
 }
 
 
-// -----------------------------------------------Change Password validation-------------------------------------------------
 
-// ---------------------------------------------------------current password-----------------------------------------------------------
+// -------------------------------------------------Reset Password-----------------------------------------------------------
+// -------------------------------------------------Email-----------------------------------------------------------
 
-export const validCurrentPassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    if (!password) return "Current password is required."
-    if (!passwordRegex.test(password)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
-    return ""
-};
+export const validResetEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) return "Email is required";
+    if (!emailRegex.test(email)) return ("Enter a valid email address");
+    return "";
+}
+
+// -------------------------------------------------Otp-----------------------------------------------------------
+
+export const validOtp =(otp)=>{
+    if (!otp) return "OTP is required";
+    return "";
+
+}
+
+
 
 // ------------------------------------------------------------new password------------------------------------------------------
 
-export const validNewPassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    if (!password) return "New password is required."
-    if (!passwordRegex.test(password)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
+export const validNewPassword = (newpassword) => {
+    // const passwordRegex = /^(?=.*[A-Za-z])(?=.\d)(?=.[@$!%#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!newpassword) return "New password is required."
+    // if (!passwordRegex.test(newpassword)) return "Password must be at least 8 characters, include one letter, one number, and one special character"
+    
+    if (newpassword.length<8) return "Password must be at least 8 characters"
+
     return ""
 };
+
+
 
 // ------------------------------------------------------confirm password------------------------------------------------------------
 
 export const validConfirmPassword = (newPassword, confirmPassword) => {
   if (!confirmPassword) return "Confirm password is required.";
-  if (newPassword !== confirmPassword) return "Passwords do not match.";
-  return null;
-};
+  if ( newPassword !== confirmPassword) return "Passwords do not match.";
+  return "";
+};    
 
 
+// -------------------------------------------------Forget Password-----------------------------------------------------------
+// -------------------------------------------------Email-----------------------------------------------------------
 
+export const validForgetEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) return "Email is required";
+    if (!emailRegex.test(email)) return ("Enter a valid email address");
+    return "";
+}
