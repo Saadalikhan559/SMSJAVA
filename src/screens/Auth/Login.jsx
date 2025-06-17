@@ -14,7 +14,6 @@ export const Login = () => {
   const { LoginUser, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
   const [loginTriggered, setLoginTriggered] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -37,18 +36,7 @@ export const Login = () => {
     try {
       const isSuccess = await LoginUser(userData);
       if (isSuccess) {
-        // if(userRole == `${constants.roles.director}`){
-        //   navigate(`${allRouterLink.directorDashboard}`)
-        // }
-        // if(userRole == `${constants.roles.officeStaff}`){
-        //   navigate(`${allRouterLink.officeStaffDashboard}`)
-        // }
-        // if(userRole == `${constants.roles.guardian}`){
-        //   navigate(`${allRouterLink.guardianDashboard}`)
-        // }
-        // if(userRole == `${constants.roles.teacher}`){
-        //   navigate(`${allRouterLink.teacherDashboard}`)
-        // }
+
         setLoginTriggered(true); 
       } else {
         setFormError("Invalid email or password");
@@ -59,7 +47,6 @@ export const Login = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
   if (!loginTriggered || !userRole) return;
 

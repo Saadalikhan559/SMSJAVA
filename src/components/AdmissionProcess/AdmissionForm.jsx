@@ -5,17 +5,41 @@ import {
   fetchGuardianType,
   fetchSchoolYear,
   fetchYearLevels,
+  fetchCountry,
+  fetchState,
+  fetchCity,
   handleAdmissionForm,
 } from "../../services/api/Api";
 import { constants } from "../../global/constants";
 import {
-  validStudentFirstName, validStudentLastName, validStudentEmail, validStudentPassword, validDOB, validgender,
-  validGuardianFatherName, validGuardianMotherName, validReligion, validCategory, validGuardianFirstName, validGuardianlastName, validGuardianEmail,
-  validGuardianPassword, ValidGuardianType, validMobileNumber,validadmissiondate, validtc,
-  validEmergencyNumber,  validHabitation, validDistrict, validState, validPinCode, validAccountHolderName,
-  validAccountNumber, validBankName, validIFSCcode
+  validStudentFirstName,
+  validStudentLastName,
+  validStudentEmail,
+  validStudentPassword,
+  validDOB,
+  validgender,
+  validGuardianFatherName,
+  validGuardianMotherName,
+  validReligion,
+  validCategory,
+  validGuardianFirstName,
+  validGuardianlastName,
+  validGuardianEmail,
+  validGuardianPassword,
+  ValidGuardianType,
+  validMobileNumber,
+  validadmissiondate,
+  validtc,
+  validEmergencyNumber,
+  validHabitation,
+  validDistrict,
+  validState,
+  validPinCode,
+  validAccountHolderName,
+  validAccountNumber,
+  validBankName,
+  validIFSCcode,
 } from "../../Validations/Validations";
-
 
 export const AdmissionForm = () => {
   const successModalRef = useRef(null);
@@ -29,6 +53,10 @@ export const AdmissionForm = () => {
   const [loading, setLoading] = useState(false);
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const [showGuardianPassword, setShowGuardianPassword] = useState(true);
+
+  const [country, setCountry] = useState([]);
+  const [state, setState] = useState([]);
+  const [city, setCity] = useState([]);
 
   const {
     register,
@@ -71,15 +99,17 @@ export const AdmissionForm = () => {
         block: "",
         district: "",
         division: "",
+        country: "",
         state: "",
+        city: "",
         pin_code: "",
-        address_line: ""
+        address_line: "",
       },
       banking_detail: {
         account_no: "",
         ifsc_code: "",
-        holder_name: ""
-      }
+        holder_name: "",
+      },
     },
     guardian: {
       first_name: "",
@@ -93,7 +123,7 @@ export const AdmissionForm = () => {
       means_of_livelihood: "",
       qualification: "",
       occupation: "",
-      designation: ""
+      designation: "",
     },
     admission_date: "",
     previous_school_name: "",
@@ -105,7 +135,7 @@ export const AdmissionForm = () => {
     entire_road_distance_from_home_to_school: "",
     obtain_marks: "",
     total_marks: "",
-    previous_percentage: ""
+    previous_percentage: "",
   });
 
   const handleFileChange = (e) => {
@@ -113,7 +143,7 @@ export const AdmissionForm = () => {
     const file = files[0];
 
     if (name === "student_user_profile") {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         student: {
           ...prev.student,
@@ -121,7 +151,7 @@ export const AdmissionForm = () => {
         },
       }));
     } else if (name === "guardian_user_profile") {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         guardian: {
           ...prev.guardian,
@@ -137,37 +167,35 @@ export const AdmissionForm = () => {
     // Handle student address fields
     if (name.startsWith("student_address_")) {
       const fieldName = name.replace("student_address_", "");
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         student: {
           ...prev.student,
           address: {
             ...prev.student.address,
-            [fieldName]: value
-          }
-        }
+            [fieldName]: value,
+          },
+        },
       }));
     }
     // Handle student banking fields
-
     else if (name.startsWith("student_banking_")) {
       const fieldName = name.replace("student_banking_", "");
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         student: {
           ...prev.student,
           banking_detail: {
             ...prev.student.banking_detail,
-            [fieldName]: value
-          }
-        }
+            [fieldName]: value,
+          },
+        },
       }));
     }
     // Handle student fields
-
     else if (name.startsWith("student_")) {
       const fieldName = name.replace("student_", "");
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         student: {
           ...prev.student,
@@ -176,10 +204,9 @@ export const AdmissionForm = () => {
       }));
     }
     // Handle guardian fields
-
     else if (name.startsWith("guardian_")) {
       const fieldName = name.replace("guardian_", "");
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         guardian: {
           ...prev.guardian,
@@ -188,9 +215,8 @@ export const AdmissionForm = () => {
       }));
     }
     // Handle all other top-level fields
-
     else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
@@ -231,10 +257,40 @@ export const AdmissionForm = () => {
     }
   };
 
+  const getCountry = async () => {
+    try {
+      const countryList = await fetchCountry();
+      setCountry(countryList);
+    } catch (err) {
+      console.log("Failed to load countries. Please try again.");
+    }
+  };
+
+  const getState = async () => {
+    try {
+      const stateList = await fetchState();
+      setState(stateList);
+    } catch (err) {
+      console.log("Failed to load states. Please try again.");
+    }
+  };
+
+  const getCity = async () => {
+    try {
+      const cityList = await fetchCity();
+      setCity(cityList);
+    } catch (err) {
+      console.log("Failed to load cities. Please try again.");
+    }
+  };
+
   useEffect(() => {
     getYearLevels();
     getSchoolYears();
     getGuardianType();
+    getCountry();
+    getState();
+    getCity();
   }, []);
 
   const onSubmit = async () => {
@@ -243,59 +299,121 @@ export const AdmissionForm = () => {
     const values = getValues();
     const formDataToSend = new FormData();
 
-    // Merge the form values into formData
-    setFormData(prev => ({
-      ...prev,
-      student: {
-        ...prev.student,
-        first_name: values.student_first_name,
+    // Student fields
+    const studentFields = {
+      first_name: values.student_first_name || "",
+      middle_name: values.student_middle_name || "",
+      last_name: values.student_last_name || "",
+      email: values.student_email || "",
+      password: values.student_password || "",
+      date_of_birth: values.student_date_of_birth || "",
+      gender: values.student_gender || "",
+      father_name: values.student_father_name || "",
+      mother_name: values.student_mother_name || "",
+      religion: values.student_religion || "",
+      category: values.student_category || "",
+      height: values.student_height || "",
+      weight: values.student_weight || "",
+      blood_group: values.student_blood_group || "",
+      number_of_siblings: values.student_number_of_siblings || "",
+      address: {
+        house_number: values.student_address_house_number || "",
+        habitation: values.student_address_habitation || "",
+        ward_no: values.student_address_ward_no || "",
+        zone: values.student_address_zone || "",
+        block: values.student_address_block || "",
+        district: values.student_address_district || "",
+        division: values.student_address_division || "",
+        state: values.student_address_state || "",
+        pin_code: values.student_address_pin_code || "",
+        address_line: values.student_address_address_line || "",
       },
-    }));
-    // Append student fields
+      banking_detail: {
+        account_no: values.student_banking_account_no || "",
+        holder_name: values.student_banking_holder_name || "",
+        ifsc_code: values.student_banking_ifsc_code || "",
+      },
+    };
 
-    Object.entries(formData.student).forEach(([key, value]) => {
-      if (key === 'address' || key === 'banking_detail') {
+    // Append student fields
+    Object.entries(studentFields).forEach(([key, value]) => {
+      if (key === "address" || key === "banking_detail") {
         Object.entries(value).forEach(([subKey, subValue]) => {
-          formDataToSend.append(`student.${key}.${subKey}`, subValue);
+          formDataToSend.append(`student.${key}`, subValue);
         });
-      } else if (key !== 'user_profile') {
+      } else if (key !== "user_profile") {
         formDataToSend.append(`student.${key}`, value);
       }
     });
 
     if (formData.student.user_profile) {
-      formDataToSend.append('student.user_profile', formData.student.user_profile);
+      formDataToSend.append(
+        "student.user_profile",
+        formData.student.user_profile
+      );
     }
-    // Append guardian fields
 
-    Object.entries(formData.guardian).forEach(([key, value]) => {
-      if (key !== 'user_profile') {
+    // Guardian fields
+    const guardianFields = {
+      first_name: values.guardian_first_name || "",
+      middle_name: values.guardian_middle_name || "",
+      last_name: values.guardian_last_name || "",
+      email: values.guardian_email || "",
+      password: values.guardian_password || "",
+      phone_no: values.guardian_phone_no || "",
+      annual_income: values.guardian_annual_income || "",
+      means_of_livelihood: values.guardian_means_of_livelihood || "",
+      qualification: values.guardian_qualification || "",
+      occupation: values.guardian_occupation || "",
+      designation: values || "",
+    };
+
+    // Append guardian fields
+    Object.entries(guardianFields).forEach(([key, value]) => {
+      if (key !== "none") {
         formDataToSend.append(`guardian.${key}`, value);
       }
     });
 
     if (formData.guardian.user_profile) {
-      formDataToSend.append('guardian.user_profile', formData.guardian.user_profile);
+      formDataToSend.append(
+        "guardian.user_profile",
+        formData.guardian.user_profile
+      );
     }
-    // Append other top-level fields
 
-    const topLevelFields = [
-      'admission_date', 'previous_school_name', 'previous_standard_studied',
-      'tc_letter', 'year_level', 'school_year', 'emergency_contact_n0',
-      'entire_road_distance_from_home_to_school', 'obtain_marks',
-      'total_marks', 'previous_percentage'
-    ];
+    // Top-level fields
+    const topLevelFields = {
+      admission_date: values.Admission_date || "",
+      previous_school_name: values.previous_school_name || "",
+      previous_standard_studied: values.previous_standard_studied || "",
+      tc_letter: values.tc_letter || "",
+      year_level: values.year_level || "",
+      school_year: values.school_year || "",
+      emergency_contact_n0: values.emergency_number || "",
+      entire_road_distance_from_home_to_school:
+        values.entire_road_distance_from_home_to_school || "",
+      obtain_marks: values.obtain_marks || "",
+      total_marks: values.total_marks || "",
+      previous_percentage: values.previous_percentage || "",
+    };
 
-    topLevelFields.forEach(field => {
-      formDataToSend.append(field, formData[field]);
+    // Append top-level fields
+    Object.entries(topLevelFields).forEach(([key, value]) => {
+      formDataToSend.append(key, value);
     });
 
-    formDataToSend.append('guardian_type', selectedGuardianType);
+    // Append guardian_type
+    if (selectedGuardianType) {
+      formDataToSend.append("guardian_type", selectedGuardianType);
+    }
 
     try {
       await handleAdmissionForm(formDataToSend);
+      // Show success modal or navigate
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
+      // Show failure modal
     } finally {
       setLoading(false);
     }
@@ -338,7 +456,8 @@ export const AdmissionForm = () => {
               />
               {errors.student_first_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.student_first_name.message || errors.student_first_name}
+                  {errors.student_first_name.message ||
+                    errors.student_first_name}
                 </span>
               )}
             </div>
@@ -358,9 +477,7 @@ export const AdmissionForm = () => {
                 className="input input-bordered w-full focus:outline-none"
                 value={formData.student.middle_name}
                 onChange={handleChange}
-
               />
-
             </div>
             {/* Last Name */}
             <div className="form-control">
@@ -381,7 +498,6 @@ export const AdmissionForm = () => {
                     return msg === "" || msg;
                   },
                 })}
-
               />
               {errors.student_last_name && (
                 <span className="text-red-500 text-sm mt-1">
@@ -391,7 +507,6 @@ export const AdmissionForm = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 ">
-
             {/* Email */}
             <div className="form-control">
               <label className="label">
@@ -430,7 +545,8 @@ export const AdmissionForm = () => {
                   <div className="relative group inline-block">
                     <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
                     <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
-                      Password must be at least 8 characters, include one letter, one number, and one special character
+                      Password must be at least 8 characters, include one
+                      letter, one number, and one special character
                     </div>
                   </div>
                 </div>
@@ -458,13 +574,13 @@ export const AdmissionForm = () => {
                 onClick={handleShowPassword}
               >
                 <i
-                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
             </div>
           </div>
-
 
           {/* Student Profile Photo */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
@@ -513,7 +629,8 @@ export const AdmissionForm = () => {
               />
               {errors.student_date_of_birth && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.student_date_of_birth.message || errors.student_date_of_birth}
+                  {errors.student_date_of_birth.message ||
+                    errors.student_date_of_birth}
                 </span>
               )}
             </div>
@@ -568,12 +685,11 @@ export const AdmissionForm = () => {
                     return msg === "" || msg;
                   },
                 })}
-
-
               />
               {errors.guardian_Father_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_Father_name.message || errors.guardian_Father_name}
+                  {errors.guardian_Father_name.message ||
+                    errors.guardian_Father_name}
                 </span>
               )}
             </div>
@@ -599,7 +715,8 @@ export const AdmissionForm = () => {
               />
               {errors.guardian_mother_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_mother_name.message || errors.guardian_mother_name}
+                  {errors.guardian_mother_name.message ||
+                    errors.guardian_mother_name}
                 </span>
               )}
             </div>
@@ -642,9 +759,9 @@ export const AdmissionForm = () => {
               <select
                 name="student_category"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                 {...register("Category", {
+                {...register("Category", {
                   validate: (value) => {
-                    const msg =  validCategory(value);
+                    const msg = validCategory(value);
                     return msg === "" || msg;
                   },
                 })}
@@ -655,13 +772,11 @@ export const AdmissionForm = () => {
                 <option value="SC">SC</option>
                 <option value="ST">ST</option>
               </select>
-               {errors.Category && (
+              {errors.Category && (
                 <span className="text-red-500 text-sm mt-1">
                   {errors.Category.message || errors.Category}
                 </span>
               )}
-
-
             </div>
             {/* Height */}
             <div className="form-control">
@@ -743,8 +858,6 @@ export const AdmissionForm = () => {
                 min={0}
               />
             </div>
-
-
           </div>
         </div>
         {/* Guardian Information Section */}
@@ -784,7 +897,8 @@ export const AdmissionForm = () => {
               />
               {errors.guardian_First_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_First_name.message || errors.guardian_First_name}
+                  {errors.guardian_First_name.message ||
+                    errors.guardian_First_name}
                 </span>
               )}
             </div>
@@ -827,7 +941,8 @@ export const AdmissionForm = () => {
               />
               {errors.guardian_last_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_last_name.message || errors.guardian_last_name}
+                  {errors.guardian_last_name.message ||
+                    errors.guardian_last_name}
                 </span>
               )}
             </div>
@@ -871,7 +986,8 @@ export const AdmissionForm = () => {
                   <div className="relative group inline-block">
                     <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
                     <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
-                      Password must be at least 8 characters, include one letter, one number, and one special character
+                      Password must be at least 8 characters, include one
+                      letter, one number, and one special character
                     </div>
                   </div>
                 </div>
@@ -899,8 +1015,9 @@ export const AdmissionForm = () => {
                 onClick={handleShowGuardianPassword}
               >
                 <i
-                  className={`fa-solid ${showGuardianPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${
+                    showGuardianPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
             </div>
@@ -921,8 +1038,6 @@ export const AdmissionForm = () => {
                   },
                 })}
               >
-              
-              
                 <option value="">Select Guardian Type</option>
                 {guardianTypes.map((guardianTy) => (
                   <option value={guardianTy.id} key={guardianTy.id}>
@@ -935,8 +1050,6 @@ export const AdmissionForm = () => {
                   {errors.GuardianType.message || errors.GuardianType}
                 </span>
               )}
-              
-
             </div>
             {/* Phone Number */}
             <div className="form-control">
@@ -965,7 +1078,6 @@ export const AdmissionForm = () => {
               )}
             </div>
           </div>
-
 
           {/* Guardian Profile Photo */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
@@ -1020,13 +1132,11 @@ export const AdmissionForm = () => {
               <select
                 name="guardian_means_of_livelihood"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-
               >
                 <option value="">Select</option>
                 <option value="Govt">Government</option>
                 <option value="Non-Govt">Non-Government</option>
               </select>
-
             </div>
             {/* Qualification */}
             <div className="form-control">
@@ -1110,7 +1220,6 @@ export const AdmissionForm = () => {
                   </option>
                 ))}
               </select>
-
             </div>
             {/* School Year */}
             <div className="form-control">
@@ -1133,7 +1242,6 @@ export const AdmissionForm = () => {
                   </option>
                 ))}
               </select>
-
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -1349,12 +1457,7 @@ export const AdmissionForm = () => {
                 className="input input-bordered w-full focus:outline-none"
                 value={formData.student.address.house_number}
                 onChange={handleChange}
-
-
-
               />
-
-
             </div>
             {/* Habitation */}
             <div className="form-control">
@@ -1398,7 +1501,6 @@ export const AdmissionForm = () => {
                 value={formData.student.address.ward_no}
                 onChange={handleChange}
               />
-
             </div>
             {/* Zone */}
             <div className="form-control">
@@ -1416,7 +1518,6 @@ export const AdmissionForm = () => {
                 value={formData.student.address.zone}
                 onChange={handleChange}
               />
-
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -1436,31 +1537,33 @@ export const AdmissionForm = () => {
                 value={formData.student.address.block}
                 onChange={handleChange}
               />
-
             </div>
-            {/* District */}
+            {/* City */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-city text-sm"></i>
-                  District <span className="text-error">*</span>
+                  City <span className="text-error">*</span>
                 </span>
               </label>
-              <input
-                type="text"
-                name="student_address_district"
-                placeholder="District"
+              <select
+                name="student_address_city"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("District", {
-                  validate: (value) => {
-                    const msg = validDistrict(value);
-                    return msg === "" || msg;
-                  },
+                {...register("City", {
+                  required: "City is required",
                 })}
-              />
-              {errors.District && (
+                onChange={handleChange}
+              >
+                <option value="">Select City</option>
+                {city.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+              {errors.City && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.District.message || errors.District}
+                  {errors.City.message}
                 </span>
               )}
             </div>
@@ -1480,7 +1583,6 @@ export const AdmissionForm = () => {
                 value={formData.student.address.division}
                 onChange={handleChange}
               />
-
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -1492,24 +1594,58 @@ export const AdmissionForm = () => {
                   State <span className="text-error">*</span>
                 </span>
               </label>
-              <input
-                type="text"
+              <select
                 name="student_address_state"
-                placeholder="State"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("State", {
-                  validate: (value) => {
-                    const msg = validState(value);
-                    return msg === "" || msg;
-                  },
+                  required: "State is required",
                 })}
-              />
+                onChange={handleChange}
+              >
+                <option value="">Select State</option>
+                {state.map((state) => (
+                  <option key={state.id} value={state.id}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
               {errors.State && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.State.message || errors.State}
+                  {errors.State.message}
                 </span>
               )}
             </div>
+            {/* Country */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-globe text-sm"></i>
+                  Country <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                name="student_address_country"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("Country", {
+                  required: "Country is required",
+                })}
+                onChange={handleChange}
+              >
+                <option value="">Select Country</option>
+                {country.map((country) => (
+                  <option key={country.id} value={country.id}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+              {errors.Country && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.Country.message}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Pin Code */}
             <div className="form-control">
               <label className="label">
@@ -1538,7 +1674,6 @@ export const AdmissionForm = () => {
               )}
             </div>
           </div>
-
           {/* Address Line */}
           <div className="grid grid-cols-1 mt-6">
             <div className="form-control">
@@ -1584,7 +1719,8 @@ export const AdmissionForm = () => {
               />
               {errors.Account_Holder_Name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Account_Holder_Name.message || errors.Account_Holder_Name}
+                  {errors.Account_Holder_Name.message ||
+                    errors.Account_Holder_Name}
                 </span>
               )}
             </div>
@@ -1670,7 +1806,6 @@ export const AdmissionForm = () => {
             </div>
           </div>
         </div>
-
 
         {/* Submit Button */}
         <div className="flex justify-center mt-10">

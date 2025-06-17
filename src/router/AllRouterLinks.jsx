@@ -20,6 +20,7 @@ export const allRouterLink = {
     teacherDashboard: '/teacherDashboard',
     guardianDashboard: '/guardianDashboard',
     directorDashboard: '/directorDashboard',
+    feeSummary: '/feeSummary',
     officeStaffDashboard: '/officeStaffDashboard',
     unAuthorized: '/unauthorized',
     notFound: "*"

@@ -20,7 +20,7 @@ const DirectorProfile = () => {
   const [profileData, setProfileData] = useState(null);
 
   const BASE_URL = constants.baseUrl;
-  const directorId = 5; // Assuming director ID is 5 as per your API endpoint
+  const directorId = 1; // Assuming director ID is 5 as per your API endpoint
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 

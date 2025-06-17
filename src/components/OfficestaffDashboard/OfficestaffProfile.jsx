@@ -38,7 +38,7 @@ function OfficestaffProfile() {
       try {
         setLoading(true);
         // Fetch office staff data
-        const response = await axios.get(`${BASE_URL}/d/officestaff/5/`);
+        const response = await axios.get(`${BASE_URL}/d/officestaff/1/`);
         console.log("API Response:", response.data);
         setProfileData(response.data);
         
@@ -85,7 +85,7 @@ function OfficestaffProfile() {
       }
 
       const response = await axios.put(
-        `${BASE_URL}/d/officestaff/5/`,
+        `${BASE_URL}/d/officestaff/1/`,
         formData,
         {
           headers: {
