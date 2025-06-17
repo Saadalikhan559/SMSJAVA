@@ -147,7 +147,15 @@ export const fetchAllTeacherAssignments = async () => {
   }
 };
 
-
+export const fetchAllTeacherClasses = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/teacher-classes/1/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch all teacher classes:", err);
+    throw err;
+  }
+};
 
 // POST APIS
 
@@ -162,8 +170,7 @@ export const handleAdmissionForm = async (formData) => {
       alert("successfully submitted the form");
     }
 
-          return response.data;
-
+    return response.data;
   } catch (err) {
     console.error("Failed:", err);
     throw err;

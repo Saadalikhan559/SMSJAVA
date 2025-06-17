@@ -1,15 +1,20 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 import { allRouterLink } from "../../router/AllRouterLinks";
-import { validloginemail, validloginpassword } from "../../Validations/Validations";
+import {
+  validloginemail,
+  validloginpassword,
+} from "../../Validations/Validations";
 
 export const Login = () => {
-  const { LoginUser } = useContext(AuthContext);
+  const { LoginUser, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [loginTriggered, setLoginTriggered] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +37,19 @@ export const Login = () => {
     try {
       const isSuccess = await LoginUser(userData);
       if (isSuccess) {
-        navigate("/");
+        // if(userRole == `${constants.roles.director}`){
+        //   navigate(`${allRouterLink.directorDashboard}`)
+        // }
+        // if(userRole == `${constants.roles.officeStaff}`){
+        //   navigate(`${allRouterLink.officeStaffDashboard}`)
+        // }
+        // if(userRole == `${constants.roles.guardian}`){
+        //   navigate(`${allRouterLink.guardianDashboard}`)
+        // }
+        // if(userRole == `${constants.roles.teacher}`){
+        //   navigate(`${allRouterLink.teacherDashboard}`)
+        // }
+        setLoginTriggered(true); 
       } else {
         setFormError("Invalid email or password");
       }
@@ -42,6 +59,23 @@ export const Login = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+  if (!loginTriggered || !userRole) return;
+
+  if (userRole === constants.roles.director) {
+    navigate(allRouterLink.directorDashboard);
+  } else if (userRole === constants.roles.officeStaff) {
+    navigate(allRouterLink.officeStaffDashboard);
+  } else if (userRole === constants.roles.guardian) {
+    navigate(allRouterLink.guardianDashboard);
+  } else if (userRole === constants.roles.teacher) {
+    navigate(allRouterLink.teacherDashboard);
+  }
+
+  // Reset loginTriggered after navigation
+  setLoginTriggered(false);
+}, [userRole, loginTriggered]);
 
   return (
     <>
@@ -55,7 +89,10 @@ export const Login = () => {
           />
         </div>
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
-          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="w-full max-w-md space-y-4"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
             {formError && (
@@ -108,7 +145,11 @@ export const Login = () => {
                 className="passwordEyes text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                <i className={`fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+                <i
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye" : "fa-eye-slash"
+                  }`}
+                ></i>
               </button>
               {errors.password && (
                 <span className="text-red-500 text-sm mt-1">
@@ -125,7 +166,7 @@ export const Login = () => {
                 ) : (
                   <i className="fa-solid fa-right-to-bracket mr-2"></i>
                 )}
-                {loading ? "Processing..." : "Login"}
+                {loading ? "" : "Login"}
               </button>
             </div>
 

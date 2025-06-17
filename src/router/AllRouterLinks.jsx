@@ -11,6 +11,7 @@ export const allRouterLink = {
     subjectAssignment: "/subjectAssignment",
     allTeacherAssignment: "/allTeacherAssignment",
     attendance: "/attendance",
+    classStudents: "/classStudents/:classLevel",
     directorProfile: '/directorProfile',
     officeStaffProfile: '/officeStaffProfile',
     guardianProfile: '/guardianProfile',

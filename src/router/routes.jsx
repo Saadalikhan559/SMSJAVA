@@ -1,5 +1,6 @@
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
 import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
 import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
@@ -102,6 +103,12 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.teacher],
   },
+  {
+    path: allRouterLink.classStudents,
+    element: <ClassStudent />,
+    protected: true,
+    allowedRoles: [constants.roles.teacher],
+  },
   // PROFILES
   {
     path: allRouterLink.directorProfile,
@@ -137,14 +144,14 @@ export const routes = [
   {
     path: allRouterLink.teacherDashboard,
     element: <TeacherDashboard />,
-    // protected: true,
-    // allowedRoles: [constants.roles.teacher],
+    protected: true,
+    allowedRoles: [constants.roles.teacher],
   },
   {
     path: allRouterLink.guardianDashboard,
     element: <GuardianDashboard />,
-    // protected: true,
-    // allowedRoles: [constants.roles.guardian, constants.roles.student],
+    protected: true,
+    allowedRoles: [constants.roles.guardian, constants.roles.student],
   },
   {
     path: allRouterLink.officeStaffDashboard,
