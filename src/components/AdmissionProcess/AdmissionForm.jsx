@@ -11,7 +11,7 @@ import { constants } from "../../global/constants";
 import {
   validStudentFirstName, validStudentLastName, validStudentEmail, validStudentPassword, validDOB, validgender,
   validGuardianFatherName, validGuardianMotherName, validReligion, validCategory, validGuardianFirstName, validGuardianlastName, validGuardianEmail,
-  validGuardianPassword, ValidGuardianType, validMobileNumber, validAdmissiondate, validtc,
+  validGuardianPassword, ValidGuardianType, validMobileNumber,validadmissiondate, validtc,
   validEmergencyNumber,  validHabitation, validDistrict, validState, validPinCode, validAccountHolderName,
   validAccountNumber, validBankName, validIFSCcode
 } from "../../Validations/Validations";
@@ -204,7 +204,6 @@ export const AdmissionForm = () => {
   // API fetch functions remain the same
   // ...
 
-
   const getYearLevels = async () => {
     try {
       const yearLevels = await fetchYearLevels();
@@ -237,8 +236,8 @@ export const AdmissionForm = () => {
     getSchoolYears();
     getGuardianType();
   }, []);
-  const onSubmit = async () => {
 
+  const onSubmit = async () => {
     setLoading(true);
 
     const values = getValues();
@@ -295,7 +294,6 @@ export const AdmissionForm = () => {
 
     try {
       await handleAdmissionForm(formDataToSend);
-
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
     } finally {
@@ -1022,10 +1020,6 @@ export const AdmissionForm = () => {
               <select
                 name="guardian_means_of_livelihood"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                required
-                value={formData.guardian.means_of_livelihood}
-                onChange={handleChange}
-
 
               >
                 <option value="">Select</option>
@@ -1194,7 +1188,7 @@ export const AdmissionForm = () => {
                 className="input input-bordered w-full focus:outline-none scroll-smooth"
                 {...register("Admission_date", {
                   validate: (value) => {
-                    const msg = validAdmissiondate(value);
+                    const msg = validadmissiondate(value);
                     return msg === "" || msg;
                   },
                 })}
