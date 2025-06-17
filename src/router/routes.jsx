@@ -1,5 +1,6 @@
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
 import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
 import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
@@ -166,6 +167,11 @@ export const routes = [
   {
     path: allRouterLink.notFound,
     element: <NotFound />,
+    protected: false,
+  },
+  {
+    path: allRouterLink.feeSummary,
+    element: <FeeSummaryTable />,
     protected: false,
   },
 ];
