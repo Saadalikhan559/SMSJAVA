@@ -10,7 +10,7 @@ import {
   validlastname,
   validregisteremail,
   validregisterpassword,
-  validregisterrole,
+  // validregisterrole,
 } from "../../Validations/Validations";
 
 export const Register = () => {
