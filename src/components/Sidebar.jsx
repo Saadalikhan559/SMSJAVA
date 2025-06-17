@@ -89,7 +89,18 @@ export const Sidebar = () => {
                   handleNavigation(e, allRouterLink.admissionFees)
                 }
               >
-                <i className="fa-solid fa-money-bill-wave mr-2"></i> Fees Portal
+                <i className="fa-solid fa-money-bill-wave mr-2"></i> Fee Submission
+              </Link>
+            </li>
+          )}
+          {isAuthenticated && (
+            <li>
+              <Link
+                onClick={(e) =>
+                  handleNavigation(e, allRouterLink.feeSummary)
+                }
+              >
+                <i className="fa-solid fa-envelope mr-2"></i>    Fee Record
               </Link>
             </li>
           )}
