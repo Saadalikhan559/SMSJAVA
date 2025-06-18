@@ -169,3 +169,26 @@ export const handleAdmissionForm = async (formData) => {
     throw err;
   }
 };
+
+export const fetchStudents1 = async () => {
+  const BASE_URL1 = constants.baseUrl1;
+  try {
+    const response = await axios.get(`${BASE_URL1}/s/students/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+export const fetchyearLevelData = async () => {
+  const BASE_URL1 = constants.baseUrl1;
+  try {
+    const response = await axios.get(`${BASE_URL1}/d/year-level-fee/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
+

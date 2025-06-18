@@ -18,8 +18,6 @@ export const AuthProvider = ({ children }) => {
   );
 
   const [loading, setLoading] = useState(true);
-  const [students, setStudents] = useState([]);
-  const [yearLevelData, setyearLevelData] = useState([]);
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
@@ -160,33 +158,6 @@ export const AuthProvider = ({ children }) => {
     verifyAuth();
   }, [authTokens]);
 
-  useEffect(() => {
-    const BASE_URL1 = constants.baseUrl1;
-    const fetchStudents = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL1}/s/students/`);
-        setStudents(response.data);
-      } catch {
-        console.error("Error fetching students:");
-      }
-    };
-
-    fetchStudents();
-  }, []);
-
-  useEffect(() => {
-    const BASE_URL1 = constants.baseUrl1;
-    const fetchyearLevelData = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL1}/d/year-level-fee/`);
-        setyearLevelData(response.data);
-      } catch {
-        console.error("Error fetching students:");
-      }
-    };
-
-    fetchyearLevelData();
-  }, []);
 
 
   const contextValue = useMemo(
@@ -199,12 +170,10 @@ export const AuthProvider = ({ children }) => {
       LoginUser,
       LogoutUser,
       RegisterUser,
-      students,
-      yearLevelData,
       ResetPassword,
       ChangePassword,
     }),
-    [authTokens, userRole, loading, axiosInstance , students , yearLevelData]
+    [authTokens, userRole, loading, axiosInstance ]
   );
 
   return (
