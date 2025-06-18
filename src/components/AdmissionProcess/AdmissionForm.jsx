@@ -5,17 +5,41 @@ import {
   fetchGuardianType,
   fetchSchoolYear,
   fetchYearLevels,
+  fetchCountry,
+  fetchState,
+  fetchCity,
   handleAdmissionForm,
 } from "../../services/api/Api";
 import { constants } from "../../global/constants";
 import {
-  validStudentFirstName, validStudentLastName, validStudentEmail, validStudentPassword, validDOB, validgender,
-  validGuardianFatherName, validGuardianMotherName, validReligion, validCategory, validGuardianFirstName, validGuardianlastName, validGuardianEmail,
-  validGuardianPassword, ValidGuardianType, validMobileNumber,validadmissiondate, validtc,
-  validEmergencyNumber,  validHabitation, validDistrict, validState, validPinCode, validAccountHolderName,
-  validAccountNumber, validBankName, validIFSCcode
+  validStudentFirstName,
+  validStudentLastName,
+  validStudentEmail,
+  validStudentPassword,
+  validDOB,
+  validgender,
+  validGuardianFatherName,
+  validGuardianMotherName,
+  validReligion,
+  validCategory,
+  validGuardianFirstName,
+  validGuardianlastName,
+  validGuardianEmail,
+  validGuardianPassword,
+  ValidGuardianType,
+  validMobileNumber,
+  validadmissiondate,
+  validtc,
+  validEmergencyNumber,
+  validHabitation,
+  validDistrict,
+  validState,
+  validPinCode,
+  validAccountHolderName,
+  validAccountNumber,
+  validBankName,
+  validIFSCcode,
 } from "../../Validations/Validations";
-
 
 export const AdmissionForm = () => {
   const successModalRef = useRef(null);
@@ -29,13 +53,15 @@ export const AdmissionForm = () => {
   const [loading, setLoading] = useState(false);
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const [showGuardianPassword, setShowGuardianPassword] = useState(true);
+  const [country, setCountry] = useState([]);
+  const [state, setState] = useState([]);
+  const [city, setCity] = useState([]);
 
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -45,164 +71,9 @@ export const AdmissionForm = () => {
     setShowGuardianPassword(!showGuardianPassword);
   };
 
-  const [formData, setFormData] = useState({
-    student: {
-      first_name: "",
-      middle_name: "",
-      last_name: "",
-      email: "",
-      user_profile: null,
-      password: "",
-      date_of_birth: "",
-      gender: "",
-      father_name: "",
-      mother_name: "",
-      religion: "",
-      category: "",
-      height: "",
-      weight: "",
-      blood_group: "",
-      number_of_siblings: "",
-      address: {
-        house_number: "",
-        habitation: "",
-        ward_no: "",
-        zone: "",
-        block: "",
-        district: "",
-        division: "",
-        state: "",
-        pin_code: "",
-        address_line: ""
-      },
-      banking_detail: {
-        account_no: "",
-        ifsc_code: "",
-        holder_name: ""
-      }
-    },
-    guardian: {
-      first_name: "",
-      middle_name: "",
-      last_name: "",
-      email: "",
-      user_profile: null,
-      password: "",
-      phone_no: "",
-      annual_income: "",
-      means_of_livelihood: "",
-      qualification: "",
-      occupation: "",
-      designation: ""
-    },
-    admission_date: "",
-    previous_school_name: "",
-    previous_standard_studied: "",
-    tc_letter: "",
-    year_level: "",
-    school_year: "",
-    emergency_contact_n0: "",
-    entire_road_distance_from_home_to_school: "",
-    obtain_marks: "",
-    total_marks: "",
-    previous_percentage: ""
-  });
-
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    const file = files[0];
-
-    if (name === "student_user_profile") {
-      setFormData(prev => ({
-        ...prev,
-        student: {
-          ...prev.student,
-          user_profile: file,
-        },
-      }));
-    } else if (name === "guardian_user_profile") {
-      setFormData(prev => ({
-        ...prev,
-        guardian: {
-          ...prev.guardian,
-          user_profile: file,
-        },
-      }));
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // Handle student address fields
-    if (name.startsWith("student_address_")) {
-      const fieldName = name.replace("student_address_", "");
-      setFormData(prev => ({
-        ...prev,
-        student: {
-          ...prev.student,
-          address: {
-            ...prev.student.address,
-            [fieldName]: value
-          }
-        }
-      }));
-    }
-    // Handle student banking fields
-
-    else if (name.startsWith("student_banking_")) {
-      const fieldName = name.replace("student_banking_", "");
-      setFormData(prev => ({
-        ...prev,
-        student: {
-          ...prev.student,
-          banking_detail: {
-            ...prev.student.banking_detail,
-            [fieldName]: value
-          }
-        }
-      }));
-    }
-    // Handle student fields
-
-    else if (name.startsWith("student_")) {
-      const fieldName = name.replace("student_", "");
-      setFormData(prev => ({
-        ...prev,
-        student: {
-          ...prev.student,
-          [fieldName]: value,
-        },
-      }));
-    }
-    // Handle guardian fields
-
-    else if (name.startsWith("guardian_")) {
-      const fieldName = name.replace("guardian_", "");
-      setFormData(prev => ({
-        ...prev,
-        guardian: {
-          ...prev.guardian,
-          [fieldName]: value,
-        },
-      }));
-    }
-    // Handle all other top-level fields
-
-    else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
   const handleGuardianTypeChange = (e) => {
     setSelectedGuardianType(e.target.value);
   };
-
-  // API fetch functions remain the same
-  // ...
 
   const getYearLevels = async () => {
     try {
@@ -231,75 +102,151 @@ export const AdmissionForm = () => {
     }
   };
 
+  const getCountry = async () => {
+    try {
+      const countryList = await fetchCountry();
+      setCountry(countryList);
+    } catch (err) {
+      console.log("Failed to load countries. Please try again.");
+    }
+  };
+
+  const getState = async () => {
+    try {
+      const stateList = await fetchState();
+      setState(stateList);
+    } catch (err) {
+      console.log("Failed to load states. Please try again.");
+    }
+  };
+
+  const getCity = async () => {
+    try {
+      const cityList = await fetchCity();
+      setCity(cityList);
+    } catch (err) {
+      console.log("Failed to load cities. Please try again.");
+    }
+  };
+
   useEffect(() => {
     getYearLevels();
     getSchoolYears();
     getGuardianType();
+    getCountry();
+    getState();
+    getCity();
   }, []);
 
-  const onSubmit = async () => {
-    setLoading(true);
-
-    const values = getValues();
-    const formDataToSend = new FormData();
-
-    // Merge the form values into formData
-    setFormData(prev => ({
-      ...prev,
-      student: {
-        ...prev.student,
-        first_name: values.student_first_name,
+const onSubmit = async (data) => {
+  setLoading(true);
+  // Construct the data object to match backend expectations
+  const formData = {
+    student: {
+      first_name: data.student_first_name,
+      middle_name: data.student_middle_name,
+      last_name: data.student_last_name,
+      email: data.student_email,
+      password: data.student_password,
+      date_of_birth: data.student_date_of_birth,
+      gender: data.student_gender,
+      father_name: data.student_father_name,
+      mother_name: data.student_mother_name,
+      religion: data.student_religion,
+      category: data.student_category,
+      height: data.student_height,
+      weight: data.student_weight,
+      blood_group: data.student_blood_group,
+      number_of_siblings: data.student_number_of_siblings,
+      address: {
+        house_no: data.student_address_house_number,
+        habitation: data.student_address_habitation,
+        word_no: data.student_address_ward_no,
+        zone_no: data.student_address_zone,
+        block: data.student_address_block,
+        district: data.student_address_district,
+        division: data.student_address_division,
+        state: data.student_address_state,
+        city: data.student_address_city,
+        country: data.student_address_country,
+        area_code: data.student_address_pin_code,
+        address_line: data.student_address_address_line
       },
-    }));
-    // Append student fields
-
-    Object.entries(formData.student).forEach(([key, value]) => {
-      if (key === 'address' || key === 'banking_detail') {
-        Object.entries(value).forEach(([subKey, subValue]) => {
-          formDataToSend.append(`student.${key}.${subKey}`, subValue);
-        });
-      } else if (key !== 'user_profile') {
-        formDataToSend.append(`student.${key}`, value);
-      }
-    });
-
-    if (formData.student.user_profile) {
-      formDataToSend.append('student.user_profile', formData.student.user_profile);
-    }
-    // Append guardian fields
-
-    Object.entries(formData.guardian).forEach(([key, value]) => {
-      if (key !== 'user_profile') {
-        formDataToSend.append(`guardian.${key}`, value);
-      }
-    });
-
-    if (formData.guardian.user_profile) {
-      formDataToSend.append('guardian.user_profile', formData.guardian.user_profile);
-    }
-    // Append other top-level fields
-
-    const topLevelFields = [
-      'admission_date', 'previous_school_name', 'previous_standard_studied',
-      'tc_letter', 'year_level', 'school_year', 'emergency_contact_n0',
-      'entire_road_distance_from_home_to_school', 'obtain_marks',
-      'total_marks', 'previous_percentage'
-    ];
-
-    topLevelFields.forEach(field => {
-      formDataToSend.append(field, formData[field]);
-    });
-
-    formDataToSend.append('guardian_type', selectedGuardianType);
-
-    try {
-      await handleAdmissionForm(formDataToSend);
-    } catch (error) {
-      console.error("Submission error:", error.response?.data || error.message);
-    } finally {
-      setLoading(false);
-    }
+      banking_detail: {
+        account_no: data.student_banking_account_no,
+        ifsc_code: data.student_banking_ifsc_code,
+        holder_name: data.student_banking_holder_name
+      },
+      user_profile: data.student_user_profile?.[0] || null
+    },
+    guardian: {
+      first_name: data.guardian_first_name,
+      middle_name: data.guardian_middle_name,
+      last_name: data.guardian_last_name,
+      email: data.guardian_email,
+      password: data.guardian_password,
+      phone_no: data.guardian_phone_no,
+      annual_income: data.guardian_annual_income,
+      means_of_livelihood: data.guardian_means_of_livelihood,
+      qualification: data.guardian_qualification,
+      occupation: data.guardian_occupation,
+      designation: data.guardian_designation,
+      user_profile: data.guardian_user_profile?.[0] || null
+    },
+    guardian_type: selectedGuardianType,
+    previous_school_name: data.previous_school_name,
+    previous_standard_studied: data.previous_standard_studied,
+    tc_letter: data.tc_letter,
+    year_level: data.year_level,
+    school_year: data.school_year,
+    emergency_contact_n0: data.emergency_contact_n0,
+    entire_road_distance_from_home_to_school: data.entire_road_distance_from_home_to_school,
+    obtain_marks: data.obtain_marks,
+    total_marks: data.total_marks,
+    previous_percentage: data.previous_percentage
   };
+
+  const formDataToSend = new FormData();
+
+  for (const key in formData) {
+    if (key == 'student' || key == 'guardian') {
+      for (const subKey in formData[key]) {
+        if (subKey === 'address' || subKey === 'banking_detail') {
+          for (const nestedKey in formData[key][subKey]) {
+            const value = formData[key][subKey][nestedKey];
+            if (value !== null && value !== undefined) {
+              formDataToSend.append(`${key}[${subKey}][${nestedKey}]`, value);
+            }
+          }
+        } else if (subKey === 'user_profile' && formData[key][subKey]) {
+          formDataToSend.append(`${key}[${subKey}]`, formData[key][subKey]);
+        } else {
+          const value = formData[key][subKey];
+          if (value !== null && value !== undefined) {
+            formDataToSend.append(`${key}[${subKey}]`, value);
+          }
+        }
+      }
+    } else {
+      const value = formData[key];
+      if (value !== null && value !== undefined) {
+        formDataToSend.append(key, value);
+      }
+    }
+  }
+
+  try {
+    await handleAdmissionForm(formDataToSend);
+    alert('successfully submitted the form');
+  } catch (error) {
+    console.error("Submission error:", error.response?.data || error.message);
+  } finally {
+    setLoading(false);
+  }
+
+  console.log("Submitting:", formData); // Debug: Check constructed object
+};
+
 
   return (
     <>
@@ -330,15 +277,13 @@ export const AdmissionForm = () => {
                 placeholder="First Name"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("student_first_name", {
-                  validate: (value) => {
-                    const msg = validStudentFirstName(value);
-                    return msg === "" || msg;
-                  },
+                  required: "First Name is required",
+                  validate: (value) => validStudentFirstName(value) || true,
                 })}
               />
               {errors.student_first_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.student_first_name.message || errors.student_first_name}
+                  {errors.student_first_name.message}
                 </span>
               )}
             </div>
@@ -356,12 +301,10 @@ export const AdmissionForm = () => {
                 name="student_middle_name"
                 placeholder="Middle Name"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.middle_name}
-                onChange={handleChange}
-
+                {...register("student_middle_name")}
               />
-
             </div>
+
             {/* Last Name */}
             <div className="form-control">
               <label className="label">
@@ -376,22 +319,19 @@ export const AdmissionForm = () => {
                 placeholder="Last Name"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("student_last_name", {
-                  validate: (value) => {
-                    const msg = validStudentLastName(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Last Name is required",
+                  validate: (value) => validStudentLastName(value) || true,
                 })}
-
               />
               {errors.student_last_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.student_last_name.message || errors.student_last_name}
+                  {errors.student_last_name.message}
                 </span>
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 ">
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Email */}
             <div className="form-control">
               <label className="label">
@@ -406,15 +346,13 @@ export const AdmissionForm = () => {
                 placeholder="student@example.com"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("student_email", {
-                  validate: (value) => {
-                    const msg = validStudentEmail(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Email is required",
+                  validate: (value) => validStudentEmail(value) || true,
                 })}
               />
               {errors.student_email && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.student_email.message || errors.student_email}
+                  {errors.student_email.message}
                 </span>
               )}
             </div>
@@ -430,7 +368,8 @@ export const AdmissionForm = () => {
                   <div className="relative group inline-block">
                     <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
                     <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
-                      Password must be at least 8 characters, include one letter, one number, and one special character
+                      Password must be at least 8 characters, include one
+                      letter, one number, and one special character
                     </div>
                   </div>
                 </div>
@@ -441,30 +380,28 @@ export const AdmissionForm = () => {
                 placeholder="Password"
                 className="input input-bordered w-full pr-10 focus:outline-none"
                 {...register("student_password", {
-                  validate: (value) => {
-                    const msg = validStudentPassword(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Password is required",
+                  validate: (value) => validStudentPassword(value) || true,
                 })}
               />
-              {errors.student_password && (
-                <span className="text-red-500 text-sm mt-1">
-                  {errors.student_password.message || errors.student_password}
-                </span>
-              )}
               <button
                 type="button"
                 className="passwordEyes text-gray-500"
                 onClick={handleShowPassword}
               >
                 <i
-                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
+              {errors.student_password && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.student_password.message}
+                </span>
+              )}
             </div>
           </div>
-
 
           {/* Student Profile Photo */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
@@ -472,7 +409,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-camera text-sm"></i>
-                  Student Profile Photo <span className="text-error"></span>
+                  Student Profile Photo
                 </span>
               </label>
               <input
@@ -480,13 +417,12 @@ export const AdmissionForm = () => {
                 name="student_user_profile"
                 accept="image/*"
                 className="file-input file-input-bordered w-full focus:outline-none"
-                onChange={handleFileChange}
+                {...register("student_user_profile")}
               />
-
-              {formData.student.user_profile && (
-                <div className="mt-2 text-sm">
-                  Selected: {formData.student.user_profile.name}
-                </div>
+              {errors.student_user_profile && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.student_user_profile.message}
+                </span>
               )}
             </div>
           </div>
@@ -503,17 +439,15 @@ export const AdmissionForm = () => {
               <input
                 type="date"
                 name="student_date_of_birth"
-                className="input input-bordered w-full focus:outline-none scroll-smooth "
+                className="input input-bordered w-full focus:outline-none"
                 {...register("student_date_of_birth", {
-                  validate: (value) => {
-                    const msg = validDOB(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Date of Birth is required",
+                  validate: (value) => validDOB(value) || true,
                 })}
               />
               {errors.student_date_of_birth && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.student_date_of_birth.message || errors.student_date_of_birth}
+                  {errors.student_date_of_birth.message}
                 </span>
               )}
             </div>
@@ -529,11 +463,9 @@ export const AdmissionForm = () => {
               <select
                 name="student_gender"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                {...register("gender", {
-                  validate: (value) => {
-                    const msg = validgender(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_gender", {
+                  required: "Gender is required",
+                  validate: (value) => validgender(value) || true,
                 })}
               >
                 <option value="">Select Gender</option>
@@ -541,13 +473,14 @@ export const AdmissionForm = () => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-              {errors.gender && (
+              {errors.student_gender && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.gender.message || errors.gender}
+                  {errors.student_gender.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {/* Father's Name */}
             <div className="form-control">
@@ -562,21 +495,18 @@ export const AdmissionForm = () => {
                 name="student_father_name"
                 placeholder="Father's Name"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("guardian_Father_name", {
-                  validate: (value) => {
-                    const msg = validGuardianFatherName(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_father_name", {
+                  required: "Father's Name is required",
+                  validate: (value) => validGuardianFatherName(value) || true,
                 })}
-
-
               />
-              {errors.guardian_Father_name && (
+              {errors.student_father_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_Father_name.message || errors.guardian_Father_name}
+                  {errors.student_father_name.message}
                 </span>
               )}
             </div>
+
             {/* Mother's Name */}
             <div className="form-control">
               <label className="label">
@@ -590,19 +520,18 @@ export const AdmissionForm = () => {
                 name="student_mother_name"
                 placeholder="Mother's Name"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("guardian_mother_name", {
-                  validate: (value) => {
-                    const msg = validGuardianMotherName(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_mother_name", {
+                  required: "Mother's Name is required",
+                  validate: (value) => validGuardianMotherName(value) || true,
                 })}
               />
-              {errors.guardian_mother_name && (
+              {errors.student_mother_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_mother_name.message || errors.guardian_mother_name}
+                  {errors.student_mother_name.message}
                 </span>
               )}
             </div>
+
             {/* Religion */}
             <div className="form-control">
               <label className="label">
@@ -616,20 +545,19 @@ export const AdmissionForm = () => {
                 name="student_religion"
                 placeholder="Religion"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Religion", {
-                  validate: (value) => {
-                    const msg = validReligion(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_religion", {
+                  required: "Religion is required",
+                  validate: (value) => validReligion(value) || true,
                 })}
               />
-              {errors.Religion && (
+              {errors.student_religion && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Religion.message || errors.Religion}
+                  {errors.student_religion.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
             {/* Category */}
             <div className="form-control">
@@ -642,11 +570,9 @@ export const AdmissionForm = () => {
               <select
                 name="student_category"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                 {...register("Category", {
-                  validate: (value) => {
-                    const msg =  validCategory(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_category", {
+                  required: "Category is required",
+                  validate: (value) => validCategory(value) || true,
                 })}
               >
                 <option value="">Select Category</option>
@@ -655,14 +581,13 @@ export const AdmissionForm = () => {
                 <option value="SC">SC</option>
                 <option value="ST">ST</option>
               </select>
-               {errors.Category && (
+              {errors.student_category && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Category.message || errors.Category}
+                  {errors.student_category.message}
                 </span>
               )}
-
-
             </div>
+
             {/* Height */}
             <div className="form-control">
               <label className="label">
@@ -676,10 +601,10 @@ export const AdmissionForm = () => {
                 name="student_height"
                 placeholder="Height"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.height}
-                onChange={handleChange}
+                {...register("student_height")}
               />
             </div>
+
             {/* Weight */}
             <div className="form-control">
               <label className="label">
@@ -693,8 +618,7 @@ export const AdmissionForm = () => {
                 name="student_weight"
                 placeholder="Weight"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.weight}
-                onChange={handleChange}
+                {...register("student_weight")}
               />
             </div>
 
@@ -709,8 +633,7 @@ export const AdmissionForm = () => {
               <select
                 name="student_blood_group"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.student.blood_group}
-                onChange={handleChange}
+                {...register("student_blood_group")}
               >
                 <option value="">Select Blood Group</option>
                 <option value="A+">A+</option>
@@ -724,6 +647,7 @@ export const AdmissionForm = () => {
               </select>
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Number of Siblings */}
             <div className="form-control">
@@ -738,15 +662,12 @@ export const AdmissionForm = () => {
                 name="student_number_of_siblings"
                 placeholder="Number of Siblings"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.number_of_siblings}
-                onChange={handleChange}
-                min={0}
+                {...register("student_number_of_siblings", { min: 0 })}
               />
             </div>
-
-
           </div>
         </div>
+
         {/* Guardian Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
@@ -761,8 +682,9 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* First Name */}
+            {/* Guardian First Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -775,20 +697,19 @@ export const AdmissionForm = () => {
                 name="guardian_first_name"
                 placeholder="First Name"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("guardian_First_name", {
-                  validate: (value) => {
-                    const msg = validGuardianFirstName(value);
-                    return msg === "" || msg;
-                  },
+                {...register("guardian_first_name", {
+                  required: "First Name is required",
+                  validate: (value) => validGuardianFirstName(value) || true,
                 })}
               />
-              {errors.guardian_First_name && (
+              {errors.guardian_first_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_First_name.message || errors.guardian_First_name}
+                  {errors.guardian_first_name.message}
                 </span>
               )}
             </div>
-            {/* Middle Name */}
+
+            {/* Guardian Middle Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -801,11 +722,11 @@ export const AdmissionForm = () => {
                 name="guardian_middle_name"
                 placeholder="Middle Name"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.guardian.middle_name}
-                onChange={handleChange}
+                {...register("guardian_middle_name")}
               />
             </div>
-            {/* Last Name */}
+
+            {/* Guardian Last Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -819,22 +740,20 @@ export const AdmissionForm = () => {
                 placeholder="Last Name"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("guardian_last_name", {
-                  validate: (value) => {
-                    const msg = validGuardianlastName(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Last Name is required",
+                  validate: (value) => validGuardianlastName(value) || true,
                 })}
               />
               {errors.guardian_last_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_last_name.message || errors.guardian_last_name}
+                  {errors.guardian_last_name.message}
                 </span>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Email */}
+            {/* Guardian Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -848,19 +767,18 @@ export const AdmissionForm = () => {
                 placeholder="guardian@example.com"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("guardian_email", {
-                  validate: (value) => {
-                    const msg = validGuardianEmail(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Email is required",
+                  validate: (value) => validGuardianEmail(value) || true,
                 })}
               />
               {errors.guardian_email && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_email.message || errors.guardian_email}
+                  {errors.guardian_email.message}
                 </span>
               )}
             </div>
-            {/* Password */}
+
+            {/* Guardian Password */}
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -871,7 +789,8 @@ export const AdmissionForm = () => {
                   <div className="relative group inline-block">
                     <i className="fa-solid fa-circle-info text-sm cursor-pointer"></i>
                     <div className="absolute left-1/2 -translate-x-1/2 -top-8 whitespace-nowrap bg-gray-800 text-white text-xs px-3 py-1 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 z-10">
-                      Password must be at least 8 characters, include one letter, one number, and one special character
+                      Password must be at least 8 characters, include one
+                      letter, one number, and one special character
                     </div>
                   </div>
                 </div>
@@ -882,28 +801,28 @@ export const AdmissionForm = () => {
                 placeholder="Password"
                 className="input input-bordered w-full pr-10 focus:outline-none"
                 {...register("guardian_password", {
-                  validate: (value) => {
-                    const msg = validGuardianPassword(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Password is required",
+                  validate: (value) => validGuardianPassword(value) || true,
                 })}
               />
-              {errors.guardian_password && (
-                <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_password.message || errors.guardian_password}
-                </span>
-              )}
               <button
                 type="button"
                 className="passwordEyes text-gray-500"
                 onClick={handleShowGuardianPassword}
               >
                 <i
-                  className={`fa-solid ${showGuardianPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${
+                    showGuardianPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
+              {errors.guardian_password && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.guardian_password.message}
+                </span>
+              )}
             </div>
+
             {/* Guardian Type */}
             <div className="form-control">
               <label className="label">
@@ -913,31 +832,29 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <select
+                name="guardian_type"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                {...register("GuardianType", {
-                  validate: (value) => {
-                    const msg = ValidGuardianType(value);
-                    return msg === "" || msg;
-                  },
+                value={selectedGuardianType}
+                {...register("guardian_type", {
+                  required: "Guardian Type is required",
+                  validate: (value) => ValidGuardianType(value) || true,
                 })}
+                onChange={handleGuardianTypeChange}
               >
-              
-              
                 <option value="">Select Guardian Type</option>
                 {guardianTypes.map((guardianTy) => (
-                  <option value={guardianTy.id} key={guardianTy.id}>
+                  <option value={guardianTy.name} key={guardianTy.id}>
                     {guardianTy.name}
                   </option>
                 ))}
               </select>
-              {errors.GuardianType && (
+              {errors.guardian_type && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.GuardianType.message || errors.GuardianType}
+                  {errors.guardian_type.message}
                 </span>
               )}
-              
-
             </div>
+
             {/* Phone Number */}
             <div className="form-control">
               <label className="label">
@@ -952,20 +869,17 @@ export const AdmissionForm = () => {
                 placeholder="Phone Number"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("guardian_phone_no", {
-                  validate: (value) => {
-                    const msg = validMobileNumber(value);
-                    return msg === "" || msg;
-                  },
+                  required: "Phone Number is required",
+                  validate: (value) => validMobileNumber(value) || true,
                 })}
               />
               {errors.guardian_phone_no && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.guardian_phone_no.message || errors.guardian_phone_no}
+                  {errors.guardian_phone_no.message}
                 </span>
               )}
             </div>
           </div>
-
 
           {/* Guardian Profile Photo */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
@@ -973,7 +887,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-camera text-sm"></i>
-                  Guardian Profile Photo <span className="text-error"></span>
+                  Guardian Profile Photo
                 </span>
               </label>
               <input
@@ -981,34 +895,44 @@ export const AdmissionForm = () => {
                 name="guardian_user_profile"
                 accept="image/*"
                 className="file-input file-input-bordered w-full focus:outline-none"
-                onChange={handleFileChange}
+                {...register("guardian_user_profile")}
               />
-
-              {formData.guardian.user_profile && (
-                <div className="mt-2 text-sm">
-                  Selected: {formData.guardian.user_profile.name}
-                </div>
+              {errors.guardian_user_profile && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.guardian_user_profile.message}
+                </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {/* Annual Income */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-money-bill-wave text-sm"></i>
-                  Annual Income
+                  Annual Income <span className="text-error">*</span>
                 </span>
               </label>
               <input
-                type="text"
+                type="number"
                 name="guardian_annual_income"
                 placeholder="Annual Income"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.guardian.annual_income}
-                onChange={handleChange}
+                {...register("guardian_annual_income", {
+                  required: "Annual Income is required",
+                  valueAsNumber: true,
+                  validate: (value) =>
+                    Number.isInteger(Number(value)) || "A valid integer is required",
+                })}
               />
+              {errors.guardian_annual_income && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.guardian_annual_income.message}
+                </span>
+              )}
             </div>
+
             {/* Means of Livelihood */}
             <div className="form-control">
               <label className="label">
@@ -1020,20 +944,20 @@ export const AdmissionForm = () => {
               <select
                 name="guardian_means_of_livelihood"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-
+                {...register("guardian_means_of_livelihood")}
               >
                 <option value="">Select</option>
                 <option value="Govt">Government</option>
                 <option value="Non-Govt">Non-Government</option>
               </select>
-
             </div>
+
             {/* Qualification */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-graduation-cap text-sm"></i>
-                  Qualification
+                  Qualification <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1041,18 +965,25 @@ export const AdmissionForm = () => {
                 name="guardian_qualification"
                 placeholder="Qualification"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.guardian.qualification}
-                onChange={handleChange}
+                {...register("guardian_qualification", {
+                  required: "Qualification is required",
+                })}
               />
+              {errors.guardian_qualification && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.guardian_qualification.message}
+                </span>
+              )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Occupation */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-briefcase text-sm"></i>
-                  Occupation
+                  Occupation <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1060,9 +991,15 @@ export const AdmissionForm = () => {
                 name="guardian_occupation"
                 placeholder="Occupation"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.guardian.occupation}
-                onChange={handleChange}
+                {...register("guardian_occupation", {
+                  required: "Occupation is required",
+                })}
               />
+              {errors.guardian_occupation && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.guardian_occupation.message}
+                </span>
+              )}
             </div>
 
             {/* Designation */}
@@ -1078,8 +1015,7 @@ export const AdmissionForm = () => {
                 name="guardian_designation"
                 placeholder="Designation"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.guardian.designation}
-                onChange={handleChange}
+                {...register("guardian_designation")}
               />
             </div>
           </div>
@@ -1094,55 +1030,67 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-graduation-cap text-sm"></i>
-                  Year Level <span className="text-error"></span>
+                  Year Level <span className="text-error">*</span>
                 </span>
               </label>
               <select
                 name="year_level"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.year_level}
-                onChange={handleChange}
+                {...register("year_level", {
+                  required: "Year Level is required",
+                })}
               >
                 <option value="">Select Year Level</option>
                 {yearLevel.map((yearlev) => (
-                  <option value={yearlev.id} key={yearlev.id}>
+                  <option value={yearlev.level_name} key={yearlev.id}>
                     {yearlev.level_name}
                   </option>
                 ))}
               </select>
-
+              {errors.year_level && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.year_level.message}
+                </span>
+              )}
             </div>
+
             {/* School Year */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-calendar text-sm"></i>
-                  School Year <span className="text-error"></span>
+                  School Year <span className="text-error">*</span>
                 </span>
               </label>
               <select
                 name="school_year"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.school_year}
-                onChange={handleChange}
+                {...register("school_year", {
+                  required: "School Year is required",
+                })}
               >
                 <option value="">Select School Year</option>
                 {schoolYears.map((schoolYear) => (
-                  <option value={schoolYear.id} key={schoolYear.id}>
+                  <option value={schoolYear.year_name} key={schoolYear.id}>
                     {schoolYear.year_name}
                   </option>
                 ))}
               </select>
-
+              {errors.school_year && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.school_year.message}
+                </span>
+              )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Previous School Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-school text-sm"></i>
-                  Previous School Name
+                  Previous School Name <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1150,9 +1098,15 @@ export const AdmissionForm = () => {
                 name="previous_school_name"
                 placeholder="Previous School Name"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.previous_school_name}
-                onChange={handleChange}
+                {...register("previous_school_name", {
+                  required: "Previous School Name is required",
+                })}
               />
+              {errors.previous_school_name && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.previous_school_name.message}
+                </span>
+              )}
             </div>
 
             {/* Previous Class/Grade */}
@@ -1160,7 +1114,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-book text-sm"></i>
-                  Previous Class/Grade
+                  Previous Class/Grade <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1168,11 +1122,18 @@ export const AdmissionForm = () => {
                 name="previous_standard_studied"
                 placeholder="Previous Class/Grade"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.previous_standard_studied}
-                onChange={handleChange}
+                {...register("previous_standard_studied", {
+                  required: "Previous Class/Grade is required",
+                })}
               />
+              {errors.previous_standard_studied && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.previous_standard_studied.message}
+                </span>
+              )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Admission Date */}
             <div className="form-control">
@@ -1185,20 +1146,19 @@ export const AdmissionForm = () => {
               <input
                 type="date"
                 name="admission_date"
-                className="input input-bordered w-full focus:outline-none scroll-smooth"
-                {...register("Admission_date", {
-                  validate: (value) => {
-                    const msg = validadmissiondate(value);
-                    return msg === "" || msg;
-                  },
+                className="input input-bordered w-full focus:outline-none"
+                {...register("admission_date", {
+                  required: "Admission Date is required",
+                  validate: (value) => validadmissiondate(value) || true,
                 })}
               />
-              {errors.Admission_date && (
+              {errors.admission_date && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Admission_date.message || errors.Admission_date}
+                  {errors.admission_date.message}
                 </span>
               )}
             </div>
+
             {/* TC Letter */}
             <div className="form-control">
               <label className="label">
@@ -1211,10 +1171,8 @@ export const AdmissionForm = () => {
                 name="tc_letter"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
                 {...register("tc_letter", {
-                  validate: (value) => {
-                    const msg = validtc(value);
-                    return msg === "" || msg;
-                  },
+                  required: "TC Letter is required",
+                  validate: (value) => validtc(value) || true,
                 })}
               >
                 <option value="">Select</option>
@@ -1224,17 +1182,18 @@ export const AdmissionForm = () => {
               </select>
               {errors.tc_letter && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.tc_letter.message || errors.tc_letter}
+                  {errors.tc_letter.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Emergency Contact */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-phone-emergency text-sm"></i>
+                  <i className="fa-solid fa-phone text-sm"></i>
                   Emergency Contact <span className="text-error">*</span>
                 </span>
               </label>
@@ -1243,25 +1202,24 @@ export const AdmissionForm = () => {
                 name="emergency_contact_n0"
                 placeholder="Emergency Contact"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Emergency_Number", {
-                  validate: (value) => {
-                    const msg = validEmergencyNumber(value);
-                    return msg === "" || msg;
-                  },
+                {...register("emergency_contact_n0", {
+                  required: "Emergency Contact is required",
+                  validate: (value) => validEmergencyNumber(value) || true,
                 })}
               />
-              {errors.Emergency_Number && (
+              {errors.emergency_contact_n0 && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Emergency_Number.message || errors.Emergency_Number}
+                  {errors.emergency_contact_n0.message}
                 </span>
               )}
             </div>
+
             {/* Distance to School */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-road text-sm"></i>
-                  Distance to School (km)
+                  Distance to School (km) <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1269,19 +1227,27 @@ export const AdmissionForm = () => {
                 name="entire_road_distance_from_home_to_school"
                 placeholder="Distance in km"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.entire_road_distance_from_home_to_school}
-                onChange={handleChange}
-                min={0}
+                {...register("entire_road_distance_from_home_to_school", {
+                  required: "Distance to School is required",
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Distance cannot be negative" },
+                })}
               />
+              {errors.entire_road_distance_from_home_to_school && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.entire_road_distance_from_home_to_school.message}
+                </span>
+              )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {/* Marks Obtained */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-marker text-sm"></i>
-                  Marks Obtained
+                  Marks Obtained <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1289,16 +1255,25 @@ export const AdmissionForm = () => {
                 name="obtain_marks"
                 placeholder="Marks Obtained"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.obtain_marks}
-                onChange={handleChange}
+                {...register("obtain_marks", {
+                  required: "Marks Obtained is required",
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Marks cannot be negative" },
+                })}
               />
+              {errors.obtain_marks && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.obtain_marks.message}
+                </span>
+              )}
             </div>
+
             {/* Total Marks */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-chart-simple text-sm"></i>
-                  Total Marks
+                  Total Marks <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1306,10 +1281,19 @@ export const AdmissionForm = () => {
                 name="total_marks"
                 placeholder="Total Marks"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.total_marks}
-                onChange={handleChange}
+                {...register("total_marks", {
+                  required: "Total Marks is required",
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Marks cannot be negative" },
+                })}
               />
+              {errors.total_marks && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.total_marks.message}
+                </span>
+              )}
             </div>
+
             {/* Previous Percentage */}
             <div className="form-control">
               <label className="label">
@@ -1324,12 +1308,21 @@ export const AdmissionForm = () => {
                 name="previous_percentage"
                 placeholder="Percentage"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.previous_percentage}
-                onChange={handleChange}
+                {...register("previous_percentage", {
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Percentage cannot be negative" },
+                  max: { value: 100, message: "Percentage cannot exceed 100" },
+                })}
               />
+              {errors.previous_percentage && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.previous_percentage.message}
+                </span>
+              )}
             </div>
           </div>
         </div>
+
         {/* Address Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Residential Address</h2>
@@ -1339,7 +1332,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-home text-sm"></i>
-                  House Number <span className="text-error"></span>
+                  House Number
                 </span>
               </label>
               <input
@@ -1347,15 +1340,10 @@ export const AdmissionForm = () => {
                 name="student_address_house_number"
                 placeholder="House Number"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.address.house_number}
-                onChange={handleChange}
-
-
-
+                {...register("student_address_house_number")}
               />
-
-
             </div>
+
             {/* Habitation */}
             <div className="form-control">
               <label className="label">
@@ -1369,25 +1357,24 @@ export const AdmissionForm = () => {
                 name="student_address_habitation"
                 placeholder="Habitation"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Habitation", {
-                  validate: (value) => {
-                    const msg = validHabitation(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_address_habitation", {
+                  required: "Habitation is required",
+                  validate: (value) => validHabitation(value) || true,
                 })}
               />
-              {errors.Habitation && (
+              {errors.student_address_habitation && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Habitation.message || errors.Habitation}
+                  {errors.student_address_habitation.message}
                 </span>
               )}
             </div>
+
             {/* Ward Number */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-map text-sm"></i>
-                  Ward Number <span className="text-error"></span>
+                  Ward Number
                 </span>
               </label>
               <input
@@ -1395,17 +1382,16 @@ export const AdmissionForm = () => {
                 name="student_address_ward_no"
                 placeholder="Ward Number"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.address.ward_no}
-                onChange={handleChange}
+                {...register("student_address_ward_no")}
               />
-
             </div>
+
             {/* Zone */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-map-pin text-sm"></i>
-                  Zone <span className="text-error"></span>
+                  Zone
                 </span>
               </label>
               <input
@@ -1413,19 +1399,18 @@ export const AdmissionForm = () => {
                 name="student_address_zone"
                 placeholder="Zone"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.address.zone}
-                onChange={handleChange}
+                {...register("student_address_zone")}
               />
-
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {/* Block */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-building text-sm"></i>
-                  Block <span className="text-error"></span>
+                  Block
                 </span>
               </label>
               <input
@@ -1433,43 +1418,45 @@ export const AdmissionForm = () => {
                 name="student_address_block"
                 placeholder="Block"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.address.block}
-                onChange={handleChange}
+                {...register("student_address_block")}
               />
-
             </div>
-            {/* District */}
+
+            {/* City */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-city text-sm"></i>
-                  District <span className="text-error">*</span>
+                  City <span className="text-error">*</span>
                 </span>
               </label>
-              <input
-                type="text"
-                name="student_address_district"
-                placeholder="District"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("District", {
-                  validate: (value) => {
-                    const msg = validDistrict(value);
-                    return msg === "" || msg;
-                  },
+              <select
+                name="student_address_city"
+                className="select select-bordered w-full focus:outline-none"
+                {...register("student_address_city", {
+                  required: "City is required",
                 })}
-              />
-              {errors.District && (
+              >
+                <option value="">Select City</option>
+                {city.map((city) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+              {errors.student_address_city && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.District.message || errors.District}
+                  {errors.student_address_city.message}
                 </span>
               )}
             </div>
+
             {/* Division */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-map-signs text-sm"></i>
-                  Division <span className="text-error"></span>
+                  Division
                 </span>
               </label>
               <input
@@ -1477,12 +1464,11 @@ export const AdmissionForm = () => {
                 name="student_address_division"
                 placeholder="Division"
                 className="input input-bordered w-full focus:outline-none"
-                value={formData.student.address.division}
-                onChange={handleChange}
+                {...register("student_address_division")}
               />
-
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* State */}
             <div className="form-control">
@@ -1492,24 +1478,58 @@ export const AdmissionForm = () => {
                   State <span className="text-error">*</span>
                 </span>
               </label>
-              <input
-                type="text"
+              <select
                 name="student_address_state"
-                placeholder="State"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("State", {
-                  validate: (value) => {
-                    const msg = validState(value);
-                    return msg === "" || msg;
-                  },
+                className="select select-bordered w-full focus:outline-none"
+                {...register("student_address_state", {
+                  required: "State is required",
                 })}
-              />
-              {errors.State && (
+              >
+                <option value="">Select State</option>
+                {state.map((state) => (
+                  <option key={state.id} value={state.id}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
+              {errors.student_address_state && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.State.message || errors.State}
+                  {errors.student_address_state.message}
                 </span>
               )}
             </div>
+
+            {/* Country */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-globe text-sm"></i>
+                  Country <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                name="student_address_country"
+                className="select select-bordered w-full focus:outline-none"
+                {...register("student_address_country", {
+                  required: "Country is required",
+                })}
+              >
+                <option value="">Select Country</option>
+                {country.map((country) => (
+                  <option key={country.id} value={country.id}>
+                    {country.name}
+                  </option>
+                ))}
+              </select>
+              {errors.student_address_country && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.student_address_country.message}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Pin Code */}
             <div className="form-control">
               <label className="label">
@@ -1524,16 +1544,14 @@ export const AdmissionForm = () => {
                 placeholder="Pin Code"
                 maxLength={6}
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Pin_Code", {
-                  validate: (value) => {
-                    const msg = validPinCode(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_address_pin_code", {
+                  required: "Pin Code is required",
+                  validate: (value) => validPinCode(value) || true,
                 })}
               />
-              {errors.Pin_Code && (
+              {errors.student_address_pin_code && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Pin_Code.message || errors.Pin_Code}
+                  {errors.student_address_pin_code.message}
                 </span>
               )}
             </div>
@@ -1552,12 +1570,12 @@ export const AdmissionForm = () => {
                 name="student_address_address_line"
                 placeholder="Full Address"
                 className="textarea textarea-bordered w-full focus:outline-none"
-                value={formData.student.address.address_line}
-                onChange={handleChange}
+                {...register("student_address_address_line")}
               ></textarea>
             </div>
           </div>
         </div>
+
         {/* Bank Details Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Bank Account Details</h2>
@@ -1575,19 +1593,18 @@ export const AdmissionForm = () => {
                 name="student_banking_holder_name"
                 placeholder="Full Name as in Bank"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Account_Holder_Name", {
-                  validate: (value) => {
-                    const msg = validAccountHolderName(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_banking_holder_name", {
+                  required: "Account Holder Name is required",
+                  validate: (value) => validAccountHolderName(value) || true,
                 })}
               />
-              {errors.Account_Holder_Name && (
+              {errors.student_banking_holder_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Account_Holder_Name.message || errors.Account_Holder_Name}
+                  {errors.student_banking_holder_name.message}
                 </span>
               )}
             </div>
+
             {/* Account Number */}
             <div className="form-control">
               <label className="label">
@@ -1601,20 +1618,19 @@ export const AdmissionForm = () => {
                 name="student_banking_account_no"
                 placeholder="Account Number"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Account_Number", {
-                  validate: (value) => {
-                    const msg = validAccountNumber(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_banking_account_no", {
+                  required: "Account Number is required",
+                  validate: (value) => validAccountNumber(value) || true,
                 })}
               />
-              {errors.Account_Number && (
+              {errors.student_banking_account_no && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Account_Number.message || errors.Account_Number}
+                  {errors.student_banking_account_no.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Bank Name */}
             <div className="form-control">
@@ -1629,19 +1645,18 @@ export const AdmissionForm = () => {
                 name="student_banking_bank_name"
                 placeholder="Bank Name"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("Bank_Name", {
-                  validate: (value) => {
-                    const msg = validBankName(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_banking_bank_name", {
+                  required: "Bank Name is required",
+                  validate: (value) => validBankName(value) || true,
                 })}
               />
-              {errors.Bank_Name && (
+              {errors.student_banking_bank_name && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.Bank_Name.message || errors.Bank_Name}
+                  {errors.student_banking_bank_name.message}
                 </span>
               )}
             </div>
+
             {/* IFSC Code */}
             <div className="form-control">
               <label className="label">
@@ -1655,22 +1670,19 @@ export const AdmissionForm = () => {
                 name="student_banking_ifsc_code"
                 placeholder="IFSC Code"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("IFSC_code", {
-                  validate: (value) => {
-                    const msg = validIFSCcode(value);
-                    return msg === "" || msg;
-                  },
+                {...register("student_banking_ifsc_code", {
+                  required: "IFSC Code is required",
+                  validate: (value) => validIFSCcode(value) || true,
                 })}
               />
-              {errors.IFSC_code && (
+              {errors.student_banking_ifsc_code && (
                 <span className="text-red-500 text-sm mt-1">
-                  {errors.IFSC_code.message || errors.IFSC_code}
+                  {errors.student_banking_ifsc_code.message}
                 </span>
               )}
             </div>
           </div>
         </div>
-
 
         {/* Submit Button */}
         <div className="flex justify-center mt-10">

@@ -147,7 +147,45 @@ export const fetchAllTeacherAssignments = async () => {
   }
 };
 
+export const fetchAllTeacherClasses = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/teacher-classes/1/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch all teacher classes:", err);
+    throw err;
+  }
+};
 
+export const fetchCountry = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/country/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch country:", err);
+    throw err;
+  }
+};
+
+export const fetchState = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/states/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch state:", err);
+    throw err;
+  }
+};
+
+export const fetchCity = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/city/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch city:", err);
+    throw err;
+  }
+};
 
 // POST APIS
 
@@ -162,8 +200,7 @@ export const handleAdmissionForm = async (formData) => {
       alert("successfully submitted the form");
     }
 
-          return response.data;
-
+    return response.data;
   } catch (err) {
     console.error("Failed:", err);
     throw err;
@@ -190,5 +227,6 @@ export const fetchyearLevelData = async () => {
     throw err;
   }
 };
+
 
 

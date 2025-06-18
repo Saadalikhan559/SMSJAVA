@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
 
+
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
 
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
           originalRequest._retry = true;
           try {
             const response = await axios.post(
-              `${BASE_URL}/auth/token/refresh/`,
+              `${BASE_URL}/auth/refresh/`,
               {
                 refresh: authTokens.refresh,
               }
@@ -120,6 +121,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
   };
+
   const ResetPassword = async (userDetails) => {
     try {
       return await axios.post(`${BASE_URL}/auth/reset_password/`, userDetails);
@@ -145,19 +147,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Set loading to false after initial render
   useEffect(() => {
-    const verifyAuth = async () => {
-      if (authTokens?.access) {
-        try {
-        } catch (error) {
-          await LogoutUser();
-        }
-      }
-      setLoading(false);
-    };
-    verifyAuth();
-  }, [authTokens]);
-
+    setLoading(false);
+  }, []);
 
 
   const contextValue = useMemo(
@@ -174,6 +167,7 @@ export const AuthProvider = ({ children }) => {
       ChangePassword,
     }),
     [authTokens, userRole, loading, axiosInstance ]
+
   );
 
   return (
