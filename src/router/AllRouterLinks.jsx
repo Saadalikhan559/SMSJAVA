@@ -11,6 +11,7 @@ export const allRouterLink = {
     subjectAssignment: "/subjectAssignment",
     allTeacherAssignment: "/allTeacherAssignment",
     attendance: "/attendance",
+    classStudents: "/classStudents/:classLevel",
     directorProfile: '/directorProfile',
     officeStaffProfile: '/officeStaffProfile',
     guardianProfile: '/guardianProfile',
@@ -20,9 +21,8 @@ export const allRouterLink = {
     guardianDashboard: '/guardianDashboard',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
-    // 
     attendanceRecord:'/attendanceRecord',
-    // 
+   
     officeStaffDashboard: '/officeStaffDashboard',
     unAuthorized: '/unauthorized',
     notFound: "*"

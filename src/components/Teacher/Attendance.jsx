@@ -1,25 +1,47 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
-const classList = [
-  { id: 3, name: "3 UKG" },
-  { id: 4, name: "4 Class 1" },
-  { id: 5, name: "5 Class 2" },
-];
+import React, { useEffect, useState } from "react";
+import { allRouterLink } from "../../router/AllRouterLinks";
+import { fetchAllTeacherClasses } from "../../services/api/Api";
+import { useNavigate } from "react-router-dom";
 
 export const Attendance = () => {
+  const navigate = useNavigate();
+  const [classList, setClassList] = useState([]);
+
+  const getAllTeacherStudents = async () => {
+    try {
+      const data = await fetchAllTeacherClasses();
+      console.log("all teacher", data);
+      setClassList(data);
+    } catch (error) {
+      console.log("failed to get all teacher students", error);
+    }
+  };
+
+  const handleNavigate = (className) => {
+    navigate(`/classStudents/${className}`);
+  };
+  useEffect(() => {
+    getAllTeacherStudents();  
+  }, []);
+
   return (
     <div className="p-6">
-      <h2 className="text-4xl font-semibold mb-4 text-center">Attendance</h2>
+      <h2 className="text-4xl font-semibold mb-6 text-center">Attendance</h2>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {classList.map((classItem) => (
-          <div key={classItem.id} className="card bg-base-100 shadow-md">
-            <div className="card-body">
-              <h1 className="card-title text-lg">
-                <Link>{classItem.name}</Link>
+          <div
+            key={classItem.id}
+            className="card bg-base-50 shadow-md hover:shadow-lg transition duration-300"
+          >
+            <div className="card-body flex flex-col justify-between">
+              <h1 className="card-title text-xl font-medium">
+                {classItem.name}
               </h1>
-              <button className="btn btn-primary btn-sm mt-2">
+              <button
+                className="btn btn-primary btn-sm w-fit mt-4"
+                onClick={() => handleNavigate(classItem.name)}
+              >
                 Mark Attendance
               </button>
             </div>
@@ -29,12 +51,3 @@ export const Attendance = () => {
     </div>
   );
 };
-
-
-
-
-
-
-
-
-

@@ -39,7 +39,7 @@ export const Sidebar = () => {
           className="drawer-overlay"
         ></label>
         <ul className="menu bg-base-200 text-base-content min-h-full w-65 p-4">
-          {role === `${constants.roles.director}` && isAuthenticated && (
+          {(role === `${constants.roles.director}` || role === `${constants.roles.officeStaff}`) && isAuthenticated && (
             <li>
               <Link
                 onClick={(e) =>
