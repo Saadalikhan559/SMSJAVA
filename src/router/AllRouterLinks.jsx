@@ -20,6 +20,9 @@ export const allRouterLink = {
     guardianDashboard: '/guardianDashboard',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
+    // 
+    attendanceRecord:'/attendanceRecord',
+    // 
     officeStaffDashboard: '/officeStaffDashboard',
     unAuthorized: '/unauthorized',
     notFound: "*"

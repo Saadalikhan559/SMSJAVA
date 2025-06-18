@@ -104,6 +104,18 @@ export const Sidebar = () => {
               </Link>
             </li>
           )}
+
+           {isAuthenticated && (
+            <li>
+              <Link
+                onClick={(e) =>
+                  handleNavigation(e, allRouterLink.attendanceRecord)
+                }
+              >
+                <i class="fa-solid fa-square-poll-vertical"></i>  Attendance Record
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </div>
