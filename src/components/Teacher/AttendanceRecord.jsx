@@ -25,14 +25,10 @@ const AttendanceRecord = () => {
   // Fetch data
   const fetchData = async () => {
     try {
-      // const response = await axios.get('https://mocki.io/v1/7f971d95-e78b-43e8-a026-8746ea05d27f');
-
       const response = await axios.get('https://8c1zb9f3-8000.inc1.devtunnels.ms/a/director-dashboard/');
       const classData = response.data.class_wise_attendance || [];
 
-
-
-      setClasses([...new Set(classData.map(item => item.class_name))]);
+        setClasses([...new Set(classData.map(item => item.class_name))]);
 
       // Filter data
       const filtered = classData.filter(item => {
@@ -83,7 +79,7 @@ const AttendanceRecord = () => {
 
         <select value={year} onChange={(e) => setYear(e.target.value)} className="select select-bordered focus:outline-none">
           <option value="">All Years</option>
-          {[2015,2016,2017,2018,2019,2020,2021,2022, 2023, 2024, 2025].map(years => (
+          {[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map(years => (
             <option key={years} value={years}>{years}</option>
           ))}
         </select>
