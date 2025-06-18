@@ -211,7 +211,6 @@ export const AdmissionFees = () => {
     }
   };
 
-  console.log(paymentStatus);
   const onSubmit = async (data) => {
     const { year_level, payment_mode, ...restData } = data;
 
@@ -262,7 +261,7 @@ export const AdmissionFees = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
-          Admission Fees Payment
+          Admission Fee Payment
           <i className="fa-solid fa-money-bill-wave ml-2"></i>
         </h1>
 

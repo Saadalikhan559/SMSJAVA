@@ -18,29 +18,49 @@ export const Navbar = () => {
     }
   };
 
+  const getProfileRoute = (role) => {
+    switch (role) {
+      case `${constants.roles.officeStaff}`:
+        return allRouterLink.officeStaffProfile;
+      case `${constants.roles.teacher}`:
+        return allRouterLink.teacherProfile;
+      case `${constants.roles.director}`:
+        return allRouterLink.directorProfile;
+      case `${constants.roles.student}`:
+        return allRouterLink.studentProfile;
+      case `${constants.roles.guardian}`:
+        return allRouterLink.guardianProfile;
+      // Add other cases as needed
+      default:
+        return allRouterLink.notFound;
+    }
+  };
+
   return (
     <>
       <div className="navbar bg-base-100 shadow-sm sticky top-0 z-5 flex flex-wrap md:flex-nowrap py-0">
         {/* Left section - always visible */}
         <div className="flex-1 flex items-center">
-{isAuthenticated &&          <label
-            htmlFor="my-drawer"
-            className="btn btn-ghost btn-circle hover:bg-base-200"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block h-5 w-5 stroke-current"
+          {isAuthenticated && (
+            <label
+              htmlFor="my-drawer"
+              className="btn btn-ghost btn-circle hover:bg-base-200"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-          </label>}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block h-5 w-5 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+            </label>
+          )}
           <span className="nexus-logo text-xl md:text-2xl ml-2">
             <Link to={allRouterLink.homeScreen}>SMS</Link>
           </span>
@@ -132,10 +152,11 @@ export const Navbar = () => {
                   </li>
 
                   <li>
-                    <a>
+                    <Link to={getProfileRoute(userRole)}>
                       <i className="fa-solid fa-user"></i> Profile
-                    </a>
+                    </Link>
                   </li>
+
                   <li>
                     <Link className="flex items-center gap-2 cursor-pointer">
                       <i className="fa-solid fa-gear"></i> Settings
