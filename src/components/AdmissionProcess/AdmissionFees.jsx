@@ -1,13 +1,14 @@
-import { useState, useContext, useEffect } from "react";
+import { useState,  useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { constants } from "../../global/constants";
 import PaymentStatusDialog from "./PaymentStatusDialog";
 import PaymentStatusDialogOffline from "./PaymentStatusDialogOffline";
+import { fetchStudents1 , fetchyearLevelData } from "../../services/api/Api";
 
 export const AdmissionFees = () => {
-  const { students, yearLevelData } = useContext(AuthContext);
+  const [students, setStudents] = useState([]);
+  const [yearLevelData, setyearLevelData] = useState([]);
   const [selectedFeeIds, setSelectedFeeIds] = useState([]);
   const [paymentStatus, setPaymentStatus] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -16,6 +17,29 @@ export const AdmissionFees = () => {
 
   const BASE_URL = constants.baseUrl1;
 
+  const getStudents = async () => {
+      try {
+        const Students = await fetchStudents1();
+        setStudents(Students);
+      } catch (err) {
+        console.log("Failed to load school years. Please try again." + err);
+      }
+    };
+    
+  const getyearLevelData = async () => {
+      try {
+        const YearLevelData = await fetchyearLevelData();
+        setyearLevelData(YearLevelData);
+      } catch (err) {
+        console.log("Failed to load school years. Please try again." + err);
+      }
+    };
+
+
+  useEffect(() => {
+     getyearLevelData();
+     getStudents();
+    }, []);
   const role = localStorage.getItem("userRole");
 
   const loadRazorpayScript = () => {
