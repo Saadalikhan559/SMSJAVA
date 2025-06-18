@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
   const [yearLevelData, setYearLevelData] = useState([]);
+  const [teacherID, setTeacherID] = useState("");
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
@@ -109,6 +110,7 @@ export const AuthProvider = ({ children }) => {
       setUserRole(role);
       localStorage.setItem("userRole", role);
 
+      setTeacherID(data.teacher_id);
       return data;
     } catch (error) {
       console.error("Login error:", error);
@@ -197,8 +199,9 @@ export const AuthProvider = ({ children }) => {
       yearLevelData,
       ResetPassword,
       ChangePassword,
+      teacherID
     }),
-    [authTokens, userRole, loading, axiosInstance, students, yearLevelData]
+    [authTokens, userRole, loading, axiosInstance, students, yearLevelData, teacherID]
   );
 
   return (
