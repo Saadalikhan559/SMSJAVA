@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
-  const [yearLevelData, setyearLevelData] = useState([]);
+  const [yearLevelData, setYearLevelData] = useState([]);
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
           originalRequest._retry = true;
           try {
             const response = await axios.post(
-              `${BASE_URL}/auth/token/refresh/`,
+              `${BASE_URL}/auth/refresh/`,
               {
                 refresh: authTokens.refresh,
               }
@@ -122,6 +122,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
   };
+
   const ResetPassword = async (userDetails) => {
     try {
       return await axios.post(`${BASE_URL}/auth/reset_password/`, userDetails);
@@ -147,19 +148,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Set loading to false after initial render
   useEffect(() => {
-    const verifyAuth = async () => {
-      if (authTokens?.access) {
-        try {
-        } catch (error) {
-          await LogoutUser();
-        }
-      }
-      setLoading(false);
-    };
-    verifyAuth();
-  }, [authTokens]);
+    setLoading(false);
+  }, []);
 
+  // Fetch students data
   useEffect(() => {
     const BASE_URL1 = constants.baseUrl1;
     const fetchStudents = async () => {
@@ -174,20 +168,20 @@ export const AuthProvider = ({ children }) => {
     fetchStudents();
   }, []);
 
+  // Fetch year level data
   useEffect(() => {
     const BASE_URL1 = constants.baseUrl1;
-    const fetchyearLevelData = async () => {
+    const fetchYearLevelData = async () => {
       try {
         const response = await axios.get(`${BASE_URL1}/d/year-level-fee/`);
-        setyearLevelData(response.data);
+        setYearLevelData(response.data);
       } catch {
-        console.error("Error fetching students:");
+        console.error("Error fetching year level data:");
       }
     };
 
-    fetchyearLevelData();
+    fetchYearLevelData();
   }, []);
-
 
   const contextValue = useMemo(
     () => ({
@@ -204,7 +198,7 @@ export const AuthProvider = ({ children }) => {
       ResetPassword,
       ChangePassword,
     }),
-    [authTokens, userRole, loading, axiosInstance , students , yearLevelData]
+    [authTokens, userRole, loading, axiosInstance, students, yearLevelData]
   );
 
   return (

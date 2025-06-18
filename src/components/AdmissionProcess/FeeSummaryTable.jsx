@@ -23,6 +23,9 @@ const FeeSummaryTable = () => {
         fetchYearLevels();
     }, []);
 
+
+
+
     // Fetch Fee Records
     useEffect(() => {
         const fetchData = async () => {
@@ -156,3 +159,10 @@ const FeeSummaryTable = () => {
 };
 
 export default FeeSummaryTable;
+
+
+
+
+
+
+
