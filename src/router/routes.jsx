@@ -1,5 +1,7 @@
+import { AdmissionDetails } from "../components/AdmissionProcess/AdmissionDetails";
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/singleAdmissionDetails";
 import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
@@ -14,6 +16,7 @@ import { Attendance } from "../components/Teacher/Attendance";
 import { TeacherDashboard } from "../components/TeacherDashboard/TeacherDashboard";
 import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
 import { Unauthorized } from "../components/Unauthorized";
+import { ViewDocuments } from "../components/UploadDocs/ViewDocuments";
 import { constants } from "../global/constants";
 import { AllTeacherAssignments } from "../screens/Assignments/AllTeacherAssignments";
 import { SubjectAssignments } from "../screens/Assignments/SubjectAssignments";
@@ -64,6 +67,18 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
+    {
+    path: allRouterLink.addmissionDetails,
+    element: <AdmissionDetails />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+    {
+    path: allRouterLink.addmissionDetailsById,
+    element: <SingleAdmissionDetails />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
   {
     path: allRouterLink.admissionFees,
     element: <AdmissionFees />,
@@ -79,6 +94,16 @@ export const routes = [
   {
     path: allRouterLink.documentUpload,
     element: <DocumentUpload />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.officeStaff,
+      constants.roles.teacher,
+    ],
+  },
+  {
+    path: allRouterLink.viewDocuments,
+    element: <ViewDocuments />,
     protected: true,
     allowedRoles: [
       constants.roles.director,
@@ -166,6 +191,12 @@ export const routes = [
     protected: false,
     allowedRoles: [constants.roles.director],
   },
+    {
+    path: allRouterLink.feeSummary,
+    element: <FeeSummaryTable />,
+    protected: false,
+  },
+  // Add all routes before this 
   {
     path: allRouterLink.unAuthorized,
     element: <Unauthorized />,
@@ -176,9 +207,5 @@ export const routes = [
     element: <NotFound />,
     protected: false,
   },
-  {
-    path: allRouterLink.feeSummary,
-    element: <FeeSummaryTable />,
-    protected: false,
-  },
+
 ];

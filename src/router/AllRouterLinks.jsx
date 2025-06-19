@@ -8,6 +8,7 @@ export const allRouterLink = {
     admissionForm: "/admissionForm",
     admissionFees: "/admissionFees/",
     documentUpload: "/documentUpload",
+    viewDocuments: "/viewDocuments",
     subjectAssignment: "/subjectAssignment",
     allTeacherAssignment: "/allTeacherAssignment",
     attendance: "/attendance",
@@ -22,6 +23,8 @@ export const allRouterLink = {
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
     officeStaffDashboard: '/officeStaffDashboard',
+    addmissionDetails: '/addmissionDetails',
+    addmissionDetailsById: '/addmissionDetails/:id',
     unAuthorized: '/unauthorized',
     notFound: "*"
 }

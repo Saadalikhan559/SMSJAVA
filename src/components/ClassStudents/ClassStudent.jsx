@@ -2,31 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchStudentYearLevelByClass } from "../../services/api/Api";
 
-const data = [
-  {
-    id: 1,
-    student_name: "Jack Paul",
-    level_name: "Nursery",
-    year_name: "2025-2026",
-  },
-  {
-    id: 2,
-    student_name: "Saklen Khan",
-    level_name: "Nursery",
-    year_name: "2025-2026",
-  },
-  {
-    id: 3,
-    student_name: "Shad Khan",
-    level_name: "Nursery",
-    year_name: "2025-2026",
-  },
-];
-
 export const ClassStudent = () => {
   const { classLevel } = useParams();
   const [classStudent, setClassStudent] = useState([]);
-  console.log(classLevel, 'classlvel');   
 
   const getClassStudents = async () => {
     try {
@@ -52,48 +30,69 @@ export const ClassStudent = () => {
           <p className="text-gray-600">No students found.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bgTheme text-white">
-                <tr>
-                  <th className="px-4 py-3 text-left">Select</th>
-                  <th className="px-4 py-3 text-left">Student Name</th>
-                  <th className="px-4 py-3 text-left">Level</th>
-                  <th className="px-4 py-3 text-left">Academic Year</th>
-                  <th className="px-4 py-3 text-left">Date</th>
-                  <th className="px-4 py-3 text-left">Attendance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {classStudent.map((student) => (
-                  <tr key={student.id}>
-                    <td className="px-4 py-3">
-                      {" "}
-                      <input
-                        type="checkbox"
-                        className="border border-gray-300 rounded-md px-2 py-1 w-full"
-                      />
-                    </td>
-                    <td className="px-4 py-3">{student.student_name}</td>
-                    <td className="px-4 py-3">{student.level_name}</td>
-                    <td className="px-4 py-3">{student.year_name}</td>
-                    <td className="px-4 py-3">
-                      <input
-                        type="date"
-                        className="border border-gray-300 rounded-md px-2 py-1 w-full"
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <select className="border border-gray-300 rounded-md px-2 py-1 w-full">
-                        <option value="">Select</option>
-                        <option value="present">Present</option>
-                        <option value="absent">Absent</option>
-                        <option value="leave">Leave</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="inline-block min-w-full align-middle">
+              <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
+                <table className="min-w-full divide-y divide-gray-300">
+                  <thead className="bgTheme text-white">
+                    <tr>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                        Select
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                        Student Name
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                        Level
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                        Academic Year
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                        Date
+                      </th>
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                        Attendance
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {classStudent.map((student) => (
+                      <tr key={student.id} className="hover:bg-gray-50">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                          <input
+                            type="checkbox"
+                            className="border border-gray-300 rounded-md px-2 py-1"
+                          />
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                          {student.student_name}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                          {student.level_name}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                          {student.year_name}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                          <input
+                            type="date"
+                            className="border border-gray-300 rounded-md px-2 py-1"
+                          />
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                          <select className="border border-gray-300 rounded-md px-2 py-1">
+                            <option value="">Select</option>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="leave">Leave</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>
