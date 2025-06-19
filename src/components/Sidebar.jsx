@@ -36,8 +36,9 @@ export const Sidebar = () => {
         <label htmlFor="my-drawer" className="drawer-overlay"></label>
 
         <div className="min-h-full w-72 bg-white shadow-lg p-4 border-r">
-
           <nav className="space-y-6">
+
+            {/* Admissions */}
             {(role === constants.roles.director || role === constants.roles.officeStaff) && isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Admissions</h3>
@@ -62,6 +63,7 @@ export const Sidebar = () => {
               </div>
             )}
 
+            {/* Documents */}
             {role !== constants.roles.student && isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Documents</h3>
@@ -86,6 +88,7 @@ export const Sidebar = () => {
               </div>
             )}
 
+            {/* Management */}
             {role === constants.roles.director && isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Management</h3>
@@ -102,6 +105,7 @@ export const Sidebar = () => {
               </div>
             )}
 
+            {/* Teaching */}
             {role === constants.roles.teacher && isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Teaching</h3>
@@ -118,6 +122,7 @@ export const Sidebar = () => {
               </div>
             )}
 
+            {/* Fees */}
             {isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Fees</h3>
@@ -127,7 +132,7 @@ export const Sidebar = () => {
                       onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-money-check-dollar w-5"></i> Fee Submission
+                      <i className="fa-solid fa-money-bill-wave w-5"></i> Fee Submission
                     </Link>
                   </li>
                   <li>
@@ -135,12 +140,30 @@ export const Sidebar = () => {
                       onClick={(e) => handleNavigation(e, allRouterLink.feeSummary)}
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-receipt w-5"></i> Fee Record
+                      <i className="fa-solid fa-envelope w-5"></i> Fee Record
                     </Link>
                   </li>
                 </ul>
               </div>
             )}
+
+            {/* Reports */}
+            {isAuthenticated && (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Reports</h3>
+                <ul className="space-y-1">
+                  <li>
+                    <Link
+                      onClick={(e) => handleNavigation(e, allRouterLink.attendanceRecord)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                    >
+                      <i className="fa-solid fa-square-poll-vertical w-5"></i> Attendance Record
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
+
           </nav>
         </div>
       </div>

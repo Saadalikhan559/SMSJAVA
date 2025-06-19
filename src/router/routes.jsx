@@ -201,17 +201,7 @@ export const routes = [
     element: <AttendanceRecord />,
     protected: false,
   },
-  {
-    path: allRouterLink.unAuthorized,
-    element: <Unauthorized />,
-    protected: false,
-  },
-  {
-    path: allRouterLink.notFound,
-    element: <NotFound />,
-    protected: false,
-  },
-  {
+    {
     path: allRouterLink.feeSummary,
     element: <FeeSummaryTable />,
     protected: false,
@@ -221,7 +211,15 @@ export const routes = [
     element: <FullAttendance />,
     protected: false,
   },
-
-
-
+  {
+    path: allRouterLink.unAuthorized,
+    element: <Unauthorized />,
+    protected: false,
+  },
+  // include all routes before this please 
+  {
+    path: allRouterLink.notFound,
+    element: <NotFound />,
+    protected: false,
+  },
 ];
