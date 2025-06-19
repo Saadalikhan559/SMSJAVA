@@ -108,6 +108,7 @@ export const AuthProvider = ({ children }) => {
       setUserRole(role);
       localStorage.setItem("userRole", role);
 
+      localStorage.setItem("teacher_id", data.teacher_id);
       setTeacherID(data.teacher_id);
       return data;
     } catch (error) {
@@ -120,6 +121,10 @@ export const AuthProvider = ({ children }) => {
     setUserRole("");
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("teacher_id");
+    localStorage.removeItem("rzp_stored_checkout_id");
+    localStorage.removeItem("rzp_device_id");
+    localStorage.removeItem("rzp_checkout_anon_id");
   };
 
   const ResetPassword = async (userDetails) => {

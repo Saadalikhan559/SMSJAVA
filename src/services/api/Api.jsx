@@ -150,6 +150,7 @@ export const fetchAllTeacherAssignments = async () => {
 export const fetchAllTeacherClasses = async (id) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/teacher-classes/${id}/`);
+    console.log(response.data);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch all teacher classes:", err);
