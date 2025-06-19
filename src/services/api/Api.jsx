@@ -187,6 +187,57 @@ export const fetchCity = async () => {
   }
 };
 
+// DASHBOARD
+
+// Director Dashboard
+export const fetchDirectorDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to director Dashboard:", err);
+    throw err;
+  }
+};
+
+// Office Staff Dashboard
+
+export const fetchOfficeStaffDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/office-staff-dashboard/13/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+// Guardian Dashboard
+
+export const fetchGuardianDashboard = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/4/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+// Teacher Dashboard
+
+export const fetchTeacherDashboard = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/1/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+
+
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {

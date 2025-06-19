@@ -1,35 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
-
-const payload = {
-  summary: {
-    new_admissions: 1,
-    students: 1450,
-    teachers: 50,
-  },
-  gender_distribution: {
-    students: {
-      count: { male: 4, female: 2 },
-      percentage: { male: 66.67, female: 33.33 },
-    },
-    teachers: {
-      count: { male: 40, female: 10 },
-      percentage: { male: 100.0, female: 0.0 },
-    },
-  },
-  class_strength: {
-    "Grade 1": 3,
-    "Grade 2": 1,
-    "Grade 3": 2,
-  },
-  students_per_year: {
-    "2023-2024": 1,
-    "2024-2025": 5,
-    "2025-2026": 0,
-  },
-};
+import { fetchDirectorDashboard } from "../../services/api/Api";
 
 export const DirectorDashboard = () => {
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getDirectorDashboardData = async () => {
+    try {
+      const data = await fetchDirectorDashboard();
+      setDashboardData(data);
+      setLoading(false);
+    } catch (error) {
+      console.log("failed to fetch director dashboard data", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getDirectorDashboardData();
+  }, []);
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading dashboard...</div>;
+  }
+
+  if (!dashboardData) {
+    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  }
+
   return (
     <div className="p-4 space-y-6">
       <h3 className="text-3xl font-bold text-center text-gray-800">
@@ -38,7 +37,7 @@ export const DirectorDashboard = () => {
 
       {/* SUMMARY CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {Object.entries(payload.summary).map(([key, value]) => (
+        {Object.entries(dashboardData.summary || {}).map(([key, value]) => (
           <div
             key={key}
             className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white"
@@ -58,7 +57,9 @@ export const DirectorDashboard = () => {
       {/* GENDER DISTRIBUTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {["students", "teachers"].map((role) => {
-          const data = payload.gender_distribution[role];
+          const data = dashboardData.gender_distribution?.[role];
+          if (!data) return null;
+          
           return (
             <div
               key={role}
@@ -75,7 +76,6 @@ export const DirectorDashboard = () => {
                   width="100%"
                   options={{
                     labels: ["Male", "Female"],
-                    // colors: ["#6e00ff", "#f97316"],
                     colors: ["#6e00ff", "gold"],
                     legend: { position: "bottom" },
                   }}
@@ -100,9 +100,8 @@ export const DirectorDashboard = () => {
               options={{
                 chart: { toolbar: { show: false } },
                 xaxis: {
-                  categories: Object.keys(payload.class_strength),
+                  categories: Object.keys(dashboardData.class_strength || {}),
                 },
-                // colors: ["#6e00ff"],
                 colors: ["gold"],
                 plotOptions: {
                   bar: {
@@ -114,7 +113,7 @@ export const DirectorDashboard = () => {
               series={[
                 {
                   name: "Students",
-                  data: Object.values(payload.class_strength),
+                  data: Object.values(dashboardData.class_strength || {}),
                 },
               ]}
             />
@@ -133,9 +132,8 @@ export const DirectorDashboard = () => {
               options={{
                 chart: { toolbar: { show: false } },
                 xaxis: {
-                  categories: Object.keys(payload.students_per_year),
+                  categories: Object.keys(dashboardData.students_per_year || {}),
                 },
-                // colors: ["#6e00ff"],
                 colors: ["gold"],
                 plotOptions: {
                   bar: {
@@ -147,7 +145,7 @@ export const DirectorDashboard = () => {
               series={[
                 {
                   name: "Students",
-                  data: Object.values(payload.students_per_year),
+                  data: Object.values(dashboardData.students_per_year || {}),
                 },
               ]}
             />
