@@ -147,9 +147,9 @@ export const fetchAllTeacherAssignments = async () => {
   }
 };
 
-export const fetchAllTeacherClasses = async () => {
+export const fetchAllTeacherClasses = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/teacher-classes/1/`);
+    const response = await axios.get(`${BASE_URL}/a/teacher-classes/${id}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch all teacher classes:", err);
@@ -227,6 +227,22 @@ export const fetchyearLevelData = async () => {
     throw err;
   }
 };
+
+
+
+
+export const fetchAttendanceData = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/director-dashboard/`);
+    return response.data.class_wise_attendance || [];
+  } catch (error) {
+    console.error('Failed to fetch attendance data:', error);
+    return [];
+  }
+};
+
+
+
 
 
 

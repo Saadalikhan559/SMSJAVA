@@ -26,11 +26,11 @@ const data = [
 export const ClassStudent = () => {
   const { classLevel } = useParams();
   const [classStudent, setClassStudent] = useState([]);
+  console.log(classLevel, 'classlvel');   
 
   const getClassStudents = async () => {
     try {
       const data = await fetchStudentYearLevelByClass(classLevel);
-      console.log("classdata", data);
       setClassStudent(data);
     } catch (error) {
       console.log("Failed to fetch students", error);
@@ -48,7 +48,7 @@ export const ClassStudent = () => {
           Students in {classLevel}
         </h2>
 
-        {data.length === 0 ? (
+        {classStudent.length === 0 ? (
           <p className="text-gray-600">No students found.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -64,7 +64,7 @@ export const ClassStudent = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((student) => (
+                {classStudent.map((student) => (
                   <tr key={student.id}>
                     <td className="px-4 py-3">
                       {" "}

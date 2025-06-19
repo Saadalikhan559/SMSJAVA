@@ -22,7 +22,7 @@ export const allRouterLink = {
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
     attendanceRecord:'/attendanceRecord',
-   
+    fullAttendance:'/fullAttendance',
     officeStaffDashboard: '/officeStaffDashboard',
     unAuthorized: '/unauthorized',
     notFound: "*"

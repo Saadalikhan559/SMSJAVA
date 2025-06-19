@@ -12,6 +12,7 @@ import OfficestaffProfile from "../components/OfficestaffDashboard/OfficestaffPr
 import StudentProfile from "../components/Student Dashboard/StudentProfile";
 import { Attendance } from "../components/Teacher/Attendance";
 import AttendanceRecord from "../components/Teacher/AttendanceRecord";
+import FullAttendance from "../components/Teacher/FullAttendance";
 import { TeacherDashboard } from "../components/TeacherDashboard/TeacherDashboard";
 import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
 import { Unauthorized } from "../components/Unauthorized";
@@ -190,6 +191,12 @@ export const routes = [
     element: <FeeSummaryTable />,
     protected: false,
   },
+   {
+    path: allRouterLink.fullAttendance,
+    element: <FullAttendance />,
+    protected: false,
+  },
+
 
 
 ];

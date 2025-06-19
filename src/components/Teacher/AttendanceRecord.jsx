@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
-import axios from 'axios';
+import { fetchAttendanceData } from '../../services/api/Api';
+import { Link } from 'react-router-dom'
+
 
 const AttendanceRecord = () => {
   const [month, setMonth] = useState('');
@@ -22,46 +24,40 @@ const AttendanceRecord = () => {
     }
   });
 
-  // Fetch data
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('https://8c1zb9f3-8000.inc1.devtunnels.ms/a/director-dashboard/');
-      const classData = response.data.class_wise_attendance || [];
+  const getData = async () => {
+    const AttendanceData = await fetchAttendanceData();
 
-        setClasses([...new Set(classData.map(item => item.class_name))]);
+    setClasses([...new Set(AttendanceData.map(item => item.class_name))]);
 
-      // Filter data
-      const filtered = classData.filter(item => {
-        const matchesMonth = month ? item.month === month : true;
-        const matchesYear = year ? item.year === year.toString() : true;
-        const matchesClass = className ? item.class_name === className : true;
-        return matchesMonth && matchesYear && matchesClass;
-      });
+    const filtered = AttendanceData.filter(item => {
+      const matchesMonth = month ? item.month === month : true;
+      const matchesYear = year ? item.year === year.toString() : true;
+      const matchesClass = className ? item.class_name === className : true;
+      return matchesMonth && matchesYear && matchesClass;
+    });
 
-      const categories = filtered.map(item => item.class_name);
-      const percentageValues = filtered.map(item =>
-        parseFloat(item.percentage.replace('%', '')) || 0
-      );
+    const categories = filtered.map(item => item.class_name);
+    const percentageValues = filtered.map(item =>
+      parseFloat(item.percentage.replace('%', '')) || 0
+    );
 
-      setChartData(prev => ({
-        ...prev,
-        series: [{ name: 'Attendance %', data: percentageValues }],
-        options: {
-          ...prev.options,
-          xaxis: { categories },
-        }
-      }));
-    } catch (error) {
-      console.error('Error fetching attendance data:', error);
-    }
+    setChartData(prev => ({
+      ...prev,
+      series: [{ name: 'Attendance %', data: percentageValues }],
+      options: {
+        ...prev.options,
+        xaxis: { categories },
+      }
+    }));
   };
 
   useEffect(() => {
-    fetchData();
+    getData();
   }, [month, year, className]);
 
   return (
     <>
+    
       <span className='font-bold text-2xl flex pt-5 justify-center gap-1'>
         <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
       </span>
@@ -72,22 +68,22 @@ const AttendanceRecord = () => {
           {[
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
-          ].map((Months) => (
-            <option key={Months} value={Months}>{Months}</option>
+          ].map((month) => (
+            <option key={month} value={month}>{month}</option>
           ))}
         </select>
 
         <select value={year} onChange={(e) => setYear(e.target.value)} className="select select-bordered focus:outline-none">
           <option value="">All Years</option>
-          {[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map(years => (
-            <option key={years} value={years}>{years}</option>
+          {[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map(year => (
+            <option key={year} value={year}>{year}</option>
           ))}
         </select>
 
         <select value={className} onChange={(e) => setClassName(e.target.value)} className="select select-bordered focus:outline-none">
           <option value="">All Classes</option>
-          {classes.map((classname, id) => (
-            <option key={id} value={classname}>{classname}</option>
+          {classes.map((cls, idx) => (
+            <option key={idx} value={cls}>{cls}</option>
           ))}
         </select>
       </div>
@@ -101,6 +97,11 @@ const AttendanceRecord = () => {
           width={1000}
         />
       </div>
+      <Link to="/fullAttendance">
+      <span className='flex justify-center'>
+      <button type="submit" className="btn btn-primary "><i class="fa-solid fa-chalkboard-user"/>Get Full Attendance</button>
+      </span></Link>
+      
     </>
   );
 };

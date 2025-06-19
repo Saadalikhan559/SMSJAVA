@@ -7,6 +7,7 @@ const BASE_URL = constants.baseUrl;
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+  const [teacherID, setTeacherID] = useState("");
   const [authTokens, setAuthTokens] = useState(
     () => JSON.parse(localStorage.getItem("authTokens")) || null
   );
@@ -18,7 +19,6 @@ export const AuthProvider = ({ children }) => {
   );
 
   const [loading, setLoading] = useState(true);
-
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
@@ -108,6 +108,7 @@ export const AuthProvider = ({ children }) => {
       setUserRole(role);
       localStorage.setItem("userRole", role);
 
+      setTeacherID(data.teacher_id);
       return data;
     } catch (error) {
       console.error("Login error:", error);
@@ -165,8 +166,9 @@ export const AuthProvider = ({ children }) => {
       RegisterUser,
       ResetPassword,
       ChangePassword,
+      teacherID
     }),
-    [authTokens, userRole, loading, axiosInstance ]
+    [authTokens, userRole, loading, axiosInstance, teacherID ]
 
   );
 
