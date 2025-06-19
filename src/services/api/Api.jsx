@@ -281,3 +281,19 @@ export const fetchyearLevelData = async () => {
 
 
 
+
+export const fetchAttendanceData = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/director-dashboard/`);
+    return response.data.class_wise_attendance || [];
+  } catch (error) {
+    console.error('Failed to fetch attendance data:', error);
+    return [];
+  }
+};
+
+
+
+
+
+
