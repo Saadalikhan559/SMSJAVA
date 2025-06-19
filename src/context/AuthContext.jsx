@@ -112,7 +112,6 @@ export const AuthProvider = ({ children }) => {
       setTeacherID(data.teacher_id);
       return data;
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     }
   };

@@ -42,9 +42,9 @@ import {
 } from "../../Validations/Validations";
 
 export const AdmissionForm = () => {
-  const successModalRef = useRef(null);
-  const failureModalRef = useRef(null);
-  const navigate = useNavigate();
+  // const successModalRef = useRef(null);
+  // const failureModalRef = useRef(null);
+  // const navigate = useNavigate();
 
   const [yearLevel, setYearLevel] = useState([]);
   const [schoolYears, setSchoolYear] = useState([]);
@@ -137,116 +137,131 @@ export const AdmissionForm = () => {
     getState();
     getCity();
   }, []);
-
 const onSubmit = async (data) => {
   setLoading(true);
-  // Construct the data object to match backend expectations
-  const formData = {
-    student: {
+
+  // Construct the data object
+  const payload = {
+    student_input: {
       first_name: data.student_first_name,
-      middle_name: data.student_middle_name,
+      middle_name: data.student_middle_name || "",
       last_name: data.student_last_name,
       email: data.student_email,
       password: data.student_password,
-      date_of_birth: data.student_date_of_birth,
-      gender: data.student_gender,
       father_name: data.student_father_name,
       mother_name: data.student_mother_name,
+      date_of_birth: data.student_date_of_birth || null,
+      gender: data.student_gender,
       religion: data.student_religion,
-      category: data.student_category,
-      height: data.student_height,
-      weight: data.student_weight,
-      blood_group: data.student_blood_group,
-      number_of_siblings: data.student_number_of_siblings,
-      address: {
-        house_no: data.student_address_house_number,
-        habitation: data.student_address_habitation,
-        word_no: data.student_address_ward_no,
-        zone_no: data.student_address_zone,
-        block: data.student_address_block,
-        district: data.student_address_district,
-        division: data.student_address_division,
-        state: data.student_address_state,
-        city: data.student_address_city,
-        country: data.student_address_country,
-        area_code: data.student_address_pin_code,
-        address_line: data.student_address_address_line
-      },
-      banking_detail: {
-        account_no: data.student_banking_account_no,
-        ifsc_code: data.student_banking_ifsc_code,
-        holder_name: data.student_banking_holder_name
-      },
-      user_profile: data.student_user_profile?.[0] || null
+      category: data.student_category || null,
+      height: data.student_height || null,
+      weight: data.student_weight || null,
+      blood_group: data.student_blood_group || "",
+      number_of_siblings: data.student_number_of_siblings || null,
+      classes: [],
     },
-    guardian: {
+    guardian_input: {
       first_name: data.guardian_first_name,
-      middle_name: data.guardian_middle_name,
+      middle_name: data.guardian_middle_name || "",
       last_name: data.guardian_last_name,
-      email: data.guardian_email,
       password: data.guardian_password,
+      email: data.guardian_email,
       phone_no: data.guardian_phone_no,
-      annual_income: data.guardian_annual_income,
-      means_of_livelihood: data.guardian_means_of_livelihood,
+      annual_income: data.guardian_annual_income || null,
+      means_of_livelihood: data.guardian_means_of_livelihood || null,
       qualification: data.guardian_qualification,
       occupation: data.guardian_occupation,
-      designation: data.guardian_designation,
-      user_profile: data.guardian_user_profile?.[0] || null
+      designation: data.guardian_designation || "",
     },
-    guardian_type: selectedGuardianType,
-    previous_school_name: data.previous_school_name,
-    previous_standard_studied: data.previous_standard_studied,
-    tc_letter: data.tc_letter,
-    year_level: data.year_level,
-    school_year: data.school_year,
-    emergency_contact_n0: data.emergency_contact_n0,
-    entire_road_distance_from_home_to_school: data.entire_road_distance_from_home_to_school,
-    obtain_marks: data.obtain_marks,
-    total_marks: data.total_marks,
-    previous_percentage: data.previous_percentage
+    address_input: {
+      house_no: data.student_address_house_number || null,
+      habitation: data.student_address_habitation,
+      word_no: data.student_address_ward_no || null,
+      zone_no: data.student_address_zone || null,
+      block: data.student_address_block || "",
+      district: data.student_address_district || "",
+      division: data.student_address_division || "",
+      area_code: data.student_address_pin_code || null,
+      country: data.student_address_country || null,
+      state: data.student_address_state || null,
+      city: data.student_address_city || null,
+      address_line: data.student_address_address_line || "",
+    },
+    banking_detail_input: {
+      account_no: data.student_banking_account_no || null,
+      ifsc_code: data.student_banking_ifsc_code,
+      holder_name: data.student_banking_holder_name,
+    },
+    guardian_type_input: selectedGuardianType || null,
+    year_level: data.year_level || null,
+    school_year: data.school_year || null,
+    previous_school_name: data.previous_school_name || "",
+    previous_standard_studied: data.previous_standard_studied || "",
+    tc_letter: data.tc_letter || "",
+    emergency_contact_n0: data.emergency_contact_n0 || "",
+    entire_road_distance_from_home_to_school: data.entire_road_distance_from_home_to_school || "",
+    obtain_marks: data.obtain_marks || null,
+    total_marks: data.total_marks || null,
+    previous_percentage: data.previous_percentage || null,
   };
 
-  const formDataToSend = new FormData();
+  // Create FormData
+  const formData = new FormData();
 
-  for (const key in formData) {
-    if (key == 'student' || key == 'guardian') {
-      for (const subKey in formData[key]) {
-        if (subKey === 'address' || subKey === 'banking_detail') {
-          for (const nestedKey in formData[key][subKey]) {
-            const value = formData[key][subKey][nestedKey];
-            if (value !== null && value !== undefined) {
-              formDataToSend.append(`${key}[${subKey}][${nestedKey}]`, value);
-            }
-          }
-        } else if (subKey === 'user_profile' && formData[key][subKey]) {
-          formDataToSend.append(`${key}[${subKey}]`, formData[key][subKey]);
-        } else {
-          const value = formData[key][subKey];
-          if (value !== null && value !== undefined) {
-            formDataToSend.append(`${key}[${subKey}]`, value);
-          }
-        }
-      }
-    } else {
-      const value = formData[key];
-      if (value !== null && value !== undefined) {
-        formDataToSend.append(key, value);
-      }
-    }
+  // Append files if they exist
+  if (data.student_user_profile?.[0]) {
+    formData.append("student_user_profile", data.student_user_profile[0]);
+  }
+  if (data.guardian_user_profile?.[0]) {
+    formData.append("guardian_user_profile", data.guardian_user_profile[0]);
   }
 
+  // Append all other fields as nested FormData entries
+  Object.entries(payload.student_input).forEach(([key, value]) => {
+    formData.append(`student_input[${key}]`, value !== null ? value : "");
+  });
+
+  Object.entries(payload.guardian_input).forEach(([key, value]) => {
+    formData.append(`guardian_input[${key}]`, value !== null ? value : "");
+  });
+
+  Object.entries(payload.address_input).forEach(([key, value]) => {
+    formData.append(`address_input[${key}]`, value !== null ? value : "");
+  });
+
+  Object.entries(payload.banking_detail_input).forEach(([key, value]) => {
+    formData.append(`banking_detail_input[${key}]`, value !== null ? value : "");
+  });
+
+  // Append remaining fields
+  formData.append("guardian_type_input", payload.guardian_type_input || "");
+  formData.append("year_level", payload.year_level || "");
+  formData.append("school_year", payload.school_year || "");
+  formData.append("previous_school_name", payload.previous_school_name);
+  formData.append("previous_standard_studied", payload.previous_standard_studied);
+  formData.append("tc_letter", payload.tc_letter);
+  formData.append("emergency_contact_n0", payload.emergency_contact_n0);
+  formData.append(
+    "entire_road_distance_from_home_to_school",
+    payload.entire_road_distance_from_home_to_school
+  );
+  formData.append("obtain_marks", payload.obtain_marks || "");
+  formData.append("total_marks", payload.total_marks || "");
+  formData.append("previous_percentage", payload.previous_percentage || "");
+
+
+
   try {
-    await handleAdmissionForm(formDataToSend);
-    alert('successfully submitted the form');
+    const response = await handleAdmissionForm(formData);
+    console.log("Submission successful:", response);
+    alert('Successfully submitted the form');
   } catch (error) {
     console.error("Submission error:", error.response?.data || error.message);
+    alert('Failed to submit the form. Please try again.');
   } finally {
     setLoading(false);
   }
-
-  console.log("Submitting:", formData); // Debug: Check constructed object
 };
-
 
   return (
     <>
@@ -923,7 +938,8 @@ const onSubmit = async (data) => {
                   required: "Annual Income is required",
                   valueAsNumber: true,
                   validate: (value) =>
-                    Number.isInteger(Number(value)) || "A valid integer is required",
+                    Number.isInteger(Number(value)) ||
+                    "A valid integer is required",
                 })}
               />
               {errors.guardian_annual_income && (
@@ -1539,7 +1555,7 @@ const onSubmit = async (data) => {
                 </span>
               </label>
               <input
-                type="text"
+                type="Number"
                 name="student_address_pin_code"
                 placeholder="Pin Code"
                 maxLength={6}
