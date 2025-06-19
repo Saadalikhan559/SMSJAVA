@@ -13,15 +13,15 @@ export const fetchRoles = async () => {
   }
 };
 
-export const fetchYearLevels = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/year-levels/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch roles:", err);
-    throw err;
-  }
-};
+// export const fetchYearLevels = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/year-levels/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch roles:", err);
+//     throw err;
+//   }
+// };
 
 export const fetchSchoolYear = async () => {
   try {
@@ -147,9 +147,9 @@ export const fetchAllTeacherAssignments = async () => {
   }
 };
 
-export const fetchAllTeacherClasses = async () => {
+export const fetchAllTeacherClasses = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/teacher-classes/1/`);
+    const response = await axios.get(`${BASE_URL}/a/teacher-classes/${id}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch all teacher classes:", err);
@@ -205,4 +205,58 @@ export const handleAdmissionForm = async (formData) => {
     console.error("Failed:", err);
     throw err;
   }
+};
+
+export const fetchStudents1 = async () => {
+  const BASE_URL1 = constants.baseUrl1;
+  try {
+    const response = await axios.get(`${BASE_URL1}/s/students/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
+export const fetchyearLevelData = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/year-level-fee/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
+export const fetchYearLevels = async () => {
+  try {
+    const response = await axios.get(`${constants.baseUrl}/d/year-levels/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch year levels:", err);
+    throw err;
+  }
+};
+
+
+// Fetch fee summary based on filters
+export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
+  let url = "";
+  const params = {};
+
+  if (selectedMonth && selectedClass) {
+    url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+    params.month = selectedMonth;
+    params.year_level = selectedClass;
+  } else if (selectedMonth) {
+    url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+    params.month = selectedMonth;
+  } else if (selectedClass) {
+    url = `${constants.baseUrl}/d/fee-record/student-fee-summary/`;
+    params.year_level = selectedClass;
+  } else {
+    url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+  }
+
+  return axios.get(url, { params });
 };

@@ -7,6 +7,7 @@ const BASE_URL = constants.baseUrl;
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+  const [teacherID, setTeacherID] = useState("");
   const [authTokens, setAuthTokens] = useState(
     () => JSON.parse(localStorage.getItem("authTokens")) || null
   );
@@ -18,8 +19,6 @@ export const AuthProvider = ({ children }) => {
   );
 
   const [loading, setLoading] = useState(true);
-  const [students, setStudents] = useState([]);
-  const [yearLevelData, setYearLevelData] = useState([]);
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
@@ -109,6 +108,7 @@ export const AuthProvider = ({ children }) => {
       setUserRole(role);
       localStorage.setItem("userRole", role);
 
+      setTeacherID(data.teacher_id);
       return data;
     } catch (error) {
       console.error("Login error:", error);
@@ -153,35 +153,6 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Fetch students data
-  useEffect(() => {
-    const BASE_URL1 = constants.baseUrl1;
-    const fetchStudents = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL1}/s/students/`);
-        setStudents(response.data);
-      } catch {
-        console.error("Error fetching students:");
-      }
-    };
-
-    fetchStudents();
-  }, []);
-
-  // Fetch year level data
-  useEffect(() => {
-    const BASE_URL1 = constants.baseUrl1;
-    const fetchYearLevelData = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL1}/d/year-level-fee/`);
-        setYearLevelData(response.data);
-      } catch {
-        console.error("Error fetching year level data:");
-      }
-    };
-
-    fetchYearLevelData();
-  }, []);
 
   const contextValue = useMemo(
     () => ({
@@ -193,12 +164,12 @@ export const AuthProvider = ({ children }) => {
       LoginUser,
       LogoutUser,
       RegisterUser,
-      students,
-      yearLevelData,
       ResetPassword,
       ChangePassword,
+      teacherID
     }),
-    [authTokens, userRole, loading, axiosInstance, students, yearLevelData]
+    [authTokens, userRole, loading, axiosInstance, teacherID ]
+
   );
 
   return (

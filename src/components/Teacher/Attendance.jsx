@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { fetchAllTeacherClasses } from "../../services/api/Api";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 export const Attendance = () => {
   const navigate = useNavigate();
   const [classList, setClassList] = useState([]);
+  const {teacherID} = useContext(AuthContext);
 
   const getAllTeacherStudents = async () => {
     try {
-      const data = await fetchAllTeacherClasses();
-      console.log("all teacher", data);
+      const data = await fetchAllTeacherClasses(teacherID);
       setClassList(data);
     } catch (error) {
       console.log("failed to get all teacher students", error);
@@ -27,7 +28,6 @@ export const Attendance = () => {
   return (
     <div className="p-6">
       <h2 className="text-4xl font-semibold mb-6 text-center">Attendance</h2>
-
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {classList.map((classItem) => (
           <div

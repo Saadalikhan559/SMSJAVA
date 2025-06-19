@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { constants } from "../../global/constants";
+import { fetchYearLevels, fetchFeeSummary } from "../../services/api/Api";
 
 const FeeSummaryTable = () => {
     const [students, setStudents] = useState([]);
@@ -10,42 +9,34 @@ const FeeSummaryTable = () => {
     const [yearLevels, setYearLevels] = useState([]);
     const [error, setError] = useState(null);
 
+    // Fetch year levels
+    // useEffect(() => {
+    //     const getYearLevels = async () => {
+    //         try {
+    //             const response = await fetchYearLevels();
+    //             setYearLevels(response.data);
+    //             console.log(response);
+                
+    //         } catch (err) {
+    //             console.error("Error fetching year levels:", err);
+    //         }
+    //     };
+    //     getYearLevels();
+    // }, []);
+
+    // Fetch student fee data dynamically
     useEffect(() => {
-        const fetchYearLevels = async () => {
-            try {
-                const response = await axios.get(`${constants.baseUrl}/d/year-levels/`);
-                console.log("Fetched year levels:", response.data);
-                setYearLevels(response.data);
-            } catch (error) {
-                console.error("Error fetching year levels:", error);
-            }
-        };
-        fetchYearLevels();
-    }, []);
-
-
-
-
-    // Fetch Fee Records
-    useEffect(() => {
-        const fetchData = async () => {
+        const getFeeData = async () => {
             setLoading(true);
             setError(null);
 
             try {
-                const url = `${constants.baseUrl}/d/fee-record/student-fee-summary/`;
-                const params = new URLSearchParams();
-
-                if (selectedMonth) params.append("month", selectedMonth);
-
-                if (selectedClass) params.append("year_level", selectedClass);
-
-                const response = await axios.get(`${url}?${params.toString()}`);
+                const response = await fetchFeeSummary({ selectedMonth, selectedClass });
 
                 if (response.status === 200) {
                     setStudents(response.data);
-                    console.log(response.data);
-
+                    console.log(response);
+                    
                 } else {
                     setError("Unexpected response from server.");
                 }
@@ -57,7 +48,7 @@ const FeeSummaryTable = () => {
             setLoading(false);
         };
 
-        fetchData();
+        getFeeData();
     }, [selectedMonth, selectedClass]);
 
     const resetFilters = () => {
@@ -65,11 +56,17 @@ const FeeSummaryTable = () => {
         setSelectedClass("");
     };
 
-    if (loading) return <div className="flex justify-center items-center h-screen w-auto"><span className="loading loading-spinner loading-xl"></span></div>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <span className="loading loading-spinner loading-xl"></span>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen p-5 bg-gray-50">
-            <div className="bg-white bg-opacity-95 p-6 rounded-lg shadow-lg max-w-screen mx-auto">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
                     Student Fee Record
                     <i className="fa-solid fa-cloud ml-2 text-blue-500"></i>
@@ -131,25 +128,33 @@ const FeeSummaryTable = () => {
                     <table className="w-full text-sm">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">ID</th>
+                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">S.No</th>
                                 <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Student Name</th>
                                 <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Year Level</th>
+                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Month</th>
                                 <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Total Amount</th>
                                 <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Paid Amount</th>
                                 <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Due Amount</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {students.map((record) => (
-                                <tr key={record.student_id} className="hover:bg-blue-50">
-                                    <td className="p-3 border border-gray-200">{record.student_id}</td>
-                                    <td className="p-3 border border-gray-200">{record.student_name}</td>
-                                    <td className="p-3 border border-gray-200">{record.year_level}</td>
-                                    <td className="p-3 border border-gray-200">₹{record.total_amount}</td>
-                                    <td className="p-3 border border-gray-200">₹{record.paid_amount}</td>
-                                    <td className="p-3 border border-gray-200">₹{record.due_amount}</td>
+                            {students.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="text-center py-6 text-gray-500">No data found.</td>
                                 </tr>
-                            ))}
+                            ) : (
+                                students.map((record) => (
+                                    <tr key={record.student_id} className="hover:bg-blue-50">
+                                        <td className="p-3 border border-gray-200">{record.id}</td>
+                                        <td className="p-3 border border-gray-200">{record.student_name}</td>
+                                        <td className="p-3 border border-gray-200">{record.year_level}</td>
+                                        <td className="p-3 border border-gray-200">{record.month}</td>
+                                        <td className="p-3 border border-gray-200">₹{record.total_amount}</td>
+                                        <td className="p-3 border border-gray-200">₹{record.paid_amount}</td>
+                                        <td className="p-3 border border-gray-200">₹{record.due_amount}</td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -159,10 +164,4 @@ const FeeSummaryTable = () => {
 };
 
 export default FeeSummaryTable;
-
-
-
-
-
-
 
