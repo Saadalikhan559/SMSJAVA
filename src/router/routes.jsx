@@ -13,6 +13,8 @@ import { OfficeStaffDashboard } from "../components/OfficestaffDashboard/OfficeS
 import OfficestaffProfile from "../components/OfficestaffDashboard/OfficestaffProfile";
 import StudentProfile from "../components/Student Dashboard/StudentProfile";
 import { Attendance } from "../components/Teacher/Attendance";
+import AttendanceRecord from "../components/Teacher/AttendanceRecord";
+import FullAttendance from "../components/Teacher/FullAttendance";
 import { TeacherDashboard } from "../components/TeacherDashboard/TeacherDashboard";
 import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
 import { Unauthorized } from "../components/Unauthorized";
@@ -28,6 +30,7 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
+
 
 export const routes = [
   {
@@ -191,12 +194,13 @@ export const routes = [
     protected: false,
     allowedRoles: [constants.roles.director],
   },
-    {
-    path: allRouterLink.feeSummary,
-    element: <FeeSummaryTable />,
+    // Attendance Record
+
+   {
+    path: allRouterLink.attendanceRecord,
+    element: <AttendanceRecord />,
     protected: false,
   },
-  // Add all routes before this 
   {
     path: allRouterLink.unAuthorized,
     element: <Unauthorized />,
@@ -207,5 +211,17 @@ export const routes = [
     element: <NotFound />,
     protected: false,
   },
+  {
+    path: allRouterLink.feeSummary,
+    element: <FeeSummaryTable />,
+    protected: false,
+  },
+   {
+    path: allRouterLink.fullAttendance,
+    element: <FullAttendance />,
+    protected: false,
+  },
+
+
 
 ];

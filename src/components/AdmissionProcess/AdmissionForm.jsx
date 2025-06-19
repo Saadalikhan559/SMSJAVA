@@ -1555,7 +1555,7 @@ const onSubmit = async (data) => {
                 </span>
               </label>
               <input
-                type="text"
+                type="Number"
                 name="student_address_pin_code"
                 placeholder="Pin Code"
                 maxLength={6}
