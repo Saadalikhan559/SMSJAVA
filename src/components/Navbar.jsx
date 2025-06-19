@@ -62,7 +62,7 @@ export const Navbar = () => {
             </label>
           )}
           <span className="nexus-logo text-xl md:text-2xl ml-2">
-            <Link to={allRouterLink.homeScreen}>SMS</Link>
+            SMS
           </span>
         </div>
 
