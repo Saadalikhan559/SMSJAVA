@@ -59,6 +59,8 @@ export const Login = () => {
     navigate(allRouterLink.guardianDashboard);
   } else if (userRole === constants.roles.teacher) {
     navigate(allRouterLink.teacherDashboard);
+  } else if (userRole === constants.roles.student) {
+    navigate(allRouterLink.studentProfile);
   }
 
   // Reset loginTriggered after navigation
