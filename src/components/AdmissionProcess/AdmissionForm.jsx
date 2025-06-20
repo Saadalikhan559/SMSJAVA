@@ -391,7 +391,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap шести mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -432,7 +432,7 @@ export const AdmissionForm = () => {
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -447,7 +447,7 @@ export const AdmissionForm = () => {
                 className="file-input file-input-bordered w-full focus:outline-none"
               />
             </div>
-          </div>
+          </div> */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
@@ -746,7 +746,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -761,7 +761,7 @@ export const AdmissionForm = () => {
                 className="file-input file-input-bordered w-full focus:outline-none"
               />
             </div>
-          </div>
+          </div> */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
@@ -1083,7 +1083,7 @@ export const AdmissionForm = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1130,6 +1130,20 @@ export const AdmissionForm = () => {
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map-signs text-sm"></i>
+                  Division
+                </span>
+              </label>
+              <input
+                type="text"
+                name="student_address_division"
+                placeholder="Division"
+                className="input input-bordered w-full focus:outline-none"
+              />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">

@@ -55,7 +55,7 @@ export const Login = () => {
     navigate(allRouterLink.directorDashboard);
   } else if (userRole === constants.roles.officeStaff) {
     navigate(allRouterLink.officeStaffDashboard);
-  } else if (userRole === constants.roles.guardian) {
+  } else if (userRole === constants.roles.guardian || userRole === constants.roles.student) {
     navigate(allRouterLink.guardianDashboard);
   } else if (userRole === constants.roles.teacher) {
     navigate(allRouterLink.teacherDashboard);
