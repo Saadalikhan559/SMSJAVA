@@ -1,5 +1,3 @@
-
-
 export const constants = {
   isOnline: true,
   isOffline: true,

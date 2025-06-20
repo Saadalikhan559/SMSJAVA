@@ -86,6 +86,8 @@ export const AdmissionFees = () => {
   const selectedFees = yearLevelData.find(
     (level) => level.year_level === selectedYearLevel
   );
+  console.log(yearLevelData);
+  
 
   const months = [
     "January",
