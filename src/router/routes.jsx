@@ -1,5 +1,7 @@
+import { AdmissionDetails } from "../components/AdmissionProcess/AdmissionDetails";
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/singleAdmissionDetails";
 import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
@@ -11,9 +13,12 @@ import { OfficeStaffDashboard } from "../components/OfficestaffDashboard/OfficeS
 import OfficestaffProfile from "../components/OfficestaffDashboard/OfficestaffProfile";
 import StudentProfile from "../components/Student Dashboard/StudentProfile";
 import { Attendance } from "../components/Teacher/Attendance";
+import AttendanceRecord from "../components/Teacher/AttendanceRecord";
+import FullAttendance from "../components/Teacher/FullAttendance";
 import { TeacherDashboard } from "../components/TeacherDashboard/TeacherDashboard";
 import TeacherProfile from "../components/TeacherDashboard/TeacherProfile";
 import { Unauthorized } from "../components/Unauthorized";
+import { ViewDocuments } from "../components/UploadDocs/ViewDocuments";
 import { constants } from "../global/constants";
 import { AllTeacherAssignments } from "../screens/Assignments/AllTeacherAssignments";
 import { SubjectAssignments } from "../screens/Assignments/SubjectAssignments";
@@ -25,6 +30,7 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
+
 
 export const routes = [
   {
@@ -64,6 +70,18 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
+    {
+    path: allRouterLink.addmissionDetails,
+    element: <AdmissionDetails />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+    {
+    path: allRouterLink.addmissionDetailsById,
+    element: <SingleAdmissionDetails />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
   {
     path: allRouterLink.admissionFees,
     element: <AdmissionFees />,
@@ -79,6 +97,16 @@ export const routes = [
   {
     path: allRouterLink.documentUpload,
     element: <DocumentUpload />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.officeStaff,
+      constants.roles.teacher,
+    ],
+  },
+  {
+    path: allRouterLink.viewDocuments,
+    element: <ViewDocuments />,
     protected: true,
     allowedRoles: [
       constants.roles.director,
@@ -166,19 +194,32 @@ export const routes = [
     protected: false,
     allowedRoles: [constants.roles.director],
   },
+    // Attendance Record
+
+   {
+    path: allRouterLink.attendanceRecord,
+    element: <AttendanceRecord />,
+    protected: false,
+  },
+    {
+    path: allRouterLink.feeSummary,
+    element: <FeeSummaryTable />,
+    protected: false,
+  },
+   {
+    path: allRouterLink.fullAttendance,
+    element: <FullAttendance />,
+    protected: false,
+  },
   {
     path: allRouterLink.unAuthorized,
     element: <Unauthorized />,
     protected: false,
   },
+  // include all routes before this please 
   {
     path: allRouterLink.notFound,
     element: <NotFound />,
-    protected: false,
-  },
-  {
-    path: allRouterLink.feeSummary,
-    element: <FeeSummaryTable />,
     protected: false,
   },
 ];

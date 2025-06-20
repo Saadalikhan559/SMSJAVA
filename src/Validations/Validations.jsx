@@ -255,6 +255,8 @@ export const validState = (State) => {
 export const validPinCode = (Pin_Code) => {
     if (!Pin_Code) return "Pin Code is required"
     if (Pin_Code.length < 6) return "Enter a 6 digits valid Pin Code";
+    if (Pin_Code.length > 6) return "Enter a 6 digits valid Pin Code";
+
 
     return ""
 }
