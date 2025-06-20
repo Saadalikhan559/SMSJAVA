@@ -205,7 +205,7 @@ export const fetchDirectorDashboard = async () => {
 
 export const fetchOfficeStaffDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/office-staff-dashboard/13/`);
+    const response = await axios.get(`${BASE_URL}/d/office-staff-dashboard/`);
     return response.data;
   } catch (err) {
     console.error("Failed to officeStaff Dashboard:", err);
@@ -229,14 +229,44 @@ export const fetchGuardianDashboard = async (id) => {
 
 export const fetchTeacherDashboard = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/1/`);
+    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${1}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to officeStaff Dashboard:", err);
     throw err;
   }
 };
+// admission details get api
+export const fetchAdmissionDetails = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/admission/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to admission details:", err);
+    throw err;
+  }
+};
+// admission details get api by id
+export const fetchAdmissionDetailsById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/admission/${id}/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to admission details:", err);
+    throw err;
+  }
+};
 
+// fetch View upload documents api
+export const fetchViewDocuments = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/Document/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load upload data details:", err);
+    throw err;
+  }
+};
 
 
 // POST APIS
@@ -260,19 +290,19 @@ export const handleAdmissionForm = async (formData) => {
 };
 
 export const fetchStudents1 = async () => {
-  const BASE_URL1 = constants.baseUrl1;
   try {
-    const response = await axios.get(`${BASE_URL1}/s/students/`);
+    const response = await axios.get(`${BASE_URL}/s/students/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
     throw err;
   }
 };
+
+
 export const fetchyearLevelData = async () => {
-  const BASE_URL1 = constants.baseUrl1;
   try {
-    const response = await axios.get(`${BASE_URL1}/d/year-level-fee/`);
+    const response = await axios.get(`${BASE_URL}/d/year-level-fee/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);

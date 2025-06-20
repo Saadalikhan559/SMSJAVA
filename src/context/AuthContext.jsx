@@ -8,6 +8,7 @@ export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [teacherID, setTeacherID] = useState("");
+  const [guardianID, setGuardianID] = useState("");
   const [authTokens, setAuthTokens] = useState(
     () => JSON.parse(localStorage.getItem("authTokens")) || null
   );
