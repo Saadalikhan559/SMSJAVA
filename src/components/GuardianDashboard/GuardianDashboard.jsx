@@ -1,30 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { fetchGuardianDashboard } from "../../services/api/Api";
 
-const payload = {
-  guardian: "Rakesh Kumar",
-  total_children: 2,
-  children: [
-    {
-      student_name: "Aarav Verma",
-      class: "Grade 1 (2024-2025)",
-    },
-    {
-      student_name: "Jhon Vick",
-      class: "Grade 1 (2024-2025)",
-    },
-  ],
-};
 
 export const GuardianDashboard = () => {
+  const [dashboardData, setDashboardData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+  const getGuardianDashboardData = async () => {
+    try {
+      const data = await fetchGuardianDashboard();
+      setDashboardData(data);
+      setLoading(false);
+    } catch (error) {
+      console.log("failed to fetch guardian dashboard data", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getGuardianDashboardData();
+  }, []);
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading dashboard...</div>;
+  }
+
+  if (!dashboardData) {
+    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  }
   return (
     <div className="p-4 space-y-6">
       <h3 className="text-3xl font-bold text-center text-gray-800">
-        {payload.guardian}'s Dashboard
+        {dashboardData.guardian}'s Dashboard
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {payload.children && payload.children.length > 0 ? (
-          payload.children.map((child, idx) => (
+        {dashboardData.children && dashboardData.children.length > 0 ? (
+          dashboardData.children.map((child, idx) => (
             <div
               key={idx}
               className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white"
@@ -40,7 +52,9 @@ export const GuardianDashboard = () => {
               <div className="p-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Class:</span>
-                  <span className="text-gray-800 font-semibold">{child.class}</span>
+                  <span className="text-gray-800 font-semibold">
+                    {child.class}
+                  </span>
                 </div>
               </div>
             </div>

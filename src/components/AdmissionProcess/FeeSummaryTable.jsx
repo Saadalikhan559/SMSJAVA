@@ -9,45 +9,61 @@ const FeeSummaryTable = () => {
     const [yearLevels, setYearLevels] = useState([]);
     const [error, setError] = useState(null);
 
-    // Fetch year levels
-    // useEffect(() => {
-    //     const getYearLevels = async () => {
-    //         try {
-    //             const response = await fetchYearLevels();
-    //             setYearLevels(response.data);
-    //             console.log(response);
-                
-    //         } catch (err) {
-    //             console.error("Error fetching year levels:", err);
-    //         }
-    //     };
-    //     getYearLevels();
-    // }, []);
+    const getYearLevels = async () => {
+        try {
+            const data = await fetchYearLevels();
+            setYearLevels(data);
+        } catch (err) {
+            console.error("Error fetching year levels:", err);
+        }
+    };
 
-    // Fetch student fee data dynamically
-    useEffect(() => {
-        const getFeeData = async () => {
-            setLoading(true);
-            setError(null);
+    const getFeeData = async () => {
+        setLoading(true);
+        setError(null);
+        setStudents([]);
 
-            try {
-                const response = await fetchFeeSummary({ selectedMonth, selectedClass });
+        try {
+            const response = await fetchFeeSummary({ selectedMonth, selectedClass });
 
-                if (response.status === 200) {
-                    setStudents(response.data);
-                    console.log(response);
-                    
+            if (response.status === 200) {
+                const data = response.data;
+
+                if (data && typeof data === "object" && data.detail === "No records found.") {
+                    setError("No records found.");
+                    setStudents([]);
+                } else if (Array.isArray(data)) {
+                    setStudents(data);
                 } else {
                     setError("Unexpected response from server.");
                 }
-            } catch (err) {
-                console.error("Error fetching fee records:", err);
-                setError("Failed to load student fee records. Please try again.");
+            } else {
+                setError("Unexpected status from server.");
+            }
+        } catch (err) {
+            console.error("Error fetching fee records:", err);
+
+            if (err.response) {
+                if (err.response.status === 404) {
+                    setError("No data found (404 Not Found).");
+                } else {
+                    setError(`Server error: ${err.response.status} ${err.response.statusText}`);
+                }
+            } else {
+                setError("Network error. Please check your connection.");
             }
 
-            setLoading(false);
-        };
+            setStudents([]);
+        }
 
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        getYearLevels();
+    }, []);
+
+    useEffect(() => {
         getFeeData();
     }, [selectedMonth, selectedClass]);
 
@@ -58,9 +74,7 @@ const FeeSummaryTable = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <span className="loading loading-spinner loading-xl"></span>
-            </div>
+            <div className='flex items-center justify-center h-screen'><i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" /></div>
         );
     }
 
@@ -101,8 +115,11 @@ const FeeSummaryTable = () => {
                             onChange={(e) => setSelectedClass(e.target.value)}
                         >
                             <option value="">All Classes</option>
-                            {yearLevels.map((level) => (
+                            {/* {yearLevels.map((level) => (
                                 <option key={level.id} value={level.id}>{level.level_name}</option>
+                            ))} */}
+                            {yearLevels.map((level) => (
+                                <option key={level.id} value={level.id}>{level.level_name}</option> // <--- Focus here
                             ))}
                         </select>
                     </div>
@@ -124,34 +141,34 @@ const FeeSummaryTable = () => {
                 )}
 
                 {/* Table Section */}
-                <div className="overflow-x-auto rounded-lg shadow-sm">
-                    <table className="w-full text-sm">
-                        <thead className="bg-gray-100">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+                        <thead className="bgTheme text-white">
                             <tr>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">S.No</th>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Student Name</th>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Year Level</th>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Month</th>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Total Amount</th>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Paid Amount</th>
-                                <th className="p-3 text-left font-semibold text-gray-700 border border-gray-200">Due Amount</th>
+                                <th className="px-4 py-3 text-left">S.No</th>
+                                <th className="px-4 py-3 text-left">Student Name</th>
+                                <th className="px-4 py-3 text-left">Class</th>
+                                <th className="px-4 py-3 text-left">Month</th>
+                                <th className="px-4 py-3 text-left">Total Amount</th>
+                                <th className="px-4 py-3 text-left">Paid Amount</th>
+                                <th className="px-4 py-3 text-left">Due Amount</th>
                             </tr>
                         </thead>
                         <tbody>
                             {students.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="text-center py-6 text-gray-500">No data found.</td>
+                                    <td colSpan="7" className="text-center py-6 text-gray-500">No data found.</td>
                                 </tr>
                             ) : (
-                                students.map((record) => (
-                                    <tr key={record.student_id} className="hover:bg-blue-50">
-                                        <td className="p-3 border border-gray-200">{record.id}</td>
-                                        <td className="p-3 border border-gray-200">{record.student_name}</td>
-                                        <td className="p-3 border border-gray-200">{record.year_level}</td>
-                                        <td className="p-3 border border-gray-200">{record.month}</td>
-                                        <td className="p-3 border border-gray-200">₹{record.total_amount}</td>
-                                        <td className="p-3 border border-gray-200">₹{record.paid_amount}</td>
-                                        <td className="p-3 border border-gray-200">₹{record.due_amount}</td>
+                                students.map((record, index) => (
+                                    <tr key={record.student_id || index} className="hover:bg-blue-50">
+                                        <td className="px-4 py-3">{index + 1}</td>
+                                        <td className="px-4 py-3">{record.student_name}</td>
+                                        <td className="px-4 py-3">{record.year_level}</td>
+                                        <td className="px-4 py-3">{record.month}</td>
+                                        <td className="px-4 py-3">₹{record.total_amount}</td>
+                                        <td className="px-4 py-3">₹{record.paid_amount}</td>
+                                        <td className="px-4 py-3">₹{record.due_amount}</td>
                                     </tr>
                                 ))
                             )}
@@ -164,4 +181,3 @@ const FeeSummaryTable = () => {
 };
 
 export default FeeSummaryTable;
-

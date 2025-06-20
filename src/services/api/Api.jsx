@@ -187,6 +187,57 @@ export const fetchCity = async () => {
   }
 };
 
+// DASHBOARD
+
+// Director Dashboard
+export const fetchDirectorDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to director Dashboard:", err);
+    throw err;
+  }
+};
+
+// Office Staff Dashboard
+
+export const fetchOfficeStaffDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/office-staff-dashboard/13/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+// Guardian Dashboard
+
+export const fetchGuardianDashboard = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/4/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+// Teacher Dashboard
+
+export const fetchTeacherDashboard = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/1/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+
+
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {
@@ -239,24 +290,26 @@ export const fetchYearLevels = async () => {
 };
 
 
-// Fetch fee summary based on filters
+
 export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
-  let url = "";
+  // Always use the same base URL for fee summaries.
+  // This is crucial for consistent behavior.
+  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`; 
+  
   const params = {};
 
-  if (selectedMonth && selectedClass) {
-    url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+  // Add month parameter if selectedMonth is provided
+  if (selectedMonth) {
     params.month = selectedMonth;
-    params.year_level = selectedClass;
-  } else if (selectedMonth) {
-    url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
-    params.month = selectedMonth;
-  } else if (selectedClass) {
-    url = `${constants.baseUrl}/d/fee-record/student-fee-summary/`;
-    params.year_level = selectedClass;
-  } else {
-    url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
   }
 
+  // Add class parameter if selectedClass is provided
+  if (selectedClass) {
+  // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
+    params.year_level = selectedClass; 
+  }
+
+  // If both selectedMonth and selectedClass are empty, the 'params' object will be empty.
+  // Your backend API for '/d/fee-record/monthly-summary/' should then return all records.
   return axios.get(url, { params });
 };
