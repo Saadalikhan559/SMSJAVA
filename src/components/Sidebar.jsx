@@ -37,51 +37,103 @@ export const Sidebar = () => {
 
         <div className="min-h-full w-72 bg-white shadow-lg p-4 border-r">
           <nav className="space-y-6">
-
-            {/* Admissions */}
-            {(role === constants.roles.director || role === constants.roles.officeStaff) && isAuthenticated && (
+            {/* Dashboard / Home */}
+            {isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Admissions</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                  Home
+                </h3>
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.admissionForm)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        let dashboardPath = "/";
+                        if (role === constants.roles.director) {
+                          dashboardPath = allRouterLink.directorDashboard;
+                        } else if (role === constants.roles.officeStaff) {
+                          dashboardPath = allRouterLink.officeStaffDashboard;
+                        } else if (
+                          role === constants.roles.guardian ||
+                          role === constants.roles.student
+                        ) {
+                          dashboardPath = allRouterLink.guardianDashboard;
+                        } else if (role === constants.roles.teacher) {
+                          dashboardPath = allRouterLink.teacherDashboard;
+                        }
+                        handleNavigation(e, dashboardPath);
+                      }}
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-user-graduate w-5"></i> Admission Form
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.addmissionDetails)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-clipboard-list w-5"></i> Admission Details
+                      <i className="fa-solid fa-house w-5"></i> Dashboard
                     </Link>
                   </li>
                 </ul>
               </div>
             )}
 
+            {/* Admissions */}
+            {(role === constants.roles.director ||
+              role === constants.roles.officeStaff) &&
+              isAuthenticated && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Admissions
+                  </h3>
+                  <ul className="space-y-1">
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.admissionForm)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-user-graduate w-5"></i>{" "}
+                        Admission Form
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.addmissionDetails)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-clipboard-list w-5"></i>{" "}
+                        Admission Details
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+
             {/* Documents */}
             {role !== constants.roles.student && isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Documents</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                  Documents
+                </h3>
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.documentUpload)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.documentUpload)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-file-arrow-up w-5"></i> Upload Documents
+                      <i className="fa-solid fa-file-arrow-up w-5"></i> Upload
+                      Documents
                     </Link>
                   </li>
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.viewDocuments)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.viewDocuments)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-file-circle-check w-5"></i> View Documents
+                      <i className="fa-solid fa-file-circle-check w-5"></i> View
+                      Documents
                     </Link>
                   </li>
                 </ul>
@@ -91,11 +143,15 @@ export const Sidebar = () => {
             {/* Management */}
             {role === constants.roles.director && isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Management</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                  Management
+                </h3>
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.subjectAssignment)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.subjectAssignment)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
                       <i className="fa-solid fa-tasks w-5"></i> Assign Subjects
@@ -108,14 +164,19 @@ export const Sidebar = () => {
             {/* Teaching */}
             {role === constants.roles.teacher && isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Teaching</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                  Teaching
+                </h3>
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.attendance)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.attendance)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-clipboard-user w-5"></i> Attendance
+                      <i className="fa-solid fa-clipboard-user w-5"></i>{" "}
+                      Attendance
                     </Link>
                   </li>
                 </ul>
@@ -125,19 +186,26 @@ export const Sidebar = () => {
             {/* Fees */}
             {isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Fees</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                  Fees
+                </h3>
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.admissionFees)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-money-bill-wave w-5"></i> Fee Submission
+                      <i className="fa-solid fa-money-bill-wave w-5"></i> Fee
+                      Submission
                     </Link>
                   </li>
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.feeSummary)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.feeSummary)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
                       <i className="fa-solid fa-envelope w-5"></i> Fee Record
@@ -150,20 +218,24 @@ export const Sidebar = () => {
             {/* Reports */}
             {isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Reports</h3>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                  Reports
+                </h3>
                 <ul className="space-y-1">
                   <li>
                     <Link
-                      onClick={(e) => handleNavigation(e, allRouterLink.attendanceRecord)}
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.attendanceRecord)
+                      }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i className="fa-solid fa-square-poll-vertical w-5"></i> Attendance Record
+                      <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
+                      Attendance Record
                     </Link>
                   </li>
                 </ul>
               </div>
             )}
-
           </nav>
         </div>
       </div>
