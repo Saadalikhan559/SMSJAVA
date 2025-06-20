@@ -20,6 +20,8 @@ function OfficestaffProfile() {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [departments, setDepartments] = useState([]);
+  const [accessToken, setAccessToken] = useState("");
+  
 
   const BASE_URL = constants.baseUrl;
 
@@ -34,11 +36,36 @@ function OfficestaffProfile() {
   } = useForm();
 
   useEffect(() => {
+      const tokenData = localStorage.getItem("authTokens");
+  
+      if (tokenData) {
+        try {
+          // Parse the JSON string to get the token object
+          const tokens = JSON.parse(tokenData);
+  
+          // Set the access token from the parsed object
+          if (tokens && tokens.access) {
+            setAccessToken(tokens.access);
+          }
+        } catch (error) {
+          console.error("Error parsing auth tokens:", error);
+        }
+      }
+    }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
     const fetchOfficestaffData = async () => {
       try {
         setLoading(true);
         // Fetch office staff data
-        const response = await axios.get(`${BASE_URL}/d/officestaff/1/`);
+        const response = await axios.get(`${BASE_URL}/d/officestaff/OfficeStaff_my_profile/` ,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
         console.log("API Response:", response.data);
         setProfileData(response.data);
         
@@ -56,7 +83,7 @@ function OfficestaffProfile() {
     };
 
     fetchOfficestaffData();
-  }, []);
+  }, [accessToken, BASE_URL]);
 
   const getDepartmentName = (deptId) => {
     const dept = departments.find(d => d.id === deptId);
@@ -84,11 +111,14 @@ function OfficestaffProfile() {
         formData.append("user_profile", imagePreview);
       }
 
+      if (!accessToken) return;
+
       const response = await axios.put(
-        `${BASE_URL}/d/officestaff/1/`,
+        `${BASE_URL}/d/officestaff/OfficeStaff_my_profile/`,
         formData,
         {
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -126,6 +156,7 @@ function OfficestaffProfile() {
   }
 
   if (error) {
+    console.log(error)
     return (
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
         <div className="text-center text-red-500">

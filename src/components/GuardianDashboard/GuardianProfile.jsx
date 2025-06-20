@@ -13,6 +13,7 @@ import {
   faCamera
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { constants } from "../../global/constants";
 
 const GuardianProfile = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -20,7 +21,9 @@ const GuardianProfile = () => {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [guardianData, setGuardianData] = useState(null);
-  const BASE_URL = "https://gl8tx74f-7000.inc1.devtunnels.ms";
+  const [accessToken, setAccessToken] = useState("");
+
+  const BASE_URL = constants.baseUrl;
 
   const {
     register,
@@ -29,16 +32,41 @@ const GuardianProfile = () => {
     formState: { errors },
   } = useForm();
 
+
   useEffect(() => {
+    const tokenData = localStorage.getItem("authTokens");
+
+    if (tokenData) {
+      try {
+        // Parse the JSON string to get the token object
+        const tokens = JSON.parse(tokenData);
+
+        // Set the access token from the parsed object
+        if (tokens && tokens.access) {
+          setAccessToken(tokens.access);
+        }
+      } catch (error) {
+        console.error("Error parsing auth tokens:", error);
+      }
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken) return;
+    
     const fetchGuardianData = async () => {
       try {
         setLoading(true);
         // Fetch guardian data - assuming we're getting the first guardian for now
-        const response = await axios.get(`${BASE_URL}/s/gaurdian/`);
-        console.log(response.data.results[0])
-        if (response.data.results && response.data.results.length > 0) {
-          setGuardianData(response.data.results[0]); 
-        }
+        const response = await axios.get(`${BASE_URL}/s/guardian/gardian_my_profile/`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+        console.log(response.data)
+        setGuardianData(response.data); 
+      
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -48,7 +76,7 @@ const GuardianProfile = () => {
     };
 
     fetchGuardianData();
-  }, []);
+  }, [accessToken, BASE_URL]);
 
   const onSubmit = async (data) => {
     try {
@@ -73,12 +101,15 @@ const GuardianProfile = () => {
       if (imagePreview && typeof imagePreview !== "string") {
         formData.append("user_profile", imagePreview);
       }
-
+      
+      if (!accessToken) return;
+      
       const response = await axios.put(
-        `${BASE_URL}/s/gaurdian/${guardianData.id}/`,
+        `${BASE_URL}/s/guardian/gardian_my_profile/`,
         formData,
         {
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         }
