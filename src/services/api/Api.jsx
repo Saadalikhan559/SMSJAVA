@@ -275,7 +275,7 @@ export const handleAdmissionForm = async (formData) => {
   try {
     const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
     });
     if (response.status === 200 || response.status === 201) {
