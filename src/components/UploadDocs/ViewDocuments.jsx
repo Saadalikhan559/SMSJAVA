@@ -38,11 +38,7 @@ export const ViewDocuments = () => {
     return "Unknown";
   };
 
-  const getUploadedBy = (doc) => {
-    return getRole(doc) + " ID: " + (
-      doc.student ?? doc.teacher ?? doc.guardian ?? doc.office_staff ?? "N/A"
-    );
-  };
+
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

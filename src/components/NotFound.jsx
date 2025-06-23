@@ -12,9 +12,6 @@ export const NotFound = () => {
       <p className="py-6">
        We're sorry, the page you requested could not be found. Please go back to the homepage! 
       </p>
-      <Link to="/">
-      <button className="btn btn-primary">Go Home</button>
-      </Link>
     </div>
   </div>
 </div>

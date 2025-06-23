@@ -1,35 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
+  fetchAdmissionDetailsById,
+  fetchCity,
+  fetchCountry,
   fetchGuardianType,
   fetchSchoolYear,
-  fetchYearLevels,
-  fetchCountry,
   fetchState,
-  fetchCity,
-  handleAdmissionForm,
-} from "../../services/api/Api";
-import { constants } from "../../global/constants";
+  fetchYearLevels,
+  handleEditAdmissionForm,
+} from "../../../services/api/Api";
+import { constants } from "../../../global/constants";
 
-export const AdmissionForm = () => {
+export const EditAddmissionDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate()
   const [yearLevel, setYearLevel] = useState([]);
   const [schoolYears, setSchoolYear] = useState([]);
   const [guardianTypes, setGuardianType] = useState([]);
-  const [showPassword, setShowPassword] = useState(true);
   const [loading, setLoading] = useState(false);
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
-  const [showGuardianPassword, setShowGuardianPassword] = useState(true);
   const [country, setCountry] = useState([]);
   const [state, setState] = useState([]);
   const [city, setCity] = useState([]);
+  const [formData, setFormData] = useState(null);
   const formRef = useRef(null);
-
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleShowGuardianPassword = () => {
-    setShowGuardianPassword(!showGuardianPassword);
-  };
 
   const handleGuardianTypeChange = (e) => {
     setSelectedGuardianType(e.target.value);
@@ -89,6 +84,32 @@ export const AdmissionForm = () => {
     }
   };
 
+  const getAdmissionData = async () => {
+    try {
+      const response = await fetchAdmissionDetailsById(id);
+      console.log("API Response:", response); // First check what the response contains
+
+      if (!response) {
+        throw new Error("No response received from API");
+      }
+
+      // Transform the API response to match your form's expected structure
+      const transformedData = {
+        ...response,
+        student: response.student_input,
+        guardian: response.guardian_input,
+        address: response.address,
+        banking_detail: response.banking_detail,
+      };
+
+      console.log("Transformed Data:", transformedData);
+      setFormData(transformedData);
+      setSelectedGuardianType(response.guardian_type || "");
+    } catch (error) {
+      console.error("Error fetching admission details:", error);
+    }
+  };
+
   useEffect(() => {
     getYearLevels();
     getSchoolYears();
@@ -96,7 +117,8 @@ export const AdmissionForm = () => {
     getCountry();
     getState();
     getCity();
-  }, []);
+    getAdmissionData();
+  }, [id]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -111,7 +133,7 @@ export const AdmissionForm = () => {
         middle_name: formData.get("student_middle_name") || "",
         last_name: formData.get("student_last_name") || "",
         email: formData.get("student_email") || "",
-        password: formData.get("student_password") || "",
+        // password: formData.student?.password || "", // Use existing password
         father_name: formData.get("student_father_name") || "",
         mother_name: formData.get("student_mother_name") || "",
         date_of_birth: formData.get("student_date_of_birth") || "",
@@ -122,14 +144,13 @@ export const AdmissionForm = () => {
         weight: formData.get("student_weight") || "",
         blood_group: formData.get("student_blood_group") || "",
         number_of_siblings: formData.get("student_number_of_siblings") || "",
-        classes: formData.get("classes") || "",
       },
       guardian: {
         first_name: formData.get("guardian_first_name") || "",
         middle_name: formData.get("guardian_middle_name") || "",
         last_name: formData.get("guardian_last_name") || "",
         email: formData.get("guardian_email") || "",
-        password: formData.get("guardian_password") || "",
+        // password: formData.guardian?.password || "", // Use existing password
         phone_no: formData.get("guardian_phone_no") || "",
         annual_income: formData.get("guardian_annual_income") || "",
         means_of_livelihood: formData.get("guardian_means_of_livelihood") || "",
@@ -160,10 +181,12 @@ export const AdmissionForm = () => {
       year_level: formData.get("year_level") || "",
       school_year: formData.get("school_year") || "",
       previous_school_name: formData.get("previous_school_name") || "",
-      previous_standard_studied: formData.get("previous_standard_studied") || "",
+      previous_standard_studied:
+        formData.get("previous_standard_studied") || "",
       tc_letter: formData.get("tc_letter") || "",
       emergency_contact_n0: formData.get("emergency_contact_n0") || "",
-      entire_road_distance_from_home_to_school: formData.get("entire_road_distance_from_home_to_school") || "",
+      entire_road_distance_from_home_to_school:
+        formData.get("entire_road_distance_from_home_to_school") || "",
       obtain_marks: formData.get("obtain_marks") || "",
       total_marks: formData.get("total_marks") || "",
       previous_percentage: formData.get("previous_percentage") || "",
@@ -171,13 +194,12 @@ export const AdmissionForm = () => {
       guardian_type: selectedGuardianType || "",
     };
 
-    
     // Create FormData for submission
     const submitFormData = new FormData();
-    
+
     // Append all payload data to FormData
     Object.entries(payload).forEach(([key, value]) => {
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === "object" && value !== null) {
         Object.entries(value).forEach(([subKey, subValue]) => {
           submitFormData.append(`${key}[${subKey}]`, subValue);
         });
@@ -186,27 +208,42 @@ export const AdmissionForm = () => {
       }
     });
 
-    // Append files separately
+    // Append files separately if they've been changed
     if (formData.get("student_user_profile")) {
-      submitFormData.append("student[profile_picture]", formData.get("student_user_profile"));
+      submitFormData.append(
+        "student[profile_picture]",
+        formData.get("student_user_profile")
+      );
     }
     if (formData.get("guardian_user_profile")) {
-      submitFormData.append("guardian[profile_picture]", formData.get("guardian_user_profile"));
+      submitFormData.append(
+        "guardian[profile_picture]",
+        formData.get("guardian_user_profile")
+      );
     }
 
     try {
-      const response = await handleAdmissionForm(submitFormData);
-      console.log("Submission successful:", response);
-      alert("Successfully submitted the form");
-      formRef.current.reset();
-      setSelectedGuardianType("");
+      handleEditAdmissionForm(submitFormData, id);
+      getAdmissionData();
+      navigate('/addmissionDetails');
+      
     } catch (error) {
-      console.error("Submission error:", error.response?.data || error.message);
-      alert(`Failed to submit the form: ${error.response?.data?.message || error.message}`);
+      console.error("Update error:", error.response?.data || error.message);
+      alert(
+        `Failed to update the form: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  if (!formData) {
+    return (
+      <div className="text-center py-10">Loading admission details...</div>
+    );
+  }
 
   return (
     <>
@@ -217,7 +254,8 @@ export const AdmissionForm = () => {
         onSubmit={onSubmit}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
-          Fill your Details <i className="fa-solid fa-graduation-cap ml-2"></i>
+          Edit Admission Details{" "}
+          <i className="fa-solid fa-pen-to-square ml-2"></i>
         </h1>
 
         {/* Student Information Section */}
@@ -236,6 +274,7 @@ export const AdmissionForm = () => {
                 name="student_first_name"
                 placeholder="First Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.first_name}
               />
             </div>
             <div className="form-control">
@@ -250,6 +289,7 @@ export const AdmissionForm = () => {
                 name="student_middle_name"
                 placeholder="Middle Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.middle_name}
               />
             </div>
             <div className="form-control">
@@ -264,6 +304,7 @@ export const AdmissionForm = () => {
                 name="student_last_name"
                 placeholder="Last Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.last_name}
               />
             </div>
           </div>
@@ -280,47 +321,7 @@ export const AdmissionForm = () => {
                 name="student_email"
                 placeholder="student@example.com"
                 className="input input-bordered w-full focus:outline-none"
-              />
-            </div>
-            <div className="form-control relative">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-lock text-sm"></i>
-                  Password <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type={showPassword ? "password" : "text"}
-                name="student_password"
-                placeholder="Password"
-                className="input input-bordered w-full pr-10 focus:outline-none"
-              />
-              <button
-                type="button"
-                className="passwordEyes text-gray-500"
-                onClick={handleShowPassword}
-              >
-                <i
-                  className={`fa-solid ${
-                    showPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
-                ></i>
-              </button>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-camera text-sm"></i>
-                  Student Profile Photo
-                </span>
-              </label>
-              <input
-                type="file"
-                name="student_user_profile"
-                accept="image/*"
-                className="file-input file-input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.email}
               />
             </div>
           </div>
@@ -332,10 +333,11 @@ export const AdmissionForm = () => {
                   Date of Birth <span className="text-error">*</span>
                 </span>
               </label>
-              <input a
+              <input
                 type="date"
                 name="student_date_of_birth"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.date_of_birth}
               />
             </div>
             <div className="form-control">
@@ -348,11 +350,11 @@ export const AdmissionForm = () => {
               <select
                 name="student_gender"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.student?.gender}
               >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-               ถือ
                 <option value="other">Other</option>
               </select>
             </div>
@@ -370,6 +372,7 @@ export const AdmissionForm = () => {
                 name="student_father_name"
                 placeholder="Father's Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.father_name}
               />
             </div>
             <div className="form-control">
@@ -384,6 +387,7 @@ export const AdmissionForm = () => {
                 name="student_mother_name"
                 placeholder="Mother's Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.mother_name}
               />
             </div>
             <div className="form-control">
@@ -397,7 +401,8 @@ export const AdmissionForm = () => {
                 type="text"
                 name="student_religion"
                 placeholder="Religion"
-                className="input input-bordered w Audit-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.religion}
               />
             </div>
           </div>
@@ -412,6 +417,7 @@ export const AdmissionForm = () => {
               <select
                 name="student_category"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.student?.category}
               >
                 <option value="">Select Category</option>
                 <option value="GEN">General</option>
@@ -432,6 +438,7 @@ export const AdmissionForm = () => {
                 name="student_height"
                 placeholder="Height"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.height}
               />
             </div>
             <div className="form-control">
@@ -446,6 +453,7 @@ export const AdmissionForm = () => {
                 name="student_weight"
                 placeholder="Weight"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.weight}
               />
             </div>
             <div className="form-control">
@@ -458,6 +466,7 @@ export const AdmissionForm = () => {
               <select
                 name="student_blood_group"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.student?.blood_group}
               >
                 <option value="">Select Blood Group</option>
                 <option value="A+">A+</option>
@@ -476,7 +485,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-people-group text-sm"></i>
-                Number of Siblings
+                  Number of Siblings
                 </span>
               </label>
               <input
@@ -484,6 +493,7 @@ export const AdmissionForm = () => {
                 name="student_number_of_siblings"
                 placeholder="Number of Siblings"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.student?.number_of_siblings}
               />
             </div>
           </div>
@@ -495,13 +505,6 @@ export const AdmissionForm = () => {
             <h2 className="text-2xl font-bold whitespace-nowrap">
               Guardian Information
             </h2>
-            <div className="form-control w-full md:w-1/3">
-              <input
-                placeholder="Search guardian..."
-                className="input input-bordered w-full focus:outline-none"
-                type="text"
-              />
-            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="form-control">
@@ -516,6 +519,7 @@ export const AdmissionForm = () => {
                 name="guardian_first_name"
                 placeholder="First Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.first_name}
               />
             </div>
             <div className="form-control">
@@ -530,6 +534,7 @@ export const AdmissionForm = () => {
                 name="guardian_middle_name"
                 placeholder="Middle Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.middle_name}
               />
             </div>
             <div className="form-control">
@@ -544,6 +549,7 @@ export const AdmissionForm = () => {
                 name="guardian_last_name"
                 placeholder="Last Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.last_name}
               />
             </div>
           </div>
@@ -560,32 +566,8 @@ export const AdmissionForm = () => {
                 name="guardian_email"
                 placeholder="guardian@example.com"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.email}
               />
-            </div>
-            <div className="form-control relative">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-lock text-sm"></i>
-                  Password <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type={showGuardianPassword ? "password" : "text"}
-                name="guardian_password"
-                placeholder="Password"
-                className="input input-bordered w-full pr-10 focus:outline-none"
-              />
-              <button
-                type="button"
-                className="passwordEyes text-gray-500"
-                onClick={handleShowGuardianPassword}
-              >
-                <i
-                  className={`fa-solid ${
-                    showGuardianPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
-                ></i>
-              </button>
             </div>
             <div className="form-control">
               <label className="label">
@@ -620,22 +602,7 @@ export const AdmissionForm = () => {
                 name="guardian_phone_no"
                 placeholder="Phone Number"
                 className="input input-bordered w-full focus:outline-none"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mt-6">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-camera text-sm"></i>
-                  Guardian Profile Photo
-                </span>
-              </label>
-              <input
-                type="file"
-                name="guardian_user_profile"
-                accept="image/*"
-                className="file-input file-input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.phone_no}
               />
             </div>
           </div>
@@ -652,6 +619,7 @@ export const AdmissionForm = () => {
                 name="guardian_annual_income"
                 placeholder="Annual Income"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.annual_income}
               />
             </div>
             <div className="form-control">
@@ -664,6 +632,7 @@ export const AdmissionForm = () => {
               <select
                 name="guardian_means_of_livelihood"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.guardian?.means_of_livelihood}
               >
                 <option value="">Select</option>
                 <option value="Govt">Government</option>
@@ -682,6 +651,7 @@ export const AdmissionForm = () => {
                 name="guardian_qualification"
                 placeholder="Qualification"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.qualification}
               />
             </div>
           </div>
@@ -698,6 +668,7 @@ export const AdmissionForm = () => {
                 name="guardian_occupation"
                 placeholder="Occupation"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.occupation}
               />
             </div>
             <div className="form-control">
@@ -712,6 +683,7 @@ export const AdmissionForm = () => {
                 name="guardian_designation"
                 placeholder="Designation"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.guardian?.designation}
               />
             </div>
           </div>
@@ -731,6 +703,7 @@ export const AdmissionForm = () => {
               <select
                 name="year_level"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.year_level}
               >
                 <option value="">Select Year Level</option>
                 {yearLevel.map((yearlev) => (
@@ -750,6 +723,7 @@ export const AdmissionForm = () => {
               <select
                 name="school_year"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.school_year}
               >
                 <option value="">Select School Year</option>
                 {schoolYears.map((schoolYear) => (
@@ -773,6 +747,7 @@ export const AdmissionForm = () => {
                 name="previous_school_name"
                 placeholder="Previous School Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.previous_school_name}
               />
             </div>
             <div className="form-control">
@@ -787,6 +762,7 @@ export const AdmissionForm = () => {
                 name="previous_standard_studied"
                 placeholder="Previous Class/Grade"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.previous_standard_studied}
               />
             </div>
           </div>
@@ -802,6 +778,7 @@ export const AdmissionForm = () => {
                 type="date"
                 name="admission_date"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.admission_date}
               />
             </div>
             <div className="form-control">
@@ -814,6 +791,7 @@ export const AdmissionForm = () => {
               <select
                 name="tc_letter"
                 className="select select-bordered w-full focus:outline-none cursor-pointer"
+                defaultValue={formData.tc_letter}
               >
                 <option value="">Select</option>
                 <option value="yes">Yes</option>
@@ -835,6 +813,7 @@ export const AdmissionForm = () => {
                 name="emergency_contact_n0"
                 placeholder="Emergency Contact"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.emergency_contact_n0}
               />
             </div>
             <div className="form-control">
@@ -849,6 +828,7 @@ export const AdmissionForm = () => {
                 name="entire_road_distance_from_home_to_school"
                 placeholder="Distance in km"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.entire_road_distance_from_home_to_school}
               />
             </div>
           </div>
@@ -865,6 +845,7 @@ export const AdmissionForm = () => {
                 name="obtain_marks"
                 placeholder="Marks Obtained"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.obtain_marks}
               />
             </div>
             <div className="form-control">
@@ -879,6 +860,7 @@ export const AdmissionForm = () => {
                 name="total_marks"
                 placeholder="Total Marks"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.total_marks}
               />
             </div>
             <div className="form-control">
@@ -894,6 +876,7 @@ export const AdmissionForm = () => {
                 name="previous_percentage"
                 placeholder="Percentage"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.previous_percentage}
               />
             </div>
           </div>
@@ -915,6 +898,7 @@ export const AdmissionForm = () => {
                 name="student_address_house_number"
                 placeholder="House Number"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.house_no}
               />
             </div>
             <div className="form-control">
@@ -929,6 +913,7 @@ export const AdmissionForm = () => {
                 name="student_address_habitation"
                 placeholder="Habitation"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.habitation}
               />
             </div>
             <div className="form-control">
@@ -943,6 +928,7 @@ export const AdmissionForm = () => {
                 name="student_address_ward_no"
                 placeholder="Ward Number"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.word_no}
               />
             </div>
             <div className="form-control">
@@ -957,6 +943,7 @@ export const AdmissionForm = () => {
                 name="student_address_zone"
                 placeholder="Zone"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.zone_no}
               />
             </div>
           </div>
@@ -973,6 +960,7 @@ export const AdmissionForm = () => {
                 name="student_address_block"
                 placeholder="Block"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.block}
               />
             </div>
             <div className="form-control">
@@ -987,6 +975,7 @@ export const AdmissionForm = () => {
                 name="student_address_district"
                 placeholder="District"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.district}
               />
             </div>
             <div className="form-control">
@@ -999,6 +988,7 @@ export const AdmissionForm = () => {
               <select
                 name="student_address_city"
                 className="select select-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.city}
               >
                 <option value="">Select City</option>
                 {city.map((city) => (
@@ -1020,6 +1010,7 @@ export const AdmissionForm = () => {
                 name="student_address_division"
                 placeholder="Division"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.division}
               />
             </div>
           </div>
@@ -1034,6 +1025,7 @@ export const AdmissionForm = () => {
               <select
                 name="student_address_state"
                 className="select select-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.state}
               >
                 <option value="">Select State</option>
                 {state.map((state) => (
@@ -1053,6 +1045,7 @@ export const AdmissionForm = () => {
               <select
                 name="student_address_country"
                 className="select select-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.country}
               >
                 <option value="">Select Country</option>
                 {country.map((country) => (
@@ -1077,6 +1070,7 @@ export const AdmissionForm = () => {
                 placeholder="Pin Code"
                 maxLength={6}
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.area_code}
               />
             </div>
           </div>
@@ -1092,6 +1086,7 @@ export const AdmissionForm = () => {
                 name="student_address_address_line"
                 placeholder="Full Address"
                 className="textarea textarea-bordered w-full focus:outline-none"
+                defaultValue={formData.address?.address_line}
               ></textarea>
             </div>
           </div>
@@ -1113,6 +1108,7 @@ export const AdmissionForm = () => {
                 name="student_banking_holder_name"
                 placeholder="Full Name as in Bank"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.banking_detail?.holder_name}
               />
             </div>
             <div className="form-control">
@@ -1127,6 +1123,7 @@ export const AdmissionForm = () => {
                 name="student_banking_account_no"
                 placeholder="Account Number"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.banking_detail?.account_no}
               />
             </div>
           </div>
@@ -1143,6 +1140,7 @@ export const AdmissionForm = () => {
                 name="student_banking_bank_name"
                 placeholder="Bank Name"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.banking_detail?.bank_name}
               />
             </div>
             <div className="form-control">
@@ -1157,6 +1155,7 @@ export const AdmissionForm = () => {
                 name="student_banking_ifsc_code"
                 placeholder="IFSC Code"
                 className="input input-bordered w-full focus:outline-none"
+                defaultValue={formData.banking_detail?.ifsc_code}
               />
             </div>
           </div>
@@ -1168,9 +1167,9 @@ export const AdmissionForm = () => {
             {loading ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
             ) : (
-              <i className="fa-solid fa-paper-plane mr-2"></i>
+              <i className="fa-solid fa-floppy-disk mr-2"></i>
             )}
-            {loading ? "" : "Register"}
+            {loading ? "" : "Update"}
           </button>
         </div>
       </form>
