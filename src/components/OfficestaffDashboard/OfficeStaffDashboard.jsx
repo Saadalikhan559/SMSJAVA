@@ -1,4 +1,7 @@
 import Chart from "react-apexcharts";
+import React, { useEffect, useState } from "react";
+
+import { fetchOfficeStaffDashboard } from "../../services/api/Api";
 
 const payload = {
   staff: "Tanveer khan",
@@ -17,8 +20,34 @@ const payload = {
 };
 
 export const OfficeStaffDashboard = () => {
-  const admissionYears = Object.keys(payload.admissions_per_year);
-  const admissionCounts = Object.values(payload.admissions_per_year);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getOfficeStaffDashboardData = async () => {
+    try {
+      const data = await fetchOfficeStaffDashboard();
+      setDashboardData(data);
+      setLoading(false);
+    } catch (error) {
+      console.log("failed to fetch office staff dashboard data", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getOfficeStaffDashboardData();
+  }, []);
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading dashboard...</div>;
+  }
+
+  if (!dashboardData) {
+    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  }
+
+  const admissionYears = Object.keys(dashboardData.admissions_per_year);
+  const admissionCounts = Object.values(dashboardData.admissions_per_year);
 
   const options = {
     chart: {
@@ -50,7 +79,7 @@ export const OfficeStaffDashboard = () => {
     <div className="p-4 space-y-9">
       {/* Header */}
       <h3 className="text-3xl font-bold text-center text-gray-800">
-        {payload.staff}'s Dashboard
+        {dashboardData.staff}'s Dashboard
       </h3>
 
       <div className="grid grid-cols-12 gap-4">
@@ -63,7 +92,7 @@ export const OfficeStaffDashboard = () => {
             <div className="p-6 flex items-center justify-center">
               <div className="text-center">
                 <p className="text-3xl font-extrabold text-gray-900 tracking-wide">
-                  {payload.current_academic_year}
+                  {dashboardData.current_academic_year}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">Session</p>
               </div>
@@ -77,7 +106,7 @@ export const OfficeStaffDashboard = () => {
             <div className="p-6 flex items-center justify-center">
               <div className="text-center">
                 <p className="text-3xl font-extrabold text-gray-900 tracking-wide">
-                  {payload.new_admissions_this_year}
+                  {dashboardData.new_admissions_this_year}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">Total Count</p>
               </div>

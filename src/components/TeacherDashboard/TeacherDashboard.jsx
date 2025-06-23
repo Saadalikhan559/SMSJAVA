@@ -1,38 +1,44 @@
-import React from "react";
 import { Link } from 'react-router-dom'
 
+import React, { useEffect, useState } from "react";
+import { fetchTeacherDashboard } from "../../services/api/Api";
 
-const payload = {
-  teacher: "Saqib Ali",
-  total_classes: 2,
-  class_details: [
-    {
-      class_period: "Physics - A101",
-      subject: "Physics",
-      classroom: "101",
-      student_count: 2,
-      level_name: "Class-3",
-    },
-    {
-      class_period: "Algebra - B202",
-      subject: "Algebra",
-      classroom: "101",
-      student_count: 4,
-      level_name: "Class-12",
-    },
-  ],
-};
 
 export const TeacherDashboard = () => {
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getGuardianDashboardData = async () => {
+    try {
+      const data = await fetchTeacherDashboard();
+      setDashboardData(data);
+      setLoading(false);
+    } catch (error) {
+      console.log("failed to fetch teacher dashboard data", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getGuardianDashboardData();
+  }, []);
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading dashboard...</div>;
+  }
+
+  if (!dashboardData) {
+    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  }
   return (
     <div className="p-4 space-y-6">
       <h3 className="text-3xl font-bold text-center text-gray-800">
-        {payload.teacher}'s Dashboard
+        {dashboardData.teacher}'s Dashboard
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {payload.class_details && payload.class_details.length > 0 ? (
-          payload.class_details.map((detail, idx) => (
+        {dashboardData.class_details && dashboardData.class_details.length > 0 ? (
+          dashboardData.class_details.map((detail, idx) => (
             <div
               key={idx}
               className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white"
