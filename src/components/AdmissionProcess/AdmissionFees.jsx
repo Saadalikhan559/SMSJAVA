@@ -15,7 +15,7 @@ export const AdmissionFees = () => {
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showPaymentDialog1, setShowPaymentDialog1] = useState(false);
 
-  const BASE_URL = constants.baseUrl1;
+  const BASE_URL = constants.baseUrl;
 
   const getStudents = async () => {
       try {

@@ -285,8 +285,8 @@ export const fetchyearLevelData = async () => {
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
-    throw err;
-  }
+    throw err;
+  }
 };
 
 export const fetchYearLevels = async () => {
