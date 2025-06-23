@@ -215,6 +215,7 @@ export const Sidebar = () => {
               </div>
             )}
 
+
             {/* Reports */}
             {isAuthenticated && (
               <div>
