@@ -217,7 +217,7 @@ export const fetchOfficeStaffDashboard = async () => {
 
 export const fetchGuardianDashboard = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/4/`);
+    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/1/`);
     return response.data;
   } catch (err) {
     console.error("Failed to officeStaff Dashboard:", err);

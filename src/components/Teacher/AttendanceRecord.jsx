@@ -99,7 +99,7 @@ const AttendanceRecord = () => {
       </div>
       <Link to="/fullAttendance">
       <span className='flex justify-center'>
-      <button type="submit" className="btn btn-primary "><i class="fa-solid fa-chalkboard-user"/>Get Full Attendance</button>
+      <button type="submit" className="btn btn-primary "><i className="fa-solid fa-chalkboard-user"/>Get Full Attendance</button>
       </span></Link>
       
     </>

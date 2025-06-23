@@ -54,7 +54,7 @@ export const TeacherDashboard = () => {
                   <span className="font-medium text-gray-600">Class:</span>
                   <span className="text-gray-800 font-semibold">
                     {detail.level_name}
-                  </span>
+                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">
