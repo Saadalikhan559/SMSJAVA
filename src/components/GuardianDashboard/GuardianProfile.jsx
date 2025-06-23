@@ -58,7 +58,7 @@ const GuardianProfile = () => {
       try {
         setLoading(true);
         // Fetch guardian data - assuming we're getting the first guardian for now
-        const response = await axios.get(`${BASE_URL}/s/guardian/gardian_my_profile/`,
+        const response = await axios.get(`${BASE_URL}/s/guardian/guardian_my_profile/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -105,7 +105,7 @@ const GuardianProfile = () => {
       if (!accessToken) return;
       
       const response = await axios.put(
-        `${BASE_URL}/s/guardian/gardian_my_profile/`,
+        `${BASE_URL}/s/guardian/guardian_my_profile/`,
         formData,
         {
           headers: {
