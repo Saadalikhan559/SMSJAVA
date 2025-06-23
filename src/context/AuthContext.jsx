@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }) => {
     if (!url) return "";
     
     // Replace localhost URL with BASE_URL if found
-    if (url.includes("http://localhost:7000")) {
-      return url.replace("http://localhost:7000", BASE_URL);
+    if (url.includes(`http://localhost:${constants.PORT}`)) {
+      return url.replace(`http://localhost:${constants.PORT}`, BASE_URL);
     }
     
     // Handle case where URL might be just a path
