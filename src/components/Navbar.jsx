@@ -5,9 +5,12 @@ import { constants } from "../global/constants";
 import { allRouterLink } from "../router/AllRouterLinks";
 
 export const Navbar = () => {
-  const { LogoutUser, userRole, isAuthenticated } = useContext(AuthContext);
+  const { LogoutUser, userRole, isAuthenticated, userName, userProfile } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
+  
+  // Default profile image
+  const defaultProfileImage = "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
 
   const handleLogout = async () => {
     try {
@@ -30,7 +33,6 @@ export const Navbar = () => {
         return allRouterLink.studentProfile;
       case `${constants.roles.guardian}`:
         return allRouterLink.guardianProfile;
-      // Add other cases as needed
       default:
         return allRouterLink.notFound;
     }
@@ -62,7 +64,7 @@ export const Navbar = () => {
             </label>
           )}
           <span className="nexus-logo text-xl md:text-2xl ml-2">
-            <Link to={allRouterLink.homeScreen}>SMS</Link>
+            SMS
           </span>
         </div>
 
@@ -136,10 +138,10 @@ export const Navbar = () => {
                   <div className="w-8 md:w-10 rounded-full">
                     <img
                       alt="User profile"
-                      src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                      src={userProfile || defaultProfileImage}
                     />
                   </div>
-                  <span className="hidden md:block ml-2">User</span>
+                  <span className="hidden md:block ml-2">{userName}</span>
                 </div>
                 <ul
                   tabIndex={0}

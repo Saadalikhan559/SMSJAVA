@@ -9,7 +9,8 @@ import {
   faVenusMars,
   faCamera,
   faIdCard,
-  faGraduationCap
+  faGraduationCap,
+  faCalendarDay
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { constants } from '../../global/constants';
@@ -20,36 +21,55 @@ const TeacherProfile = () => {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(null);
+  const [accessToken, setAccessToken] = useState("");
 
   const BASE_URL = constants.baseUrl;
-  const teacherId = 1; // Assuming teacher ID is 1 as per your API endpoint
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   useEffect(() => {
+    const tokenData = localStorage.getItem("authTokens");
+    if (tokenData) {
+      try {
+        const tokens = JSON.parse(tokenData);
+        if (tokens && tokens.access) {
+          setAccessToken(tokens.access);
+        }
+      } catch (error) {
+        console.error("Error parsing auth tokens:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
     const fetchTeacherData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BASE_URL}/t/teacher/${teacherId}/`);
+        const response = await axios.get(`${BASE_URL}/t/teacher/teacher_my_profile/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         setProfileData(response.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching teacher data:", err);
-        setError(err.message);
+        setError(err.response?.data?.detail || err.message);
         setLoading(false);
       }
     };
 
     fetchTeacherData();
-  }, []);
+  }, [accessToken, BASE_URL]);
 
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
 
-      // Append all fields from the form
+      // Required fields
       formData.append("first_name", data.first_name);
-      formData.append("middle_name", data.middle_name || "");
       formData.append("last_name", data.last_name);
       formData.append("email", data.email);
       formData.append("phone_no", data.phone_no);
@@ -58,22 +78,28 @@ const TeacherProfile = () => {
       formData.append("pan_no", data.pan_no);
       formData.append("qualification", data.qualification);
 
+      // Optional fields
+      formData.append("middle_name", data.middle_name || "");
+
       // Append the file if selected
       if (imagePreview && typeof imagePreview !== 'string') {
         formData.append("user_profile", imagePreview);
       }
 
-      const response = await axios.put(`${BASE_URL}/t/teacher/${teacherId}/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.put(
+        `${BASE_URL}/t/teacher/teacher_my_profile/`, 
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      console.log("Update response:", response.data);
       setProfileData(response.data);
       setIsDialogOpen(false);
       setImagePreview(null);
-
       window.location.reload();
     } catch (err) {
       console.error("Error updating teacher data:", err);
@@ -84,7 +110,6 @@ const TeacherProfile = () => {
   const handleEditClick = () => {
     reset(profileData);
     setIsDialogOpen(true);
-    // Set the current image as preview if it exists
     if (profileData?.user_profile) {
       setImagePreview(`${BASE_URL}${profileData.user_profile}`);
     }
@@ -274,6 +299,21 @@ const TeacherProfile = () => {
                 readOnly
               />
             </div>
+
+            {profileData.date_joined && (
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold text-gray-500">
+                  <FontAwesomeIcon icon={faCalendarDay} className="w-4 h-4 mr-2" />
+                  Date Joined
+                </label>
+                <input
+                  type="text"
+                  value={profileData.date_joined}
+                  className="input input-bordered w-full text-sm"
+                  readOnly
+                />
+              </div>
+            )}
           </div>
         </div>
 

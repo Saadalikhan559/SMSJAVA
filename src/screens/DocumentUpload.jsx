@@ -31,7 +31,7 @@ export const DocumentUpload = () => {
 
   // Dynamic fields for document uploads
   const [uploadFields, setUploadFields] = useState([
-    { file: null, document_type: "" }, // Initialize file as null
+    { files: null, document_types: "", identities: "" },
   ]);
 
   const [formData, setFormData] = useState({
@@ -82,7 +82,9 @@ export const DocumentUpload = () => {
     if (!formData.year_level) return;
     try {
       setLoadingStudents(true);
-      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelName);
+      const allStudentsByClass = await fetchStudentYearLevelByClass(
+        yearLevelName
+      );
       setStudents(allStudentsByClass);
       console.log(allStudentsByClass);
     } catch (error) {
@@ -122,12 +124,15 @@ export const DocumentUpload = () => {
   // HANDLING CHANGES
 
   const handleAddField = () => {
-    setUploadFields([...uploadFields, { file: null, document_type: "" }]);
+    setUploadFields([
+      ...uploadFields,
+      { files: null, document_types: "", identities_read: "" },
+    ]);
   };
 
   const handleFileChange = (e, index) => {
     const newFields = [...uploadFields];
-    newFields[index].file = e.target.files[0];
+    newFields[index].files = e.target.files[0];
     setUploadFields(newFields);
   };
 
@@ -137,7 +142,6 @@ export const DocumentUpload = () => {
     newFields[index][name] = value;
     setUploadFields(newFields);
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "year_level") {
@@ -163,13 +167,12 @@ export const DocumentUpload = () => {
     }
   };
 
-  // Filter available document types for a specific field
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
-      .map((field, index) =>
-        index !== currentIndex ? field.document_type : null
+      .map(
+        (field, index) => (index !== currentIndex ? field.document_types : null) // Changed from document_type
       )
-      .filter((type) => type); // Exclude empty and current field's type
+      .filter((type) => type);
     return documentType.filter(
       (doc) => !selectedDocTypes.includes(doc.id.toString())
     );
@@ -182,15 +185,15 @@ export const DocumentUpload = () => {
     try {
       // Iterate through each upload field and submit separately
       for (const field of uploadFields) {
-        if (!field.file || !field.document_type) {
+        if (!field.files || !field.document_types) {
           alert("Please select a file and document type for all fields");
           setLoading(false);
           return;
         }
 
         const formDataToSend = new FormData();
-        formDataToSend.append("file", field.file);
-        formDataToSend.append("document_type", field.document_type);
+        formDataToSend.append("uploaded_files", field.files);
+        formDataToSend.append("document_types", field.document_types);
 
         // Append role-specific fields
         if (formData.student)
@@ -201,6 +204,8 @@ export const DocumentUpload = () => {
           formDataToSend.append("guardian", formData.guardian);
         if (formData.office_staff)
           formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities)
+          formDataToSend.append("identities", field.identities);
 
         const response = await axios.post(
           `${constants.baseUrl}/d/Document/`,
@@ -301,29 +306,31 @@ export const DocumentUpload = () => {
                 ))}
               </select>
             </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-graduation-cap text-sm"></i> Class{" "}
-                  <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                name="year_level"
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                required
-                value={formData.year_level}
-                onChange={handleChange}
-                disabled={role !== constants.roles.student}
-              >
-                <option value="">Class</option>
-                {yearLevel.map((yearlev) => (
-                  <option value={yearlev.id} key={yearlev.id}>
-                    {yearlev.level_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+
+            {role === constants.roles.student && (
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-graduation-cap text-sm"></i> Class{" "}
+                    <span className="text-error">*</span>
+                  </span>
+                </label>
+                <select
+                  name="year_level"
+                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  required
+                  value={formData.year_level}
+                  onChange={handleChange}
+                >
+                  <option value="">Class</option>
+                  {yearLevel.map((yearlev) => (
+                    <option value={yearlev.id} key={yearlev.id}>
+                      {yearlev.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -336,194 +343,197 @@ export const DocumentUpload = () => {
             <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
           </h1>
           {uploadFields.map((field, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-6 mt-6"
-            >
+<div
+  key={index}
+  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mt-6 w-full"
+>
+  {/* Document Upload */}
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text flex items-center gap-1">
+        <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
+        <span className="text-error">*</span>
+      </span>
+    </label>
+    <input
+      type="file"
+      name="file"
+      className="file-input file-input-bordered w-full focus:outline-none"
+      required
+      onChange={(e) => handleFileChange(e, index)}
+    />
+  </div>
+
+  {/* Document Type */}
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text flex items-center gap-1">
+        <i className="fa-solid fa-file text-sm"></i> Document Type
+        <span className="text-error">*</span>
+      </span>
+    </label>
+    <select
+      name="document_types"
+      className="select select-bordered w-full focus:outline-none cursor-pointer"
+      required
+      value={field.document_types}
+      onChange={(e) => handleUploadChange(e, index)}
+    >
+      <option value="">Select Document Type</option>
+      {getAvailableDocumentTypes(index).map((doc) => (
+        <option key={doc.id} value={doc.id}>
+          {doc.name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  {/* Identity */}
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text flex items-center gap-1">
+        <i className="fa-solid fa-id-card text-sm"></i> Identity
+      </span>
+    </label>
+    <input
+      type="text"
+      name="identities"
+      className="input input-bordered w-full focus:outline-none"
+      value={field.identities}
+      onChange={(e) => handleUploadChange(e, index)}
+      placeholder="Enter identity ID"
+    />
+  </div>
+
+  {/* Add/Remove Button */}
+  <div className="form-control w-full">
+    {index === 0 ? (
+      <button
+        type="button"
+        className="btn btn-primary mt-auto w-full"
+        onClick={handleAddField}
+      >
+        <i className="fa-solid fa-plus mr-1"></i> Add
+      </button>
+    ) : (
+      <button
+        type="button"
+        className="btn btn-error mt-auto w-full"
+        onClick={() =>
+          setUploadFields(uploadFields.filter((_, i) => i !== index))
+        }
+      >
+        <i className="fa-solid fa-trash mr-1"></i> Remove
+      </button>
+    )}
+  </div>
+</div>
+
+          ))}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {role === constants.roles.student && (
               <div className="form-control">
                 <label className="label">
                   <span className="label-text flex items-center gap-1">
-                    <i className="fa-solid fa-file-upload text-sm"></i> Document
-                    Upload <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  name="file"
-                  className="file-input file-input-bordered w-full focus:outline-none"
-                  required
-                  onChange={(e) => handleFileChange(e, index)}
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text flex items-center gap-1">
-                    <i className="fa-solid fa-file text-sm"></i> Document Type{" "}
-                    <span className="text-error">*</span>
+                    <i className="fa-solid fa-user-graduate text-sm"></i>{" "}
+                    Student
                   </span>
                 </label>
                 <select
-                  name="document_type"
+                  name="student"
                   className="select select-bordered w-full focus:outline-none cursor-pointer"
-                  required
-                  value={field.document_type}
-                  onChange={(e) => handleUploadChange(e, index)}
+                  value={formData.student}
+                  onChange={handleChange}
                 >
-                  <option value="">Select Document Type</option>
-                  {getAvailableDocumentTypes(index).map((doc) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.name}
+                  <option value="">Select Student</option>
+                  {loadingStudents ? (
+                    <option disabled>Loading students...</option>
+                  ) : students.length === 0 ? (
+                    <option disabled>No students found</option>
+                  ) : (
+                    students.map((studentObj) => (
+                      <option key={studentObj.id} value={studentObj.id}>
+                        {studentObj.student_name}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+            )}
+
+            {role === constants.roles.teacher && (
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-chalkboard-teacher text-sm"></i>{" "}
+                    Teacher
+                  </span>
+                </label>
+                <select
+                  name="teacher"
+                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  value={formData.teacher}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Teacher</option>
+                  {teachers.map((teacher) => (
+                    <option key={teacher.id} value={teacher.id}>
+                      {teacher.first_name} {teacher.last_name}
                     </option>
                   ))}
                 </select>
               </div>
-              <div className="flex items-end">
-                {index === 0 ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary w-full md:w-24"
-                    onClick={handleAddField}
-                  >
-                    <i className="fa-solid fa-plus mr-1"></i> Add
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn btn-error w-full md:w-24"
-                    onClick={() =>
-                      setUploadFields(
-                        uploadFields.filter((_, i) => i !== index)
-                      )
-                    }
-                  >
-                    <i className="fa-solid fa-trash mr-1"></i> Remove
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user-graduate text-sm"></i> Student
-                </span>
-              </label>
-              <select
-                name="student"
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.student}
-                onChange={handleChange}
-                disabled={role !== constants.roles.student || loadingStudents}
-              >
-                <option value="">Select Student</option>
-                {loadingStudents ? (
-                  <option disabled>Loading students...</option>
-                ) : students.length === 0 ? (
-                  <option disabled>No students found</option>
-                ) : (
-                  students.map((studentObj) => (
-                    <option key={studentObj.id} value={studentObj.id}>
-                      {studentObj.student_name}{" "}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
-            {/* <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user-graduate text-sm"></i> Student
-                </span>
-              </label>
-              <select
-                name="student"
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.student}
-                onChange={handleChange}
-                disabled={role !== constants.roles.student || loadingStudents}
-              >
-                <option value="">Select Student</option>
-                {loadingStudents ? (
-                  <option disabled>Loading students...</option>
-                ) : students.length === 0 ? (
-                  <option disabled>No students found</option>
-                ) : (
-                  students.map((studentObj) => (
-                    <option key={studentObj.id} value={studentObj.student.id}>
-                      {studentObj.student.first_name}{" "}
-                      {studentObj.student.last_name}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div> */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-chalkboard-teacher text-sm"></i>{" "}
-                  Teacher
-                </span>
-              </label>
-              <select
-                name="teacher"
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.teacher}
-                onChange={handleChange}
-                disabled={role !== constants.roles.teacher}
-              >
-                <option value="">Select Teacher</option>
-                {teachers.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.first_name} {teacher.last_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            )}
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user-shield text-sm"></i> Guardian
-                </span>
-              </label>
-              <select
-                name="guardian"
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.guardian}
-                onChange={handleChange}
-                disabled={role !== constants.roles.guardian}
-              >
-                <option value="">Select Guardian</option>
-                {guardians.map((guardian) => (
-                  <option key={guardian.id} value={guardian.id}>
-                    {guardian.first_name} {guardian.last_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-briefcase text-sm"></i> Office Staff
-                </span>
-              </label>
-              <select
-                name="office_staff"
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
-                value={formData.office_staff}
-                onChange={handleChange}
-                disabled={role !== constants.roles.officeStaff}
-              >
-                <option value="">Select Office Staff</option>
-                {officeStaff.map((staff) => (
-                  <option key={staff.id} value={staff.id}>
-                    {staff.first_name} {staff.last_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {role === constants.roles.guardian && (
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-user-shield text-sm"></i> Guardian
+                  </span>
+                </label>
+                <select
+                  name="guardian"
+                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  value={formData.guardian}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Guardian</option>
+                  {guardians.map((guardian) => (
+                    <option key={guardian.id} value={guardian.id}>
+                      {guardian.first_name} {guardian.last_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {role === constants.roles.officeStaff && (
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-briefcase text-sm"></i> Office
+                    Staff
+                  </span>
+                </label>
+                <select
+                  name="office_staff"
+                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  value={formData.office_staff}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Office Staff</option>
+                  {officeStaff.map((staff) => (
+                    <option key={staff.id} value={staff.id}>
+                      {staff.first_name} {staff.last_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
       )}

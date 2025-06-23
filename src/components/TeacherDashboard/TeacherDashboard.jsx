@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom'
 
-import React, { useEffect, useState } from "react";
+
+import React, { useContext, useEffect, useState } from "react";
 import { fetchTeacherDashboard } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
 
 
 export const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const {teacherID} = useContext(AuthContext);
 
   const getGuardianDashboardData = async () => {
     try {

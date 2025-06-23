@@ -7,18 +7,47 @@ const BASE_URL = constants.baseUrl;
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [teacherID, setTeacherID] = useState("");
+  const [teacherID, setTeacherID] = useState(
+    () => localStorage.getItem("teacher_id") || ""
+  );
+  const [guardianID, setGuardianID] = useState(
+    () => localStorage.getItem("guardian_id") || ""
+  );
+  const [userName, setUserName] = useState(
+    () => localStorage.getItem("user_name") || ""
+  );
+  const [userProfile, setUserProfile] = useState(
+    () => localStorage.getItem("user_profile") || ""
+  );
   const [authTokens, setAuthTokens] = useState(
     () => JSON.parse(localStorage.getItem("authTokens")) || null
   );
   const [userRole, setUserRole] = useState(
     () => localStorage.getItem("userRole") || ""
   );
-  const [user, setUser] = useState(
-    () => JSON.parse(localStorage.getItem("user")) || null
-  );
-
   const [loading, setLoading] = useState(true);
+
+  // Function to normalize profile URL by replacing localhost with BASE_URL
+  const normalizeProfileUrl = (url) => {
+    if (!url) return "";
+    
+    // Replace localhost URL with BASE_URL if found
+    if (url.includes(`http://localhost:${constants.PORT}`)) {
+      return url.replace(`http://localhost:${constants.PORT}`, BASE_URL);
+    }
+    
+    // Handle case where URL might be just a path
+    if (!url.startsWith("http") && !url.startsWith("/")) {
+      return `${BASE_URL}/${url}`;
+    }
+    
+    // Handle case where URL is a path starting with slash
+    if (!url.startsWith("http") && url.startsWith("/")) {
+      return `${BASE_URL}${url}`;
+    }
+    
+    return url;
+  };
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({ baseURL: BASE_URL });
@@ -64,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       }
     );
     return instance;
-  }, [authTokens, BASE_URL]);
+  }, [authTokens]);
 
   const RegisterUser = async (userDetails) => {
     try {
@@ -108,9 +137,30 @@ export const AuthProvider = ({ children }) => {
       setUserRole(role);
       localStorage.setItem("userRole", role);
 
-      setTeacherID(data.teacher_id);
+      if (data.teacher_id) {
+        localStorage.setItem("teacher_id", data.teacher_id);
+        setTeacherID(data.teacher_id);
+      }
+      
+      if (data.guardian_id) {
+        localStorage.setItem("guardian_id", data.guardian_id);
+        setGuardianID(data.guardian_id);
+      }
+
+      if (data.name) {
+        localStorage.setItem("user_name", data.name);
+        setUserName(data.name);
+      }
+
+      if (data.user_profile) {
+        const normalizedProfile = normalizeProfileUrl(data.user_profile);
+        localStorage.setItem("user_profile", normalizedProfile);
+        setUserProfile(normalizedProfile);
+      }
+      
       return data;
     } catch (error) {
+      console.error("Login error:", error);
       throw error;
     }
   };
@@ -118,8 +168,19 @@ export const AuthProvider = ({ children }) => {
   const LogoutUser = async () => {
     setAuthTokens(null);
     setUserRole("");
+    setTeacherID("");
+    setGuardianID("");
+    setUserName("");
+    setUserProfile("");
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("teacher_id");
+    localStorage.removeItem("guardian_id");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_profile");
+    localStorage.removeItem("rzp_stored_checkout_id");
+    localStorage.removeItem("rzp_device_id");
+    localStorage.removeItem("rzp_checkout_anon_id");
   };
 
   const ResetPassword = async (userDetails) => {
@@ -147,11 +208,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Set loading to false after initial render
   useEffect(() => {
+    // Normalize any existing profile URL on initial load
+    const currentProfile = localStorage.getItem("user_profile");
+    if (currentProfile) {
+      const normalizedProfile = normalizeProfileUrl(currentProfile);
+      if (normalizedProfile !== currentProfile) {
+        localStorage.setItem("user_profile", normalizedProfile);
+        setUserProfile(normalizedProfile);
+      }
+    }
     setLoading(false);
   }, []);
-
 
   const contextValue = useMemo(
     () => ({
@@ -165,10 +233,12 @@ export const AuthProvider = ({ children }) => {
       RegisterUser,
       ResetPassword,
       ChangePassword,
-      teacherID
+      teacherID,
+      guardianID,
+      userName,
+      userProfile: normalizeProfileUrl(userProfile)
     }),
-    [authTokens, userRole, loading, axiosInstance, teacherID ]
-
+    [authTokens, userRole, loading, axiosInstance, teacherID, guardianID, userName, userProfile]
   );
 
   return (
