@@ -230,15 +230,31 @@ export const fetchyearLevelData = async () => {
 
 
 
-
-export const fetchAttendanceData = async () => {
+export const fetchAttendanceData = async (date = '') => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/director-dashboard/`);
-    return response.data.class_wise_attendance || [];
+    const url = date
+      ? `${BASE_URL}/a/director-dashboard/?date=${date}`
+      : `${BASE_URL}/a/director-dashboard/`;
+
+    const response = await axios.get(url);
+    return response.data; 
   } catch (error) {
     console.error('Failed to fetch attendance data:', error);
-    return [];
-  }
+    return null; 
+  }
+};
+
+
+
+
+
+export const fetchAttendance = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/api/report/`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to fetch Attendance data.');
+  }
 };
 
 

@@ -112,7 +112,7 @@ export const Sidebar = () => {
                   handleNavigation(e, allRouterLink.attendanceRecord)
                 }
               >
-                <i class="fa-solid fa-square-poll-vertical"></i>  Attendance Record
+                <i className="fa-solid fa-square-poll-vertical"></i>  Attendance Record
               </Link>
             </li>
           )}
