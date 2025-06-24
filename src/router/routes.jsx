@@ -31,6 +31,7 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
+import Studentdetails from "../global/Studentdetails";
 
 
 export const routes = [
@@ -228,6 +229,11 @@ export const routes = [
   {
     path: allRouterLink.notFound,
     element: <NotFound />,
+    protected: false,
+  },
+   {
+    path: allRouterLink.Studentdetails,
+    element: <Studentdetails />,
     protected: false,
   },
 ];
