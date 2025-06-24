@@ -7,6 +7,9 @@ const BASE_URL = constants.baseUrl;
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+  const [userID, setUSerID] = useState(
+    () => localStorage.getItem("user_id") || ""
+  );
   const [teacherID, setTeacherID] = useState(
     () => localStorage.getItem("teacher_id") || ""
   );
@@ -116,72 +119,79 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const LoginUser = async (userDetails) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
-      const data = response.data;
+const LoginUser = async (userDetails) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
+    const data = response.data;
 
-      if (!data["Access Token"] || !data["Refresh Token"] || !data.Roles) {
-        throw new Error("Invalid login response structure");
-      }
-
-      const tokens = {
-        access: data["Access Token"],
-        refresh: data["Refresh Token"],
-      };
-
-      setAuthTokens(tokens);
-      localStorage.setItem("authTokens", JSON.stringify(tokens));
-
-      const role = data.Roles[0];
-      setUserRole(role);
-      localStorage.setItem("userRole", role);
-
-      if (data.teacher_id) {
-        localStorage.setItem("teacher_id", data.teacher_id);
-        setTeacherID(data.teacher_id);
-      }
-      
-      if (data.guardian_id) {
-        localStorage.setItem("guardian_id", data.guardian_id);
-        setGuardianID(data.guardian_id);
-      }
-
-      if (data.name) {
-        localStorage.setItem("user_name", data.name);
-        setUserName(data.name);
-      }
-
-      if (data.user_profile) {
-        const normalizedProfile = normalizeProfileUrl(data.user_profile);
-        localStorage.setItem("user_profile", normalizedProfile);
-        setUserProfile(normalizedProfile);
-      }
-      
-      return data;
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
+    if (!data["Access Token"] || !data["Refresh Token"] || !data.Roles) {
+      throw new Error("Invalid login response structure");
     }
-  };
 
-  const LogoutUser = async () => {
-    setAuthTokens(null);
-    setUserRole("");
-    setTeacherID("");
-    setGuardianID("");
-    setUserName("");
-    setUserProfile("");
-    localStorage.removeItem("authTokens");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("teacher_id");
-    localStorage.removeItem("guardian_id");
-    localStorage.removeItem("user_name");
-    localStorage.removeItem("user_profile");
-    localStorage.removeItem("rzp_stored_checkout_id");
-    localStorage.removeItem("rzp_device_id");
-    localStorage.removeItem("rzp_checkout_anon_id");
-  };
+    const tokens = {
+      access: data["Access Token"],
+      refresh: data["Refresh Token"],
+    };
+
+    setAuthTokens(tokens);
+    localStorage.setItem("authTokens", JSON.stringify(tokens));
+
+    const role = data.Roles[0];
+    setUserRole(role);
+    localStorage.setItem("userRole", role);
+
+    // Set user ID from response
+    if (data["User ID"]) {
+      localStorage.setItem("user_id", data["User ID"]);
+      setUSerID(data["User ID"]);
+    }
+
+    if (data.teacher_id) {
+      localStorage.setItem("teacher_id", data.teacher_id);
+      setTeacherID(data.teacher_id);
+    }
+    
+    if (data.guardian_id) {
+      localStorage.setItem("guardian_id", data.guardian_id);
+      setGuardianID(data.guardian_id);
+    }
+
+    if (data.name) {
+      localStorage.setItem("user_name", data.name);
+      setUserName(data.name);
+    }
+
+    if (data.user_profile) {
+      const normalizedProfile = normalizeProfileUrl(data.user_profile);
+      localStorage.setItem("user_profile", normalizedProfile);
+      setUserProfile(normalizedProfile);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
+const LogoutUser = async () => {
+  setAuthTokens(null);
+  setUserRole("");
+  setUSerID(""); // Add this line
+  setTeacherID("");
+  setGuardianID("");
+  setUserName("");
+  setUserProfile("");
+  localStorage.removeItem("authTokens");
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("user_id"); // Add this line
+  localStorage.removeItem("teacher_id");
+  localStorage.removeItem("guardian_id");
+  localStorage.removeItem("user_name");
+  localStorage.removeItem("user_profile");
+  localStorage.removeItem("rzp_stored_checkout_id");
+  localStorage.removeItem("rzp_device_id");
+  localStorage.removeItem("rzp_checkout_anon_id");
+};
 
   const ResetPassword = async (userDetails) => {
     try {
@@ -221,25 +231,26 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const contextValue = useMemo(
-    () => ({
-      authTokens,
-      isAuthenticated: !!authTokens?.access,
-      userRole,
-      loading,
-      axiosInstance,
-      LoginUser,
-      LogoutUser,
-      RegisterUser,
-      ResetPassword,
-      ChangePassword,
-      teacherID,
-      guardianID,
-      userName,
-      userProfile: normalizeProfileUrl(userProfile)
-    }),
-    [authTokens, userRole, loading, axiosInstance, teacherID, guardianID, userName, userProfile]
-  );
+const contextValue = useMemo(
+  () => ({
+    authTokens,
+    isAuthenticated: !!authTokens?.access,
+    userRole,
+    userID, // Add this line
+    loading,
+    axiosInstance,
+    LoginUser,
+    LogoutUser,
+    RegisterUser,
+    ResetPassword,
+    ChangePassword,
+    teacherID,
+    guardianID,
+    userName,
+    userProfile: normalizeProfileUrl(userProfile)
+  }),
+  [authTokens, userRole, userID, loading, axiosInstance, teacherID, guardianID, userName, userProfile]
+);
 
   return (
     <AuthContext.Provider value={contextValue}>

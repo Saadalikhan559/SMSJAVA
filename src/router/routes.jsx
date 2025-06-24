@@ -2,7 +2,7 @@ import { AdmissionDetails } from "../components/AdmissionProcess/AdmissionDetail
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
 import { EditAddmissionDetails } from "../components/AdmissionProcess/Admissions/EditAddmissionDetails";
-import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/singleAdmissionDetails";
+import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/SingleAdmissionDetails";
 import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
