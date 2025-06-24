@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { fetchAttendanceData } from '../../services/api/Api';
-import { Link } from 'react-router-dom'
-
 
 const AttendanceRecord = () => {
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
-  const [className, setClassName] = useState('');
-  const [classes, setClasses] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [overallAttendance, setOverallAttendance] = useState({
+    present: 0,
+    total: 0,
+    percentage: '0%'
+  });
   const [chartData, setChartData] = useState({
     series: [{ name: 'Attendance %', data: [] }],
     options: {
@@ -25,21 +25,25 @@ const AttendanceRecord = () => {
   });
 
   const getData = async () => {
-    const AttendanceData = await fetchAttendanceData();
+    const data = await fetchAttendanceData(selectedDate);
 
-    setClasses([...new Set(AttendanceData.map(item => item.class_name))]);
+    if (!data) {
+      setOverallAttendance({ present: 0, total: 0, percentage: '0%' });
+      setChartData(prev => ({
+        ...prev,
+        series: [{ name: 'Attendance %', data: [] }],
+        options: { ...prev.options, xaxis: { categories: [] } }
+      }));
+      return;
+    }
 
-    const filtered = AttendanceData.filter(item => {
-      const matchesMonth = month ? item.month === month : true;
-      const matchesYear = year ? item.year === year.toString() : true;
-      const matchesClass = className ? item.class_name === className : true;
-      return matchesMonth && matchesYear && matchesClass;
-    });
+    // overall attendance
+    setOverallAttendance(data.overall_attendance || { present: 0, total: 0, percentage: '0%' });
 
-    const categories = filtered.map(item => item.class_name);
-    const percentageValues = filtered.map(item =>
-      parseFloat(item.percentage.replace('%', '')) || 0
-    );
+    // class wise data for chart
+    const classWise = data.class_wise_attendance || [];
+    const categories = classWise.map(item => item.class_name);
+    const percentageValues = classWise.map(item => parseFloat(item.percentage.replace('%', '')) || 0);
 
     setChartData(prev => ({
       ...prev,
@@ -53,39 +57,34 @@ const AttendanceRecord = () => {
 
   useEffect(() => {
     getData();
-  }, [month, year, className]);
+  }, [selectedDate]);
+
+  const handleReset = () => {
+    setSelectedDate('');
+  };
 
   return (
     <>
-    
       <span className='font-bold text-2xl flex pt-5 justify-center gap-1'>
         <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
       </span>
 
-      <div className='flex flex-wrap justify-center gap-4 p-4'>
-        <select value={month} onChange={(e) => setMonth(e.target.value)} className="select select-bordered focus:outline-none">
-          <option value="">All Months</option>
-          {[
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-          ].map((month) => (
-            <option key={month} value={month}>{month}</option>
-          ))}
-        </select>
+      <div className="flex flex-wrap justify-center gap-4 p-4">
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="input input-bordered focus:outline-none"
+        />
+        <button onClick={handleReset} className="btn" disabled={!selectedDate}>
+          Reset
+        </button>
+      </div>
 
-        <select value={year} onChange={(e) => setYear(e.target.value)} className="select select-bordered focus:outline-none">
-          <option value="">All Years</option>
-          {[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025].map(year => (
-            <option key={year} value={year}>{year}</option>
-          ))}
-        </select>
-
-        <select value={className} onChange={(e) => setClassName(e.target.value)} className="select select-bordered focus:outline-none">
-          <option value="">All Classes</option>
-          {classes.map((cls, idx) => (
-            <option key={idx} value={cls}>{cls}</option>
-          ))}
-        </select>
+      <div className="flex justify-center gap-10 font-semibold text-lg mb-4">
+        <div>Total Present Students: {overallAttendance.present}</div>
+        <div>Total Students: {overallAttendance.total}</div>
+        <div>Overall Attendance: {overallAttendance.percentage}</div>
       </div>
 
       <div className="p-4 flex justify-center">
@@ -97,15 +96,9 @@ const AttendanceRecord = () => {
           width={1000}
         />
       </div>
-      <Link to="/fullAttendance">
-      <span className='flex justify-center'>
-      <button type="submit" className="btn btn-primary "><i className="fa-solid fa-chalkboard-user"/>Get Full Attendance</button>
-      </span></Link>
-      
     </>
   );
 };
 
 export default AttendanceRecord;
-
 

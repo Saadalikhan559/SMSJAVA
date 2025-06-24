@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchAdmissionDetails } from "../../services/api/Api";
 import { Link } from "react-router-dom";
+import { allRouterLink } from "../../router/AllRouterLinks";
 
 export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
@@ -93,17 +94,19 @@ export const AdmissionDetails = () => {
                     {details.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50">
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
-                          {detail.student.first_name} {detail.student.last_name}
+                          {detail.student_input.first_name}{" "}
+                          {detail.student_input.last_name}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                          {detail.guardian.first_name}{" "}
-                          {detail.guardian.last_name} ({detail.guardian_type})
+                          {detail.guardian_input.first_name}{" "}
+                          {detail.guardian_input.last_name} (
+                          {detail.guardian_type || "N/A"})
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                          {detail.student.date_of_birth}
+                          {detail.student_input.date_of_birth}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                          {detail.student.gender}
+                          {detail.student_input.gender}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
                           {detail.year_level}
@@ -114,13 +117,19 @@ export const AdmissionDetails = () => {
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
                           <div className="flex space-x-2">
                             <Link
-                              to={`/admissions/edit/${detail.id}`}
+                              to={allRouterLink.editAddmisionDetails.replace(
+                                ":id",
+                                detail.id
+                              )}
                               className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                             >
                               Edit
                             </Link>
                             <Link
-                              to={`/addmissionDetails/${detail.id}`}
+                              to={allRouterLink.addmissionDetailsById.replace(
+                                ":id",
+                                detail.id
+                              )}
                               className="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
                               More

@@ -1,6 +1,7 @@
 import { AdmissionDetails } from "../components/AdmissionProcess/AdmissionDetails";
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
+import { EditAddmissionDetails } from "../components/AdmissionProcess/Admissions/EditAddmissionDetails";
 import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/singleAdmissionDetails";
 import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
@@ -31,6 +32,7 @@ import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
 
+import Allstudents from "../components/AllStudents";
 
 export const routes = [
   {
@@ -79,6 +81,12 @@ export const routes = [
     {
     path: allRouterLink.addmissionDetailsById,
     element: <SingleAdmissionDetails />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+    {
+    path: allRouterLink.editAddmisionDetails,
+    element: <EditAddmissionDetails />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
@@ -211,15 +219,21 @@ export const routes = [
     element: <FullAttendance />,
     protected: false,
   },
+    // include all routes before this please 
+
   {
     path: allRouterLink.unAuthorized,
     element: <Unauthorized />,
     protected: false,
   },
-  // include all routes before this please 
   {
     path: allRouterLink.notFound,
     element: <NotFound />,
+    protected: false,
+  },
+    {
+    path: allRouterLink. allstudents,
+    element: <Allstudents />,
     protected: false,
   },
 ];

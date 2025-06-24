@@ -7,7 +7,8 @@ import {
   faEnvelope, 
   faPhone, 
   faVenusMars,
-  faCamera
+  faCamera,
+  faCalendarDay
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { constants } from '../../global/constants';
@@ -18,28 +19,49 @@ const DirectorProfile = () => {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(null);
+  const [accessToken, setAccessToken] = useState("");
 
   const BASE_URL = constants.baseUrl;
-  const directorId = 1; // Assuming director ID is 5 as per your API endpoint
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   useEffect(() => {
+    const tokenData = localStorage.getItem("authTokens");
+    if (tokenData) {
+      try {
+        const tokens = JSON.parse(tokenData);
+        if (tokens && tokens.access) {
+          setAccessToken(tokens.access);
+        }
+      } catch (error) {
+        console.error("Error parsing auth tokens:", error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
     const fetchDirectorData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BASE_URL}/d/director/${directorId}/`);
+        const response = await axios.get(`${BASE_URL}/d/director/director_my_profile/`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+        });
+        
         setProfileData(response.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching director data:", err);
-        setError(err.message);
+        setError(err.message || "Failed to fetch director data");
         setLoading(false);
       }
     };
 
     fetchDirectorData();
-  }, []);
+  }, [accessToken, BASE_URL]);
 
   const onSubmit = async (data) => {
     try {
@@ -58,28 +80,30 @@ const DirectorProfile = () => {
         formData.append("user_profile", imagePreview);
       }
 
-      const response = await axios.put(`${BASE_URL}/d/director/${directorId}/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.put(
+        `${BASE_URL}/d/director/director_my_profile/`, 
+        formData, 
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      console.log("Update response:", response.data);
       setProfileData(response.data);
       setIsDialogOpen(false);
       setImagePreview(null);
-
       window.location.reload();
     } catch (err) {
       console.error("Error updating director data:", err);
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     }
   };
 
   const handleEditClick = () => {
     reset(profileData);
     setIsDialogOpen(true);
-    // Set the current image as preview if it exists
     if (profileData?.user_profile) {
       setImagePreview(`${BASE_URL}${profileData.user_profile}`);
     }
@@ -230,12 +254,30 @@ const DirectorProfile = () => {
                 readOnly
               />
             </div>
+
+            {profileData.date_joined && (
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold text-gray-500">
+                  <FontAwesomeIcon icon={faCalendarDay} className="w-4 h-4 mr-2" />
+                  Date Joined
+                </label>
+                <input
+                  type="text"
+                  value={profileData.date_joined}
+                  className="input input-bordered w-full text-sm"
+                  readOnly
+                />
+              </div>
+            )}
           </div>
         </div>
 
         {/* Buttons section */}
         <div className="flex justify-end gap-4 mt-8">
-          <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <button 
+            className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onClick={() => window.history.back()}
+          >
             <span className="mr-1">X</span> Cancel
           </button>
           <button 

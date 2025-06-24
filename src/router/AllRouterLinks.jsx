@@ -27,6 +27,8 @@ export const allRouterLink = {
     officeStaffDashboard: '/officeStaffDashboard',
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
+    editAddmisionDetails: '/editAddmisionDetails/:id',
     unAuthorized: '/unauthorized',
+    allstudents:'/AllStudents',
     notFound: "*"
 }

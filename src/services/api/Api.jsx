@@ -268,27 +268,6 @@ export const fetchViewDocuments = async () => {
   }
 };
 
-
-// POST APIS
-
-export const handleAdmissionForm = async (formData) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    if (response.status === 200 || response.status === 201) {
-      alert("successfully submitted the form");
-    }
-
-    return response.data;
-  } catch (err) {
-    console.error("Failed:", err);
-    throw err;
-  }
-};
-
 export const fetchStudents1 = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/s/students/`);
@@ -306,8 +285,8 @@ export const fetchyearLevelData = async () => {
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
-    throw err;
-  }
+    throw err;
+  }
 };
 
 export const fetchYearLevels = async () => {
@@ -345,19 +324,75 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   return axios.get(url, { params });
 };
 
-
-export const fetchAttendanceData = async () => {
+export const fetchAttendanceData = async (date = '') => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/director-dashboard/`);
-    return response.data.class_wise_attendance || [];
+    const url = date
+      ? `${BASE_URL}/a/director-dashboard/?date=${date}`
+      : `${BASE_URL}/a/director-dashboard/`;
+
+    const response = await axios.get(url);
+    return response.data; 
   } catch (error) {
     console.error('Failed to fetch attendance data:', error);
-    return [];
-  }
+    return null; 
+  }
 };
 
 
 
 
+
+export const fetchAttendance = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/api/report/`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to fetch Attendance data.');
+  }
+};
+
+
+// POST APIS
+
+export const handleAdmissionForm = async (formData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
+      headers: {
+        "Content-Type": "application/json",
+        // "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200 || response.status === 201) {
+      alert("successfully submitted the form");
+    }
+
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+
+
+// EDIT APIS
+
+
+export const handleEditAdmissionForm = async (formData, id) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/d/admission/${id}/`, formData, {
+      headers: {
+        "Content-Type": "application/json",
+        // "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200 || response.status === 201) {
+      alert("successfully submitted the form");
+    }
+
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
 
 

@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+
+
 import React, { useContext, useEffect, useState } from "react";
 import { fetchTeacherDashboard } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
@@ -78,7 +81,13 @@ export const TeacherDashboard = () => {
                     {detail.student_count}
                   </span>
                 </div>
+                <Link to="/fullAttendance">
+                      <span className='flex justify-center'>
+                      <button type="submit" className="btn btn-primary w-full "><i class="fa-solid fa-chalkboard-user"/>Full Attendance {detail.level_name}</button>
+                      </span>
+                 </Link>
               </div>
+               
             </div>
           ))
         ) : (
