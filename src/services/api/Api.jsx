@@ -316,6 +316,7 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
   // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
+  
     params.year_level = selectedClass; 
   }
 
