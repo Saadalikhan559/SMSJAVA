@@ -49,24 +49,43 @@ export const OfficeStaffDashboard = () => {
   const admissionYears = Object.keys(dashboardData.admissions_per_year);
   const admissionCounts = Object.values(dashboardData.admissions_per_year);
 
-  const options = {
-    chart: {
-      id: "admissions-line",
-    },
-    toolbar: { show: false },
-    xaxis: {
-      categories: admissionYears,
-    },
-    stroke: {
-      curve: "straight",
-      width: 5,
-    },
+const options = {
+  chart: {
+    id: "admissions-line",
+  },
+  toolbar: { show: false },
+  xaxis: {
+    categories: admissionYears,
     title: {
-      text: "Yearly Admissions",
-      align: "left",
+      text: "Year",
+      style: {
+        fontSize: "14px",
+        fontWeight: 600,
+        color: "#333",
+      },
     },
-    colors: ["#6e00ff"],
-  };
+  },
+  yaxis: {
+    title: {
+      text: "Number of Admissions",
+      style: {
+        fontSize: "14px",
+        fontWeight: 600,
+        color: "#333",
+      },
+    },
+  },
+  stroke: {
+    curve: "straight",
+    width: 5,
+  },
+  title: {
+    text: "Yearly Admissions",
+    align: "left",
+  },
+  colors: ["#6e00ff"],
+};
+
 
   const series = [
     {
