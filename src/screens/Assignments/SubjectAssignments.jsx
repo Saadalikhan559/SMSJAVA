@@ -103,41 +103,38 @@ export const SubjectAssignments = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const formDataToSend = new FormData();
-    formDataToSend.append("teacher_id", formData.teacher_id);
-    formDataToSend.append("yearlevel_id", formData.yearlevel_id);
-    // Append each subject ID individually
-    formData.subject_ids.forEach((id) => {
-      formDataToSend.append("subject_ids", id);
-    });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    // Append each period ID individually
-    formData.period_ids.forEach((id) => {
-      formDataToSend.append("period_ids", id);
-    });
+  // Debug: Log the data being sent
+  console.log("Sending:", {
+    teacher_id: formData.teacher_id,
+    yearlevel_id: formData.yearlevel_id,
+    subject_ids: formData.subject_ids,
+    period_ids: formData.period_ids,
+  });
 
-    // console.log(formData);
-    try {
-      const response = await axios.post(
-        `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
-        formDataToSend
-      );
-      if (response.status === 200 || response.status === 201) {
-        alert("Subjects assigned successfully!");
+  try {
+    const response = await axios.post(
+      `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
+      formData, // Send as JSON
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.error) {
-        alert(`Error: ${error.response.data.error}`);
-      } else {
-        alert("An unexpected error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      alert("Subjects assigned successfully!");
     }
-  };
+  } catch (error) {
+    alert(error.response?.data?.error || "Failed to assign subjects.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleNavigate = () => {
     navigate(`${allRouterLink.allTeacherAssignment}`);
