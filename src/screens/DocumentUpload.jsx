@@ -27,7 +27,7 @@ export const DocumentUpload = () => {
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [role, setRole] = useState("");
   const [yearLevel, setYearLevel] = useState([]);
-  const [yearLevelName, setYearLevelName] = useState("");
+  const [yearLevelID, setYearLevelID] = useState("");
 
   // Dynamic fields for document uploads
   const [uploadFields, setUploadFields] = useState([
@@ -83,10 +83,9 @@ export const DocumentUpload = () => {
     try {
       setLoadingStudents(true);
       const allStudentsByClass = await fetchStudentYearLevelByClass(
-        yearLevelName
+        yearLevelID
       );
       setStudents(allStudentsByClass);
-      console.log(allStudentsByClass);
     } catch (error) {
       console.error("Failed to load students:", error);
     } finally {
@@ -258,16 +257,16 @@ export const DocumentUpload = () => {
         (yl) => yl.id === parseInt(formData.year_level)
       );
       if (selected) {
-        setYearLevelName(selected.level_name);
+        setYearLevelID(selected.id);
       }
     }
   }, [formData.year_level, yearLevel]);
 
   useEffect(() => {
-    if (yearLevelName) {
+    if (yearLevelID) {
       getStudentsYearLevel();
     }
-  }, [yearLevelName]);
+  }, [yearLevelID]);
 
   return (
     <form
@@ -343,92 +342,94 @@ export const DocumentUpload = () => {
             <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
           </h1>
           {uploadFields.map((field, index) => (
-<div
-  key={index}
-  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mt-6 w-full"
->
-  {/* Document Upload */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
-        <span className="text-error">*</span>
-      </span>
-    </label>
-    <input
-      type="file"
-      name="file"
-      className="file-input file-input-bordered w-full focus:outline-none"
-      required
-      onChange={(e) => handleFileChange(e, index)}
-    />
-  </div>
+            <div
+              key={index}
+              className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mt-6 w-full"
+            >
+              {/* Document Upload */}
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-file-upload text-sm"></i> Document
+                    Upload
+                    <span className="text-error">*</span>
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  name="file"
+                  className="file-input file-input-bordered w-full focus:outline-none"
+                  required
+                  onChange={(e) => handleFileChange(e, index)}
+                />
+              </div>
 
-  {/* Document Type */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-file text-sm"></i> Document Type
-        <span className="text-error">*</span>
-      </span>
-    </label>
-    <select
-      name="document_types"
-      className="select select-bordered w-full focus:outline-none cursor-pointer"
-      required
-      value={field.document_types}
-      onChange={(e) => handleUploadChange(e, index)}
-    >
-      <option value="">Select Document Type</option>
-      {getAvailableDocumentTypes(index).map((doc) => (
-        <option key={doc.id} value={doc.id}>
-          {doc.name}
-        </option>
-      ))}
-    </select>
-  </div>
+              {/* Document Type */}
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-file text-sm"></i> Document Type
+                    <span className="text-error">*</span>
+                  </span>
+                </label>
+                <select
+                  name="document_types"
+                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  required
+                  value={field.document_types}
+                  onChange={(e) => handleUploadChange(e, index)}
+                >
+                  <option value="">Select Document Type</option>
+                  {getAvailableDocumentTypes(index).map((doc) => (
+                    <option key={doc.id} value={doc.id}>
+                      {doc.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-  {/* Identity */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-id-card text-sm"></i> Identity
-      </span>
-    </label>
-    <input
-      type="text"
-      name="identities"
-      className="input input-bordered w-full focus:outline-none"
-      value={field.identities}
-      onChange={(e) => handleUploadChange(e, index)}
-      placeholder="Enter identity ID"
-    />
-  </div>
+              {/* Identity */}
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text flex items-center gap-1">
+                    <i className="fa-solid fa-id-card text-sm"></i> Identity
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  name="identities"
+                  className="input input-bordered w-full focus:outline-none"
+                  value={field.identities}
+                  onChange={(e) => handleUploadChange(e, index)}
+                  placeholder="Enter identity ID"
+                />
+              </div>
 
-  {/* Add/Remove Button */}
-  <div className="form-control w-full">
-    {index === 0 ? (
-      <button
-        type="button"
-        className="btn btn-primary mt-auto w-full"
-        onClick={handleAddField}
-      >
-        <i className="fa-solid fa-plus mr-1"></i> Add
-      </button>
-    ) : (
-      <button
-        type="button"
-        className="btn btn-error mt-auto w-full"
-        onClick={() =>
-          setUploadFields(uploadFields.filter((_, i) => i !== index))
-        }
-      >
-        <i className="fa-solid fa-trash mr-1"></i> Remove
-      </button>
-    )}
-  </div>
-</div>
-
+              {/* Add/Remove Button */}
+              <div className="form-control w-full">
+                {index === 0 ? (
+                  <button
+                    type="button"
+                    className="btn btn-primary mt-auto w-full"
+                    onClick={handleAddField}
+                  >
+                    <i className="fa-solid fa-plus mr-1"></i> Add
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-error mt-auto w-full"
+                    onClick={() =>
+                      setUploadFields(
+                        uploadFields.filter((_, i) => i !== index)
+                      )
+                    }
+                  >
+                    <i className="fa-solid fa-trash mr-1"></i> Remove
+                  </button>
+                )}
+              </div>
+            </div>
           ))}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
