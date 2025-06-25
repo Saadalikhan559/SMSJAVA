@@ -217,7 +217,7 @@ export const fetchOfficeStaffDashboard = async () => {
 
 export const fetchGuardianDashboard = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/4/`);
+    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to officeStaff Dashboard:", err);
@@ -229,7 +229,8 @@ export const fetchGuardianDashboard = async (id) => {
 
 export const fetchTeacherDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${4}/`);
+
+    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch Teacher Dashboard:", err);

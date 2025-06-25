@@ -14,7 +14,7 @@ import { constants } from "../../../global/constants";
 
 export const EditAddmissionDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [yearLevel, setYearLevel] = useState([]);
   const [schoolYears, setSchoolYear] = useState([]);
   const [guardianTypes, setGuardianType] = useState([]);
@@ -87,29 +87,48 @@ export const EditAddmissionDetails = () => {
   const getAdmissionData = async () => {
     try {
       const response = await fetchAdmissionDetailsById(id);
-      console.log("API Response:", response); // First check what the response contains
-
       if (!response) {
         throw new Error("No response received from API");
       }
 
-      // Transform the API response to match your form's expected structure
+      // Get all countries, states, cities first
+      const countries = await fetchCountry();
+      const states = await fetchState();
+      const cities = await fetchCity();
+
+      // Find matching IDs for the names
+      const countryObj = countries.find(
+        (c) => c.name === response.address.country_name
+      );
+      const stateObj = states.find(
+        (s) => s.name === response.address.state_name
+      );
+      const cityObj = cities.find((c) => c.name === response.address.city_name);
+
+      // Transform the API response
       const transformedData = {
         ...response,
         student: response.student_input,
         guardian: response.guardian_input,
-        address: response.address,
+        address: {
+          ...response.address,
+          country: countryObj?.id || null,
+          state: stateObj?.id || null,
+          city: cityObj?.id || null,
+          country_name: response.address.country_name, // Keep for display
+          state_name: response.address.state_name, // Keep for display
+          city_name: response.address.city_name, // Keep for display
+        },
         banking_detail: response.banking_detail,
+        guardian_type: response.guardian_type,
       };
 
-      console.log("Transformed Data:", transformedData);
       setFormData(transformedData);
       setSelectedGuardianType(response.guardian_type || "");
     } catch (error) {
       console.error("Error fetching admission details:", error);
     }
   };
-
   useEffect(() => {
     getYearLevels();
     getSchoolYears();
@@ -126,60 +145,63 @@ export const EditAddmissionDetails = () => {
 
     const formData = new FormData(formRef.current);
 
-    // Create the payload object with nested structure
+    // Create the payload object with nested structure that matches API expectations
     const payload = {
       student: {
         first_name: formData.get("student_first_name") || "",
         middle_name: formData.get("student_middle_name") || "",
         last_name: formData.get("student_last_name") || "",
         email: formData.get("student_email") || "",
-        // password: formData.student?.password || "", // Use existing password
         father_name: formData.get("student_father_name") || "",
         mother_name: formData.get("student_mother_name") || "",
-        date_of_birth: formData.get("student_date_of_birth") || "",
+        date_of_birth: formData.get("student_date_of_birth") || null,
         gender: formData.get("student_gender") || "",
         religion: formData.get("student_religion") || "",
-        category: formData.get("student_category") || "",
-        height: formData.get("student_height") || "",
-        weight: formData.get("student_weight") || "",
+        category: formData.get("student_category") || null,
+        height: parseFloat(formData.get("student_height")) || null,
+        weight: parseFloat(formData.get("student_weight")) || null,
         blood_group: formData.get("student_blood_group") || "",
-        number_of_siblings: formData.get("student_number_of_siblings") || "",
+        number_of_siblings:
+          parseInt(formData.get("student_number_of_siblings")) || null,
       },
       guardian: {
         first_name: formData.get("guardian_first_name") || "",
         middle_name: formData.get("guardian_middle_name") || "",
         last_name: formData.get("guardian_last_name") || "",
         email: formData.get("guardian_email") || "",
-        // password: formData.guardian?.password || "", // Use existing password
         phone_no: formData.get("guardian_phone_no") || "",
-        annual_income: formData.get("guardian_annual_income") || "",
-        means_of_livelihood: formData.get("guardian_means_of_livelihood") || "",
+        annual_income:
+          parseFloat(formData.get("guardian_annual_income")) || null,
+        means_of_livelihood:
+          formData.get("guardian_means_of_livelihood") || null,
         qualification: formData.get("guardian_qualification") || "",
         occupation: formData.get("guardian_occupation") || "",
         designation: formData.get("guardian_designation") || "",
       },
-      address: {
-        house_no: formData.get("student_address_house_number") || "",
+      address_input: {
+        house_no:
+          parseInt(formData.get("student_address_house_number")) || null,
         habitation: formData.get("student_address_habitation") || "",
-        word_no: formData.get("student_address_ward_no") || "",
-        zone_no: formData.get("student_address_zone") || "",
+        word_no: parseInt(formData.get("student_address_ward_no")) || null,
+        zone_no: parseInt(formData.get("student_address_zone")) || null,
         block: formData.get("student_address_block") || "",
         district: formData.get("student_address_district") || "",
         division: formData.get("student_address_division") || "",
-        area_code: formData.get("student_address_pin_code") || "",
-        country: formData.get("student_address_country") || "",
-        state: formData.get("student_address_state") || "",
-        city: formData.get("student_address_city") || "",
+        area_code: parseInt(formData.get("student_address_pin_code")) || null,
+        country: formData.get("student_address_country") || null,
+        state: formData.get("student_address_state") || null,
+        city: formData.get("student_address_city") || null,
         address_line: formData.get("student_address_address_line") || "",
       },
-      banking_detail: {
-        account_no: formData.get("student_banking_account_no") || "",
+      banking_detail_input: {
+        account_no: formData.get("student_banking_account_no") || null,
         ifsc_code: formData.get("student_banking_ifsc_code") || "",
         holder_name: formData.get("student_banking_holder_name") || "",
-        bank_name: formData.get("student_banking_bank_name") || "",
       },
-      year_level: formData.get("year_level") || "",
-      school_year: formData.get("school_year") || "",
+      guardian_type_input: selectedGuardianType || null,
+      year_level: formData.get("year_level") || null,
+      school_year: formData.get("school_year") || null,
+      admission_date: formData.get("admission_date") || null,
       previous_school_name: formData.get("previous_school_name") || "",
       previous_standard_studied:
         formData.get("previous_standard_studied") || "",
@@ -187,11 +209,8 @@ export const EditAddmissionDetails = () => {
       emergency_contact_n0: formData.get("emergency_contact_n0") || "",
       entire_road_distance_from_home_to_school:
         formData.get("entire_road_distance_from_home_to_school") || "",
-      obtain_marks: formData.get("obtain_marks") || "",
-      total_marks: formData.get("total_marks") || "",
-      previous_percentage: formData.get("previous_percentage") || "",
-      admission_date: formData.get("admission_date") || "",
-      guardian_type: selectedGuardianType || "",
+      obtain_marks: parseFloat(formData.get("obtain_marks")) || null,
+      total_marks: parseFloat(formData.get("total_marks")) || null,
     };
 
     // Create FormData for submission
@@ -199,34 +218,39 @@ export const EditAddmissionDetails = () => {
 
     // Append all payload data to FormData
     Object.entries(payload).forEach(([key, value]) => {
-      if (typeof value === "object" && value !== null) {
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !(value instanceof File)
+      ) {
         Object.entries(value).forEach(([subKey, subValue]) => {
-          submitFormData.append(`${key}[${subKey}]`, subValue);
+          submitFormData.append(
+            `${key}[${subKey}]`,
+            subValue !== null ? subValue : ""
+          );
         });
       } else {
-        submitFormData.append(key, value);
+        submitFormData.append(key, value !== null ? value : "");
       }
     });
 
     // Append files separately if they've been changed
     if (formData.get("student_user_profile")) {
       submitFormData.append(
-        "student[profile_picture]",
+        "student[user_profile]",
         formData.get("student_user_profile")
       );
     }
     if (formData.get("guardian_user_profile")) {
       submitFormData.append(
-        "guardian[profile_picture]",
+        "guardian[user_profile]",
         formData.get("guardian_user_profile")
       );
     }
 
     try {
-      handleEditAdmissionForm(submitFormData, id);
-      getAdmissionData();
-      navigate('/addmissionDetails');
-      
+      await handleEditAdmissionForm(submitFormData, id);
+      navigate("/addmissionDetails");
     } catch (error) {
       console.error("Update error:", error.response?.data || error.message);
       alert(
@@ -824,7 +848,7 @@ export const EditAddmissionDetails = () => {
                 </span>
               </label>
               <input
-                type="number"
+                type="text"
                 name="entire_road_distance_from_home_to_school"
                 placeholder="Distance in km"
                 className="input input-bordered w-full focus:outline-none"
@@ -863,22 +887,22 @@ export const EditAddmissionDetails = () => {
                 defaultValue={formData.total_marks}
               />
             </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-percent text-sm"></i>
-                  Previous Percentage
-                </span>
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                name="previous_percentage"
-                placeholder="Percentage"
-                className="input input-bordered w-full focus:outline-none"
-                defaultValue={formData.previous_percentage}
-              />
-            </div>
+            {/* <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-2">
+                    <i className="fa-solid fa-percent text-sm"></i>
+                    Previous Percentage
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  name="previous_percentage"
+                  placeholder="Percentage"
+                  className="input input-bordered w-full focus:outline-none"
+                  defaultValue={formData.previous_percentage}
+                />
+              </div> */}
           </div>
         </div>
 
@@ -985,6 +1009,7 @@ export const EditAddmissionDetails = () => {
                   City <span className="text-error">*</span>
                 </span>
               </label>
+              {/* City Dropdown */}
               <select
                 name="student_address_city"
                 className="select select-bordered w-full focus:outline-none"
@@ -1022,6 +1047,7 @@ export const EditAddmissionDetails = () => {
                   State <span className="text-error">*</span>
                 </span>
               </label>
+              {/* State Dropdown */}
               <select
                 name="student_address_state"
                 className="select select-bordered w-full focus:outline-none"
@@ -1128,21 +1154,21 @@ export const EditAddmissionDetails = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-building text-sm"></i>
-                  Bank Name <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="text"
-                name="student_banking_bank_name"
-                placeholder="Bank Name"
-                className="input input-bordered w-full focus:outline-none"
-                defaultValue={formData.banking_detail?.bank_name}
-              />
-            </div>
+            {/* <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-2">
+                    <i className="fa-solid fa-building text-sm"></i>
+                    Bank Name <span className="text-error">*</span>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  name="student_banking_bank_name"
+                  placeholder="Bank Name"
+                  className="input input-bordered w-full focus:outline-none"
+                  defaultValue={formData.banking_detail?.bank_name}
+                />
+              </div> */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">

@@ -123,12 +123,7 @@ export const SubjectAssignments = () => {
     try {
       const response = await axios.post(
         `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formDataToSend
       );
       if (response.status === 200 || response.status === 201) {
         alert("Subjects assigned successfully!");
