@@ -74,12 +74,12 @@ export const Sidebar = () => {
                   <li>
                     <Link
                       onClick={(e) =>
-                        handleNavigation(e, allRouterLink.allstudents)
+                        handleNavigation(e, allRouterLink.allClasses)
                       }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
-                      <i class="fa-solid fa-graduation-cap"></i>{" "}
-                      All Students
+                      <i className="fa-solid fa-graduation-cap"></i>{" "}
+                      All Classes
                     </Link>
                   </li>
                 </ul>

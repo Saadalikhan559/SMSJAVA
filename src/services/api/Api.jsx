@@ -304,8 +304,8 @@ export const fetchYearLevels = async () => {
 export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Always use the same base URL for fee summaries.
   // This is crucial for consistent behavior.
-  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`; 
-  
+  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+
   const params = {};
 
   // Add month parameter if selectedMonth is provided
@@ -315,8 +315,8 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
 
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
-  // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-    params.year_level = selectedClass; 
+    // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
+    params.year_level = selectedClass;
   }
 
   // If both selectedMonth and selectedClass are empty, the 'params' object will be empty.
@@ -331,16 +331,12 @@ export const fetchAttendanceData = async (date = '') => {
       : `${BASE_URL}/a/director-dashboard/`;
 
     const response = await axios.get(url);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error('Failed to fetch attendance data:', error);
-    return null; 
+    return null;
   }
 };
-
-
-
-
 
 export const fetchAttendance = async () => {
   try {
@@ -350,7 +346,6 @@ export const fetchAttendance = async () => {
     throw new Error('Failed to fetch Attendance data.');
   }
 };
-
 
 // POST APIS
 
@@ -394,5 +389,6 @@ export const handleEditAdmissionForm = async (formData, id) => {
     throw err;
   }
 };
+
 
 

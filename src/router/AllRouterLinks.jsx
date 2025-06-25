@@ -28,7 +28,9 @@ export const allRouterLink = {
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
     editAddmisionDetails: '/editAddmisionDetails/:id',
+    allClasses:'/allClasses',
+    allStudentsperClass:'/allStudentsPerClass/:levelName',
+    // all routes before this
     unAuthorized: '/unauthorized',
-    allstudents:'/AllStudents',
     notFound: "*"
 }

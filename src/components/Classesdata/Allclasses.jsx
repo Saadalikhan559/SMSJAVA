@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { fetchYearLevels } from "../services/api/Api";
+import { fetchYearLevels } from "../../services/api/Api";
+import { Link, useParams } from "react-router-dom";
 
-const Allstudents = () => {
-    const [loading, setLoading] = useState(true);
+const Allclasses = () => {
+  const { levelName } = useParams(); // param coming from URL
     const [yearLevels, setYearLevels] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const getYearLevels = async () => {
         setLoading(true);
-        try {   
+        try {
             const data = await fetchYearLevels();
+            console.log("Fetched year levels:", data); // Debugging
             setYearLevels(data);
         } catch (err) {
             console.error("Error fetching year levels:", err);
@@ -47,9 +50,9 @@ const Allstudents = () => {
                 <div className="overflow-x-auto">
                     <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
                         <thead className="bgTheme text-white">
-                            <tr> 
-                                <th className="px-4 py-3 text-left">S.NO</th>
-                                <th className="px-4 py-3 text-left">Year Level</th>
+                            <tr>
+                                <th scope="col" className="px-4 py-3 text-left">S.NO</th>
+                                <th scope="col" className="px-4 py-3 text-left">Year Level</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,7 +66,16 @@ const Allstudents = () => {
                                 yearLevels.map((record, index) => (
                                     <tr key={record.id || index} className="hover:bg-blue-50">
                                         <td className="px-4 py-3">{index + 1}</td>
-                                        <td className="px-4 py-3">{record.level_name}</td>
+                                        <td className="px-4 py-3">
+                                            <Link
+                                                to={`/allStudentsPerClass/${record.level_name}`}
+                                                className="text-blue-600 hover:underline"
+
+                                            >
+                                                {record.level_name}
+                                            </Link>
+
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -75,4 +87,4 @@ const Allstudents = () => {
     );
 };
 
-export default Allstudents;
+export default Allclasses;
