@@ -2,189 +2,29 @@ import { useEffect, useState } from "react";
 import { fetchAllTeacherAssignments } from "../../services/api/Api";
 export const AllTeacherAssignments = () => {
   const [teacherAssignments, setTeacherAssignment] = useState([]);
-
-//   let dummyData = [
-//     {
-//         "teacher_id": 1,
-//         "teacher_name": "Maisara Waseem",
-//         "total_assigned_periods": 3,
-//         "max_periods_allowed": 6,
-//         "assignments": [
-//             {
-//                 "year_level_id": 2,
-//                 "year_level_name": "Nursery",
-//                 "periods": [
-//                     {
-//                         "period_id": 1,
-//                         "period_name": "Maths Period",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 3,
-//                         "subject_name": "Maths"
-//                     },
-//                     {
-//                         "period_id": 4,
-//                         "period_name": "Science - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 1,
-//                         "subject_name": "Science"
-//                     },
-//                     {
-//                         "period_id": 5,
-//                         "period_name": "English - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 2,
-//                         "subject_name": "English"
-//                     }
-//                 ]
-//             }
-//         ]
-//     },
-//     {
-//         "teacher_id": 2,
-//         "teacher_name": "Mariya Khan",
-//         "total_assigned_periods": 1,
-//         "max_periods_allowed": 6,
-//         "assignments": []
-//     },
-//     {
-//         "teacher_id": 3,
-//         "teacher_name": "Moosa Alam",
-//         "total_assigned_periods": 3,
-//         "max_periods_allowed": 6,
-//         "assignments": [
-//             {
-//                 "year_level_id": 2,
-//                 "year_level_name": "Nursery",
-//                 "periods": [
-//                     {
-//                         "period_id": 6,
-//                         "period_name": "Science - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 1,
-//                         "subject_name": "Science"
-//                     },
-//                     {
-//                         "period_id": 7,
-//                         "period_name": "English - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 2,
-//                         "subject_name": "English"
-//                     },
-//                     {
-//                         "period_id": 8,
-//                         "period_name": "Social Science - Social Science",
-//                         "start_time": "09:30",
-//                         "end_time": "10:15",
-//                         "subject_id": 4,
-//                         "subject_name": "Social Science"
-//                     }
-//                 ]
-//             },
-//             {
-//                 "year_level_id": 4,
-//                 "year_level_name": "KG-2",
-//                 "periods": [
-//                                       {
-//                         "period_id": 6,
-//                         "period_name": "Science - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 1,
-//                         "subject_name": "Science"
-//                     },
-//                     {
-//                         "period_id": 7,
-//                         "period_name": "English - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 2,
-//                         "subject_name": "English"
-//                     }
-//                 ]
-//             }
-//         ]
-//     },
-//     {
-//         "teacher_id": 4,
-//         "teacher_name": "Imad Khan",
-//         "total_assigned_periods": 1,
-//         "max_periods_allowed": 6,
-//         "assignments": []
-//     },
-//     {
-//         "teacher_id": 5,
-//         "teacher_name": "Ibrahim Khan",
-//         "total_assigned_periods": 1,
-//         "max_periods_allowed": 6,
-//         "assignments": [
-//             {
-//                 "year_level_id": 13,
-//                 "year_level_name": "Class-9",
-//                 "periods": [
-//                     {
-//                         "period_id": 10,
-//                         "period_name": "English - English",
-//                         "start_time": "08:45",
-//                         "end_time": "09:30",
-//                         "subject_id": 2,
-//                         "subject_name": "English"
-//                     }
-//                 ]
-//             }
-//         ]
-//     },
-//     {
-//         "teacher_id": 6,
-//         "teacher_name": "Faiza Alam",
-//         "total_assigned_periods": 2,
-//         "max_periods_allowed": 6,
-//         "assignments": [
-//             {
-//                 "year_level_id": 1,
-//                 "year_level_name": "Pre-Nursery",
-//                 "periods": [
-//                     {
-//                         "period_id": 9,
-//                         "period_name": "Social Science - Social Science",
-//                         "start_time": "09:30",
-//                         "end_time": "10:15",
-//                         "subject_id": 4,
-//                         "subject_name": "Social Science"
-//                     },
-//                     {
-//                         "period_id": 11,
-//                         "period_name": "Science - Maths",
-//                         "start_time": "07:15",
-//                         "end_time": "08:00",
-//                         "subject_id": 1,
-//                         "subject_name": "Science"
-//                     }
-//                 ]
-//             },
-//             {
-//                 "year_level_id": 4,
-//                 "year_level_name": "KG-2",
-//                 "periods": []
-//             }
-//         ]
-//     }
-// ];
+  const [loading, setLoading] = useState(true);
   const getAllTeacherAssignment = async () => {
     try {
+      setLoading(true);
       const allAssignments = await fetchAllTeacherAssignments();
       setTeacherAssignment(allAssignments);
     } catch (error) {
       console.log("Failed to load teacher. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
     getAllTeacherAssignment();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-3">
@@ -264,7 +104,9 @@ export const AllTeacherAssignments = () => {
           </div>
         ))
       ) : (
-        <div>No assignments found</div>
+        <div className="col-span-full text-center py-10">
+          {!loading && "No assignments found"}
+        </div>
       )}
 
       {/* {CARD ENDS} */}

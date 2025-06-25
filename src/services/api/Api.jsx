@@ -73,10 +73,10 @@ export const fetchStudentYearLevel = async () => {
   }
 };
 
-export const fetchStudentYearLevelByClass = async (classLevel) => {
+export const fetchStudentYearLevelByClass = async (year_level_id) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevels/?search=${classLevel}`
+      `${BASE_URL}/s/studentyearlevel/?level__id=${year_level_id}`
     );
     return response.data;
   } catch (err) {
@@ -217,7 +217,11 @@ export const fetchOfficeStaffDashboard = async () => {
 
 export const fetchGuardianDashboard = async (id) => {
   try {
+<<<<<<< HEAD
     const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/1/`);
+=======
+    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
     return response.data;
   } catch (err) {
     console.error("Failed to officeStaff Dashboard:", err);
@@ -227,12 +231,13 @@ export const fetchGuardianDashboard = async (id) => {
 
 // Teacher Dashboard
 
-export const fetchTeacherDashboard = async (id) => {
+export const fetchTeacherDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${1}/`);
+
+    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to officeStaff Dashboard:", err);
+    console.error("Failed to fetch Teacher Dashboard:", err);
     throw err;
   }
 };
@@ -249,7 +254,7 @@ export const fetchAdmissionDetails = async () => {
 // admission details get api by id
 export const fetchAdmissionDetailsById = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/admission/${id}/`);
+    const response = await axios.get(`${BASE_URL}/d/admission/${1}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to admission details:", err);
@@ -316,6 +321,10 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
     // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
+<<<<<<< HEAD
+=======
+
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
     params.year_level = selectedClass;
   }
 
@@ -392,3 +401,18 @@ export const handleEditAdmissionForm = async (formData, id) => {
 
 
 
+<<<<<<< HEAD
+=======
+
+
+export const fetchStudentById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/students/${1}/`);
+      return response.data;
+  } catch (error) {
+    console.error("Failed to fetch student details:", error);
+    throw error;
+  }
+};
+
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0

@@ -2,6 +2,7 @@ export const constants = {
   isOnline: true,
   isOffline: true,
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
+<<<<<<< HEAD
 // <<<<<<< HEAD
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
@@ -10,6 +11,9 @@ export const constants = {
   // baseUrl1: "http s://187gwsw1-8000.inc1.devtunnels.ms",
 // =======
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
+=======
+  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
   // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms",
 
@@ -18,8 +22,8 @@ export const constants = {
   //   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
   //   baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
 
-  // baseUrl: "https://8c1zb9f3-8000.inc1.devtunnels.ms",
-//   baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
+  // baseUrl: "https://8c1zb9f3-8000.inc1.devtunnels.ms", 
+  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
   // baseUrl: "https://8c1zb9f3-8000.inc1.devtunnels.ms/",
   // baseUrl:"https://2gqlk571-8000.inc1.devtunnels.ms/",
 

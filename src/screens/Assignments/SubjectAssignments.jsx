@@ -107,6 +107,7 @@ export const SubjectAssignments = () => {
     });
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -163,8 +164,40 @@ export const SubjectAssignments = () => {
       );
     } finally {
       setLoading(false);
+=======
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  // Debug: Log the data being sent
+  console.log("Sending:", {
+    teacher_id: formData.teacher_id,
+    yearlevel_id: formData.yearlevel_id,
+    subject_ids: formData.subject_ids,
+    period_ids: formData.period_ids,
+  });
+
+  try {
+    const response = await axios.post(
+      `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
+      formData, // Send as JSON
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      alert("Subjects assigned successfully!");
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
     }
-  };
+  } catch (error) {
+    alert(error.response?.data?.error || "Failed to assign subjects.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleNavigate = () => {
     navigate(allRouterLink.allTeacherAssignment);

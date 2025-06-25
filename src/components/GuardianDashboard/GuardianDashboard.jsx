@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { fetchGuardianDashboard } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
 
 
 export const GuardianDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
+  const {guardianID} = useContext(AuthContext);
 
   const getGuardianDashboardData = async () => {
     try {
-      const data = await fetchGuardianDashboard();
+      const data = await fetchGuardianDashboard(guardianID);
       setDashboardData(data);
       setLoading(false);
     } catch (error) {

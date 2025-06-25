@@ -79,7 +79,7 @@ export const OfficeStaffDashboard = () => {
     <div className="p-4 space-y-9">
       {/* Header */}
       <h3 className="text-3xl font-bold text-center text-gray-800">
-        {dashboardData.staff}'s Dashboard
+        Office Staff Dashboard
       </h3>
 
       <div className="grid grid-cols-12 gap-4">

@@ -9,11 +9,11 @@ import { AuthContext } from "../../context/AuthContext";
 export const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {teacherID} = useContext(AuthContext);
+  const {userID} = useContext(AuthContext);
 
   const getGuardianDashboardData = async () => {
     try {
-      const data = await fetchTeacherDashboard();
+      const data = await fetchTeacherDashboard(userID);
       setDashboardData(data);
       setLoading(false);
     } catch (error) {

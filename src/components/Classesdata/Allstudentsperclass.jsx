@@ -3,16 +3,15 @@ import { useParams } from "react-router-dom";
 import { fetchStudentYearLevelByClass } from "../../services/api/Api";
 
 const AllStudentsPerClass = () => {
-  const { levelName } = useParams();
+  const { id } = useParams();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log('level name', levelName);
   
   const getStudents = async () => {
     try {
-      const data = await fetchStudentYearLevelByClass(levelName);
+      const data = await fetchStudentYearLevelByClass(id);
       setStudents(data);
     } catch (err) {
       console.error("Error fetching students:", err);

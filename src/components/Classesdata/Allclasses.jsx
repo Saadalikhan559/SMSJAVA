@@ -68,7 +68,7 @@ const Allclasses = () => {
                                         <td className="px-4 py-3">{index + 1}</td>
                                         <td className="px-4 py-3">
                                             <Link
-                                                to={`/allStudentsPerClass/${record.level_name}`}
+                                                to={`/allStudentsPerClass/${record.id}`}
                                                 className="text-blue-600 hover:underline"
 
                                             >

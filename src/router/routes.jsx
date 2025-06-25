@@ -2,7 +2,7 @@ import { AdmissionDetails } from "../components/AdmissionProcess/AdmissionDetail
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
 import { EditAddmissionDetails } from "../components/AdmissionProcess/Admissions/EditAddmissionDetails";
-import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/singleAdmissionDetails";
+import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/SingleAdmissionDetails";
 import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
@@ -31,8 +31,12 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
+<<<<<<< HEAD
 import Allclasses from "../components/Classesdata/Allclasses";
 import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
+=======
+import Studentdetails from "../global/Studentdetails";
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
 
 
 export const routes = [
@@ -242,6 +246,15 @@ export const routes = [
     path: allRouterLink.notFound,
     element: <NotFound />,
     protected: false,
+<<<<<<< HEAD
   }
+=======
+  },
+   {
+    path: allRouterLink.Studentdetails,
+    element: <Studentdetails />,
+    protected: false,
+  },
+>>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
 ];
 
