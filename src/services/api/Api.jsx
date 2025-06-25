@@ -217,11 +217,7 @@ export const fetchOfficeStaffDashboard = async () => {
 
 export const fetchGuardianDashboard = async (id) => {
   try {
-<<<<<<< HEAD
-    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/1/`);
-=======
     const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
->>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
     return response.data;
   } catch (err) {
     console.error("Failed to officeStaff Dashboard:", err);
@@ -321,10 +317,6 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
     // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-<<<<<<< HEAD
-=======
-
->>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
     params.year_level = selectedClass;
   }
 
@@ -401,8 +393,6 @@ export const handleEditAdmissionForm = async (formData, id) => {
 
 
 
-<<<<<<< HEAD
-=======
 
 
 export const fetchStudentById = async (id) => {
@@ -415,4 +405,3 @@ export const fetchStudentById = async (id) => {
   }
 };
 
->>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0

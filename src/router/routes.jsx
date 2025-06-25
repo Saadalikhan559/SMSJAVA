@@ -31,12 +31,9 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
-<<<<<<< HEAD
 import Allclasses from "../components/Classesdata/Allclasses";
 import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
-=======
 import Studentdetails from "../global/Studentdetails";
->>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
 
 
 export const routes = [
@@ -246,15 +243,11 @@ export const routes = [
     path: allRouterLink.notFound,
     element: <NotFound />,
     protected: false,
-<<<<<<< HEAD
-  }
-=======
   },
    {
     path: allRouterLink.Studentdetails,
     element: <Studentdetails />,
     protected: false,
   },
->>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
 ];
 

@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { fetchStudentYearLevelByClass } from "../../services/api/Api";
 
 const AllStudentsPerClass = () => {
   const { id } = useParams();
+  const location = useLocation();
+
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // const [levelName, setLevelName] = useState(location.state?.level_name);
+const levelName = location.state?.level_name || "Unknown";
 
-  
+
   const getStudents = async () => {
     try {
       const data = await fetchStudentYearLevelByClass(id);
@@ -23,7 +27,7 @@ const AllStudentsPerClass = () => {
 
   useEffect(() => {
     getStudents();
-  }, [levelName]);
+  }, [id]);
 
   if (loading) {
     return (

@@ -3,7 +3,6 @@ import { fetchYearLevels } from "../../services/api/Api";
 import { Link, useParams } from "react-router-dom";
 
 const Allclasses = () => {
-  const { levelName } = useParams(); // param coming from URL
     const [yearLevels, setYearLevels] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -69,6 +68,7 @@ const Allclasses = () => {
                                         <td className="px-4 py-3">
                                             <Link
                                                 to={`/allStudentsPerClass/${record.id}`}
+                                                state={{ level_name: record.level_name }}
                                                 className="text-blue-600 hover:underline"
 
                                             >

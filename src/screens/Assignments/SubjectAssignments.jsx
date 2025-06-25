@@ -107,64 +107,6 @@ export const SubjectAssignments = () => {
     });
   };
 
-<<<<<<< HEAD
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const storedTokens = JSON.parse(localStorage.getItem("authTokens"));
-    const accessToken = storedTokens?.access;
-
-    if (!accessToken) {
-      alert("Token missing! Please login again.");
-      setLoading(false);
-      return;
-    }
-
-    const formDataToSend = new FormData();
-    formDataToSend.append("teacher_id", formData.teacher_id);
-    formDataToSend.append("yearlevel_id", formData.yearlevel_id);
-
-    formData.subject_ids.forEach((id) =>
-      formDataToSend.append("subject_ids", id)
-    );
-    formData.period_ids.forEach((id) =>
-      formDataToSend.append("period_ids", id)
-    );
-
-    // For debugging
-    console.log("Submitting:", {
-      teacher_id: formData.teacher_id,
-      yearlevel_id: formData.yearlevel_id,
-      subject_ids: formData.subject_ids,
-      period_ids: formData.period_ids,
-    });
-
-    try {
-      const response = await axios.post(
-        `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        alert("Subjects assigned successfully!");
-        
-      }
-    } catch (error) {
-      console.error("Submission Error:", error.response?.data || error);
-      alert(
-        error.response?.data?.error ||
-          "An unexpected error occurred. Please try again."
-      );
-    } finally {
-      setLoading(false);
-=======
 const handleSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);
@@ -190,7 +132,6 @@ const handleSubmit = async (e) => {
 
     if (response.status === 200 || response.status === 201) {
       alert("Subjects assigned successfully!");
->>>>>>> 429f20f7ce565e49090cc09cf6163d2f218567b0
     }
   } catch (error) {
     alert(error.response?.data?.error || "Failed to assign subjects.");
