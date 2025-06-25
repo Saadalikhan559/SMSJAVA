@@ -83,7 +83,7 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Height/Weight:</p>
-                <p>{details.student_input.height} ft / {details.student_input.weight} kg</p>
+                <p>{details.student_input.height} cm / {details.student_input.weight} kg</p>
               </div>
               <div>
                 <p className="font-medium">Siblings:</p>
@@ -184,7 +184,7 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Distance to School:</p>
-                <p>{details.entire_road_distance_from_home_to_school} km</p>
+                <p>{details.entire_road_distance_from_home_to_school}</p>
               </div>
               <div>
                 <p className="font-medium">Previous School:</p>

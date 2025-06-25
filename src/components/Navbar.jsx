@@ -8,9 +8,15 @@ export const Navbar = () => {
   const { LogoutUser, userRole, isAuthenticated, userName, userProfile } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showSearch, setShowSearch] = useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
   
   // Default profile image
   const defaultProfileImage = "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
+
+  // Handle image loading errors
+  const handleImageError = () => {
+    setProfileImageError(true);
+  };
 
   const handleLogout = async () => {
     try {
@@ -138,7 +144,8 @@ export const Navbar = () => {
                   <div className="w-8 md:w-10 rounded-full">
                     <img
                       alt="User profile"
-                      src={userProfile || defaultProfileImage}
+                      src={profileImageError || !userProfile ? defaultProfileImage : userProfile}
+                      onError={handleImageError}
                     />
                   </div>
                   <span className="hidden md:block ml-2">{userName}</span>
