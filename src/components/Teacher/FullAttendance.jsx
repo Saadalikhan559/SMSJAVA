@@ -12,7 +12,6 @@ const FullAttendance = () => {
 
   const columnsPerPage = 7;
 
-  // Date filter
   const formatInputDate = (inputDate) => {
     if (!inputDate) return '';
     const dateObj = new Date(inputDate);
@@ -36,7 +35,7 @@ const FullAttendance = () => {
         setLoading(false);
       });
   }, []);
-// header
+
   const getAllHeaders = () => {
     const headersSet = new Set();
     data.forEach((item) => {
@@ -51,7 +50,7 @@ const FullAttendance = () => {
   const allHeaders = getAllHeaders();
   const studentKey = allHeaders[0];
   const dateHeaders = allHeaders.slice(1);
-// pagination
+
   const totalPages = Math.ceil(dateHeaders.length / columnsPerPage);
   const currentPageDates = dateHeaders.slice(
     page * columnsPerPage,
@@ -68,7 +67,7 @@ const FullAttendance = () => {
   } else {
     headers = [studentKey, ...currentPageDates];
   }
-// filter Date
+
   useEffect(() => {
     const formattedDate = formatInputDate(dateFilter);
     const filtered = data.filter((item) => {
@@ -109,8 +108,12 @@ const FullAttendance = () => {
   }
 
   return (
-    <div className="p-5 bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen mx-auto">
+    <div className="p-5 bg-gray-50 min-h-screen">
+      <div
+        className={`bg-white p-6 rounded-lg shadow-lg mx-auto ${
+          dateFilter ? 'max-w-fit' : 'max-w-screen'
+        }`}
+      >
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           <i className="fa-solid fa-chalkboard-user ml-2" />
           Attendance Table
@@ -141,12 +144,20 @@ const FullAttendance = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto rounded-lg overflow-hidden">
-            <thead className="bgTheme text-white ">
+        <div
+          className={`overflow-x-auto ${
+            dateFilter ? 'flex justify-center' : ''
+          }`}
+        >
+          <table
+            className={`${
+              dateFilter ? 'w-auto' : 'min-w-full'
+            } table-auto rounded-lg overflow-hidden`}
+          >
+            <thead className="bgTheme text-white">
               <tr>
                 {headers.map((header, index) => (
-                  <th key={index} className="px-4 py-3 text-left whitespace-nowrap font-semibold ">
+                  <th key={index} className="px-4 py-3 text-left whitespace-nowrap font-semibold">
                     {header}
                   </th>
                 ))}
@@ -172,34 +183,33 @@ const FullAttendance = () => {
               )}
             </tbody>
           </table>
-
-          {/* Pagination */}
-          {!dateFilter && (
-            <div className="flex justify-center mt-4 gap-4">
-              <button
-                onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-                disabled={page === 0}
-                className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
-              >
-                <i className="fa-solid fa-arrow-left mr-1" /> Previous
-              </button>
-              <span className="px-4 py-1 text-sm text-gray-700">
-                Page {page + 1} of {totalPages}
-              </span>
-              <button
-                onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
-                disabled={page >= totalPages - 1}
-                className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
-              >
-                Next <i className="fa-solid fa-arrow-right ml-1" />
-              </button>
-            </div>
-          )}
         </div>
+
+        {/* Pagination */}
+        {!dateFilter && (
+          <div className="flex justify-center mt-4 gap-4">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+              disabled={page === 0}
+              className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
+            >
+              <i className="fa-solid fa-arrow-left mr-1" /> Previous
+            </button>
+            <span className="px-4 py-1 text-sm text-gray-700">
+              Page {page + 1} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
+              disabled={page >= totalPages - 1}
+              className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
+            >
+              Next <i className="fa-solid fa-arrow-right ml-1" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default FullAttendance;
-

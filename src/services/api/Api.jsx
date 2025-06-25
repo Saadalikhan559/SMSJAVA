@@ -227,12 +227,13 @@ export const fetchGuardianDashboard = async (id) => {
 
 // Teacher Dashboard
 
-export const fetchTeacherDashboard = async (id) => {
+export const fetchTeacherDashboard = async () => {
   try {
+
     const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to officeStaff Dashboard:", err);
+    console.error("Failed to fetch Teacher Dashboard:", err);
     throw err;
   }
 };
@@ -249,7 +250,7 @@ export const fetchAdmissionDetails = async () => {
 // admission details get api by id
 export const fetchAdmissionDetailsById = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/admission/${id}/`);
+    const response = await axios.get(`${BASE_URL}/d/admission/${1}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to admission details:", err);
@@ -304,8 +305,8 @@ export const fetchYearLevels = async () => {
 export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Always use the same base URL for fee summaries.
   // This is crucial for consistent behavior.
-  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`; 
-  
+  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+
   const params = {};
 
   // Add month parameter if selectedMonth is provided
@@ -315,8 +316,9 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
 
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
-  // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-    params.year_level = selectedClass; 
+    // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
+
+    params.year_level = selectedClass;
   }
 
   // If both selectedMonth and selectedClass are empty, the 'params' object will be empty.
@@ -331,10 +333,10 @@ export const fetchAttendanceData = async (date = '') => {
       : `${BASE_URL}/a/director-dashboard/`;
 
     const response = await axios.get(url);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error('Failed to fetch attendance data:', error);
-    return null; 
+    return null;
   }
 };
 
@@ -395,4 +397,17 @@ export const handleEditAdmissionForm = async (formData, id) => {
   }
 };
 
+
+
+
+
+export const fetchStudentById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/students/${1}/`);
+      return response.data;
+  } catch (error) {
+    console.error("Failed to fetch student details:", error);
+    throw error;
+  }
+};
 
