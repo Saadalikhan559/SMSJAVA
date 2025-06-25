@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { fetchAttendance } from '../../services/api/Api';
+import { useParams } from 'react-router-dom';
 
 const FullAttendance = () => {
+  const { className } = useParams();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +25,7 @@ const FullAttendance = () => {
   };
 
   useEffect(() => {
-    fetchAttendance()
+    fetchAttendance(className)
       .then((data) => {
         setData(data);
         setFilteredData(data);
