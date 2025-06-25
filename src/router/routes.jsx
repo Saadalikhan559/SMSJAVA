@@ -2,7 +2,7 @@ import { AdmissionDetails } from "../components/AdmissionProcess/AdmissionDetail
 import { AdmissionFees } from "../components/AdmissionProcess/AdmissionFees";
 import { AdmissionForm } from "../components/AdmissionProcess/AdmissionForm";
 import { EditAddmissionDetails } from "../components/AdmissionProcess/Admissions/EditAddmissionDetails";
-import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/singleAdmissionDetails";
+import { SingleAdmissionDetails } from "../components/AdmissionProcess/Admissions/SingleAdmissionDetails";
 import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
@@ -32,6 +32,7 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
+import Studentdetails from "../global/Studentdetails";
 
 
 export const routes = [
@@ -235,6 +236,11 @@ export const routes = [
   {
     path: allRouterLink.notFound,
     element: <NotFound />,
+    protected: false,
+  },
+   {
+    path: allRouterLink.Studentdetails,
+    element: <Studentdetails />,
     protected: false,
   },
 ];
