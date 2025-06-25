@@ -165,12 +165,6 @@ export const Navbar = () => {
                       <i className="fa-solid fa-user"></i> Profile
                     </Link>
                   </li>
-
-                  <li>
-                    <Link className="flex items-center gap-2 cursor-pointer">
-                      <i className="fa-solid fa-gear"></i> Settings
-                    </Link>
-                  </li>
                   <li>
                     <Link to={allRouterLink.changePassword}>
                       <i className="fa-solid fa-lock"></i> Change Password
