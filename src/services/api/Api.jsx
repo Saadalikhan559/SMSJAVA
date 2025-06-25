@@ -76,7 +76,7 @@ export const fetchStudentYearLevel = async () => {
 export const fetchStudentYearLevelByClass = async (classLevel) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevels/?search=${classLevel}`
+      `${BASE_URL}/s/studentyearlevel/?search=${classLevel}`
     );
     return response.data;
   } catch (err) {
@@ -342,12 +342,13 @@ export const fetchAttendanceData = async (date = '') => {
 
 
 
-export const fetchAttendance = async () => {
+export const fetchAttendance = async (className) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/api/report/`);
+    const response = await axios.get(`${BASE_URL}/a/api/report/?class=${className}`);
     return response.data;
-  } catch (error) {
-    throw new Error('Failed to fetch Attendance data.');
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
   }
 };
 

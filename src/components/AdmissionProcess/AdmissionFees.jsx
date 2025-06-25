@@ -70,7 +70,7 @@ export const AdmissionFees = () => {
       paid_amount: "",
       payment_mode: "",
       remarks: "",
-      signature: "",
+      received_by: "",
     },
   });
 
@@ -160,7 +160,7 @@ export const AdmissionFees = () => {
         student_id,
         month,
         year_level_fees,
-        signature,
+        received_by,
         payment_mode,
         paid_amount,
       } = payload;
@@ -187,7 +187,7 @@ export const AdmissionFees = () => {
               student_id: parseInt(student_id),
               month,
               year_level_fees,
-              signature,
+              received_by,
               payment_mode,
               paid_amount,
             }
@@ -285,7 +285,7 @@ export const AdmissionFees = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
-          Admission Fee Payment
+          Fee Payment
           <i className="fa-solid fa-money-bill-wave ml-2"></i>
         </h1>
 
@@ -518,7 +518,7 @@ export const AdmissionFees = () => {
             <label className="label">
               <span className="label-text flex items-center gap-2">
                 <i className="fa-solid fa-signature text-sm"></i>
-                Signature <span className="text-error">*</span>
+                Received By <span className="text-error">*</span>
               </span>
             </label>
             <input
@@ -526,7 +526,7 @@ export const AdmissionFees = () => {
               className={`input w-full focus:outline-none ${
                 errors.signature ? "input-error" : "input-bordered"
               }`}
-              {...register("signature", { required: "Signature is required" })}
+              {...register("received_by", { required: "Signature is required" })}
               placeholder="Enter your name as signature"
             />
             {errors.signature && (
