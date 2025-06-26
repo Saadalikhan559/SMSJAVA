@@ -32,6 +32,8 @@ import { ResetPassword } from "../screens/Auth/ResetPassword";
 import { DocumentUpload } from "../screens/DocumentUpload";
 import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
+import Allclasses from "../components/Classesdata/Allclasses";
+import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
 import Studentdetails from "../global/Studentdetails";
 
 
@@ -73,19 +75,19 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-    {
+  {
     path: allRouterLink.addmissionDetails,
     element: <AdmissionDetails />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-    {
+  {
     path: allRouterLink.addmissionDetailsById,
     element: <SingleAdmissionDetails />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-    {
+  {
     path: allRouterLink.editAddmisionDetails,
     element: <EditAddmissionDetails />,
     protected: true,
@@ -209,24 +211,35 @@ export const routes = [
     protected: false,
     allowedRoles: [constants.roles.director],
   },
-    // Attendance Record
+  // Attendance Record
 
-   {
+  {
     path: allRouterLink.attendanceRecord,
     element: <AttendanceRecord />,
     protected: false,
   },
-    {
+  {
     path: allRouterLink.feeSummary,
     element: <FeeSummaryTable />,
     protected: false,
   },
-   {
+  {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
   },
-    // include all routes before this please 
+  ,
+  {
+    path: allRouterLink.allClasses,
+    element: <Allclasses />,
+    protected: false,
+  },
+  {
+    path: allRouterLink.allStudentsperClass,
+    element: <Allstudentsperclass />, // 
+    protected: false,
+  },
+  // include all routes before this please 
 
   {
     path: allRouterLink.unAuthorized,
@@ -244,3 +257,4 @@ export const routes = [
     protected: false,
   },
 ];
+

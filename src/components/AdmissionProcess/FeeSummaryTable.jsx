@@ -82,9 +82,9 @@ const FeeSummaryTable = () => {
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-                    Student Fee Record
-                    <i className="fa-solid fa-cloud ml-2 text-blue-500"></i>
+                  <i class="fa-solid fa-graduation-cap"></i>  Student Fee Record
                 </h1>
+
 
                 {/* Filter Section */}
                 <div className="flex flex-wrap justify-center gap-4 mb-6">

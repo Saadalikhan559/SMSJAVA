@@ -342,7 +342,6 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
     // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-
     params.year_level = selectedClass;
   }
 
@@ -369,6 +368,7 @@ export const fetchAttendanceData = async (date = '') => {
 
 
 
+
 export const fetchAttendance = async (className) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/api/report/?class=${className}`);
@@ -378,7 +378,6 @@ export const fetchAttendance = async (className) => {
     throw err;
   }
 };
-
 
 // POST APIS
 
