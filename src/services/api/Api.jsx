@@ -394,6 +394,11 @@ export const fetchAttendanceData = async (date = '') => {
   }
 };
 
+
+
+
+
+
 export const fetchAttendance = async (className) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/api/report/?class=${className}`);
