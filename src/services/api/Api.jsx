@@ -358,6 +358,8 @@ export const fetchAttendanceData = async (date = '') => {
       : `${BASE_URL}/a/director-dashboard/`;
 
     const response = await axios.get(url);
+    // const response = await axios.get(`${BASE_URL}/a/director-dashboard/?date=${date}`);
+
     return response.data;
   } catch (error) {
     console.error('Failed to fetch attendance data:', error);
