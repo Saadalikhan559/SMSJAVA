@@ -76,6 +76,7 @@ export const fetchStudentYearLevel = async () => {
 export const fetchStudentYearLevelByClass = async (year_level_id) => {
   try {
     const response = await axios.get(
+
       `${BASE_URL}/s/studentyearlevel/?level__id=${year_level_id}`
     );
     return response.data;
@@ -196,7 +197,31 @@ export const fetchDirectorDashboard = async () => {
     const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to director Dashboard:", err);
+    console.error("Failed to load director Dashboard:", err);
+    throw err;
+  }
+};
+
+// Student Category Dashboard
+
+export const fetchStudentCategoryDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/student-category-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load student category director Dashboard:", err);
+    throw err;
+  }
+};
+
+// Income Distribution Dashboard
+
+export const fetchIncomeDistributionDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/income-distribution-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load Income Distribution Dashboard:", err);
     throw err;
   }
 };
@@ -220,7 +245,7 @@ export const fetchGuardianDashboard = async (id) => {
     const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to officeStaff Dashboard:", err);
+    console.error("Failed to guardian Dashboard:", err);
     throw err;
   }
 };
@@ -339,12 +364,18 @@ export const fetchAttendanceData = async (date = '') => {
   }
 };
 
-export const fetchAttendance = async () => {
+
+
+
+
+
+export const fetchAttendance = async (className) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/api/report/`);
+    const response = await axios.get(`${BASE_URL}/a/api/report/?class=${className}`);
     return response.data;
-  } catch (error) {
-    throw new Error('Failed to fetch Attendance data.');
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
   }
 };
 
