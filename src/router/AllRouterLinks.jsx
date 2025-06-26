@@ -33,8 +33,9 @@ export const allRouterLink = {
     editAddmisionDetails: '/editAddmisionDetails/:id',
     allClasses:'/allClasses',
     allStudentsperClass:'/allStudentsPerClass/:id',
+    Studentdetails:'/Studentdetails',
     // all routes before this
     unAuthorized: '/unauthorized',
-    Studentdetails:'/Studentdetails',
-    notFound: "*"
+    
+notFound: "*"
 }

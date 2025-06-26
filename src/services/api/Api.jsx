@@ -77,7 +77,7 @@ export const fetchStudentYearLevelByClass = async (year_level_id) => {
   try {
     const response = await axios.get(
 
-      `${BASE_URL}/s/studentyearlevel/?level__id=${year_level_id}`
+      `${BASE_URL}/s/studentyearlevels/?level__id=${year_level_id}`
     );
     return response.data;
   } catch (err) {
