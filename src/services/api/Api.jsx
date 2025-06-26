@@ -342,7 +342,6 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   // Add class parameter if selectedClass is provided
   if (selectedClass) {
     // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-
     params.year_level = selectedClass;
   }
 
@@ -353,12 +352,7 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
 
 export const fetchAttendanceData = async (date = '') => {
   try {
-    const url = date
-      ? `${BASE_URL}/a/director-dashboard/?date=${date}`
-      : `${BASE_URL}/a/director-dashboard/`;
-
-    const response = await axios.get(url);
-    // const response = await axios.get(`${BASE_URL}/a/director-dashboard/?date=${date}`);
+    const response = await axios.get(`${BASE_URL}/a/director-dashboard/?date=${date}`);
 
     return response.data;
   } catch (error) {
@@ -366,6 +360,7 @@ export const fetchAttendanceData = async (date = '') => {
     return null;
   }
 };
+
 
 
 
@@ -380,7 +375,6 @@ export const fetchAttendance = async (className) => {
     throw err;
   }
 };
-
 
 // POST APIS
 
