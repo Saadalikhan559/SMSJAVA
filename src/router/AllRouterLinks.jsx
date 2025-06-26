@@ -1,5 +1,3 @@
-import Studentdetails from "../global/Studentdetails";
-
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -32,8 +30,10 @@ export const allRouterLink = {
     editAddmisionDetails: '/editAddmisionDetails/:id',
     allClasses:'/allClasses',
     allStudentsperClass:'/allStudentsPerClass/:id',
+    studentDetails: '/studentdetails/:id',
+    allStaffMembers: '/allStaffMembers',
+    staffdetail: '/staffDetails/:id',
     // all routes before this
     unAuthorized: '/unauthorized',
-    Studentdetails:'/Studentdetails',
     notFound: "*"
 }

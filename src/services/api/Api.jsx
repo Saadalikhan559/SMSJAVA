@@ -348,6 +348,16 @@ export const fetchAttendance = async () => {
   }
 };
 
+export const fetchStudentById = async (student_id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
+      return response.data;
+  } catch (error) {
+    console.error("Failed to fetch student details:", error);
+    throw error;
+  }
+};
+
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {
@@ -393,15 +403,4 @@ export const handleEditAdmissionForm = async (formData, id) => {
 
 
 
-
-
-export const fetchStudentById = async (id) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/s/students/${1}/`);
-      return response.data;
-  } catch (error) {
-    console.error("Failed to fetch student details:", error);
-    throw error;
-  }
-};
 
