@@ -7,6 +7,7 @@ import FeeSummaryTable from "../components/AdmissionProcess/FeeSummaryTable";
 import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
 import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
+import GuardianAttendanceRecord from "../components/GuardianDashboard/GuardianAttendanceRecord";
 import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
 import GuardianProfile from "../components/GuardianDashboard/GuardianProfile";
 import { NotFound } from "../components/NotFound";
@@ -176,6 +177,12 @@ export const routes = [
     allowedRoles: [constants.roles.guardian],
   },
   {
+    path: allRouterLink.guardianAttendanceRecord,
+    element: <GuardianAttendanceRecord />,
+    protected: true,
+    allowedRoles: [constants.roles.guardian],
+  },
+  {
     path: allRouterLink.studentProfile,
     element: <StudentProfile />,
     protected: true,
@@ -245,7 +252,7 @@ export const routes = [
     protected: false,
   },
          {
-    path: allRouterLink.staffdetail,
+    path: allRouterLink.staffDetail,
     element: <Staffdetail />,
     protected: false,
   },

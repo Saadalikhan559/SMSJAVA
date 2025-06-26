@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchStudentYearLevelByClass } from "../../services/api/Api";
 import axios from "axios";
+import { constants } from "../../global/constants";
 
 export const ClassStudent = () => {
-  const { classLevel } = useParams();
+  const { classLevel , Year_level_id } = useParams();
   const [classStudent, setClassStudent] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -13,6 +14,10 @@ export const ClassStudent = () => {
   const [individualDates, setIndividualDates] = useState({});
   const [individualStatuses, setIndividualStatuses] = useState({});
   const [teacherID, setTeacherID] = useState(null);
+
+
+  const year_level_id  = Year_level_id;
+  const BASE_URL = constants.baseUrl;
 
   useEffect(() => {
     const token = localStorage.getItem("teacher_id");
@@ -79,10 +84,13 @@ export const ClassStudent = () => {
 
     if (!teacherID) return;
 
+    if (!year_level_id) return;
+
     // Prepare the base payload
     const payload = {
       teacher_id: teacherID,
       marked_at: attendanceDate,
+      year_level_id
     };
 
     // Use the attendanceStatus from the modal to determine which field to set
@@ -93,11 +101,11 @@ export const ClassStudent = () => {
     } else if (attendanceStatus === "leave") {
       payload.L = selectedStudents;
     }
-
+     
     // Make the API call
     const response = await axios.post(
-      "https://8c1zb9f3-8000.inc1.devtunnels.ms/a/multiple-attendance/",
-      payload
+      `${BASE_URL}/a/multiple-attendance/`,
+      payload 
     );
 
     console.log("Bulk attendance submitted successfully:", response.data);
@@ -117,7 +125,7 @@ export const ClassStudent = () => {
 
     // Show success message or refresh data
     alert("Attendance marked successfully!");
-    window.location.reload();
+    // window.location.reload();
   } catch (error) {
     console.error("Error submitting bulk attendance:", error);
     alert(error.response?.data?.error || "An error occurred");
@@ -137,6 +145,7 @@ export const ClassStudent = () => {
       const payload = {
         teacher_id: teacherID,
         marked_at: individualDates[studentId],
+        year_level_id
       };
 
       // Add status-specific fields only if they have values
@@ -151,7 +160,7 @@ export const ClassStudent = () => {
 
       // Make the API call
       const response = await axios.post(
-        "https://8c1zb9f3-8000.inc1.devtunnels.ms/a/multiple-attendance/",
+        `${BASE_URL}/a/multiple-attendance/`,
         payload
       );
 
@@ -160,7 +169,7 @@ export const ClassStudent = () => {
         response.data
       );
       alert("Attendance marked successfully!");
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("Error submitting individual attendance:", error);
       alert(error.response?.data?.error || "An error occurred");
@@ -174,13 +183,22 @@ export const ClassStudent = () => {
           Students in {classLevel}{" "}
           <i className="fa-solid fa-clipboard-user ml-2"></i>
         </h2>
+        
+        {selectedStudents.length >= 2 && (
+          <button
+            onClick={handleBulkAttendance}
+            className="mb-4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-300"
+          >
+            Mark Attendance for Selected ({selectedStudents.length})
+          </button>
+        )}
 
         {classStudent.length === 0 ? (
           <p className="text-gray-600">No students found.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bgTheme text-white">
+              <thead className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl font-medium">
                 <tr>
                   <th className="px-4 py-3 text-left">Select</th>
                   <th className="px-4 py-3 text-left">Student Name</th>
@@ -246,15 +264,6 @@ export const ClassStudent = () => {
               </tbody>
             </table>
           </div>
-        )}
-
-        {selectedStudents.length >= 2 && (
-          <button
-            onClick={handleBulkAttendance}
-            className="mb-4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-300"
-          >
-            Mark Attendance for Selected ({selectedStudents.length})
-          </button>
         )}
       </div>
 

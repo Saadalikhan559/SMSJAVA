@@ -1,3 +1,5 @@
+import staffDetail from "../components/StaffData/Staffdetail";
+
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -12,7 +14,7 @@ export const allRouterLink = {
     subjectAssignment: "/subjectAssignment",
     allTeacherAssignment: "/allTeacherAssignment",
     attendance: "/attendance",
-    classStudents: "/classStudents/:classLevel",
+    classStudents: "/classStudents/:classLevel/:Year_level_id",
     directorProfile: '/directorProfile',
     officeStaffProfile: '/officeStaffProfile',
     guardianProfile: '/guardianProfile',
@@ -20,10 +22,11 @@ export const allRouterLink = {
     studentProfile: '/studentProfile',
     teacherDashboard: '/teacherDashboard',
     guardianDashboard: '/guardianDashboard',
+    guardianAttendanceRecord: '/guardianAttendanceRecord',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
     attendanceRecord:'/attendanceRecord',
-    fullAttendance:'/fullAttendance',
+    fullAttendance:'/fullAttendance/:className',
     officeStaffDashboard: '/officeStaffDashboard',
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
@@ -32,7 +35,7 @@ export const allRouterLink = {
     allStudentsperClass:'/allStudentsPerClass/:id',
     studentDetails: '/studentdetails/:id',
     allStaffMembers: '/allStaffMembers',
-    staffdetail: '/staffDetails/:id',
+    staffDetail:'/staffDetails/:id',
     // all routes before this
     unAuthorized: '/unauthorized',
     notFound: "*"

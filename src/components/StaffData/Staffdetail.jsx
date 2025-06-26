@@ -6,20 +6,34 @@ const Staffdetail = () => {
     const [staff, setstaff] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const getStudent = async () => {
-            try {
-                const data = await fetchStudentById(id);
-                setStudent(data);
-            } catch (error) {
-                console.error("Error loading student data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const getofficestaff = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchOfficeStaff();
+      setofficestaff(data);
+    } catch (err) {
+      setError("Failed to fetch office staff. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        getStudent();
-    }, [id]);
+  const getteachers = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchTeachers();
+      setteachers(data);
+    } catch (err) {
+      setError("Failed to fetch teachers. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getofficestaff();
+    getteachers();
+  }, []);
 
     if (loading) {
         return <div className="p-4 text-center">Loading Staff Member details...</div>;

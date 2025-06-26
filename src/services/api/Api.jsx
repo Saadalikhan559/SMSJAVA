@@ -76,6 +76,7 @@ export const fetchStudentYearLevel = async () => {
 export const fetchStudentYearLevelByClass = async (year_level_id) => {
   try {
     const response = await axios.get(
+
       `${BASE_URL}/s/studentyearlevel/?level__id=${year_level_id}`
     );
     return response.data;
@@ -85,15 +86,30 @@ export const fetchStudentYearLevelByClass = async (year_level_id) => {
   }
 };
 
-export const fetchTeachers = async () => {
+// export const fetchTeachers = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/t/teacher/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch teachers:", err);
+//     throw err;
+//   }
+// };
+
+export const fetchTeachers = async (id = null) => {
   try {
-    const response = await axios.get(`${BASE_URL}/t/teacher/`);
+    const url = id
+      ? `${BASE_URL}/t/teacher/${id}/`   // fetch specific teacher by ID
+      : `${BASE_URL}/t/teacher/`;        // fetch all teachers
+
+    const response = await axios.get(url);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch teachers:", err);
     throw err;
   }
 };
+
 
 export const fetchGuardians = async () => {
   try {
@@ -105,15 +121,30 @@ export const fetchGuardians = async () => {
   }
 };
 
-export const fetchOfficeStaff = async () => {
+// export const fetchOfficeStaff = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/officestaff/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch office Staff:", err);
+//     throw err;
+//   }
+// };
+
+export const fetchOfficeStaff = async (id = null) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/officestaff/`);
+    const url = id
+      ? `${BASE_URL}/d/officestaff/${id}/`  // fetch specific staff by ID
+      : `${BASE_URL}/d/officestaff/`;       // fetch all staff
+
+    const response = await axios.get(url);
     return response.data;
   } catch (err) {
-    console.error("Failed to fetch office Staff:", err);
+    console.error("Failed to fetch office staff:", err);
     throw err;
   }
 };
+
 
 export const fetchPeriods = async () => {
   try {
@@ -196,7 +227,31 @@ export const fetchDirectorDashboard = async () => {
     const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to director Dashboard:", err);
+    console.error("Failed to load director Dashboard:", err);
+    throw err;
+  }
+};
+
+// Student Category Dashboard
+
+export const fetchStudentCategoryDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/student-category-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load student category director Dashboard:", err);
+    throw err;
+  }
+};
+
+// Income Distribution Dashboard
+
+export const fetchIncomeDistributionDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/income-distribution-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load Income Distribution Dashboard:", err);
     throw err;
   }
 };
@@ -220,7 +275,7 @@ export const fetchGuardianDashboard = async (id) => {
     const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to officeStaff Dashboard:", err);
+    console.error("Failed to guardian Dashboard:", err);
     throw err;
   }
 };
@@ -339,12 +394,13 @@ export const fetchAttendanceData = async (date = '') => {
   }
 };
 
-export const fetchAttendance = async () => {
+export const fetchAttendance = async (className) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/api/report/`);
+    const response = await axios.get(`${BASE_URL}/a/api/report/?class=${className}`);
     return response.data;
-  } catch (error) {
-    throw new Error('Failed to fetch Attendance data.');
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
   }
 };
 

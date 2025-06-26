@@ -135,37 +135,39 @@ export const Sidebar = () => {
               )}
 
             {/* Documents */}
-            {role !== constants.roles.student && isAuthenticated && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                  Documents
-                </h3>
-                <ul className="space-y-1">
-                  <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(e, allRouterLink.documentUpload)
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-file-arrow-up w-5"></i> Upload
-                      Documents
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(e, allRouterLink.viewDocuments)
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-file-circle-check w-5"></i> View
-                      Documents
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            )}
+            {(role === constants.roles.director ||
+              role === constants.roles.officeStaff) &&
+              isAuthenticated && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Documents
+                  </h3>
+                  <ul className="space-y-1">
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.documentUpload)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-file-arrow-up w-5"></i> Upload
+                        Documents
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.viewDocuments)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-file-circle-check w-5"></i>{" "}
+                        View Documents
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
 
             {/* Management */}
             {role === constants.roles.director && isAuthenticated && (
@@ -211,40 +213,68 @@ export const Sidebar = () => {
             )}
 
             {/* Fees */}
-            {isAuthenticated && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                  Fees
-                </h3>
-                <ul className="space-y-1">
-                  <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(e, allRouterLink.admissionFees)
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-money-bill-wave w-5"></i> Fee
-                      Submission
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(e, allRouterLink.feeSummary)
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-envelope w-5"></i> Fee Record
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-
+            {(role === constants.roles.director ||
+              role === constants.roles.guardian ||
+              role === constants.roles.student ||
+              role === constants.roles.officeStaff) &&
+              isAuthenticated && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Fees
+                  </h3>
+                  <ul className="space-y-1">
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.admissionFees)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-money-bill-wave w-5"></i> Fee
+                        Submission
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.feeSummary)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-envelope w-5"></i> Fee Record
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
 
             {/* Reports */}
-            {isAuthenticated && (
+            {(role === constants.roles.director ||
+              role === constants.roles.teacher ||
+              role === constants.roles.student ||
+              role === constants.roles.officeStaff) &&
+              isAuthenticated && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Reports
+                  </h3>
+                  <ul className="space-y-1">
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.attendanceRecord)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
+                        Attendance Record
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            {/* Reports */}
+            {role === constants.roles.guardian && isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                   Reports
@@ -253,7 +283,10 @@ export const Sidebar = () => {
                   <li>
                     <Link
                       onClick={(e) =>
-                        handleNavigation(e, allRouterLink.attendanceRecord)
+                        handleNavigation(
+                          e,
+                          allRouterLink.guardianAttendanceRecord
+                        )
                       }
                       className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                     >
