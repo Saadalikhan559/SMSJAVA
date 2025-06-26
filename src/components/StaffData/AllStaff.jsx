@@ -14,7 +14,7 @@ const AllStaff = () => {
       const data = await fetchOfficeStaff();
       setofficestaff(data);
       console.log(data);
-      
+
     } catch (err) {
       setError("Failed to fetch office staff. Please try again later.");
     } finally {
@@ -28,7 +28,7 @@ const AllStaff = () => {
       const data = await fetchTeachers();
       setteachers(data);
       console.log(data);
-      
+
     } catch (err) {
       setError("Failed to fetch teachers. Please try again later.");
     } finally {

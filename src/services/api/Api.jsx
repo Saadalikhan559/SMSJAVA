@@ -99,8 +99,8 @@ export const fetchStudentYearLevelByClass = async (year_level_id) => {
 export const fetchTeachers = async (id = null) => {
   try {
     const url = id
-      ? `${BASE_URL}/t/teacher/${id}/`   // fetch specific teacher by ID
-      : `${BASE_URL}/t/teacher/`;        // fetch all teachers
+      ? `${BASE_URL}/t/teacher/${id}/`       // fetch single teacher
+      : `${BASE_URL}/t/teacher/`;            // fetch all teachers
 
     const response = await axios.get(url);
     return response.data;
@@ -109,6 +109,7 @@ export const fetchTeachers = async (id = null) => {
     throw err;
   }
 };
+
 
 
 export const fetchGuardians = async () => {
@@ -134,16 +135,17 @@ export const fetchGuardians = async () => {
 export const fetchOfficeStaff = async (id = null) => {
   try {
     const url = id
-      ? `${BASE_URL}/d/officestaff/${id}/`  // fetch specific staff by ID
-      : `${BASE_URL}/d/officestaff/`;       // fetch all staff
+      ? `${BASE_URL}/d/officestaff/${id}/`  // <-- if ID is passed, fetch single staff
+      : `${BASE_URL}/d/officestaff/`;       // otherwise fetch all
 
     const response = await axios.get(url);
     return response.data;
   } catch (err) {
-    console.error("Failed to fetch office staff:", err);
+    console.error("Failed to fetch office Staff:", err);
     throw err;
   }
 };
+
 
 
 export const fetchPeriods = async () => {
@@ -412,7 +414,7 @@ export const fetchAttendance = async (className) => {
 export const fetchStudentById = async (student_id) => {
   try {
     const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
-      return response.data;
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch student details:", error);
     throw error;

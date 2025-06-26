@@ -35,7 +35,7 @@ export const allRouterLink = {
     allStudentsperClass:'/allStudentsPerClass/:id',
     studentDetails: '/studentdetails/:id',
     allStaffMembers: '/allStaffMembers',
-    staffDetail:'/staffDetails/:id',
+    staffDetail: '/staffDetail/:id',
     // all routes before this
     unAuthorized: '/unauthorized',
     notFound: "*"
