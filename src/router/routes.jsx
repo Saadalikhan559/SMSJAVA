@@ -34,7 +34,11 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
 import Allclasses from "../components/Classesdata/Allclasses";
 import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
-import Studentdetails from "../global/Studentdetails";
+// import Studentdetails from "../global/Studentdetails";
+import StudentDetails from "../components/Classesdata/StudentDetails";
+import UpdateStudentDetail from "../components/Classesdata/UpdateStudentDetail";
+import AllStaff from "../components/StaffData/AllStaff";
+import Staffdetail from "../components/StaffData/Staffdetail";
 
 
 export const routes = [
@@ -239,6 +243,31 @@ export const routes = [
     element: <Allstudentsperclass />, // 
     protected: false,
   },
+  //    {
+  //   path: allRouterLink.studentDetails,
+  //   element: <Studentdetails />,
+  //   protected: false,
+  // },
+  {
+    path: allRouterLink.studentDetails,
+    element: <StudentDetails />,
+    protected: false,
+  },
+   {
+    path: allRouterLink.updateStudentdetail,
+    element: <UpdateStudentDetail />,
+    protected: false,
+  },
+       {
+    path: allRouterLink.allStaffMembers,
+    element: <AllStaff />,
+    protected: false,
+  },
+         {
+    path: allRouterLink.staffDetail,
+    element: <Staffdetail />,
+    protected: false,
+  },
   // include all routes before this please 
 
   {
@@ -249,11 +278,6 @@ export const routes = [
   {
     path: allRouterLink.notFound,
     element: <NotFound />,
-    protected: false,
-  },
-   {
-    path: allRouterLink.Studentdetails,
-    element: <Studentdetails />,
     protected: false,
   },
 ];

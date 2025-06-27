@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchYearLevels } from "../../services/api/Api";
-import { Link, useParams } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 const Allclasses = () => {
     const [yearLevels, setYearLevels] = useState([]);
