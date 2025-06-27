@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUser, 
-  faSignature, 
-  faEnvelope, 
-  faPhone, 
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faSignature,
+  faEnvelope,
+  faPhone,
   faVenusMars,
   faCamera,
-  faCalendarDay
-} from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
-import { constants } from '../../global/constants';
+  faCalendarDay,
+} from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { constants } from "../../global/constants";
 
 const DirectorProfile = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -23,7 +23,12 @@ const DirectorProfile = () => {
 
   const BASE_URL = constants.baseUrl;
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     const tokenData = localStorage.getItem("authTokens");
@@ -45,12 +50,15 @@ const DirectorProfile = () => {
     const fetchDirectorData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BASE_URL}/d/director/director_my_profile/`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        });
-        
+        const response = await axios.get(
+          `${BASE_URL}/d/director/director_my_profile/`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
         setProfileData(response.data);
         setLoading(false);
       } catch (err) {
@@ -76,13 +84,13 @@ const DirectorProfile = () => {
       formData.append("gender", data.gender);
 
       // Append the file if selected
-      if (imagePreview && typeof imagePreview !== 'string') {
+      if (imagePreview && typeof imagePreview !== "string") {
         formData.append("user_profile", imagePreview);
       }
 
       const response = await axios.put(
-        `${BASE_URL}/d/director/director_my_profile/`, 
-        formData, 
+        `${BASE_URL}/d/director/director_my_profile/`,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -148,12 +156,19 @@ const DirectorProfile = () => {
           <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
             {profileData.user_profile ? (
               <img
-                src={`${BASE_URL}${profileData.user_profile}`}
+                src={
+                  profileData.user_profile
+                    ? `${BASE_URL}${profileData.user_profile}`
+                    : "https://images.unsplash.com/photo-1531123897727-8f129e1688ce"
+                }
                 alt="Profile"
                 className="h-full w-full object-cover"
               />
             ) : (
-              <FontAwesomeIcon icon={faUser} className="h-12 w-12 text-gray-400" />
+              <FontAwesomeIcon
+                icon={faUser}
+                className="h-12 w-12 text-gray-400"
+              />
             )}
           </div>
         </div>
@@ -181,7 +196,7 @@ const DirectorProfile = () => {
               </label>
               <input
                 type="text"
-                value={profileData.first_name || 'Not provided'}
+                value={profileData.first_name || "Not provided"}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />
@@ -194,7 +209,7 @@ const DirectorProfile = () => {
               </label>
               <input
                 type="text"
-                value={profileData.middle_name || 'Not provided'}
+                value={profileData.middle_name || "Not provided"}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />
@@ -207,7 +222,7 @@ const DirectorProfile = () => {
               </label>
               <input
                 type="text"
-                value={profileData.last_name || 'Not provided'}
+                value={profileData.last_name || "Not provided"}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />
@@ -223,7 +238,7 @@ const DirectorProfile = () => {
               </label>
               <input
                 type="text"
-                value={profileData.email || 'Not provided'}
+                value={profileData.email || "Not provided"}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />
@@ -236,7 +251,7 @@ const DirectorProfile = () => {
               </label>
               <input
                 type="text"
-                value={profileData.phone_no || 'Not provided'}
+                value={profileData.phone_no || "Not provided"}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />
@@ -249,7 +264,7 @@ const DirectorProfile = () => {
               </label>
               <input
                 type="text"
-                value={profileData.gender || 'Not provided'}
+                value={profileData.gender || "Not provided"}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />
@@ -258,7 +273,10 @@ const DirectorProfile = () => {
             {profileData.date_joined && (
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500">
-                  <FontAwesomeIcon icon={faCalendarDay} className="w-4 h-4 mr-2" />
+                  <FontAwesomeIcon
+                    icon={faCalendarDay}
+                    className="w-4 h-4 mr-2"
+                  />
                   Date Joined
                 </label>
                 <input
@@ -273,7 +291,7 @@ const DirectorProfile = () => {
         </div>
 
         {/* Buttons section */}
-        <div className="flex justify-end gap-4 mt-8">
+        {/* <div className="flex justify-end gap-4 mt-8">
           <button 
             className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             onClick={() => window.history.back()}
@@ -286,7 +304,7 @@ const DirectorProfile = () => {
           >
             <span className="mr-2 text-lg leading-none">↑</span> Update
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Dialog Box */}
@@ -294,8 +312,10 @@ const DirectorProfile = () => {
         <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl">
             <div className="p-6">
-              <h2 className="text-xl font-bold text-[#167bff] mb-4">Update Director Profile</h2>
-              
+              <h2 className="text-xl font-bold text-[#167bff] mb-4">
+                Update Director Profile
+              </h2>
+
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Column 1 - Profile Image */}
@@ -391,11 +411,15 @@ const DirectorProfile = () => {
                       </label>
                       <input
                         type="text"
-                        {...register("first_name", { required: "First name is required" })}
+                        {...register("first_name", {
+                          required: "First name is required",
+                        })}
                         className="input input-bordered w-full text-sm"
                       />
                       {errors.first_name && (
-                        <p className="text-red-500 text-xs mt-1">{errors.first_name.message}</p>
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.first_name.message}
+                        </p>
                       )}
                     </div>
 
@@ -416,11 +440,15 @@ const DirectorProfile = () => {
                       </label>
                       <input
                         type="text"
-                        {...register("last_name", { required: "Last name is required" })}
+                        {...register("last_name", {
+                          required: "Last name is required",
+                        })}
                         className="input input-bordered w-full text-sm"
                       />
                       {errors.last_name && (
-                        <p className="text-red-500 text-xs mt-1">{errors.last_name.message}</p>
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.last_name.message}
+                        </p>
                       )}
                     </div>
 
@@ -430,31 +458,37 @@ const DirectorProfile = () => {
                       </label>
                       <input
                         type="email"
-                        {...register("email", { 
+                        {...register("email", {
                           required: "Email is required",
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "Invalid email address"
-                          }
+                            message: "Invalid email address",
+                          },
                         })}
                         className="input input-bordered w-full text-sm"
                       />
                       {errors.email && (
-                        <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.email.message}
+                        </p>
                       )}
                     </div>
-                    
+
                     <div className="flex flex-col gap-1">
                       <label className="text-sm font-semibold text-gray-500">
                         Phone Number
                       </label>
                       <input
                         type="tel"
-                        {...register("phone_no", { required: "Phone number is required" })}
+                        {...register("phone_no", {
+                          required: "Phone number is required",
+                        })}
                         className="input input-bordered w-full text-sm"
                       />
                       {errors.phone_no && (
-                        <p className="text-red-500 text-xs mt-1">{errors.phone_no.message}</p>
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.phone_no.message}
+                        </p>
                       )}
                     </div>
 
@@ -463,7 +497,9 @@ const DirectorProfile = () => {
                         Gender
                       </label>
                       <select
-                        {...register("gender", { required: "Gender is required" })}
+                        {...register("gender", {
+                          required: "Gender is required",
+                        })}
                         className="select select-bordered w-full text-sm"
                       >
                         <option value="">Select Gender</option>
@@ -472,7 +508,9 @@ const DirectorProfile = () => {
                         <option value="other">Other</option>
                       </select>
                       {errors.gender && (
-                        <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.gender.message}
+                        </p>
                       )}
                     </div>
                   </div>

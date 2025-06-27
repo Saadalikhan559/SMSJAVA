@@ -234,7 +234,7 @@ export const Sidebar = () => {
                         Submission
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.feeSummary)
@@ -243,7 +243,7 @@ export const Sidebar = () => {
                       >
                         <i className="fa-solid fa-envelope w-5"></i> Fee Record
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               )}

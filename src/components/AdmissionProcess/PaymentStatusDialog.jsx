@@ -19,6 +19,7 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
             <p>Month: {paymentStatus.fee_record.month}</p>
             <p>Total Amount: ₹{paymentStatus.fee_record.total_amount}</p>
             <p>Paid Amount: ₹{paymentStatus.fee_record.paid_amount}</p>
+            <p>Late Fee: ₹{paymentStatus.fee_record.late_fee}</p>
             <p>Due Amount: {paymentStatus.fee_record.due_amount}</p>
             <p>Payment Mode: {paymentStatus.fee_record.payment_mode}</p>
             <p>Payment Date: {paymentStatus.fee_record.payment_date}</p>
