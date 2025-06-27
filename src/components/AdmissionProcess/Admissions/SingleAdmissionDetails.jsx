@@ -204,7 +204,7 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Emergency Contact:</p>
-                <p>{details.emergency_contact_n0 || 'N/A'}</p>
+                <p>{details.emergency_contact_no || 'N/A'}</p>
               </div>
             </div>
           </div>

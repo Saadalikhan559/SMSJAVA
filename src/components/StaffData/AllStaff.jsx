@@ -14,7 +14,7 @@ const AllStaff = () => {
       const data = await fetchOfficeStaff();
       setofficestaff(data);
       console.log(data);
-      
+
     } catch (err) {
       setError("Failed to fetch office staff. Please try again later.");
     } finally {
@@ -28,7 +28,7 @@ const AllStaff = () => {
       const data = await fetchTeachers();
       setteachers(data);
       console.log(data);
-      
+
     } catch (err) {
       setError("Failed to fetch teachers. Please try again later.");
     } finally {
@@ -81,7 +81,7 @@ const AllStaff = () => {
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4">
                         <Link
-                          to={`/staffDetail/${record.id}`}
+                          to={`/staffDetail/teacher/${record.id}`} // lowercase "staffdetail"
                           state={{ level_name: record.level_name }}
                           className="text-blue-600 hover:underline"
                         >
@@ -125,7 +125,7 @@ const AllStaff = () => {
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4">
                         <Link
-                          to={`/staffDetail/${record.id}`}
+                          to={`/staffDetail/office/${record.id}`}
                           state={{ level_name: record.level_name }}
                           className="text-blue-600 hover:underline"
                         >
@@ -133,6 +133,7 @@ const AllStaff = () => {
                             .filter(Boolean)
                             .join(" ")}
                         </Link>
+
                       </td>
                     </tr>
                   ))
