@@ -289,7 +289,7 @@ export const fetchGuardianDashboard = async (id) => {
 
 // Teacher Dashboard
 
-export const fetchTeacherDashboard = async () => {
+export const fetchTeacherDashboard = async (id) => {
   try {
     const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
     return response.data;
