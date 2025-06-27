@@ -40,7 +40,7 @@ import FeeDashboard from "../components/AdmissionProcess/FeeDashboard";
 import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
 import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
-
+import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
 
 export const routes = [
   {
@@ -202,7 +202,13 @@ export const routes = [
     path: allRouterLink.guardianDashboard,
     element: <GuardianDashboard />,
     protected: true,
-    allowedRoles: [constants.roles.guardian, constants.roles.student],
+    allowedRoles: [constants.roles.guardian],
+  },
+  {
+    path: allRouterLink.studentDashboard,
+    element: <StudentDashboard />,
+    protected: true,
+    allowedRoles: [constants.roles.student],
   },
   {
     path: allRouterLink.officeStaffDashboard,
@@ -226,7 +232,8 @@ export const routes = [
   {
     path: allRouterLink.feeSummary,
     element: <FeeSummaryTable />,
-    protected: false,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.feeDashboard,
@@ -238,7 +245,7 @@ export const routes = [
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
-  },
+  }
   ,
   {
     path: allRouterLink.allClasses,
@@ -250,13 +257,12 @@ export const routes = [
     element: <Allstudentsperclass />,
     protected: false,
   },
-    {
-
+  {
     path: allRouterLink.studentDetails,
     element: <StudentDetails />,
     protected: false,
   },
-   {
+  {
     path: allRouterLink.updateStudentdetail,
     element: <UpdateStudentDetail />,
     protected: false,
@@ -276,7 +282,7 @@ export const routes = [
     element: <UpdateStaffdetails />,
     protected: false,
   },
-  // include all routes before this please 
+  // include all routes before this please
 
   {
     path: allRouterLink.unAuthorized,
@@ -288,5 +294,4 @@ export const routes = [
     element: <NotFound />,
     protected: false,
   },
-
 ];
