@@ -76,7 +76,7 @@ export const fetchStudentYearLevel = async () => {
 export const fetchStudentYearLevelByClass = async (year_level_id) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevel/?level__id=${year_level_id}`
+      `${BASE_URL}/s/studentyearlevels/?level__id=${year_level_id}`
     );
     return response.data;
   } catch (err) {
@@ -98,8 +98,8 @@ export const fetchStudentYearLevelByClass = async (year_level_id) => {
 export const fetchTeachers = async (id = null) => {
   try {
     const url = id
-      ? `${BASE_URL}/t/teacher/${id}/`   // fetch specific teacher by ID
-      : `${BASE_URL}/t/teacher/`;        // fetch all teachers
+      ? `${BASE_URL}/t/teacher/${id}/` // fetch specific teacher by ID
+      : `${BASE_URL}/t/teacher/`; // fetch all teachers
 
     const response = await axios.get(url);
     return response.data;
@@ -108,7 +108,6 @@ export const fetchTeachers = async (id = null) => {
     throw err;
   }
 };
-
 
 export const fetchGuardians = async () => {
   try {
@@ -133,8 +132,8 @@ export const fetchGuardians = async () => {
 export const fetchOfficeStaff = async (id = null) => {
   try {
     const url = id
-      ? `${BASE_URL}/d/officestaff/${id}/`  // fetch specific staff by ID
-      : `${BASE_URL}/d/officestaff/`;       // fetch all staff
+      ? `${BASE_URL}/d/officestaff/${id}/` // fetch specific staff by ID
+      : `${BASE_URL}/d/officestaff/`; // fetch all staff
 
     const response = await axios.get(url);
     return response.data;
@@ -143,7 +142,6 @@ export const fetchOfficeStaff = async (id = null) => {
     throw err;
   }
 };
-
 
 export const fetchPeriods = async () => {
   try {
@@ -165,10 +163,16 @@ export const fetchSubjects = async () => {
   }
 };
 
-export const fetchAllTeacherAssignments = async () => {
+export const fetchAllTeacherAssignments = async (accessToken) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/t/teacher/all-teacher-assignments/`
+      `${BASE_URL}/t/teacher/all-teacher-assignments/`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        }
+      }
     );
     return response.data;
   } catch (err) {
@@ -311,7 +315,9 @@ export const fetchFeeDashboard = async () => {
 
 export const fetchFeeDashboardByMonth = async (month) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/fee-dashboard/?month=${month}`);
+    const response = await axios.get(
+      `${BASE_URL}/d/fee-dashboard/?month=${month}`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to fetch fee Dashboard by month:", err);
@@ -352,9 +358,11 @@ export const fetchViewDocuments = async () => {
 };
 
 export const fetchStudents1 = async (classId) => {
-  console.log(classId)
+  console.log(classId);
   try {
-    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/?level__id=${classId}`);
+    const response = await axios.get(
+      `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -434,7 +442,7 @@ export const fetchAttendance = async (className) => {
 export const fetchStudentById = async (student_id) => {
   try {
     const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
-      return response.data;
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch student details:", error);
     throw error;
@@ -485,19 +493,14 @@ export const handleEditAdmissionForm = async (formData, id) => {
   }
 };
 
-
-
-
-
-
 export const fetchGuardianAttendance = async (id, month, year) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/guardian/attendance/`, {
       params: {
         guardian_id: id,
         month: month,
-        year: year
-      }
+        year: year,
+      },
     });
     console.log(response.data);
     return response.data;
@@ -506,5 +509,3 @@ export const fetchGuardianAttendance = async (id, month, year) => {
     throw err;
   }
 };
-
-

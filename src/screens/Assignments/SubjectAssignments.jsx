@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   fetchPeriods,
   fetchSubjects,
@@ -9,6 +9,7 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
+import { AuthContext } from "../../context/AuthContext";
 
 export const SubjectAssignments = () => {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export const SubjectAssignments = () => {
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
   const subjectRef = useRef(null);
   const periodRef = useRef(null);
+  const {authTokens} = useContext(AuthContext);
+  
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -126,6 +129,7 @@ const handleSubmit = async (e) => {
       {
         headers: {
           "Content-Type": "application/json",
+          "Authorization" : `Bearer ${authTokens.access}`
         },
       }
     );
