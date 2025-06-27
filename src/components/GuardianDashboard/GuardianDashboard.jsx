@@ -6,11 +6,13 @@ import { AuthContext } from "../../context/AuthContext";
 export const GuardianDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
-  const {guardianID} = useContext(AuthContext);
+  // const {guardianID} = useContext(AuthContext);
+  const {userID} = useContext(AuthContext);
+  
 
   const getGuardianDashboardData = async () => {
     try {
-      const data = await fetchGuardianDashboard(guardianID);
+      const data = await fetchGuardianDashboard(userID);
       setDashboardData(data);
       setLoading(false);
     } catch (error) {

@@ -208,7 +208,7 @@ const FeeDashboard = () => {
 
         <div className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white">
           <div className="p-4 bgTheme text-white text-center">
-            <h2 className="text-xl font-bold">Top Defaulters</h2>
+            <h2 className="text-xl font-bold">Overdue Accounts</h2>
           </div>
           <div className="p-4">
             {dashboardData.top_defaulters?.length > 0 ? (
@@ -223,7 +223,7 @@ const FeeDashboard = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-center text-gray-500">No defaulters found</p>
+              <p className="text-center text-gray-500">No Overdue Accounts found</p>
             )}
           </div>
         </div>

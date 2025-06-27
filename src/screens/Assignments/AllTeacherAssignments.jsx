@@ -6,12 +6,11 @@ export const AllTeacherAssignments = () => {
   const [loading, setLoading] = useState(true);
     const {authTokens} = useContext(AuthContext);
     const accessToken = authTokens.access;
-    console.log('authtoken', accessToken);
   
   const getAllTeacherAssignment = async () => {
     try {
       setLoading(true);
-      const allAssignments = await fetchAllTeacherAssignments(authTokens.access);
+      const allAssignments = await fetchAllTeacherAssignments(accessToken);
       setTeacherAssignment(allAssignments);
     } catch (error) {
       console.log("Failed to load teacher. Please try again.");
