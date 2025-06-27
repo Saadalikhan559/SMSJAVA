@@ -209,7 +209,7 @@ const LogoutUser = async () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authTokens.access}`,
+            "Authorization": `Bearer ${authTokens.access}`,
           },
         }
       );

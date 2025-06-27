@@ -35,6 +35,7 @@ import { allRouterLink } from "./AllRouterLinks";
 import Allclasses from "../components/Classesdata/Allclasses";
 import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
 import Studentdetails from "../global/Studentdetails";
+import FeeDashboard from "../components/AdmissionProcess/FeeDashboard";
 import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
 
@@ -210,7 +211,7 @@ export const routes = [
   {
     path: allRouterLink.directorDashboard,
     element: <DirectorDashboard />,
-    protected: false,
+    protected: true,
     allowedRoles: [constants.roles.director],
   },
   // Attendance Record
@@ -226,6 +227,12 @@ export const routes = [
     protected: false,
   },
   {
+    path: allRouterLink.feeDashboard,
+    element: <FeeDashboard />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
@@ -238,7 +245,7 @@ export const routes = [
   },
   {
     path: allRouterLink.allStudentsperClass,
-    element: <Allstudentsperclass />, // 
+    element: <Allstudentsperclass />,
     protected: false,
   },
      {
@@ -268,5 +275,5 @@ export const routes = [
     element: <NotFound />,
     protected: false,
   },
-];
 
+];

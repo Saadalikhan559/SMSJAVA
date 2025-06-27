@@ -161,8 +161,7 @@ export const EditAddmissionDetails = () => {
         height: parseFloat(formData.get("student_height")) || null,
         weight: parseFloat(formData.get("student_weight")) || null,
         blood_group: formData.get("student_blood_group") || "",
-        number_of_siblings:
-          parseInt(formData.get("student_number_of_siblings")) || null,
+        number_of_siblings: formData.get("student_number_of_siblings") || 0,
       },
       guardian: {
         first_name: formData.get("guardian_first_name") || "",
@@ -182,7 +181,7 @@ export const EditAddmissionDetails = () => {
         house_no:
           parseInt(formData.get("student_address_house_number")) || null,
         habitation: formData.get("student_address_habitation") || "",
-        word_no: parseInt(formData.get("student_address_ward_no")) || null,
+        ward_no: parseInt(formData.get("student_address_ward_no")) || null,
         zone_no: parseInt(formData.get("student_address_zone")) || null,
         block: formData.get("student_address_block") || "",
         district: formData.get("student_address_district") || "",
@@ -206,7 +205,7 @@ export const EditAddmissionDetails = () => {
       previous_standard_studied:
         formData.get("previous_standard_studied") || "",
       tc_letter: formData.get("tc_letter") || "",
-      emergency_contact_n0: formData.get("emergency_contact_n0") || "",
+      emergency_contact_no: formData.get("emergency_contact_no") || "",
       entire_road_distance_from_home_to_school:
         formData.get("entire_road_distance_from_home_to_school") || "",
       obtain_marks: parseFloat(formData.get("obtain_marks")) || null,
@@ -834,10 +833,10 @@ export const EditAddmissionDetails = () => {
               </label>
               <input
                 type="tel"
-                name="emergency_contact_n0"
+                name="emergency_contact_no"
                 placeholder="Emergency Contact"
                 className="input input-bordered w-full focus:outline-none"
-                defaultValue={formData.emergency_contact_n0}
+                defaultValue={formData.emergency_contact_no}
               />
             </div>
             <div className="form-control">
@@ -952,7 +951,7 @@ export const EditAddmissionDetails = () => {
                 name="student_address_ward_no"
                 placeholder="Ward Number"
                 className="input input-bordered w-full focus:outline-none"
-                defaultValue={formData.address?.word_no}
+                defaultValue={formData.address?.ward_no}
               />
             </div>
             <div className="form-control">

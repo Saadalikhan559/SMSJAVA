@@ -10,8 +10,10 @@ import {
   handleAdmissionForm,
 } from "../../services/api/Api";
 import { constants } from "../../global/constants";
+import { useNavigate } from "react-router-dom";
 
 export const AdmissionForm = () => {
+  const navigate = useNavigate();
   const [yearLevel, setYearLevel] = useState([]);
   const [schoolYears, setSchoolYear] = useState([]);
   const [guardianTypes, setGuardianType] = useState([]);
@@ -65,7 +67,7 @@ export const AdmissionForm = () => {
       address_input: {
         house_no: "",
         habitation: "",
-        word_no: "",
+        ward_no: "",
         zone_no: "",
         block: "",
         district: "",
@@ -86,7 +88,7 @@ export const AdmissionForm = () => {
       previous_school_name: "",
       previous_standard_studied: "",
       tc_letter: "",
-      emergency_contact_n0: "",
+      emergency_contact_no: "",
       entire_road_distance_from_home_to_school: "",
       obtain_marks: "",
       total_marks: "",
@@ -199,7 +201,6 @@ export const AdmissionForm = () => {
       formRef.current.reset();
       setSelectedGuardianType("");
             navigate("/addmissionDetails");
-
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
       alert(
@@ -1152,7 +1153,7 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="tel"
-                {...register("emergency_contact_n0", {
+                {...register("emergency_contact_no", {
                   required: "Emergency contact is required",
                   pattern: {
                     value: /^\+?\d{10,15}$/,
@@ -1165,12 +1166,12 @@ export const AdmissionForm = () => {
                 })}
                 placeholder="Emergency Contact"
                 className={`input input-bordered w-full focus:outline-none ${
-                  errors.emergency_contact_n0 ? "input-error" : ""
+                  errors.emergency_contact_no ? "input-error" : ""
                 }`}
               />
-              {errors.emergency_contact_n0 && (
+              {errors.emergency_contact_no && (
                 <span className="text-error text-sm">
-                  {errors.emergency_contact_n0.message}
+                  {errors.emergency_contact_no.message}
                 </span>
               )}
             </div>
@@ -1322,19 +1323,19 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="number"
-                {...register("address_input.word_no", {
+                {...register("address_input.ward_no", {
                   required: "Ward number is required",
                   min: { value: -2147483648, message: "Invalid ward number" },
                   max: { value: 2147483647, message: "Invalid ward number" },
                 })}
                 placeholder="Ward Number"
                 className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.word_no ? "input-error" : ""
+                  errors.address?.ward_no ? "input-error" : ""
                 }`}
               />
-              {errors.address?.word_no && (
+              {errors.address?.ward_no && (
                 <span className="text-error text-sm">
-                  {errors.address.word_no.message}
+                  {errors.address.ward_no.message}
                 </span>
               )}
             </div>
