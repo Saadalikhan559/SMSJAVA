@@ -89,8 +89,9 @@ export const fetchStudentYearLevelByClass = async (year_level_id) => {
 export const fetchTeachers = async (id = null) => {
   try {
     const url = id
-      ? `${BASE_URL}/t/teacher/${id}/`     // fetch single teacher by ID
-      : `${BASE_URL}/t/teacher/`;          // fetch all teachers
+
+      ? `${BASE_URL}/t/teacher/${id}/` // fetch specific teacher by ID
+      : `${BASE_URL}/t/teacher/`; // fetch all teachers
 
     const response = await axios.get(url);
     return response.data;
@@ -113,6 +114,7 @@ export const fetchOfficeStaff = async (id = null) => {
     throw err;
   }
 };
+
 
 
 
@@ -151,10 +153,16 @@ export const fetchSubjects = async () => {
   }
 };
 
-export const fetchAllTeacherAssignments = async () => {
+export const fetchAllTeacherAssignments = async (accessToken) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/t/teacher/all-teacher-assignments/`
+      `${BASE_URL}/t/teacher/all-teacher-assignments/`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        }
+      }
     );
     return response.data;
   } catch (err) {
@@ -221,7 +229,9 @@ export const fetchDirectorDashboard = async () => {
 
 export const fetchStudentCategoryDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/student-category-dashboard/`);
+    const response = await axios.get(
+      `${BASE_URL}/d/student-category-dashboard/`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to load student category director Dashboard:", err);
@@ -233,7 +243,9 @@ export const fetchStudentCategoryDashboard = async () => {
 
 export const fetchIncomeDistributionDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/income-distribution-dashboard/`);
+    const response = await axios.get(
+      `${BASE_URL}/d/income-distribution-dashboard/`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to load Income Distribution Dashboard:", err);
@@ -269,7 +281,6 @@ export const fetchGuardianDashboard = async (id) => {
 
 export const fetchTeacherDashboard = async () => {
   try {
-
     const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
     return response.data;
   } catch (err) {
@@ -277,6 +288,33 @@ export const fetchTeacherDashboard = async () => {
     throw err;
   }
 };
+
+// Fee Dashboard
+
+export const fetchFeeDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/fee-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch fee Dashboard:", err);
+    throw err;
+  }
+};
+
+// Fee Dashboard by month
+
+export const fetchFeeDashboardByMonth = async (month) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/d/fee-dashboard/?month=${month}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch fee Dashboard by month:", err);
+    throw err;
+  }
+};
+
 // admission details get api
 export const fetchAdmissionDetails = async () => {
   try {
@@ -310,16 +348,17 @@ export const fetchViewDocuments = async () => {
 };
 
 export const fetchStudents1 = async (classId) => {
-  console.log(classId)
+  console.log(classId);
   try {
-    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/?level__id=${classId}`);
+    const response = await axios.get(
+      `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
     throw err;
   }
 };
-
 
 export const fetchyearLevelData = async () => {
   try {
@@ -340,8 +379,6 @@ export const fetchYearLevels = async () => {
     throw err;
   }
 };
-
-
 
 export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
@@ -364,7 +401,7 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
   return axios.get(url, { params });
 };
 
-export const fetchAttendanceData = async (date = '') => {
+export const fetchAttendanceData = async (date = "") => {
   try {
     const url = date
       ? `${BASE_URL}/a/director-dashboard/?date=${date}`
@@ -373,19 +410,16 @@ export const fetchAttendanceData = async (date = '') => {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch attendance data:', error);
+    console.error("Failed to fetch attendance data:", error);
     return null;
   }
 };
 
-
-
-
-
-
 export const fetchAttendance = async (className) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/api/report/?class=${className}`);
+    const response = await axios.get(
+      `${BASE_URL}/a/api/report/?class=${className}`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to fetch students:", err);
@@ -423,19 +457,20 @@ export const handleAdmissionForm = async (formData) => {
   }
 };
 
-
-
 // EDIT APIS
-
 
 export const handleEditAdmissionForm = async (formData, id) => {
   try {
-    const response = await axios.put(`${BASE_URL}/d/admission/${id}/`, formData, {
-      headers: {
-        "Content-Type": "application/json",
-        // "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.put(
+      `${BASE_URL}/d/admission/${id}/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     if (response.status === 200 || response.status === 201) {
       alert("successfully submitted the form");
     }
@@ -473,14 +508,15 @@ export const editOfficeStaffdetails = async (id, formdata) => {
 
 
 
+
 export const fetchGuardianAttendance = async (id, month, year) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/guardian/attendance/`, {
       params: {
         guardian_id: id,
         month: month,
-        year: year
-      }
+        year: year,
+      },
     });
     console.log(response.data);
     return response.data;
@@ -489,5 +525,3 @@ export const fetchGuardianAttendance = async (id, month, year) => {
     throw err;
   }
 };
-
-

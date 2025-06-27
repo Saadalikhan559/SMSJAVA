@@ -23,8 +23,10 @@ export const allRouterLink = {
     guardianAttendanceRecord: '/guardianAttendanceRecord',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
-    attendanceRecord: '/attendanceRecord',
-    fullAttendance: '/fullAttendance/:className',
+
+    feeDashboard: '/feeDashboard',
+    attendanceRecord:'/attendanceRecord',
+    fullAttendance:'/fullAttendance/:className',
     officeStaffDashboard: '/officeStaffDashboard',
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',

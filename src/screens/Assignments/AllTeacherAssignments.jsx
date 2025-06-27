@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { fetchAllTeacherAssignments } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
 export const AllTeacherAssignments = () => {
   const [teacherAssignments, setTeacherAssignment] = useState([]);
   const [loading, setLoading] = useState(true);
+    const {authTokens} = useContext(AuthContext);
+    const accessToken = authTokens.access;
+    console.log('authtoken', accessToken);
+  
   const getAllTeacherAssignment = async () => {
     try {
       setLoading(true);
-      const allAssignments = await fetchAllTeacherAssignments();
+      const allAssignments = await fetchAllTeacherAssignments(authTokens.access);
       setTeacherAssignment(allAssignments);
     } catch (error) {
       console.log("Failed to load teacher. Please try again.");
