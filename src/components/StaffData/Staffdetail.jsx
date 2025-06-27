@@ -1,32 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchOfficeStaff, fetchTeachers } from "../../services/api/Api";
+import { Link } from "react-router-dom";
 
 const Staffdetail = () => {
-    const { id } = useParams();
+    const { id, type } = useParams();
+    console.log("Fetching for id:", id, "type:", type);
     const [staffData, setStaffData] = useState(null);
-    const [staffType, setStaffType] = useState(""); // "Teacher" or "Office Staff"
+    const [staffType, setStaffType] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const getStaffById = async () => {
         setLoading(true);
         try {
-            const officeStaff = await fetchOfficeStaff(id);
-            if (officeStaff && officeStaff.id) {
-                setStaffData(officeStaff);
-                setStaffType("Office Staff");
-                return;
+            if (type === "teacher") {
+                const teacher = await fetchTeachers(id);
+                if (teacher && teacher.id) {
+                    setStaffData(teacher);
+                    setStaffType("Teacher");
+                    return;
+                } else {
+                    setError("Teacher not found.");
+                }
+            } else if (type === "office") {
+                const officeStaff = await fetchOfficeStaff(id);
+                if (officeStaff && officeStaff.id) {
+                    setStaffData(officeStaff);
+                    setStaffType("Office Staff");
+                    return;
+                } else {
+                    setError("Office staff not found.");
+                }
+            } else {
+                setError("Invalid staff type in URL.");
             }
-
-            const teacher = await fetchTeachers(id);
-            if (teacher && teacher.id) {
-                setStaffData(teacher);
-                setStaffType("Teacher");
-                return;
-            }
-
-            setError("Staff member not found.");
         } catch (err) {
             setError("Failed to fetch staff. Please try again later.");
         } finally {
@@ -36,7 +44,7 @@ const Staffdetail = () => {
 
     useEffect(() => {
         getStaffById();
-    }, [id]);
+    }, [id, type]);
 
     if (loading) {
         return <div className="p-4 text-center">Loading Staff Member details...</div>;
@@ -82,6 +90,13 @@ const Staffdetail = () => {
                         <div><strong>Qualification:</strong><br />{staffData.qualification || "N/A"}</div>
                         <div><strong>Category:</strong><br />{staffData.category || "N/A"}</div>
                     </div>
+                    <div className="flex justify-center p-8">
+                        <Link to={`/staffdetail/update/${type}/${staffData.id}`}>
+                            <button type="button" className="btn btn-primary">
+                                <i className="fa-solid fa-pen-to-square"></i> Update Staff Details
+                            </button>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,11 +104,4 @@ const Staffdetail = () => {
 };
 
 export default Staffdetail;
-
-
-
-
-
-
-
 
