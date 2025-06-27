@@ -13,16 +13,6 @@ export const fetchRoles = async () => {
   }
 };
 
-// export const fetchYearLevels = async () => {
-//   try {
-//     const response = await axios.get(`${BASE_URL}/d/year-levels/`);
-//     return response.data;
-//   } catch (err) {
-//     console.error("Failed to fetch roles:", err);
-//     throw err;
-//   }
-// };
-
 export const fetchSchoolYear = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/school-years/`);
@@ -86,34 +76,26 @@ export const fetchStudentYearLevelByClass = async (year_level_id) => {
   }
 };
 
-export const fetchTeachers = async (id = null) => {
+export const fetchTeachers = async (id) => {
   try {
-    const url = id
-
-      ? `${BASE_URL}/t/teacher/${id}/` // fetch specific teacher by ID
-      : `${BASE_URL}/t/teacher/`; // fetch all teachers
-
-    const response = await axios.get(url);
-    return response.data;
+    const res = await axios.get(`${BASE_URL}/t/teacher/${id ? `${id}/` : ''}`);
+    return res.data;
   } catch (err) {
     console.error("Failed to fetch teachers:", err);
     throw err;
   }
 };
 
-export const fetchOfficeStaff = async (id = null) => {
+export const fetchOfficeStaff = async (id) => {
   try {
-    const url = id
-      ? `${BASE_URL}/d/officestaff/${id}/`  // fetch single office staff by ID
-      : `${BASE_URL}/d/officestaff/`;       // fetch all office staff
-
-    const response = await axios.get(url);
-    return response.data;
+    const res = await axios.get(`${BASE_URL}/d/officestaff/${id ? `${id}/` : ''}`);
+    return res.data;
   } catch (err) {
     console.error("Failed to fetch office staff:", err);
     throw err;
   }
 };
+
 
 
 
