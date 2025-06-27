@@ -1,8 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import { fetchGuardianAttendance } from "../../services/api/Api";
 
 const GuardianAttendanceRecord = () => {
   // Define a color palette with enough distinct colors
+  const [guardianList, setGuardianList] = useState(null);
+  const [guardianID, setGuardianID] = useState(null);
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1); // Current month
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear()); // Current year
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("guardian_id");
+    setGuardianID(token);
+  }, []);
+
+  const getGuardianAttendance = async () => {
+    if (!guardianID) return;
+
+    setIsLoading(true);
+    try {
+      const data = await fetchGuardianAttendance(
+        guardianID,
+        filterMonth,
+        filterYear
+      );
+      setGuardianList(data);
+    } catch (error) {
+      console.log("failed to get guardian attendance", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getGuardianAttendance();
+  }, [guardianID, filterMonth, filterYear]);
+
   const colorPalette = [
     "#6e00ff", // purple-600 (primary)
     "#ffd24d", // peach-100 (secondary)
@@ -16,56 +50,84 @@ const GuardianAttendanceRecord = () => {
     "#f97316", // orange-500
   ];
 
-  // Define Tailwind colors
   const colorPrimary = "#6e00ff"; // purple-600
-  const colorSecondary = "#ffd24d"; // peach-100 
+  const colorSecondary = "#ffd24d"; // peach-100
 
-  // Static payload data
-  const attendanceData = {
-    guardian_id: 1,
-    total_children: 2,
-    children: [
-      {
-        student_name: "Noore Nabi",
-        class_name: "Nursery",
-        monthly_summary: {
-          present: 8,
-          absent: 1,
-          leave: 1,
-          total_days: 13,
-          percentage: "61.5%",
-        },
-        yearly_summary: {
-          present: 10,
-          absent: 1,
-          leave: 1,
-          total_days: 15,
-          percentage: "66.7%",
-        },
-      },
-      {
-        student_name: "Shad Khan",
-        class_name: "Nursery",
-        monthly_summary: {
-          present: 1,
-          absent: 5,
-          leave: 1,
-          total_days: 10,
-          percentage: "10.0%",
-        },
-        yearly_summary: {
-          present: 3,
-          absent: 5,
-          leave: 1,
-          total_days: 12,
-          percentage: "25.0%",
-        },
-      }
-    ],
+  // Loading UI
+  if (!guardianList)
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="relative w-20 h-20 mb-4">
+          {/* Animated spinner */}
+          <div className="absolute inset-0 border-4 border-[#6e00ff] border-t-transparent rounded-full animate-spin"></div>
+          {/* Optional: School/attendance themed icon inside spinner */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-[#6e00ff]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        {/* Loading text with animated dots */}
+        <div className="text-center">
+          <h3 className="text-xl font-semibold text-gray-700 mb-1">
+            Loading Attendance Data
+          </h3>
+          <p className="text-gray-500 flex justify-center items-center">
+            Please wait
+            <span className="inline-flex space-x-1 ml-1">
+              <span
+                className="animate-bounce"
+                style={{ animationDelay: "0ms" }}
+              >
+                .
+              </span>
+              <span
+                className="animate-bounce"
+                style={{ animationDelay: "150ms" }}
+              >
+                .
+              </span>
+              <span
+                className="animate-bounce"
+                style={{ animationDelay: "300ms" }}
+              >
+                .
+              </span>
+            </span>
+          </p>
+        </div>
+
+        {/* Optional progress bar */}
+        <div className="w-full max-w-xs bg-gray-200 rounded-full h-2.5 mt-6">
+          <div
+            className="bg-[#6e00ff] h-2.5 rounded-full animate-pulse"
+            style={{ width: "70%" }}
+          ></div>
+        </div>
+      </div>
+    );
+
+  // Helper function to get month name from number
+  const getMonthName = (monthNumber) => {
+    const date = new Date();
+    date.setMonth(monthNumber - 1);
+    return date.toLocaleString("default", { month: "long" });
   };
 
   // Prepare monthly data for charts
-  const monthlySeries = attendanceData.children.map((child) => ({
+  const monthlySeries = guardianList.children.map((child) => ({
     name: child.student_name,
     data: [
       child.monthly_summary.present,
@@ -125,7 +187,9 @@ const GuardianAttendanceRecord = () => {
     },
     colors: colorPalette,
     title: {
-      text: "Monthly Attendance Summary",
+      text: `Monthly Attendance Summary (${getMonthName(
+        guardianList.filter_month
+      )} ${guardianList.filter_year})`,
       align: "center",
       style: {
         fontSize: "16px",
@@ -136,7 +200,7 @@ const GuardianAttendanceRecord = () => {
   };
 
   // Prepare yearly data for charts
-  const yearlySeries = attendanceData.children.map((child) => ({
+  const yearlySeries = guardianList.children.map((child) => ({
     name: child.student_name,
     data: [
       child.yearly_summary.present,
@@ -148,7 +212,7 @@ const GuardianAttendanceRecord = () => {
   const yearlyOptions = {
     ...monthlyOptions,
     title: {
-      text: "Yearly Attendance Summary",
+      text: `Yearly Attendance Summary (${guardianList.filter_year})`,
       align: "center",
       style: {
         fontSize: "16px",
@@ -159,7 +223,7 @@ const GuardianAttendanceRecord = () => {
   };
 
   // Prepare percentage data for radial charts
-  const percentageSeries = attendanceData.children.map((child) => ({
+  const percentageSeries = guardianList.children.map((child) => ({
     name: child.student_name,
     data: [
       parseFloat(child.monthly_summary.percentage),
@@ -193,7 +257,7 @@ const GuardianAttendanceRecord = () => {
       },
     },
     labels: ["Monthly", "Yearly"],
-    colors: [colorPrimary, colorSecondary], // Using only the two colors
+    colors: [colorPrimary, colorSecondary],
     title: {
       text: "Attendance Percentage",
       align: "center",
@@ -203,6 +267,28 @@ const GuardianAttendanceRecord = () => {
         color: colorPrimary,
       },
     },
+  };
+
+  // Generate month options for dropdown
+  const monthOptions = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: getMonthName(i + 1),
+  }));
+
+  // Generate year options for dropdown (last 5 years and next 5 years)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 11 }, (_, i) => ({
+    value: currentYear - 5 + i,
+    label: currentYear - 5 + i,
+  }));
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "month") {
+      setFilterMonth(parseInt(value));
+    } else if (name === "year") {
+      setFilterYear(parseInt(value));
+    }
   };
 
   return (
@@ -215,74 +301,219 @@ const GuardianAttendanceRecord = () => {
         Record
       </span>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <ReactApexChart
-            options={{
-              ...monthlyOptions,
-              colors: colorPalette.slice(0, attendanceData.children.length * 3),
-            }}
-            series={monthlySeries}
-            type="bar"
-            height={350}
-          />
-        </div>
-
-        <div className="bg-white p-4 rounded-lg shadow">
-          <ReactApexChart
-            options={{
-              ...yearlyOptions,
-              colors: colorPalette.slice(0, attendanceData.children.length * 3),
-            }}
-            series={yearlySeries}
-            type="bar"
-            height={350}
-          />
-        </div>
-
-        <div className="bg-white p-4 rounded-lg shadow md:col-span-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {attendanceData.children.map((child, index) => (
-              <div key={index} className="p-4">
-                <span
-                  className="font-bold text-xl flex pt-5 justify-center gap-1 mb-4"
-                  style={{ color: colorPrimary }}
-                >
-                  <i class="fa-solid fa-gauge flex pt-1"></i> Average
-                </span>
-
-                <h3
-                  className="text-lg font-semibold text-center mb-4"
-                  style={{ color: colorPrimary }}
-                >
-                  {child.student_name} - {child.class_name}
-                </h3>
-                <ReactApexChart
-                  options={{
-                    ...percentageOptions,
-                    labels: ["Monthly", "Yearly"],
-                    title: {
-                      text: `${child.student_name}'s Attendance Percentage`,
-                      align: "center",
-                      style: {
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        color: colorPrimary,
-                      },
-                    },
-                  }}
-                  series={[
-                    percentageSeries[index].data[0],
-                    percentageSeries[index].data[1],
-                  ]}
-                  type="radialBar"
-                  height={300}
-                />
-              </div>
-            ))}
+      {/* Enhanced Filter Controls */}
+      <div className="flex flex-wrap justify-center gap-6 my-8">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="month" className="text-sm font-medium text-gray-600">
+            Select Month
+          </label>
+          <div className="relative">
+            <select
+              id="month"
+              name="month"
+              value={filterMonth}
+              onChange={handleFilterChange}
+              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm cursor-pointer transition-all duration-200 hover:border-purple-400"
+              disabled={isLoading}
+            >
+              {monthOptions.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
           </div>
         </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="year" className="text-sm font-medium text-gray-600">
+            Select Year
+          </label>
+          <div className="relative">
+            <select
+              id="year"
+              name="year"
+              value={filterYear}
+              onChange={handleFilterChange}
+              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm cursor-pointer transition-all duration-200 hover:border-purple-400"
+              disabled={isLoading}
+            >
+              {yearOptions.map((year) => (
+                <option key={year.value} value={year.value}>
+                  {year.label}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {!isLoading ? (
+          <button
+            onClick={getGuardianAttendance}
+            className="self-end px-4 py-2 bg-[#6e00ff] text-white border-[#6e00ff] rounded-lg hover:bg-[#6e00ff] focus:outline-none focus:ring-2 focus:ring-[#6e00ff] focus:ring-offset-2 shadow-md transition-colors duration-200"
+          >
+            <i className="fas fa-sync-alt mr-2"></i> Refresh
+          </button>
+        ) : (
+          <button
+            disabled
+            className="self-end px-4 py-2 bg-[#6e00ff] text-white rounded-lg cursor-not-allowed shadow-md"
+          >
+            <i className="fas fa-spinner fa-spin mr-2"></i> Loading...
+          </button>
+        )}
       </div>
+
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="relative w-20 h-20 mb-4">
+            {/* Animated spinner */}
+            <div className="absolute inset-0 border-4 border-[#6e00ff] border-t-transparent rounded-full animate-spin"></div>
+            {/* Optional: School/attendance themed icon inside spinner */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-[#6e00ff]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                ></path>
+              </svg>
+            </div>
+          </div>
+
+          {/* Loading text with animated dots */}
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-700 mb-1">
+              Loading Attendance Data
+            </h3>
+            <p className="text-gray-500 flex justify-center items-center">
+              Please wait
+              <span className="inline-flex space-x-1 ml-1">
+                <span
+                  className="animate-bounce"
+                  style={{ animationDelay: "0ms" }}
+                >
+                  .
+                </span>
+                <span
+                  className="animate-bounce"
+                  style={{ animationDelay: "150ms" }}
+                >
+                  .
+                </span>
+                <span
+                  className="animate-bounce"
+                  style={{ animationDelay: "300ms" }}
+                >
+                  .
+                </span>
+              </span>
+            </p>
+          </div>
+
+          {/* Optional progress bar */}
+          <div className="w-full max-w-xs bg-gray-200 rounded-full h-2.5 mt-6">
+            <div
+              className="bg-[#6e00ff] h-2.5 rounded-full animate-pulse"
+              style={{ width: "70%" }}
+            ></div>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <ReactApexChart
+              options={{
+                ...monthlyOptions,
+                colors: colorPalette.slice(0, guardianList.children.length * 3),
+              }}
+              series={monthlySeries}
+              type="bar"
+              height={350}
+            />
+          </div>
+
+          <div className="bg-white p-4 rounded-lg shadow">
+            <ReactApexChart
+              options={{
+                ...yearlyOptions,
+                colors: colorPalette.slice(0, guardianList.children.length * 3),
+              }}
+              series={yearlySeries}
+              type="bar"
+              height={350}
+            />
+          </div>
+
+          <div className="bg-white p-4 rounded-lg shadow md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {guardianList.children.map((child, index) => (
+                <div key={index} className="p-4">
+                  <span
+                    className="font-bold text-xl flex pt-5 justify-center gap-1 mb-4"
+                    style={{ color: colorPrimary }}
+                  >
+                    <i className="fa-solid fa-gauge flex pt-1"></i> Average
+                  </span>
+
+                  <h3
+                    className="text-lg font-semibold text-center mb-4"
+                    style={{ color: colorPrimary }}
+                  >
+                    {child.student_name} - {child.class_name}
+                  </h3>
+                  <ReactApexChart
+                    options={{
+                      ...percentageOptions,
+                      labels: ["Monthly", "Yearly"],
+                      title: {
+                        text: `${child.student_name}'s Attendance Percentage`,
+                        align: "center",
+                        style: {
+                          fontSize: "16px",
+                          fontWeight: "bold",
+                          color: colorPrimary,
+                        },
+                      },
+                    }}
+                    series={[
+                      percentageSeries[index].data[0],
+                      percentageSeries[index].data[1],
+                    ]}
+                    type="radialBar"
+                    height={300}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
