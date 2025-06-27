@@ -493,7 +493,7 @@ export const updateStudentById = async (id, updatedData) => {
 
 export const editTeachersdetails = async (id, formdata) => {
   try {
-    const response = await axios.put(`${BASE_URL}/teachers/${id}/`, formdata);
+    const response = await axios.put(`${BASE_URL}/t/teachers/${id}/`, formdata);
     return response.data;
   } catch (error) {
     console.error("Failed to update teacher details:", error.response?.data || error.message);
@@ -503,20 +503,13 @@ export const editTeachersdetails = async (id, formdata) => {
 
 export const editOfficeStaffdetails = async (id, formdata) => {
   try {
-    const response = await axios.put(`${BASE_URL}/officestaff/${id}/`, formdata);
+    const response = await axios.put(`${BASE_URL}/d/officestaff/${id}/`, formdata);
     return response.data;
   } catch (error) {
     console.error("Failed to update office staff details:", error.response?.data || error.message);
     throw error.response?.data || new Error("Something went wrong while updating office staff details.");
   }
 };
-
-
-
-
-
-
-
 
 export const fetchGuardianAttendance = async (id, month, year) => {
   try {
