@@ -301,7 +301,4 @@ export const DirectorDashboard = () => {
     </div>
   );
 };
-<<<<<<< HEAD
-=======
 
->>>>>>> b88f1f1ee5dba5e9ca2dea8e007b96d7edc42a2d
