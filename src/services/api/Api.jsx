@@ -294,9 +294,10 @@ export const fetchViewDocuments = async () => {
   }
 };
 
-export const fetchStudents1 = async () => {
+export const fetchStudents1 = async (classId) => {
+  console.log(classId)
   try {
-    const response = await axios.get(`${BASE_URL}/s/students/`);
+    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/?level__id=${classId}`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -434,6 +435,23 @@ export const fetchStudentById = async (id) => {
   } catch (error) {
     console.error("Failed to fetch student details:", error);
     throw error;
+  }
+};
+
+export const fetchGuardianAttendance = async (id, month, year) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/guardian/attendance/`, {
+      params: {
+        guardian_id: id,
+        month: month,
+        year: year
+      }
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch guardian attendance:", err);
+    throw err;
   }
 };
 
