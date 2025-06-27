@@ -33,38 +33,43 @@ export const SubjectAssignments = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
   const getTeachers = async () => {
     try {
       const allTeachers = await fetchTeachers();
       setTeachers(allTeachers);
-    } catch (error) {
-      console.log("Failed to load teacher. Please try again.");
+    } catch {
+      console.log("Failed to load teachers.");
     }
   };
+
   const getYearLevels = async () => {
     try {
-      const allyearLevels = await fetchYearLevels();
-      setYearLevel(allyearLevels);
-    } catch (err) {
-      console.log("Failed to load year levels. Please try again.");
+      const levels = await fetchYearLevels();
+      setYearLevel(levels);
+    } catch {
+      console.log("Failed to load year levels.");
     }
   };
+
   const getPeriods = async () => {
     try {
-      const allPeriods = await fetchPeriods();
-      setPeriods(allPeriods);
-    } catch (err) {
-      console.log("Failed to load periods. Please try again.");
+      const periodList = await fetchPeriods();
+      setPeriods(periodList);
+    } catch {
+      console.log("Failed to load periods.");
     }
   };
+
   const getSubjects = async () => {
     try {
-      const allSubjects = await fetchSubjects();
-      setSubjects(allSubjects);
-    } catch (err) {
-      console.log("Failed to load subjects. Please try again.");
+      const subjectList = await fetchSubjects();
+      setSubjects(subjectList);
+    } catch {
+      console.log("Failed to load subjects.");
     }
   };
+
   useEffect(() => {
     getTeachers();
     getPeriods();
@@ -85,18 +90,17 @@ export const SubjectAssignments = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  // Handle checkbox changes
+
   const handleMultiSelect = (name, id) => {
+    const numericId = Number(id);
     setFormData((prev) => {
       const currentValues = [...prev[name]];
-      const index = currentValues.indexOf(id);
+      const index = currentValues.indexOf(numericId);
 
       if (index > -1) {
-        // Remove if already selected
         currentValues.splice(index, 1);
       } else {
-        // Add if not selected
-        currentValues.push(id);
+        currentValues.push(numericId);
       }
 
       return { ...prev, [name]: currentValues };
@@ -137,14 +141,14 @@ const handleSubmit = async (e) => {
 };
 
   const handleNavigate = () => {
-    navigate(`${allRouterLink.allTeacherAssignment}`);
+    navigate(allRouterLink.allTeacherAssignment);
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none">
+    <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
       <button
         className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 text-blue-600"
-        onClick={() => handleNavigate()}
+        onClick={handleNavigate}
       >
         Teacher Assignments <span>&rarr;</span>
       </button>
@@ -155,48 +159,46 @@ const handleSubmit = async (e) => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Select Teacher  */}
+          {/* Teacher Select */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-file-lines text-sm"></i>
+              <span className="label-text">
                 Teacher <span className="text-error">*</span>
               </span>
             </label>
             <select
               name="teacher_id"
-              className="select select-bordered w-full focus:outline-none"
+              className="select select-bordered w-full"
               onChange={handleChange}
               value={formData.teacher_id}
             >
               <option value="">Select Teacher</option>
-              {teachers.map((teacher) => (
-                <option key={teacher.id} value={teacher.id}>
-                  {teacher.first_name} {teacher.middle_name} {teacher.last_name}
+              {teachers.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.first_name} {t.middle_name} {t.last_name}
                 </option>
               ))}
             </select>
           </div>
-          {/* Select Year Level*/}
-          {/* Year Level */}
+
+          {/* Year Level Select */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-graduation-cap text-sm"></i>
+              <span className="label-text">
                 Year Level <span className="text-error">*</span>
               </span>
             </label>
             <select
-              name="yearlevel_id" // Corrected to match state
-              className="select select-bordered w-full focus:outline-none"
+              name="yearlevel_id"
+              className="select select-bordered w-full"
               required
-              value={formData.yearlevel_id}
               onChange={handleChange}
+              value={formData.yearlevel_id}
             >
               <option value="">Select Year Level</option>
-              {yearLevel.map((yearlev) => (
-                <option value={yearlev.id} key={yearlev.id}>
-                  {yearlev.level_name}
+              {yearLevel.map((y) => (
+                <option key={y.id} value={y.id}>
+                  {y.level_name}
                 </option>
               ))}
             </select>
@@ -204,43 +206,36 @@ const handleSubmit = async (e) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Custom Subjects Dropdown */}
+          {/* Subject Multiselect */}
           <div className="form-control" ref={subjectRef}>
             <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-file-lines text-sm"></i>
+              <span className="label-text">
                 Subjects <span className="text-error">*</span>
               </span>
             </label>
-
             <div className="relative">
               <div
-                className="select select-bordered w-full focus:outline-none cursor-pointer flex items-center"
+                className="select select-bordered w-full cursor-pointer"
                 onClick={() => setIsSubjectOpen(!isSubjectOpen)}
               >
                 {formData.subject_ids.length > 0
-                  ? `${formData.subject_ids.length} subjects selected`
+                  ? `${formData.subject_ids.length} selected`
                   : "Select Subjects"}
               </div>
-
               {isSubjectOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {subjects.map((subject) => (
+                <div className="absolute z-10 w-full bg-white border rounded-md shadow max-h-60 overflow-y-auto">
+                  {subjects.map((s) => (
                     <label
-                      key={subject.id}
-                      className="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
+                      key={s.id}
+                      className="flex items-center p-3 hover:bg-gray-100"
                     >
                       <input
                         type="checkbox"
-                        className="checkbox checkbox-primary mr-3"
-                        checked={formData.subject_ids.includes(subject.id)}
-                        onChange={() =>
-                          handleMultiSelect("subject_ids", subject.id)
-                        }
+                        className="checkbox checkbox-primary mr-2"
+                        checked={formData.subject_ids.includes(s.id)}
+                        onChange={() => handleMultiSelect("subject_ids", s.id)}
                       />
-                      <span>
-                        {subject.subject_name} ({subject.department})
-                      </span>
+                      {s.subject_name} ({s.department})
                     </label>
                   ))}
                 </div>
@@ -248,44 +243,36 @@ const handleSubmit = async (e) => {
             </div>
           </div>
 
-          {/* Custom Periods Dropdown */}
+          {/* Period Multiselect */}
           <div className="form-control" ref={periodRef}>
             <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-graduation-cap text-sm"></i>
+              <span className="label-text">
                 Periods <span className="text-error">*</span>
               </span>
             </label>
-
             <div className="relative">
               <div
-                className="select select-bordered w-full focus:outline-none cursor-pointer flex items-center"
+                className="select select-bordered w-full cursor-pointer"
                 onClick={() => setIsPeriodOpen(!isPeriodOpen)}
               >
                 {formData.period_ids.length > 0
-                  ? `${formData.period_ids.length} periods selected`
+                  ? `${formData.period_ids.length} selected`
                   : "Select Periods"}
               </div>
-
               {isPeriodOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {periods.map((period) => (
+                <div className="absolute z-10 w-full bg-white border rounded-md shadow max-h-60 overflow-y-auto">
+                  {periods.map((p) => (
                     <label
-                      key={period.id}
-                      className="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
+                      key={p.id}
+                      className="flex items-center p-3 hover:bg-gray-100"
                     >
                       <input
                         type="checkbox"
-                        className="checkbox checkbox-primary mr-3"
-                        checked={formData.period_ids.includes(period.id)}
-                        onChange={() =>
-                          handleMultiSelect("period_ids", period.id)
-                        }
+                        className="checkbox checkbox-primary mr-2"
+                        checked={formData.period_ids.includes(p.id)}
+                        onChange={() => handleMultiSelect("period_ids", p.id)}
                       />
-                      <span>
-                        {period.name} | {period.start_period_time} -{" "}
-                        {period.end_period_time}
-                      </span>
+                      {p.name} | {p.start_period_time} - {p.end_period_time}
                     </label>
                   ))}
                 </div>
@@ -298,11 +285,11 @@ const handleSubmit = async (e) => {
         <div className="flex justify-center mt-10">
           <button type="submit" className="btn btn-primary w-52">
             {loading ? (
-              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+              <i className="fa-solid fa-spinner fa-spin mr-2" />
             ) : (
-              <i className="fa-solid fa-book ml-2"></i>
+              <i className="fa-solid fa-book ml-2" />
             )}
-            {loading ? " " : "Assign"}
+            {loading ? "" : "Assign"}
           </button>
         </div>
       </form>

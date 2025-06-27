@@ -1,4 +1,4 @@
-import Studentdetails from "../global/Studentdetails";
+import staffDetail from "../components/StaffData/Staffdetail";
 
 export const allRouterLink = {
     homeScreen: "/",
@@ -31,7 +31,12 @@ export const allRouterLink = {
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
     editAddmisionDetails: '/editAddmisionDetails/:id',
+    allClasses:'/allClasses',
+    allStudentsperClass:'/allStudentsPerClass/:id',
+    studentDetails: '/studentdetails/:id',
+    allStaffMembers: '/allStaffMembers',
+    staffDetail:'/staffDetails/:id',
+    // all routes before this
     unAuthorized: '/unauthorized',
-    Studentdetails:'/Studentdetails',
     notFound: "*"
 }
