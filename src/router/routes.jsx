@@ -34,7 +34,6 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
 import Allclasses from "../components/Classesdata/Allclasses";
 import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
-// import Studentdetails from "../global/Studentdetails";
 import StudentDetails from "../components/Classesdata/StudentDetails";
 import UpdateStudentDetail from "../components/Classesdata/UpdateStudentDetail";
 import AllStaff from "../components/StaffData/AllStaff";
@@ -243,12 +242,7 @@ export const routes = [
     element: <Allstudentsperclass />, // 
     protected: false,
   },
-  //    {
-  //   path: allRouterLink.studentDetails,
-  //   element: <Studentdetails />,
-  //   protected: false,
-  // },
-  {
+    {
     path: allRouterLink.studentDetails,
     element: <StudentDetails />,
     protected: false,

@@ -14,12 +14,25 @@ export const AdmissionFees = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showPaymentDialog1, setShowPaymentDialog1] = useState(false);
+  const [classes, setClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState(null);
 
   const BASE_URL = constants.baseUrl;
 
-  const getStudents = async () => {
+  // Fetch all classes
+  const getClasses = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/d/year-levels/`);
+      setClasses(response.data);
+    } catch (err) {
+      console.log("Failed to load classes. Please try again." + err);
+    }
+  };
+
+  const getStudents = async (classId) => {
+      console.log(classId)
       try {
-        const Students = await fetchStudents1();
+        const Students = await fetchStudents1(classId);
         setStudents(Students);
       } catch (err) {
         console.log("Failed to load school years. Please try again." + err);
@@ -38,8 +51,37 @@ export const AdmissionFees = () => {
 
   useEffect(() => {
      getyearLevelData();
-     getStudents();
+     getClasses();
     }, []);
+
+     // Handle class selection
+  const handleClassChange = (e) => {
+    const classId = e.target.value;
+    setSelectedClassId(classId);
+    console.log(classId)
+    // Reset form when class changes
+    reset({
+      student_id: "",
+      month: "",
+      year_level: "",
+      paid_amount: "",
+      payment_mode: "",
+      remarks: "",
+      received_by: "",
+    });
+    setSelectedFeeIds([]);
+  };
+
+  // When class is selected, fetch students and year level data
+  useEffect(() => {
+    if (selectedClassId) {
+      getStudents(selectedClassId);
+    } else {
+      setStudents([]);
+    }
+  }, [selectedClassId]);
+  
+
   const role = localStorage.getItem("userRole");
 
   const loadRazorpayScript = () => {
@@ -61,6 +103,7 @@ export const AdmissionFees = () => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -203,7 +246,7 @@ export const AdmissionFees = () => {
         },
         prefill: {
           name: selectedStudent
-            ? `${selectedStudent.first_name} ${selectedStudent.last_name}`
+            ? `${selectedStudent.student_name}`
             : "",
           email: selectedStudent?.email || "",
         },
@@ -290,6 +333,29 @@ export const AdmissionFees = () => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+         
+           {/* Class Selection */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1">
+                <i className="fa-solid fa-school text-sm"></i>
+                Class <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none"
+              onChange={handleClassChange}
+              value={selectedClassId || ""}
+            >
+              <option value="">Select Class</option>
+              {classes?.map((classItem) => (
+                <option key={classItem.id} value={classItem.id}>
+                  {classItem.level_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
           {/* Student Selection */}
           <div className="form-control">
             <label className="label">
@@ -306,11 +372,12 @@ export const AdmissionFees = () => {
                 required: "Student selection is required",
               })}
               value={selectedStudentId || ""} // Add this line
+              disabled={!selectedClassId} // Disable if no class is selected
             >
               <option value="">Select Student</option>
               {students?.map((student) => (
                 <option key={student.id} value={student.id}>
-                  {student.first_name} {student.last_name} - {student.email}
+                  {student.student_name} - {student.student_email}
                 </option>
               ))}
             </select>
@@ -354,10 +421,6 @@ export const AdmissionFees = () => {
               </label>
             )}
           </div>
-        </div>
-
-        {/* Year Level Selection - Updated with react-hook-form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -372,6 +435,7 @@ export const AdmissionFees = () => {
               {...register("year_level", {
                 required: "Year level selection is required",
               })}
+              disabled={!yearLevelData}
             >
               <option value="">Select Year Level</option>
               {yearLevelData.map((level, index) => (

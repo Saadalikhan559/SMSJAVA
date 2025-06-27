@@ -43,13 +43,13 @@ const StudentDetails = () => {
 
                 <div className="p-6">
                     <div className="mt-6">
-                        <strong>Profile Picture:</strong>
+                        
                         <div className="mt-2">
                             {student.user_profile ? (
                                 <img
                                     src={student.user_profile}
                                     alt="Profile"
-                                    className="w-24 h-24 object-cover rounded-full border"
+                                    className="w-24 h-24 object-cover rounded-full  border"
                                 />
                             ) : (
                                 <span className="italic text-gray-400">No profile picture</span>
