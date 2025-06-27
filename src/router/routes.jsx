@@ -38,6 +38,7 @@ import Studentdetails from "../global/Studentdetails";
 import FeeDashboard from "../components/AdmissionProcess/FeeDashboard";
 import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
+import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 
 
 export const routes = [
@@ -248,19 +249,24 @@ export const routes = [
     element: <Allstudentsperclass />,
     protected: false,
   },
-     {
+  {
     path: allRouterLink.studentDetails,
     element: <Studentdetails />,
     protected: false,
   },
-       {
+  {
     path: allRouterLink.allStaffMembers,
     element: <AllStaff />,
     protected: false,
   },
-         {
+  {
     path: allRouterLink.staffDetail,
     element: <Staffdetail />,
+    protected: false,
+  },
+  {
+    path: allRouterLink.updateStaffDetails,
+    element: <UpdateStaffdetails />,
     protected: false,
   },
   // include all routes before this please 

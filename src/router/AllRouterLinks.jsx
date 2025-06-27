@@ -1,5 +1,3 @@
-import staffDetail from "../components/StaffData/Staffdetail";
-
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -25,6 +23,7 @@ export const allRouterLink = {
     guardianAttendanceRecord: '/guardianAttendanceRecord',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
+
     feeDashboard: '/feeDashboard',
     attendanceRecord:'/attendanceRecord',
     fullAttendance:'/fullAttendance/:className',
@@ -32,11 +31,13 @@ export const allRouterLink = {
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
     editAddmisionDetails: '/editAddmisionDetails/:id',
-    allClasses:'/allClasses',
-    allStudentsperClass:'/allStudentsPerClass/:id',
+    allClasses: '/allClasses',
+    allStudentsperClass: '/allStudentsPerClass/:id',
     studentDetails: '/studentdetails/:id',
     allStaffMembers: '/allStaffMembers',
-    staffDetail:'/staffDetails/:id',
+    staffDetail: '/staffDetail/:type/:id',
+    updateStaffDetails: '/staffdetail/update/:type/:id',
+
     // all routes before this
     unAuthorized: '/unauthorized',
     notFound: "*"
