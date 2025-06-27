@@ -86,7 +86,7 @@ export const Sidebar = () => {
                             onClick={(e) => handleNavigation(e, allRouterLink.allStaffMembers)}
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-clipboard-user"></i> Staff Members
+                           <i className="fa-solid fa-id-card-clip"></i>Staff Members
                           </Link>
                         </li>
                       </ul>
