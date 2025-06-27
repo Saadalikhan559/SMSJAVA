@@ -110,7 +110,7 @@ export const DirectorDashboard = () => {
                   width="100%"
                   options={{
                     labels: ["Male", "Female"],
-                    colors: ["#6e00ff", "#FFBB28"], // #FFD700 is gold
+                    colors: ["#6e00ff", "rgb(255, 174, 0)"], //rgb(255, 174, 0) is gold
                     legend: { position: "bottom" },
                   }}
                   series={[data.count.male, data.count.female]}
@@ -134,7 +134,7 @@ export const DirectorDashboard = () => {
               width="100%"
               options={{
                 labels: studentCategoryLabel,
-                colors: ["#6e00ff", "#E65C00", "#00C49F", "#FFBB28"],
+                colors: ["#6e00ff", "#E65C00", "#00C49F", "rgb(255, 174, 0)"],
                 legend: { position: "bottom" },
               }}
               series={studentCategorySeries}
@@ -173,7 +173,7 @@ export const DirectorDashboard = () => {
                     },
                   },
                 },
-                colors: ["#E65C00"],
+                colors: ["#00C49F"],
                 plotOptions: {
                   bar: {
                     borderRadius: 6,
@@ -226,7 +226,7 @@ export const DirectorDashboard = () => {
                     },
                   },
                 },
-                colors: ["#E65C00"],
+                colors: ["#00C49F"],
                 plotOptions: {
                   bar: {
                     borderRadius: 6,
@@ -286,7 +286,7 @@ export const DirectorDashboard = () => {
                   text: "Yearly Admissions",
                   align: "left",
                 },
-                colors: ["#E65C00"],
+                colors: ["rgb(255, 174, 0)"],
               }}
               series={[
                 {
