@@ -107,7 +107,8 @@ const AllStudentsPerClass = () => {
   const location = useLocation();
 
   const [students, setStudents] = useState([]);
-  const [searchStudent, setSearchStudent] = useState(""); // ✅ searchStudent state
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const levelName = location.state?.level_name || "Unknown";
@@ -128,9 +129,9 @@ const AllStudentsPerClass = () => {
     getStudents();
   }, [id]);
 
-  // filtering using searchStudent
   const filteredStudents = students.filter((student) =>
-    student.student_name?.toLowerCase().includes(searchStudent.toLowerCase())
+    student.student_name?.toLowerCase().includes(searchTerm.toLowerCase())
+
   );
 
   if (loading) {
@@ -154,14 +155,15 @@ const AllStudentsPerClass = () => {
           </div>
         )}
 
-        {/* 🔍 Search Field */}
-        <div className="mb-6">
+       
+        <div className="mb-4">
           <input
             type="text"
-            placeholder="Search student by name..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={searchStudent}
-            onChange={(e) => setSearchStudent(e.target.value)} // ✅ onChange update
+            placeholder= "Search Student Name "
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+
           />
         </div>
 
@@ -171,12 +173,12 @@ const AllStudentsPerClass = () => {
               <tr>
                 <th scope="col" className="px-4 py-3 text-left">S.NO</th>
                 <th scope="col" className="px-4 py-3 text-left">Student Name</th>
-              </tr>
+             </tr>
             </thead>
             <tbody>
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="text-center py-6 text-gray-500">
+                  <td colSpan="2" className="text-center py-6 text-red-500">
                     No students found.
                   </td>
                 </tr>

@@ -403,11 +403,8 @@ export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
 
 export const fetchAttendanceData = async (date = "") => {
   try {
-    const url = date
-      ? `${BASE_URL}/a/director-dashboard/?date=${date}`
-      : `${BASE_URL}/a/director-dashboard/`;
+    const response = await axios.get(`${BASE_URL}/a/director-dashboard/?date=${date}`);
 
-    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch attendance data:", error);
@@ -436,6 +433,7 @@ export const fetchStudentById = async (student_id) => {
     throw error;
   }
 };
+
 
 // POST APIS
 
@@ -479,6 +477,17 @@ export const handleEditAdmissionForm = async (formData, id) => {
   } catch (err) {
     throw err;
   }
+};
+
+              // Update Student Detail
+export const updateStudentById = async (id, updatedData) => {
+    try {
+        const response = await axios.put(`${BASE_URL}/s/students/${id}/`, updatedData);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to update student profile:", error);
+        throw error;
+    }
 };
 
 
