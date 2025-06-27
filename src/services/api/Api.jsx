@@ -338,7 +338,7 @@ export const fetchAdmissionDetails = async () => {
 // admission details get api by id
 export const fetchAdmissionDetailsById = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/admission/${1}/`);
+    const response = await axios.get(`${BASE_URL}/d/admission/${id}/`);
     return response.data;
   } catch (err) {
     console.error("Failed to admission details:", err);

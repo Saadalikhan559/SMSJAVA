@@ -1,5 +1,3 @@
-import staffDetail from "../components/StaffData/Staffdetail";
-
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
