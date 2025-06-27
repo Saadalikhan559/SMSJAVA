@@ -5,7 +5,7 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 
 export const ClassStudent = () => {
-  const { classLevel , Year_level_id } = useParams();
+  const { classLevel, Year_level_id } = useParams();
   const [classStudent, setClassStudent] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -15,9 +15,17 @@ export const ClassStudent = () => {
   const [individualStatuses, setIndividualStatuses] = useState({});
   const [teacherID, setTeacherID] = useState(null);
 
-
-  const year_level_id  = Year_level_id;
+  const year_level_id = Year_level_id;
   const BASE_URL = constants.baseUrl;
+
+  // Function to get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("teacher_id");
@@ -26,7 +34,7 @@ export const ClassStudent = () => {
 
   const getClassStudents = async () => {
     try {
-      const data = await fetchStudentYearLevelByClass(classLevel);
+      const data = await fetchStudentYearLevelByClass(year_level_id);
       setClassStudent(data);
       // Initialize individual dates and statuses
       const initialDates = {};
@@ -73,64 +81,56 @@ export const ClassStudent = () => {
       [studentId]: status,
     }));
   };
- 
-  console.log(selectedStudents);
- const submitBulkAttendance = async () => {
-  try {
-    if (!attendanceDate) {
-      alert("Please select a date");
-      return;
+
+  const submitBulkAttendance = async () => {
+    try {
+      if (!attendanceDate) {
+        alert("Please select a date");
+        return;
+      }
+
+      if (!teacherID) return;
+      if (!year_level_id) return;
+
+      const payload = {
+        teacher_id: teacherID,
+        marked_at: attendanceDate,
+        year_level_id
+      };
+
+      if (attendanceStatus === "present") {
+        payload.P = selectedStudents;
+      } else if (attendanceStatus === "absent") {
+        payload.A = selectedStudents;
+      } else if (attendanceStatus === "leave") {
+        payload.L = selectedStudents;
+      }
+       
+      const response = await axios.post(
+        `${BASE_URL}/a/multiple-attendance/`,
+        payload 
+      );
+
+      console.log("Bulk attendance submitted successfully:", response.data);
+
+      setSelectedStudents([]);
+      setShowModal(false);
+      setAttendanceDate("");
+      setAttendanceStatus("present");
+
+      document
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+
+      alert("Attendance marked successfully!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error submitting bulk attendance:", error);
+      alert(error.response?.data?.error || "An error occurred");
     }
-
-    if (!teacherID) return;
-
-    if (!year_level_id) return;
-
-    // Prepare the base payload
-    const payload = {
-      teacher_id: teacherID,
-      marked_at: attendanceDate,
-      year_level_id
-    };
-
-    // Use the attendanceStatus from the modal to determine which field to set
-    if (attendanceStatus === "present") {
-      payload.P = selectedStudents;
-    } else if (attendanceStatus === "absent") {
-      payload.A = selectedStudents;
-    } else if (attendanceStatus === "leave") {
-      payload.L = selectedStudents;
-    }
-     
-    // Make the API call
-    const response = await axios.post(
-      `${BASE_URL}/a/multiple-attendance/`,
-      payload 
-    );
-
-    console.log("Bulk attendance submitted successfully:", response.data);
-
-    // Reset and close
-    setSelectedStudents([]);
-    setShowModal(false);
-    setAttendanceDate("");
-    setAttendanceStatus("present");
-
-    // Uncheck all checkboxes
-    document
-      .querySelectorAll('input[type="checkbox"]')
-      .forEach((checkbox) => {
-        checkbox.checked = false;
-      });
-
-    // Show success message or refresh data
-    alert("Attendance marked successfully!");
-    // window.location.reload();
-  } catch (error) {
-    console.error("Error submitting bulk attendance:", error);
-    alert(error.response?.data?.error || "An error occurred");
-  }
-};
+  };
 
   const submitIndividualAttendance = async (studentId) => {
     try {
@@ -141,14 +141,12 @@ export const ClassStudent = () => {
 
       if (!teacherID) return;
 
-      // Prepare the base payload
       const payload = {
         teacher_id: teacherID,
         marked_at: individualDates[studentId],
         year_level_id
       };
 
-      // Add status-specific fields only if they have values
       const status = individualStatuses[studentId];
       if (status === "present") {
         payload.P = [studentId];
@@ -158,7 +156,6 @@ export const ClassStudent = () => {
         payload.L = [studentId];
       }
 
-      // Make the API call
       const response = await axios.post(
         `${BASE_URL}/a/multiple-attendance/`,
         payload
@@ -169,7 +166,7 @@ export const ClassStudent = () => {
         response.data
       );
       alert("Attendance marked successfully!");
-      // window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.error("Error submitting individual attendance:", error);
       alert(error.response?.data?.error || "An error occurred");
@@ -232,6 +229,7 @@ export const ClassStudent = () => {
                           handleIndividualDateChange(student.id, e.target.value)
                         }
                         className="border border-gray-300 rounded-md px-2 py-1 w-full"
+                        max={getTodayDate()}
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -267,7 +265,6 @@ export const ClassStudent = () => {
         )}
       </div>
 
-      {/* Custom Modal for Bulk Attendance */}
       {showModal && (
         <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm  flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -285,6 +282,7 @@ export const ClassStudent = () => {
                 onChange={(e) => setAttendanceDate(e.target.value)}
                 className="border border-gray-300 rounded-md px-3 py-2 w-full"
                 required
+                max={getTodayDate()}
               />
             </div>
 
