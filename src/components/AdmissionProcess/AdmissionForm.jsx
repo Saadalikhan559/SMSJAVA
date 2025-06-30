@@ -50,6 +50,7 @@ export const AdmissionForm = () => {
         weight: "",
         blood_group: "",
         number_of_siblings: "",
+        roll_number: "",
       },
       guardian: {
         first_name: "",
@@ -169,6 +170,9 @@ export const AdmissionForm = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     const submitFormData = new FormData();
+
+      data.student.roll_number = null;
+
 
     // Append all payload data to FormData
     Object.entries(data).forEach(([key, value]) => {

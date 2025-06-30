@@ -58,6 +58,10 @@ export const SingleAdmissionDetails = () => {
                 <p>{details.student_input.mother_name}</p>
               </div>
               <div>
+                <p className="font-medium">Roll No:</p>
+                <p>{details.student_input.roll_number}</p>
+              </div>
+              <div>
                 <p className="font-medium">Date of Birth:</p>
                 <p>{details.student_input.date_of_birth}</p>
               </div>
@@ -181,6 +185,10 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">Admission Date:</p>
                 <p>{details.admission_date}</p>
+              </div>
+              <div>
+                <p className="font-medium">Enrollment No:</p>
+                <p>{details.enrollment_no}</p>
               </div>
               <div>
                 <p className="font-medium">Distance to School:</p>
