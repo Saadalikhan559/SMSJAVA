@@ -34,7 +34,7 @@ export const AdmissionForm = () => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      student: {
+student: {
         first_name: "",
         middle_name: "",
         last_name: "",
@@ -45,14 +45,14 @@ export const AdmissionForm = () => {
         date_of_birth: "",
         gender: "",
         religion: "",
-        category: "",
-        height: "",
-        weight: "",
+        category: null,
+        height: null,
+        weight: null,
         blood_group: "",
         number_of_siblings: "",
-        roll_number: "",
-        scholar_number: "",
-        contact_number: ""
+        roll_number: null,
+        scholar_number: null,
+        contact_number: "",
       },
       guardian: {
         first_name: "",
