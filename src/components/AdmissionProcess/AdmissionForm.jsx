@@ -1671,7 +1671,7 @@ export const AdmissionForm = () => {
                     message: "IFSC code cannot exceed 225 characters",
                   },
                   pattern: {
-                    value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+                    // value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
                     message: "Invalid IFSC code format",
                   },
                 })}

@@ -21,7 +21,7 @@ function OfficestaffProfile() {
   const [imagePreview, setImagePreview] = useState(null);
   const [departments, setDepartments] = useState([]);
   const [accessToken, setAccessToken] = useState("");
-  
+  const [officeStaffFullName, setOfficeStaffFullName] = useState("");
 
   const BASE_URL = constants.baseUrl;
 
@@ -36,22 +36,22 @@ function OfficestaffProfile() {
   } = useForm();
 
   useEffect(() => {
-      const tokenData = localStorage.getItem("authTokens");
-  
-      if (tokenData) {
-        try {
-          // Parse the JSON string to get the token object
-          const tokens = JSON.parse(tokenData);
-  
-          // Set the access token from the parsed object
-          if (tokens && tokens.access) {
-            setAccessToken(tokens.access);
-          }
-        } catch (error) {
-          console.error("Error parsing auth tokens:", error);
+    const tokenData = localStorage.getItem("authTokens");
+
+    if (tokenData) {
+      try {
+        // Parse the JSON string to get the token object
+        const tokens = JSON.parse(tokenData);
+
+        // Set the access token from the parsed object
+        if (tokens && tokens.access) {
+          setAccessToken(tokens.access);
         }
+      } catch (error) {
+        console.error("Error parsing auth tokens:", error);
       }
-    }, [accessToken]);
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -60,20 +60,29 @@ function OfficestaffProfile() {
       try {
         setLoading(true);
         // Fetch office staff data
-        const response = await axios.get(`${BASE_URL}/d/officestaff/OfficeStaff_my_profile/` ,
+        const response = await axios.get(
+          `${BASE_URL}/d/officestaff/OfficeStaff_my_profile/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          });
-        console.log("API Response:", response.data);
-        setProfileData(response.data);
-        
+          }
+        );
+        const data = response.data;
+        let fullName = `${data.first_name} ${data.middle_name} ${data.last_name}`;
+
+        let userName = localStorage.getItem("user_name");
+        if (userName) {
+          setOfficeStaffFullName(fullName);
+          localStorage.setItem("user_name", fullName); // No need for JSON.stringify if you're storing a string
+        }
+        setProfileData(data);
+
         // Fetch departments data
         const deptResponse = await axios.get(`${BASE_URL}/d/departments/`);
-        console.log(deptResponse.data)
+        console.log(deptResponse.data);
         setDepartments(deptResponse.data);
-        
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -86,7 +95,7 @@ function OfficestaffProfile() {
   }, [accessToken, BASE_URL]);
 
   const getDepartmentName = (deptId) => {
-    const dept = departments.find(d => d.id === deptId);
+    const dept = departments.find((d) => d.id === deptId);
     return dept ? dept.department_name : "N/A";
   };
 
@@ -156,7 +165,7 @@ function OfficestaffProfile() {
   }
 
   if (error) {
-    console.log(error)
+    console.log(error);
     return (
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
         <div className="text-center text-red-500">
@@ -280,7 +289,7 @@ function OfficestaffProfile() {
                 readOnly
               />
             </div>
-            
+
             <div className="flex flex-col gap-1">
               <label className="text-sm font-semibold text-gray-500">
                 <FontAwesomeIcon icon={faVenusMars} className="w-4 h-4 mr-2" />
