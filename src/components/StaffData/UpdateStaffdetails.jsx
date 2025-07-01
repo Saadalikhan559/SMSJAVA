@@ -86,6 +86,8 @@ const UpdateStaffDetails = () => {
     } catch (err) {
       console.error("Submit error:", err);
       setError("Failed to update staff details.");
+      console.error("Submit error:", err.response?.data || err.message);
+
     }
   };
 
