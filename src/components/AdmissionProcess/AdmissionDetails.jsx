@@ -52,7 +52,7 @@ export const AdmissionDetails = () => {
           </h2>
           <input
             type="text"
-            placeholder="Search Name..."
+            placeholder="Search Student Name..."
             className="input input-bordered w-full sm:max-w-xs focus:outline-none"
             value = {searchInput}
             onChange={(e)=>setSearchInput(e.target.value)}

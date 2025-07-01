@@ -51,6 +51,8 @@ export const AdmissionForm = () => {
         blood_group: "",
         number_of_siblings: "",
         roll_number: "",
+        scholar_number: "",
+        contact_number: ""
       },
       guardian: {
         first_name: "",
@@ -171,9 +173,9 @@ export const AdmissionForm = () => {
     setLoading(true);
     const submitFormData = new FormData();
 
-      data.student.roll_number = null;
-
-
+    data.student.roll_number = null;
+    data.student.scholar_number = null;
+    data.student.contact_number = data.guardian.phone_no; 
     // Append all payload data to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (typeof value === "object" && value !== null) {
@@ -204,7 +206,7 @@ export const AdmissionForm = () => {
       // Reset form after successful submission
       formRef.current.reset();
       setSelectedGuardianType("");
-            navigate("/addmissionDetails");
+      navigate("/addmissionDetails");
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
       alert(
