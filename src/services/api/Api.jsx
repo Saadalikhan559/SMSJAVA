@@ -475,7 +475,7 @@ export const updateStudentById = async (id, updatedData) => {
 
 export const editTeachersdetails = async (id, formdata) => {
   try {
-    const response = await axios.put(`${BASE_URL}/t/teachers/${id}/`, formdata);
+    const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formdata);
     return response.data;
   } catch (error) {
     console.error("Failed to update teacher details:", error.response?.data || error.message);

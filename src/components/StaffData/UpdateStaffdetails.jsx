@@ -80,13 +80,15 @@ const UpdateStaffDetails = () => {
         setError("Invalid staff type.");
         return;
       }
+      console.log("Navigating to:", `/staffdetail/${id}/${type}`);
       alert("Staff details updated successfully.");
-      navigate(`/staffdetail/${id}/${type}`);
+      navigate(`/staffDetail/${type}/${id}`);
     } catch (err) {
-      console.error(err);
+      console.error("Submit error:", err);
       setError("Failed to update staff details.");
     }
   };
+
 
   if (loading) return <div className="p-4 text-center">Loading staff data...</div>;
 
