@@ -13,9 +13,11 @@ const AttendanceRecord = () => {
     series: [{ name: 'Attendance %', data: [] }],
     options: {
       chart: { type: 'bar', height: 350 },
-      xaxis: { categories: [] },
+      xaxis: { categories: [],
+        // title: { text: 'Classes' },
+       },
       yaxis: {
-        title: { text: '' },
+        // title: { text: 'Attendance %' },
         labels: { formatter: (val) => ` ${val}% ` }
       },
       tooltip: {
@@ -92,8 +94,8 @@ const AttendanceRecord = () => {
           options={chartData.options}
           series={chartData.series}
           type="bar"
-          height={450}
-          width={1000}
+          height={500}
+          width={1200}
         />
       </div>
     </>
