@@ -61,7 +61,6 @@ const UpdateStaffDetails = () => {
   useEffect(() => {
     fetchStaff();
     console.log("Fetching for id:", id, "type:", type);
-
   }, [id, type]);
 
   const handleChange = (e) => {
@@ -71,19 +70,28 @@ const UpdateStaffDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      ...formData,
+      pan_no: formData.pan_no.trim() === "" ? null : formData.pan_no,
+    };
+
     try {
       if (type === "teacher") {
-        await editTeachersdetails(id, formData);
+        console.log(payload);
+        await editTeachersdetails(id, payload);
       } else if (type === "office") {
-        await editOfficeStaffdetails(id, formData);
+        await editOfficeStaffdetails(id, payload);
       } else {
         setError("Invalid staff type.");
         return;
       }
+
+      console.log("Navigating to:", `/staffdetail/${id}/${type}`);
       alert("Staff details updated successfully.");
-      navigate(`/staffdetail/${id}/${type}`);
+      navigate(`/staffDetail/${type}/${id}`);
     } catch (err) {
-      console.error(err);
+      console.error("Submit error:", err);
       setError("Failed to update staff details.");
     }
   };
@@ -122,7 +130,9 @@ const UpdateStaffDetails = () => {
                 name={field}
                 value={formData[field]}
                 onChange={handleChange}
-                placeholder={field.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                placeholder={field
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
                 className="input input-bordered focus:outline-none"
               />
             ))}
