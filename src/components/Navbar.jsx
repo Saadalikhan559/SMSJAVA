@@ -81,12 +81,12 @@ export const Navbar = () => {
               showSearch ? "flex" : "hidden"
             } md:flex order-last md:order-none w-full md:w-auto bg-base-100 px-4 py-2 md:px-0 md:py-0`}
           >
-            <input
+            {/* <input
               type="text"
               placeholder="Search..."
               className="input input-bordered w-full focus:outline-none"
               autoFocus={showSearch}
-            />
+            /> */}
             <button
               className="btn btn-ghost md:hidden ml-2"
               onClick={() => setShowSearch(false)}
@@ -114,7 +114,7 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <>
               {/* Search icon - visible only on mobile */}
-              <button
+              {/* <button
                 className="btn btn-ghost btn-circle md:hidden"
                 onClick={() => setShowSearch(true)}
               >
@@ -132,7 +132,7 @@ export const Navbar = () => {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-              </button>
+              </button> */}
 
               {/* User avatar dropdown */}
               <div className="dropdown dropdown-end">
@@ -154,11 +154,11 @@ export const Navbar = () => {
                   tabIndex={0}
                   className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow"
                 >
-                  <li className="md:hidden">
+                  {/* <li className="md:hidden">
                     <a onClick={() => setShowSearch(true)}>
                       <i className="fa-solid fa-search"></i> Search
                     </a>
-                  </li>
+                  </li> */}
 
                   <li>
                     <Link to={getProfileRoute(userRole)}>

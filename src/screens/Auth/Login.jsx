@@ -53,12 +53,18 @@ export const Login = () => {
 
   if (userRole === constants.roles.director) {
     navigate(allRouterLink.directorDashboard);
-  } else if (userRole === constants.roles.officeStaff) {
+  }
+   else if (userRole === constants.roles.officeStaff) {
     navigate(allRouterLink.officeStaffDashboard);
-  } else if (userRole === constants.roles.guardian || userRole === constants.roles.student) {
+  }
+   else if (userRole === constants.roles.guardian) {
     navigate(allRouterLink.guardianDashboard);
-  } else if (userRole === constants.roles.teacher) {
+  }
+   else if (userRole === constants.roles.teacher) {
     navigate(allRouterLink.teacherDashboard);
+  }
+   else if (userRole === constants.roles.student) {
+    navigate(allRouterLink.studentDashboard);
   }
 
   // Reset loginTriggered after navigation

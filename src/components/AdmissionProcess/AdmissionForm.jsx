@@ -34,7 +34,7 @@ export const AdmissionForm = () => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      student: {
+student: {
         first_name: "",
         middle_name: "",
         last_name: "",
@@ -45,11 +45,14 @@ export const AdmissionForm = () => {
         date_of_birth: "",
         gender: "",
         religion: "",
-        category: "",
-        height: "",
-        weight: "",
+        category: null,
+        height: null,
+        weight: null,
         blood_group: "",
         number_of_siblings: "",
+        roll_number: null,
+        scholar_number: null,
+        contact_number: "",
       },
       guardian: {
         first_name: "",
@@ -170,6 +173,9 @@ export const AdmissionForm = () => {
     setLoading(true);
     const submitFormData = new FormData();
 
+    data.student.roll_number = null;
+    data.student.scholar_number = null;
+    data.student.contact_number = data.guardian.phone_no; 
     // Append all payload data to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (typeof value === "object" && value !== null) {
@@ -200,7 +206,7 @@ export const AdmissionForm = () => {
       // Reset form after successful submission
       formRef.current.reset();
       setSelectedGuardianType("");
-            navigate("/addmissionDetails");
+      navigate("/addmissionDetails");
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
       alert(
