@@ -354,12 +354,14 @@ export const fetchStudents1 = async (classId) => {
   }
 };
 
-export const fetchyearLevelData = async () => {
+
+export const fetchyearLevelData = async (classId) => {
+
   try {
-    const response = await axios.get(`${BASE_URL}/d/year-level-fee/`);
+    const response = await axios.get(`${BASE_URL}/d/year-level-fee/${classId}/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to fetch roles:", err);
+    console.log("Failed to load year level data. Please try again." + err);
     throw err;
   }
 };

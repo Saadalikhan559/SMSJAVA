@@ -15,6 +15,57 @@ const GuardianAttendanceRecord = () => {
     setGuardianID(token);
   }, []);
 
+  // // Static payload data
+  // const attendanceData = {
+  //   guardian_id: 1,
+  //   filter_month: 6,
+  //   filter_year: 2025,
+  //   total_children: 2,
+  //   children: [
+  //     {
+  //       student_name: "Noore Nabi",
+  //       class_name: "Nursery",
+  //       monthly_summary: {
+  //         month: 6,
+  //         present: 13,
+  //         absent: 1,
+  //         leave: 1,
+  //         total_days: 18,
+  //         percentage: "72.2%",
+  //       },
+  //       yearly_summary: {
+  //         year: 2025,
+  //         present: 20,
+  //         absent: 3,
+  //         leave: 1,
+  //         total_days: 27,
+  //         percentage: "74.1%",
+  //       },
+  //     },
+  //     {
+  //       student_name: "Shad Khan",
+  //       class_name: "Nursery",
+  //       monthly_summary: {
+  //         month: 6,
+  //         present: 3,
+  //         absent: 8,
+  //         leave: 1,
+  //         total_days: 15,
+  //         percentage: "20.0%",
+  //       },
+  //       yearly_summary: {
+  //         year: 2025,
+  //         present: 6,
+  //         absent: 10,
+  //         leave: 1,
+  //         total_days: 20,
+  //         percentage: "30.0%",
+  //       },
+  //     },
+  //   ],
+  // };
+
+
   const getGuardianAttendance = async () => {
     if (!guardianID) return;
 
