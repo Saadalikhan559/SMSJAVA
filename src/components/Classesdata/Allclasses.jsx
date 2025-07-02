@@ -11,7 +11,7 @@ const Allclasses = () => {
         setLoading(true);
         try {
             const data = await fetchYearLevels();
-            console.log("Fetched year levels:", data); // Debugging
+            console.log("Fetched year levels:", data);
             setYearLevels(data);
         } catch (err) {
             console.error("Error fetching year levels:", err);

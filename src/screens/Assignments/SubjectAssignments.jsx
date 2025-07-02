@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   fetchPeriods,
   fetchSubjects,
@@ -9,72 +9,41 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
+import { AuthContext } from "../../context/AuthContext";
+import { useForm } from "react-hook-form";
 
 export const SubjectAssignments = () => {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm();
+
   const navigate = useNavigate();
+  const { authTokens } = useContext(AuthContext);
+
   const [teachers, setTeachers] = useState([]);
   const [yearLevel, setYearLevel] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [periods, setPeriods] = useState([]);
+
+  const [subject_ids, setSubjectIds] = useState([]);
+  const [period_ids, setPeriodIds] = useState([]);
+
   const [isSubjectOpen, setIsSubjectOpen] = useState(false);
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
   const subjectRef = useRef(null);
   const periodRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    yearlevel_id: "",
-    teacher_id: "",
-    subject_ids: [],
-    period_ids: [],
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const getTeachers = async () => {
-    try {
-      const allTeachers = await fetchTeachers();
-      setTeachers(allTeachers);
-    } catch {
-      console.log("Failed to load teachers.");
-    }
-  };
-
-  const getYearLevels = async () => {
-    try {
-      const levels = await fetchYearLevels();
-      setYearLevel(levels);
-    } catch {
-      console.log("Failed to load year levels.");
-    }
-  };
-
-  const getPeriods = async () => {
-    try {
-      const periodList = await fetchPeriods();
-      setPeriods(periodList);
-    } catch {
-      console.log("Failed to load periods.");
-    }
-  };
-
-  const getSubjects = async () => {
-    try {
-      const subjectList = await fetchSubjects();
-      setSubjects(subjectList);
-    } catch {
-      console.log("Failed to load subjects.");
-    }
-  };
 
   useEffect(() => {
-    getTeachers();
-    getPeriods();
-    getYearLevels();
-    getSubjects();
+    fetchTeachers().then(setTeachers);
+    fetchYearLevels().then(setYearLevel);
+    fetchSubjects().then(setSubjects);
+    fetchPeriods().then(setPeriods);
   }, []);
 
   useEffect(() => {
@@ -92,53 +61,77 @@ export const SubjectAssignments = () => {
   }, []);
 
   const handleMultiSelect = (name, id) => {
+    const setState = name === "subject_ids" ? setSubjectIds : setPeriodIds;
+    const current = name === "subject_ids" ? [...subject_ids] : [...period_ids];
+
     const numericId = Number(id);
-    setFormData((prev) => {
-      const currentValues = [...prev[name]];
-      const index = currentValues.indexOf(numericId);
-
-      if (index > -1) {
-        currentValues.splice(index, 1);
-      } else {
-        currentValues.push(numericId);
-      }
-
-      return { ...prev, [name]: currentValues };
-    });
+    const index = current.indexOf(numericId);
+    if (index > -1) {
+      current.splice(index, 1);
+    } else {
+      current.push(numericId);
+    }
+    setState(current);
+    clearErrors(name);
+    clearErrors("api");
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-
-  // Debug: Log the data being sent
-  console.log("Sending:", {
-    teacher_id: formData.teacher_id,
-    yearlevel_id: formData.yearlevel_id,
-    subject_ids: formData.subject_ids,
-    period_ids: formData.period_ids,
-  });
-
-  try {
-    const response = await axios.post(
-      `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
-      formData, // Send as JSON
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (response.status === 200 || response.status === 201) {
-      alert("Subjects assigned successfully!");
+  const handleSubmitForm = async (data) => {
+    if (subject_ids.length === 0) {
+      setError("subject_ids", { message: "Please select at least one subject." });
+      return;
     }
-  } catch (error) {
-    alert(error.response?.data?.error || "Failed to assign subjects.");
-  } finally {
-    setLoading(false);
-  }
-};
+
+    if (period_ids.length === 0) {
+      setError("period_ids", { message: "Please select at least one period." });
+      return;
+    }
+
+    const finalPayload = {
+      ...data,
+      subject_ids,
+      period_ids,
+    };
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
+        finalPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authTokens.access}`,
+          },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        alert("Subjects assigned successfully!");
+      }
+    } catch (error) {
+      const res = error.response?.data;
+
+      if (res?.error) {
+        setError("api", { message: res.error });
+      } else if (res?.detail) {
+        setError("api", { message: res.detail });
+      } else if (res && typeof res === "object") {
+        Object.keys(res).forEach((key) => {
+          const val = res[key];
+          if (Array.isArray(val)) {
+            setError(key, { message: val[0] });
+          } else if (typeof val === "string") {
+            setError(key, { message: val });
+          }
+        });
+      } else {
+        setError("api", { message: "Something went wrong. Try again." });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNavigate = () => {
     navigate(allRouterLink.allTeacherAssignment);
@@ -153,24 +146,27 @@ const handleSubmit = async (e) => {
         Teacher Assignments <span>&rarr;</span>
       </button>
 
-      <form onSubmit={handleSubmit}>
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Assign Subjects <i className="fa-solid fa-book ml-2"></i>
+      <form onSubmit={handleSubmit(handleSubmitForm)}>
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Assign Subjects <i className="fa-solid fa-book ml-2" />
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Teacher Select */}
+        {errors.api && (
+          <p className="text-red-600 text-center mb-4 font-medium">{errors.api.message}</p>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">
-                Teacher <span className="text-error">*</span>
-              </span>
+              <span className="label-text">Teacher <span className="text-error">*</span></span>
             </label>
             <select
-              name="teacher_id"
-              className="select select-bordered w-full"
-              onChange={handleChange}
-              value={formData.teacher_id}
+              {...register("teacher_id", { required: "Teacher is required" })}
+              className="select select-bordered w-full focus:outline-none"
+              onChange={(e) => {
+                clearErrors(["teacher_id", "api"]);
+                register("teacher_id").onChange(e);
+              }}
             >
               <option value="">Select Teacher</option>
               {teachers.map((t) => (
@@ -179,60 +175,50 @@ const handleSubmit = async (e) => {
                 </option>
               ))}
             </select>
+            {errors.teacher_id && <p className="text-red-500">{errors.teacher_id.message}</p>}
           </div>
 
-          {/* Year Level Select */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text">
-                Year Level <span className="text-error">*</span>
-              </span>
+              <span className="label-text">Year Level <span className="text-error">*</span></span>
             </label>
             <select
-              name="yearlevel_id"
-              className="select select-bordered w-full"
-              required
-              onChange={handleChange}
-              value={formData.yearlevel_id}
+              {...register("yearlevel_id", { required: "Year level is required" })}
+              className="select select-bordered w-full focus:outline-none"
+              onChange={(e) => {
+                clearErrors(["yearlevel_id", "api"]);
+                register("yearlevel_id").onChange(e);
+              }}
             >
               <option value="">Select Year Level</option>
               {yearLevel.map((y) => (
-                <option key={y.id} value={y.id}>
-                  {y.level_name}
-                </option>
+                <option key={y.id} value={y.id}>{y.level_name}</option>
               ))}
             </select>
+            {errors.yearlevel_id && <p className="text-red-500">{errors.yearlevel_id.message}</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Subject Multiselect */}
           <div className="form-control" ref={subjectRef}>
             <label className="label">
-              <span className="label-text">
-                Subjects <span className="text-error">*</span>
-              </span>
+              <span className="label-text">Subjects <span className="text-error">*</span></span>
             </label>
             <div className="relative">
               <div
-                className="select select-bordered w-full cursor-pointer"
+                className="select select-bordered w-full cursor-pointer focus:outline-none"
                 onClick={() => setIsSubjectOpen(!isSubjectOpen)}
               >
-                {formData.subject_ids.length > 0
-                  ? `${formData.subject_ids.length} selected`
-                  : "Select Subjects"}
+                {subject_ids.length > 0 ? `${subject_ids.length} selected` : "Select Subjects"}
               </div>
               {isSubjectOpen && (
                 <div className="absolute z-10 w-full bg-white border rounded-md shadow max-h-60 overflow-y-auto">
                   {subjects.map((s) => (
-                    <label
-                      key={s.id}
-                      className="flex items-center p-3 hover:bg-gray-100"
-                    >
+                    <label key={s.id} className="flex items-center p-3 hover:bg-gray-100">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-primary mr-2"
-                        checked={formData.subject_ids.includes(s.id)}
+                        checked={subject_ids.includes(s.id)}
                         onChange={() => handleMultiSelect("subject_ids", s.id)}
                       />
                       {s.subject_name} ({s.department})
@@ -241,35 +227,28 @@ const handleSubmit = async (e) => {
                 </div>
               )}
             </div>
+            {errors.subject_ids && <p className="text-red-500 mt-1">{errors.subject_ids.message}</p>}
           </div>
 
-          {/* Period Multiselect */}
           <div className="form-control" ref={periodRef}>
             <label className="label">
-              <span className="label-text">
-                Periods <span className="text-error">*</span>
-              </span>
+              <span className="label-text">Periods <span className="text-error">*</span></span>
             </label>
             <div className="relative">
               <div
-                className="select select-bordered w-full cursor-pointer"
+                className="select select-bordered w-full cursor-pointer focus:outline-none"
                 onClick={() => setIsPeriodOpen(!isPeriodOpen)}
               >
-                {formData.period_ids.length > 0
-                  ? `${formData.period_ids.length} selected`
-                  : "Select Periods"}
+                {period_ids.length > 0 ? `${period_ids.length} selected` : "Select Periods"}
               </div>
               {isPeriodOpen && (
                 <div className="absolute z-10 w-full bg-white border rounded-md shadow max-h-60 overflow-y-auto">
                   {periods.map((p) => (
-                    <label
-                      key={p.id}
-                      className="flex items-center p-3 hover:bg-gray-100"
-                    >
+                    <label key={p.id} className="flex items-center p-3 hover:bg-gray-100">
                       <input
                         type="checkbox"
                         className="checkbox checkbox-primary mr-2"
-                        checked={formData.period_ids.includes(p.id)}
+                        checked={period_ids.includes(p.id)}
                         onChange={() => handleMultiSelect("period_ids", p.id)}
                       />
                       {p.name} | {p.start_period_time} - {p.end_period_time}
@@ -278,10 +257,10 @@ const handleSubmit = async (e) => {
                 </div>
               )}
             </div>
+            {errors.period_ids && <p className="text-red-500 mt-1">{errors.period_ids.message}</p>}
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-center mt-10">
           <button type="submit" className="btn btn-primary w-52">
             {loading ? (

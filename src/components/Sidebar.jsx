@@ -53,11 +53,10 @@ export const Sidebar = () => {
                           dashboardPath = allRouterLink.directorDashboard;
                         } else if (role === constants.roles.officeStaff) {
                           dashboardPath = allRouterLink.officeStaffDashboard;
-                        } else if (
-                          role === constants.roles.guardian ||
-                          role === constants.roles.student
-                        ) {
+                        } else if (role === constants.roles.guardian) {
                           dashboardPath = allRouterLink.guardianDashboard;
+                        } else if (role === constants.roles.student) {
+                          dashboardPath = allRouterLink.studentDashboard;
                         } else if (role === constants.roles.teacher) {
                           dashboardPath = allRouterLink.teacherDashboard;
                         }
@@ -69,32 +68,30 @@ export const Sidebar = () => {
                     </Link>
                   </li>
                   <div>
-               
-                <ul className="space-y-1">
-                  <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(e, allRouterLink.allClasses)
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-graduation-cap"></i>{" "}
-                      All Classes
-                    </Link>
-                  </li>
-                   <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(e, allRouterLink.allStaffMembers)
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-clipboard-user"></i>{" "}
-                      Staff Members
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+                    {(role === constants.roles.director 
+                    || role === constants.roles.officeStaff) 
+                    && (
+                      <ul className="space-y-1">
+                        <li>
+                          <Link
+                            onClick={(e) => handleNavigation(e, allRouterLink.allClasses)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-graduation-cap"></i> All Classes
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            onClick={(e) => handleNavigation(e, allRouterLink.allStaffMembers)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                           <i className="fa-solid fa-id-card-clip"></i>Staff Members
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
+
+                  </div>
                 </ul>
               </div>
             )}

@@ -34,10 +34,13 @@ import { HomeScreen } from "../screens/HomeScreen";
 import { allRouterLink } from "./AllRouterLinks";
 import Allclasses from "../components/Classesdata/Allclasses";
 import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
-import Studentdetails from "../global/Studentdetails";
+import StudentDetails from "../components/Classesdata/StudentDetails";
+import UpdateStudentDetail from "../components/Classesdata/UpdateStudentDetail";
+import FeeDashboard from "../components/AdmissionProcess/FeeDashboard";
 import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
-
+import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
+import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
 
 export const routes = [
   {
@@ -199,7 +202,13 @@ export const routes = [
     path: allRouterLink.guardianDashboard,
     element: <GuardianDashboard />,
     protected: true,
-    allowedRoles: [constants.roles.guardian, constants.roles.student],
+    allowedRoles: [constants.roles.guardian],
+  },
+  {
+    path: allRouterLink.studentDashboard,
+    element: <StudentDashboard />,
+    protected: true,
+    allowedRoles: [constants.roles.student],
   },
   {
     path: allRouterLink.officeStaffDashboard,
@@ -210,7 +219,7 @@ export const routes = [
   {
     path: allRouterLink.directorDashboard,
     element: <DirectorDashboard />,
-    protected: false,
+    protected: true,
     allowedRoles: [constants.roles.director],
   },
   // Attendance Record
@@ -223,13 +232,20 @@ export const routes = [
   {
     path: allRouterLink.feeSummary,
     element: <FeeSummaryTable />,
-    protected: false,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.feeDashboard,
+    element: <FeeDashboard />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
-  },
+  }
   ,
   {
     path: allRouterLink.allClasses,
@@ -238,25 +254,35 @@ export const routes = [
   },
   {
     path: allRouterLink.allStudentsperClass,
-    element: <Allstudentsperclass />, // 
+    element: <Allstudentsperclass />,
     protected: false,
   },
-     {
+  {
     path: allRouterLink.studentDetails,
-    element: <Studentdetails />,
+    element: <StudentDetails />,
     protected: false,
   },
-       {
+  {
+    path: allRouterLink.updateStudentdetail,
+    element: <UpdateStudentDetail />,
+    protected: false,
+  },
+  {
     path: allRouterLink.allStaffMembers,
     element: <AllStaff />,
     protected: false,
   },
-         {
+  {
     path: allRouterLink.staffDetail,
     element: <Staffdetail />,
     protected: false,
   },
-  // include all routes before this please 
+  {
+    path: allRouterLink.updateStaffDetails,
+    element: <UpdateStaffdetails />,
+    protected: false,
+  },
+  // include all routes before this please
 
   {
     path: allRouterLink.unAuthorized,
@@ -269,4 +295,3 @@ export const routes = [
     protected: false,
   },
 ];
-

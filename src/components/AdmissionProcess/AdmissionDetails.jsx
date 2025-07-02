@@ -6,17 +6,22 @@ import { allRouterLink } from "../../router/AllRouterLinks";
 export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
 
   const getAdmissionDetails = async () => {
     try {
       const data = await fetchAdmissionDetails();
+      console.log("data", data);
+
       setDetails(data);
+      setStudentFirstName(data.student_input.first_name);
       setLoading(false);
     } catch (error) {
       console.log("failed to fetch teacher dashboard data", error);
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     getAdmissionDetails();
@@ -30,14 +35,31 @@ export const AdmissionDetails = () => {
     return <div className="p-4 text-center">Failed to load data</div>;
   }
 
+    const filterData =  details.filter((detail) =>
+    detail.student_input.first_name
+      .toLowerCase()
+      .includes(searchInput.toLowerCase())
+  );
+
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          Admission Details
-        </h2>
+        {/* Search Input */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-2 gap-4">
+          <h2 className="text-3xl font-semibold text-gray-800">
+            Admission Details
+          </h2>
+          <input
+            type="text"
+            placeholder="Search Student Name..."
+            className="input input-bordered w-full sm:max-w-xs focus:outline-none"
+            value = {searchInput}
+            onChange={(e)=>setSearchInput(e.target.value)}
+          />
+        </div>
 
-        {details.length === 0 ? (
+        {filterData.length === 0 ? (
           <p className="text-gray-600">No admission records found.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -91,7 +113,7 @@ export const AdmissionDetails = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {details.map((detail) => (
+                    {filterData.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50">
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
                           {detail.student_input.first_name}{" "}
