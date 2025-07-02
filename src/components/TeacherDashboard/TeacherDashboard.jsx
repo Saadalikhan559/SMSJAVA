@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom'
-
-
 import React, { useContext, useEffect, useState } from "react";
 import { fetchTeacherDashboard } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";

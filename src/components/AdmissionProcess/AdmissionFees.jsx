@@ -1,10 +1,10 @@
-import { useState,  useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { constants } from "../../global/constants";
 import PaymentStatusDialog from "./PaymentStatusDialog";
 import PaymentStatusDialogOffline from "./PaymentStatusDialogOffline";
-import { fetchStudents1 , fetchyearLevelData } from "../../services/api/Api";
+import { fetchStudents1, fetchyearLevelData } from "../../services/api/Api";
 
 export const AdmissionFees = () => {
   const [students, setStudents] = useState([]);
@@ -30,35 +30,40 @@ export const AdmissionFees = () => {
   };
 
   const getStudents = async (classId) => {
-      console.log(classId)
-      try {
-        const Students = await fetchStudents1(classId);
-        setStudents(Students);
-      } catch (err) {
-        console.log("Failed to load school years. Please try again." + err);
-      }
-    };
-    
-  const getyearLevelData = async () => {
-      try {
-        const YearLevelData = await fetchyearLevelData();
-        setyearLevelData(YearLevelData);
-      } catch (err) {
-        console.log("Failed to load school years. Please try again." + err);
-      }
-    };
+    console.log(classId);
+    try {
+      const Students = await fetchStudents1(classId);
+      setStudents(Students);
+    } catch (err) {
+      console.log("Failed to load school years. Please try again." + err);
+    }
+  };
 
+  const getyearLevelData = async (classId) => {
+  try {
+    const YearLevelData = await fetchyearLevelData(classId);
+    setyearLevelData([YearLevelData]); // Wrap in array to maintain consistent structure
+    
+    // Automatically set the year level in the form
+    reset({
+      ...watch(), // Keep existing form values
+      year_level: YearLevelData.year_level // Set the new year level
+    });
+  } catch (err) {
+    setyearLevelData([]);
+    console.log("Failed to load school years. Please try again." + err);
+  }
+};
 
   useEffect(() => {
-     getyearLevelData();
-     getClasses();
-    }, []);
+    getClasses();
+  }, []);
 
-     // Handle class selection
+  // Handle class selection
   const handleClassChange = (e) => {
     const classId = e.target.value;
     setSelectedClassId(classId);
-    console.log(classId)
+    console.log(classId);
     // Reset form when class changes
     reset({
       student_id: "",
@@ -76,11 +81,11 @@ export const AdmissionFees = () => {
   useEffect(() => {
     if (selectedClassId) {
       getStudents(selectedClassId);
+      getyearLevelData(selectedClassId);
     } else {
       setStudents([]);
     }
   }, [selectedClassId]);
-  
 
   const role = localStorage.getItem("userRole");
 
@@ -117,20 +122,11 @@ export const AdmissionFees = () => {
     },
   });
 
-  // Watch the year_level field to react to changes
-  const selectedYearLevel = watch("year_level");
-
-  // Clear selected fees when year level changes
-  useEffect(() => {
-    setSelectedFeeIds([]);
-  }, [selectedYearLevel]);
-
   // Find the selected fees data
-  const selectedFees = yearLevelData.find(
-    (level) => level.year_level === selectedYearLevel
-  );
+  // Find the selected fees data - simplified since we know there's only one item
+  const selectedFees = yearLevelData.length > 0 ? yearLevelData[0] : null;
+
   console.log(yearLevelData);
-  
 
   const months = [
     "January",
@@ -149,7 +145,7 @@ export const AdmissionFees = () => {
 
   // Updated payment modes based on role
   const paymentModes =
-    role === constants.roles.officeStaff
+    role === constants.roles.officeStaff || constants.roles.director
       ? ["Cash", "Cheque", "Online"]
       : ["Online"];
 
@@ -158,7 +154,7 @@ export const AdmissionFees = () => {
   useEffect(() => {
     if (selectedStudentId) {
       const student = students.find(
-        (s) => s.id === parseInt(selectedStudentId)
+        (s) => s.student_id === parseInt(selectedStudentId)
       );
       setSelectedStudent(student);
     } else {
@@ -245,9 +241,7 @@ export const AdmissionFees = () => {
           }
         },
         prefill: {
-          name: selectedStudent
-            ? `${selectedStudent.student_name}`
-            : "",
+          name: selectedStudent ? `${selectedStudent.student_name}` : "",
           email: selectedStudent?.email || "",
         },
         notes: {
@@ -295,10 +289,7 @@ export const AdmissionFees = () => {
         await displayRazorpay(payload); // Fee-record API will be called *inside* Razorpay handler
       } else if (payment_mode === "Cash" || payment_mode === "Cheque") {
         // 💸 For Cash or Check, call the fee-record endpoint directly
-        const response = await axios.post(
-          `${BASE_URL}/d/fee-record/`,
-          payload
-        );
+        const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload);
         console.log("Response:", response.data);
         setPaymentStatus(response.data);
         setShowPaymentDialog1(true);
@@ -333,8 +324,7 @@ export const AdmissionFees = () => {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-         
-           {/* Class Selection */}
+          {/* Class Selection */}
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-1">
@@ -355,7 +345,7 @@ export const AdmissionFees = () => {
               ))}
             </select>
           </div>
-          
+
           {/* Student Selection */}
           <div className="form-control">
             <label className="label">
@@ -376,7 +366,7 @@ export const AdmissionFees = () => {
             >
               <option value="">Select Student</option>
               {students?.map((student) => (
-                <option key={student.id} value={student.id}>
+                <option key={student.student_id} value={student.student_id}>
                   {student.student_name} - {student.student_email}
                 </option>
               ))}
@@ -421,29 +411,23 @@ export const AdmissionFees = () => {
               </label>
             )}
           </div>
-          <div className="form-control">
+          {/* <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-2">
                 <i className="fa-solid fa-graduation-cap text-sm"></i>
                 Year Level <span className="text-error">*</span>
               </span>
             </label>
-            <select
-              className={`select w-full focus:outline-none ${
-                errors.year_level ? "select-error" : "select-bordered"
-              }`}
+            <input
+              type="text"
+              className="input input-bordered w-full focus:outline-none"
               {...register("year_level", {
-                required: "Year level selection is required",
+                required: "Year level is required",
               })}
-              disabled={!yearLevelData}
-            >
-              <option value="">Select Year Level</option>
-              {yearLevelData.map((level, index) => (
-                <option key={index} value={level.year_level}>
-                  {level.year_level}
-                </option>
-              ))}
-            </select>
+              readOnly
+              value={watch("year_level") || ""}
+              placeholder="Year level will auto-fill"
+            />
             {errors.year_level && (
               <label className="label">
                 <span className="label-text-alt text-error">
@@ -451,11 +435,11 @@ export const AdmissionFees = () => {
                 </span>
               </label>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Updated Year Level Fees Display with checkboxes */}
-        {selectedFees && (
+        {selectedFees && selectedFees.fees && (
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">
@@ -590,7 +574,9 @@ export const AdmissionFees = () => {
               className={`input w-full focus:outline-none ${
                 errors.signature ? "input-error" : "input-bordered"
               }`}
-              {...register("received_by", { required: "Signature is required" })}
+              {...register("received_by", {
+                required: "Signature is required",
+              })}
               placeholder="Enter your name as signature"
             />
             {errors.signature && (

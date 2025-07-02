@@ -94,8 +94,8 @@ const AttendanceRecord = () => {
           options={chartData.options}
           series={chartData.series}
           type="bar"
-          height={450}
-          width={1000}
+          height={500}
+          width={1200}
         />
       </div>
     </>

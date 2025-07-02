@@ -59,6 +59,7 @@ const DirectorProfile = () => {
             },
           }
         );
+
         const data = response.data;
         let fullName = `${data.first_name} ${data.middle_name} ${data.last_name}`;
 
@@ -167,7 +168,11 @@ const DirectorProfile = () => {
           <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
             {profileData.user_profile ? (
               <img
-                src={`${BASE_URL}${profileData.user_profile}`}
+                src={
+                  profileData.user_profile
+                    ? `${BASE_URL}${profileData.user_profile}`
+                    : "https://images.unsplash.com/photo-1531123897727-8f129e1688ce"
+                }
                 alt="Profile"
                 className="h-full w-full object-cover"
               />
@@ -298,6 +303,7 @@ const DirectorProfile = () => {
         </div>
 
         {/* Buttons section */}
+
         <div className="flex justify-end gap-4 mt-8">
           <button
             className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -311,7 +317,7 @@ const DirectorProfile = () => {
           >
             <span className="mr-2 text-lg leading-none">↑</span> Update
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Dialog Box */}
