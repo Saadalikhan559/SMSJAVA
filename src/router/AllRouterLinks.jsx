@@ -27,6 +27,7 @@ export const allRouterLink = {
     feeDashboard: '/feeDashboard',
     attendanceRecord:'/attendanceRecord',
     fullAttendance:'/fullAttendance/:className',
+    directorMarkHolidays:'/directorMarkHolidays',
     officeStaffDashboard: '/officeStaffDashboard',
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
