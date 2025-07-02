@@ -7,6 +7,7 @@ export const allRouterLink = {
     resetPassword: "/resetPassword",
     admissionForm: "/admissionForm",
     admissionFees: "/admissionFees/",
+    studentFeeCard: "/studentFeeCard",
     documentUpload: "/documentUpload",
     viewDocuments: "/viewDocuments",
     subjectAssignment: "/subjectAssignment",
