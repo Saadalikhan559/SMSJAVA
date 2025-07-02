@@ -37,6 +37,7 @@ import Allstudentsperclass from "../components/Classesdata/Allstudentsperclass";
 import Studentdetails from "../global/Studentdetails";
 import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
+import DirectorMarkHolidays from "../components/DirectorDashboard/DirectorMarkHolidays";
 
 
 export const routes = [
@@ -155,6 +156,12 @@ export const routes = [
   {
     path: allRouterLink.directorProfile,
     element: <DirectorProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.directorMarkHolidays,
+    element: <DirectorMarkHolidays />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },

@@ -186,6 +186,16 @@ export const Sidebar = () => {
                       <i className="fa-solid fa-tasks w-5"></i> Assign Subjects
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.directorMarkHolidays)
+                      }
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                    >
+                      <i className="fa-solid fa-tasks w-5"></i> Assign Holidays
+                    </Link>
+                  </li>
                 </ul>
               </div>
             )}
