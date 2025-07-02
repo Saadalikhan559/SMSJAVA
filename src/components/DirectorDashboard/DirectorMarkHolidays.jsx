@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { constants } from "../../global/constants";
 const DirectorMarkHolidays = () => {
+
+  const BASE_URL = constants.baseUrl;
+
   const [formData, setFormData] = useState({
     title: "",
     start_date: "",
@@ -41,7 +44,7 @@ const DirectorMarkHolidays = () => {
 
       // Send request using axios
       const response = await axios.post(
-        "https://8c1zb9f3-8000.inc1.devtunnels.ms/a/attendance/mark-holidays/",
+        `${BASE_URL}/a/attendance/mark-holidays/`,
         payload,
         {
           headers: {
