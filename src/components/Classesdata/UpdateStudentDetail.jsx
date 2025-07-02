@@ -15,6 +15,8 @@ const UpdateStudentDetail = () => {
         const fetchData = async () => {
             try {
                 const data = await fetchStudentById(id);
+                console.log(data);
+                
                 setStudent(data);
             } catch (err) {
                 setError("Failed to load student data.");
