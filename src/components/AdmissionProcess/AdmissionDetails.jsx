@@ -11,8 +11,6 @@ export const AdmissionDetails = () => {
   const getAdmissionDetails = async () => {
     try {
       const data = await fetchAdmissionDetails();
-      console.log("data", data);
-
       setDetails(data);
       setStudentFirstName(data.student_input.first_name);
       setLoading(false);

@@ -41,6 +41,7 @@ import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
 import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
+import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
 
 export const routes = [
   {
@@ -107,6 +108,18 @@ export const routes = [
       constants.roles.officeStaff,
       constants.roles.student,
       constants.roles.teacher,
+      constants.roles.guardian,
+    ],
+  },
+  {
+    path: allRouterLink.studentFeeCard,
+    element: <StudentFeeCard />,
+    protected: true,
+    allowedRoles: [
+      // constants.roles.director,
+      // constants.roles.officeStaff,
+      constants.roles.student,
+      // constants.roles.teacher,
       constants.roles.guardian,
     ],
   },
@@ -245,8 +258,7 @@ export const routes = [
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
-  }
-  ,
+  },
   {
     path: allRouterLink.allClasses,
     element: <Allclasses />,
