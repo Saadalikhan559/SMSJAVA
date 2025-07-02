@@ -1,18 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { fetchGuardianDashboard } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
+import { fetchStudentDashboard } from "../../services/api/Api";
+import { Link } from 'react-router-dom';
 
-
-export const GuardianDashboard = () => {
+export const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
-    const [loading, setLoading] = useState(true);
-  // const {guardianID} = useContext(AuthContext);
-  const {userID} = useContext(AuthContext);
-  
+  const [loading, setLoading] = useState(true);
+  const { userID } = useContext(AuthContext);
 
   const getGuardianDashboardData = async () => {
     try {
-      const data = await fetchGuardianDashboard(userID);
+      const data = await fetchStudentDashboard(userID);
       setDashboardData(data);
       setLoading(false);
     } catch (error) {
@@ -32,10 +30,11 @@ export const GuardianDashboard = () => {
   if (!dashboardData) {
     return <div className="p-4 text-center">Failed to load dashboard data</div>;
   }
+
   return (
     <div className="p-4 space-y-6">
       <h3 className="text-3xl font-bold text-center text-gray-800">
-        {dashboardData.guardian}'s Dashboard
+        Student Dashboard
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -47,12 +46,10 @@ export const GuardianDashboard = () => {
             >
               {/* Header */}
               <div className="p-4 bgTheme text-white">
-                <h2 className="text-xl font-bold truncate">
-                  {child.student_name}
-                </h2>
+                <h2 className="text-xl font-bold truncate">{child.student_name}</h2>
               </div>
 
-              {/* Child Info */}
+              {/* Detail Section */}
               <div className="p-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Class:</span>
@@ -65,7 +62,7 @@ export const GuardianDashboard = () => {
           ))
         ) : (
           <div className="text-center col-span-full text-gray-500">
-            No children data available.
+            No student data available.
           </div>
         )}
       </div>
