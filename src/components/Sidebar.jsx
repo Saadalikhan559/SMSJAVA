@@ -53,11 +53,10 @@ export const Sidebar = () => {
                           dashboardPath = allRouterLink.directorDashboard;
                         } else if (role === constants.roles.officeStaff) {
                           dashboardPath = allRouterLink.officeStaffDashboard;
-                        } else if (
-                          role === constants.roles.guardian ||
-                          role === constants.roles.student
-                        ) {
+                        } else if (role === constants.roles.guardian) {
                           dashboardPath = allRouterLink.guardianDashboard;
+                        } else if (role === constants.roles.student) {
+                          dashboardPath = allRouterLink.studentDashboard;
                         } else if (role === constants.roles.teacher) {
                           dashboardPath = allRouterLink.teacherDashboard;
                         }
@@ -91,6 +90,7 @@ export const Sidebar = () => {
                         </li>
                       </ul>
                     )}
+
                   </div>
                 </ul>
               </div>

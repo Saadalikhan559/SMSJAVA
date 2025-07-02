@@ -20,10 +20,10 @@ export const allRouterLink = {
     studentProfile: '/studentProfile',
     teacherDashboard: '/teacherDashboard',
     guardianDashboard: '/guardianDashboard',
+    studentDashboard: '/studentDashboard',
     guardianAttendanceRecord: '/guardianAttendanceRecord',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
-
     feeDashboard: '/feeDashboard',
     attendanceRecord:'/attendanceRecord',
     fullAttendance:'/fullAttendance/:className',

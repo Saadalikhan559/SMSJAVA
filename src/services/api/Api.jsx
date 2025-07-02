@@ -259,6 +259,18 @@ export const fetchGuardianDashboard = async (id) => {
   }
 };
 
+// Guardian Dashboard
+
+export const fetchStudentDashboard = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/student_dashboard/${id}/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch student Dashboard:", err);
+    throw err;
+  }
+};
+
 // Teacher Dashboard
 
 export const fetchTeacherDashboard = async (id) => {
