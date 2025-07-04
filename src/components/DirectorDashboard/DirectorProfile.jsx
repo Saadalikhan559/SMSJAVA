@@ -317,7 +317,7 @@ const DirectorProfile = () => {
           >
             <span className="mr-2 text-lg leading-none">↑</span> Update
           </button>
-        </div> */}
+        </div> 
       </div>
 
       {/* Dialog Box */}

@@ -41,6 +41,7 @@ import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
 import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
+import MyAttendance from "../components/Student Dashboard/MyAttendance";
 
 export const routes = [
   {
@@ -282,6 +283,12 @@ export const routes = [
     element: <UpdateStaffdetails />,
     protected: false,
   },
+{
+  path: allRouterLink.myAttendance,
+  element: <MyAttendance />, // or StudentAttendance if that's the component
+  protected: false,
+},
+
   // include all routes before this please
 
   {

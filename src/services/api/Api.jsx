@@ -408,17 +408,33 @@ export const fetchAttendanceData = async (date = "") => {
   }
 };
 
-export const fetchAttendance = async (className) => {
+// export const fetchAttendance = async (className) => {
+//   try {
+//     const response = await axios.get(
+//       `${BASE_URL}/a/api/report/?class=${className}`
+//     );
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch students:", err);
+//     throw err;
+//   }
+// };
+
+
+export const fetchAttendance = async (studentId) => {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/a/api/report/?class=${className}`
-    );
+    const url = studentId
+      ? `${BASE_URL}/a/api/report/?student_id=${studentId}`
+      : `${BASE_URL}/a/api/report/`;
+
+    const response = await axios.get(url);
     return response.data;
-  } catch (err) {
-    console.error("Failed to fetch students:", err);
-    throw err;
+  } catch (error) {
+    console.error("Failed to fetch attendance:", error.response?.data || error.message);
+    throw error.response?.data || new Error("Something went wrong.");
   }
 };
+
 
 export const fetchStudentById = async (student_id) => {
   try {
