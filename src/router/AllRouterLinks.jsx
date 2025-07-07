@@ -22,6 +22,7 @@ export const allRouterLink = {
     guardianDashboard: '/guardianDashboard',
     studentDashboard: '/studentDashboard',
     guardianAttendanceRecord: '/guardianAttendanceRecord',
+    studentAttendance:'/studentAttendance',
     directorDashboard: '/directorDashboard',
     feeSummary: '/feeSummary',
     feeDashboard: '/feeDashboard',
