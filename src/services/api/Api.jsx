@@ -251,6 +251,20 @@ export const fetchGuardianDashboard = async (id) => {
   }
 };
 
+export const getAttendanceByGuardianId = async (guardianId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/api/report/?guardian_id=${guardianId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching attendance data:', error);
+    throw error;
+  }
+};
+
+
+
+
+
 // Guardian Dashboard
 
 export const fetchStudentDashboard = async (id) => {
@@ -483,10 +497,8 @@ export const handleEditAdmissionForm = async (formData, id) => {
 // Update Student Detail
 export const updateStudentById = async (id, updatedData) => {
   try {
-    const response = await axios.put(
-      `${BASE_URL}/s/students/${id}/`,
-      updatedData
-    );
+    const response = await axios.put(`${BASE_URL}/s/students/${id}/`, updatedData);
+
     return response.data;
   } catch (error) {
     console.error("Failed to update student profile:", error);
@@ -497,7 +509,7 @@ export const updateStudentById = async (id, updatedData) => {
 export const editTeachersdetails = async (id, formdata) => {
   try {
     const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formdata);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error(
       "Failed to update teacher details:",
