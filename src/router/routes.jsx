@@ -40,8 +40,10 @@ import UpdateStudentDetail from "../components/Classesdata/UpdateStudentDetail";
 import FeeDashboard from "../components/AdmissionProcess/FeeDashboard";
 import AllStaff from "../components/StaffData/AllStaff";
 import Staffdetail from "../components/StaffData/Staffdetail";
+import DirectorMarkHolidays from "../components/DirectorDashboard/DirectorMarkHolidays";
 import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
+import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
 
 export const routes = [
   {
@@ -112,6 +114,18 @@ export const routes = [
     ],
   },
   {
+    path: allRouterLink.studentFeeCard,
+    element: <StudentFeeCard />,
+    protected: true,
+    allowedRoles: [
+      // constants.roles.director,
+      // constants.roles.officeStaff,
+      constants.roles.student,
+      // constants.roles.teacher,
+      constants.roles.guardian,
+    ],
+  },
+  {
     path: allRouterLink.documentUpload,
     element: <DocumentUpload />,
     protected: true,
@@ -159,6 +173,12 @@ export const routes = [
   {
     path: allRouterLink.directorProfile,
     element: <DirectorProfile />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.directorMarkHolidays,
+    element: <DirectorMarkHolidays />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },
@@ -252,8 +272,7 @@ export const routes = [
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
-  }
-  ,
+  },
   {
     path: allRouterLink.allClasses,
     element: <Allclasses />,

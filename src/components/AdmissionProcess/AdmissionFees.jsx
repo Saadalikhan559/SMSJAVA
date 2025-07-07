@@ -19,6 +19,24 @@ export const AdmissionFees = () => {
 
   const BASE_URL = constants.baseUrl;
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      student_id: "",
+      month: "",
+      year_level: "",
+      paid_amount: "",
+      payment_mode: "",
+      remarks: "",
+      received_by: "",
+    },
+  });
+
   // Fetch all classes
   const getClasses = async () => {
     try {
@@ -40,20 +58,20 @@ export const AdmissionFees = () => {
   };
 
   const getyearLevelData = async (classId) => {
-  try {
-    const YearLevelData = await fetchyearLevelData(classId);
-    setyearLevelData([YearLevelData]); // Wrap in array to maintain consistent structure
-    
-    // Automatically set the year level in the form
-    reset({
-      ...watch(), // Keep existing form values
-      year_level: YearLevelData.year_level // Set the new year level
-    });
-  } catch (err) {
-    setyearLevelData([]);
-    console.log("Failed to load school years. Please try again." + err);
-  }
-};
+    try {
+      const YearLevelData = await fetchyearLevelData(classId);
+      setyearLevelData([YearLevelData]); // Wrap in array to maintain consistent structure
+
+      // Automatically set the year level in the form
+      reset({
+        ...watch(), // Keep existing form values
+        year_level: YearLevelData.year_level, // Set the new year level
+      });
+    } catch (err) {
+      setyearLevelData([]);
+      console.log("Failed to load school years. Please try again." + err);
+    }
+  };
 
   useEffect(() => {
     getClasses();
@@ -87,43 +105,38 @@ export const AdmissionFees = () => {
     }
   }, [selectedClassId]);
 
+  // Automatically update paid amount when fees are selected
+  useEffect(() => {
+    if (yearLevelData.length > 0 && yearLevelData[0].fees) {
+      const totalAmount = yearLevelData[0].fees
+        .filter((fee) => selectedFeeIds.includes(fee.id))
+        .reduce((sum, fee) => sum + parseFloat(fee.amount), 0)
+        .toFixed(2);
+
+      reset({
+        ...watch(),
+        paid_amount: totalAmount,
+      });
+    }
+  }, [selectedFeeIds, yearLevelData, reset, watch]);
+
   const role = localStorage.getItem("userRole");
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
-      const script = document.createElement("script"); // Creates a new <script> HTML element.
-      script.src = "https://checkout.razorpay.com/v1/checkout.js"; // Sets its src attribute to point to Razorpay's checkout SDK.
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.onload = () => {
-        // If the script loads successfully, the Promise resolves with true.
         resolve(true);
       };
       script.onerror = () => {
         resolve(false);
       };
-      document.body.appendChild(script); // Adds the script element to the <body> of your HTML document, which triggers the download and execution of the script
+      document.body.appendChild(script);
     });
   };
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      student_id: "",
-      month: "",
-      year_level: "",
-      paid_amount: "",
-      payment_mode: "",
-      remarks: "",
-      received_by: "",
-    },
-  });
-
   // Find the selected fees data
-  // Find the selected fees data - simplified since we know there's only one item
   const selectedFees = yearLevelData.length > 0 ? yearLevelData[0] : null;
 
   console.log(yearLevelData);
@@ -206,7 +219,6 @@ export const AdmissionFees = () => {
 
       // Razorpay options
       const options = {
-        // This options object configures how the Razorpay payment popup will look and behave. It tells Razorpay: What payment to collect (amount, currency, description). How to handle the payment (what happens after success/failure). What user details to pre-fill (optional).
         key: "rzp_test_4h2aRSAPbYw3f8",
         amount: orderAmount,
         currency: currency,
@@ -214,8 +226,6 @@ export const AdmissionFees = () => {
         description: `receipt_number: ${receipt_number}`,
         order_id: orderId,
         handler: async function (response) {
-          // This function runs after a user completes the payment process with Razorpay and it will give us response
-          // Verify payment on your backend
           console.log(response);
           const verificationResponse = await axios.post(
             `${BASE_URL}/d/fee-record/confirm-payment/`,
@@ -252,8 +262,8 @@ export const AdmissionFees = () => {
         },
       };
 
-      const rzp = new window.Razorpay(options); // This code is responsible for launching the Razorpay payment popup where users can enter their payment details (credit card, UPI, net banking, etc.).
-      rzp.open(); // Opens the Razorpay payment modal (a popup window)
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.error("Payment error:", error);
       if (error.response) {
@@ -285,10 +295,8 @@ export const AdmissionFees = () => {
 
     try {
       if (payment_mode === "Online") {
-        // 🔁 Only trigger Razorpay flow, do NOT post here
-        await displayRazorpay(payload); // Fee-record API will be called *inside* Razorpay handler
+        await displayRazorpay(payload);
       } else if (payment_mode === "Cash" || payment_mode === "Cheque") {
-        // 💸 For Cash or Check, call the fee-record endpoint directly
         const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload);
         console.log("Response:", response.data);
         setPaymentStatus(response.data);
@@ -361,8 +369,8 @@ export const AdmissionFees = () => {
               {...register("student_id", {
                 required: "Student selection is required",
               })}
-              value={selectedStudentId || ""} // Add this line
-              disabled={!selectedClassId} // Disable if no class is selected
+              value={selectedStudentId || ""}
+              disabled={!selectedClassId}
             >
               <option value="">Select Student</option>
               {students?.map((student) => (
@@ -411,31 +419,6 @@ export const AdmissionFees = () => {
               </label>
             )}
           </div>
-          {/* <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-graduation-cap text-sm"></i>
-                Year Level <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              className="input input-bordered w-full focus:outline-none"
-              {...register("year_level", {
-                required: "Year level is required",
-              })}
-              readOnly
-              value={watch("year_level") || ""}
-              placeholder="Year level will auto-fill"
-            />
-            {errors.year_level && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.year_level.message}
-                </span>
-              </label>
-            )}
-          </div> */}
         </div>
 
         {/* Updated Year Level Fees Display with checkboxes */}
@@ -514,7 +497,7 @@ export const AdmissionFees = () => {
             )}
           </div>
 
-          {/* Paid Amount */}
+          {/* Paid Amount - Now read-only and auto-calculated */}
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-2">
@@ -531,8 +514,9 @@ export const AdmissionFees = () => {
                 required: "Amount is required",
                 min: { value: 0, message: "Amount must be positive" },
               })}
-              placeholder="Enter paid amount"
+              placeholder="Amount will auto-calculate"
               step="0.01"
+              readOnly
             />
             {errors.paid_amount && (
               <label className="label">
@@ -606,19 +590,18 @@ export const AdmissionFees = () => {
         </div>
       </form>
 
-      {/* Add this at the bottom */}
+      {/* Payment Status Dialogs */}
       {showPaymentDialog && paymentStatus && (
         <PaymentStatusDialog
           paymentStatus={paymentStatus}
           onClose={() => {
             setShowPaymentDialog(false);
-            setPaymentStatus(null); // Reset payment status when closing
+            setPaymentStatus(null);
             window.location.reload();
           }}
         />
       )}
 
-      {/* Payment Status Dialog - shown for all successful payments */}
       {showPaymentDialog1 && paymentStatus && (
         <PaymentStatusDialogOffline
           paymentStatus={paymentStatus}

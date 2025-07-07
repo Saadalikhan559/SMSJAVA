@@ -40,8 +40,8 @@ export const ClassStudent = () => {
       const initialDates = {};
       const initialStatuses = {};
       data.forEach((student) => {
-        initialDates[student.id] = "";
-        initialStatuses[student.id] = "present";
+        initialDates[student.student_id] = "";
+        initialStatuses[student.student_id] = "present";
       });
       setIndividualDates(initialDates);
       setIndividualStatuses(initialStatuses);
@@ -58,7 +58,7 @@ export const ClassStudent = () => {
     if (isChecked) {
       setSelectedStudents([...selectedStudents, studentId]);
     } else {
-      setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
+      setSelectedStudents(selectedStudents.filter((student_id) => student_id !== studentId));
     }
   };
 
@@ -132,6 +132,7 @@ export const ClassStudent = () => {
     }
   };
 
+  console.log(classStudent)
   const submitIndividualAttendance = async (studentId) => {
     try {
       if (!individualDates[studentId]) {
@@ -214,7 +215,7 @@ export const ClassStudent = () => {
                         type="checkbox"
                         className="border border-gray-300 rounded-md px-2 py-1 w-full"
                         onChange={(e) =>
-                          handleStudentSelect(student.id, e.target.checked)
+                          handleStudentSelect(student.student_id, e.target.checked)
                         }
                       />
                     </td>
@@ -224,9 +225,9 @@ export const ClassStudent = () => {
                     <td className="px-4 py-3">
                       <input
                         type="date"
-                        value={individualDates[student.id] || ""}
+                        value={individualDates[student.student_id] || ""}
                         onChange={(e) =>
-                          handleIndividualDateChange(student.id, e.target.value)
+                          handleIndividualDateChange(student.student_id, e.target.value)
                         }
                         className="border border-gray-300 rounded-md px-2 py-1 w-full"
                         max={getTodayDate()}
@@ -234,10 +235,10 @@ export const ClassStudent = () => {
                     </td>
                     <td className="px-4 py-3">
                       <select
-                        value={individualStatuses[student.id] || "present"}
+                        value={individualStatuses[student.student_id] || "present"}
                         onChange={(e) =>
                           handleIndividualStatusChange(
-                            student.id,
+                            student.student_id,
                             e.target.value
                           )
                         }
@@ -250,9 +251,9 @@ export const ClassStudent = () => {
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => submitIndividualAttendance(student.id)}
+                        onClick={() => submitIndividualAttendance(student.student_id)}
                         className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm"
-                        disabled={!individualDates[student.id]}
+                        disabled={!individualDates[student.student_id]}
                       >
                         Save
                       </button>

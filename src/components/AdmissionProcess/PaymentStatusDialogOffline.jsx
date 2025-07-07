@@ -87,12 +87,6 @@ export const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
         {/* Print/Close Buttons */}
         <div className="mt-6 flex justify-end gap-2">
           <button
-            onClick={() => window.print()}
-            className="btn btn-outline"
-          >
-            Print Receipt
-          </button>
-          <button
             onClick={onClose}
             className="btn btn-primary"
           >
