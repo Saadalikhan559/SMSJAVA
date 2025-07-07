@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { allRouterLink } from "../router/AllRouterLinks";
 import { constants } from "../global/constants";
 import { AuthContext } from "../context/AuthContext";
@@ -9,6 +9,8 @@ export const Sidebar = () => {
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
+  const studentId = localStorage.getItem("student_id");
+
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -70,17 +72,19 @@ export const Sidebar = () => {
                   {role === constants.roles.student && isAuthenticated && (
                     <li>
                       <Link
-                        onClick={(e) => handleNavigation(e, allRouterLink.myAttendance)}
-
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.myAttendance.replace(":id", studentId))
+                        }
 
                         className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                       >
-                        <i className="fa-solid fa-chart-simple"></i> My Attendance
+                        <i className="fa-solid fa-calendar-check"></i> My Attendance
                       </Link>
                     </li>
                   )}
 
                   <div>
+
                     {(role === constants.roles.director
                       || role === constants.roles.officeStaff)
                       && (
@@ -196,6 +200,16 @@ export const Sidebar = () => {
                       <i className="fa-solid fa-tasks w-5"></i> Assign Subjects
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.directorMarkHolidays)
+                      }
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                    >
+                      <i className="fa-solid fa-tasks w-5"></i> Assign Holidays
+                    </Link>
+                  </li>
                 </ul>
               </div>
             )}
@@ -244,16 +258,32 @@ export const Sidebar = () => {
                         Submission
                       </Link>
                     </li>
-                    {/* <li>
+
+
+                    <li>
                       <Link
                         onClick={(e) =>
-                          handleNavigation(e, allRouterLink.feeSummary)
+                          handleNavigation(e, allRouterLink.studentFeeCard)
                         }
                         className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                       >
-                        <i className="fa-solid fa-envelope w-5"></i> Fee Record
+                        <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
                       </Link>
-                    </li> */}
+                    </li>
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.feeSummary)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-envelope w-5"></i> Fee
+                            Record
+                          </Link>
+                        </li>
+                      )}
                   </ul>
                 </div>
               )}

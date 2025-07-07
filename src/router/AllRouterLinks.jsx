@@ -9,6 +9,7 @@ export const allRouterLink = {
     resetPassword: "/resetPassword",
     admissionForm: "/admissionForm",
     admissionFees: "/admissionFees/",
+    studentFeeCard: "/studentFeeCard",
     documentUpload: "/documentUpload",
     viewDocuments: "/viewDocuments",
     subjectAssignment: "/subjectAssignment",
@@ -29,6 +30,7 @@ export const allRouterLink = {
     feeDashboard: '/feeDashboard',
     attendanceRecord:'/attendanceRecord',
     fullAttendance:'/fullAttendance/:className',
+    directorMarkHolidays:'/directorMarkHolidays',
     officeStaffDashboard: '/officeStaffDashboard',
     addmissionDetails: '/addmissionDetails',
     addmissionDetailsById: '/addmissionDetails/:id',
@@ -40,7 +42,7 @@ export const allRouterLink = {
     allStaffMembers: '/allStaffMembers',
     staffDetail: '/staffDetail/:type/:id',
     updateStaffDetails: '/staffdetail/update/:type/:id',
-    myAttendance: '/myattendance/:id',
+    myAttendance: '/myAttendance/:id',
 
 
     // all routes before this
