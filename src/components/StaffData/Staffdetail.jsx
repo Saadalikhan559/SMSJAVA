@@ -18,7 +18,9 @@ const Staffdetail = () => {
                 const teacher = await fetchTeachers(id);
                 if (teacher && teacher.id) {
                     setStaffData(teacher);
+                    console.log("Staff data:", staffData);
                     setStaffType("Teacher");
+                    
                     return;
                 } else {
                     setError("Teacher not found.");
@@ -27,7 +29,10 @@ const Staffdetail = () => {
                 const officeStaff = await fetchOfficeStaff(id);
                 if (officeStaff && officeStaff.id) {
                     setStaffData(officeStaff);
+                     console.log("Staff data:", staffData);
                     setStaffType("Office Staff");
+                   
+
                     return;
                 } else {
                     setError("Office staff not found.");

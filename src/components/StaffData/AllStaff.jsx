@@ -115,7 +115,7 @@ const AllStaff = () => {
               <tbody>
                 {officestaff.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>

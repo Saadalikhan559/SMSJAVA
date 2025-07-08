@@ -22,6 +22,7 @@ const UpdateStaffDetails = () => {
     pan_no: "",
     qualification: "",
     category: "",
+    user_profile: null,
   });
 
   const [loading, setLoading] = useState(true);
@@ -50,6 +51,7 @@ const UpdateStaffDetails = () => {
         pan_no: data.pan_no || "",
         qualification: data.qualification || "",
         category: data.category || "",
+        user_profile: null,
       });
     } catch (err) {
       setError("Failed to load staff data.");
@@ -68,26 +70,33 @@ const UpdateStaffDetails = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      user_profile: e.target.files[0],
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formPayload = new FormData();
 
-    const payload = {
-      ...formData,
-      pan_no: formData.pan_no.trim() === "" ? null : formData.pan_no,
-    };
+    for (const key in formData) {
+      if (formData[key] !== null) {
+        formPayload.append(key, formData[key]);
+      }
+    }
 
     try {
       if (type === "teacher") {
-        console.log(payload);
-        await editTeachersdetails(id, payload);
+        await editTeachersdetails(id, formPayload);
       } else if (type === "office") {
-        await editOfficeStaffdetails(id, payload);
+        await editOfficeStaffdetails(id, formPayload);
       } else {
         setError("Invalid staff type.");
         return;
       }
 
-      console.log("Navigating to:", `/staffdetail/${id}/${type}`);
       alert("Staff details updated successfully.");
       navigate(`/staffDetail/${type}/${id}`);
     } catch (err) {
@@ -111,6 +120,7 @@ const UpdateStaffDetails = () => {
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            encType="multipart/form-data"
           >
             {[
               "first_name",
@@ -136,6 +146,17 @@ const UpdateStaffDetails = () => {
                 className="input input-bordered focus:outline-none"
               />
             ))}
+
+            <div className="md:col-span-2">
+              <label className="block mb-2 font-medium">Update Profile Picture</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="file-input file-input-bordered w-full focus:outline-none"
+              />
+            </div>
+
 
             <div className="col-span-2 text-center mt-6">
               <button type="submit" className="btn btn-primary">

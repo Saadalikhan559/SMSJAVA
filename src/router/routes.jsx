@@ -8,6 +8,7 @@ import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
 import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
 import GuardianAttendanceRecord from "../components/GuardianDashboard/GuardianAttendanceRecord";
+import StudentAttendance from "../components/GuardianDashboard/StudentAttendance";
 import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
 import GuardianProfile from "../components/GuardianDashboard/GuardianProfile";
 import { NotFound } from "../components/NotFound";
@@ -203,6 +204,12 @@ export const routes = [
   {
     path: allRouterLink.guardianAttendanceRecord,
     element: <GuardianAttendanceRecord />,
+    protected: true,
+    allowedRoles: [constants.roles.guardian],
+  },
+  {
+    path: allRouterLink.studentAttendance,
+    element: <StudentAttendance />,
     protected: true,
     allowedRoles: [constants.roles.guardian],
   },

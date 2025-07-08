@@ -334,6 +334,20 @@ export const Sidebar = () => {
                       Attendance Record
                     </Link>
                   </li>
+                   <li>
+                    <Link
+                      onClick={(e) =>
+                        handleNavigation(
+                          e,
+                          allRouterLink.studentAttendance
+                        )
+                      }
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                    >
+                      <i className="fa-solid fa-chart-simple"></i>{" "}
+                         Full Attendance
+                    </Link>
+                  </li>
                 </ul>
               </div>
             )}
