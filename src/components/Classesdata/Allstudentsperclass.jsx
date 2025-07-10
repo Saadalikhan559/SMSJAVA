@@ -56,11 +56,11 @@ const AllStudentsPerClass = () => {
           </div>
         )}
 
-       
+
         <div className="mb-4">
           <input
             type="text"
-            placeholder= "Search Student Name "
+            placeholder="Search Student Name "
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
@@ -74,7 +74,7 @@ const AllStudentsPerClass = () => {
               <tr>
                 <th scope="col" className="px-4 py-3 text-left">S.NO</th>
                 <th scope="col" className="px-4 py-3 text-left">Student Name</th>
-             </tr>
+              </tr>
             </thead>
             <tbody>
               {filteredStudents.length === 0 ? (

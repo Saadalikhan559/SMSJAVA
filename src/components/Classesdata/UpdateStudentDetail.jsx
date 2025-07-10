@@ -1,159 +1,144 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchStudentById } from "../../services/api/Api";
-import { updateStudentById } from "../../services/api/Api";
-
+import { fetchStudentById, updateStudentById } from "../../services/api/Api";
 
 const UpdateStudentDetail = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [student, setStudent] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await fetchStudentById(id);
-                console.log(data);
-                
-                setStudent(data);
-            } catch (err) {
-                setError("Failed to load student data.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [id]);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    email: "",
+    date_of_birth: "",
+    gender: "",
+    blood_group: "",
+    religion: "",
+    category: "",
+    height: "",
+    weight: "",
+    number_of_siblings: "",
+    father_name: "",
+    mother_name: "",
+    user_profile: null,
+  });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setStudent((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await updateStudentById(id, student);
-            alert("Profile updated successfully.");
-            navigate(`/studentDetails/${id}`);
-        } catch (err) {
-            alert("Failed to update student detail.");
-        }
-    };
+  const fetchStudent = async () => {
+    try {
+      const data = await fetchStudentById(id);
+      const { classes, ...rest } = data;
+      setFormData({
+        ...rest,
+        user_profile: null,
+      });
+    } catch (err) {
+      setError("Failed to load student data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (loading) 
-        return <div className="p-4 text-center">Loading Student Profile ...</div>;
-    if (error) 
-        return <div className="text-red-500 text-center">{error}</div>;
-    if (!student)
-         return <div className="text-center">Student not found.</div>;
+  useEffect(() => {
+    fetchStudent();
+  }, [id]);
 
-    return (
-        <div className="p-6 bg-gray-100 min-h-screen">
-            <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
-                <h1 className="text-3xl font-bold mb-8 text-center"><i class="fa-solid fa-pen-to-square"></i> Update Student Details</h1>
-       
-                <div className="bg-base-200 p-6 rounded-box mb-6">
-                <form onSubmit={handleSubmit} 
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                >
-                   
-                    <input type="text" name="first_name"
-                     value={student.first_name || ""}
-                     onChange={handleChange}
-                      placeholder="First Name" 
-                      className="input input-bordered focus:outline-none" />
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-                    <input type="text" name="middle_name" 
-                    value={student.middle_name || ""}
-                     onChange={handleChange} 
-                     placeholder="Middle Name" 
-                     className="input input-bordered focus:outline-none" />
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      user_profile: e.target.files[0],
+    }));
+  };
 
-                    <input type="text" name="last_name" 
-                    value={student.last_name || ""}
-                     onChange={handleChange} 
-                     placeholder="Last Name"
-                      className="input input-bordered focus:outline-none" />
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = new FormData();
+    for (const key in formData) {
+      if (formData[key] !== null && formData[key] !== "") {
+        payload.append(key, formData[key]);
+      }
+    }
 
-                    <input type="email" name="email"
-                     value={student.email || ""} 
-                     onChange={handleChange} 
-                     placeholder="Email" 
-                     className="input input-bordered focus:outline-none" />
+    try {
+      await updateStudentById(id, payload);
+      alert("Student profile updated successfully.");
+      navigate(`/studentDetails/${id}`);
+    } catch (err) {
+      setError("Failed to update student details.");
+    }
+  };
 
-                    <input type="date" name="date_of_birth"
-                     value={student.date_of_birth || ""} 
-                     onChange={handleChange}
-                      className="input input-bordered focus:outline-none" />
+  if (loading) return <div className="p-4 text-center">Loading student data...</div>;
+  if (error) return <div className="text-red-500 text-center">{error}</div>;
 
-                    <input type="text" name="gender"
-                     value={student.gender || ""} 
-                     onChange={handleChange}
-                      placeholder="Gender" 
-                      className="input input-bordered focus:outline-none" />
+  const fields = [
+    "first_name",
+    "middle_name",
+    "last_name",
+    "email",
+    "date_of_birth",
+    "gender",
+    "blood_group",
+    "religion",
+    "category",
+    "height",
+    "weight",
+    "number_of_siblings",
+    "father_name",
+    "mother_name",
+  ];
 
-                    <input type="text" name="blood_group"
-                     value={student.blood_group || ""} 
-                     onChange={handleChange}
-                      placeholder="Blood Group" 
-                      className="input input-bordered focus:outline-none" />
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
+        <h1 className="text-3xl font-bold mb-8 text-center">
+          <i className="fa-solid fa-pen-to-square mr-2"></i> Update Student Details
+        </h1>
 
-                    <input type="text" name="religion"
-                     value={student.religion || ""} 
-                     onChange={handleChange}
-                      placeholder="Religion"
-                       className="input input-bordered focus:outline-none" />
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          encType="multipart/form-data"
+        >
+          {fields.map((field) => (
+            <input
+              key={field}
+              type={field === "email" ? "email" : field === "date_of_birth" ? "date" : "text"}
+              name={field}
+              value={formData[field] || ""}
+              onChange={handleChange}
+              placeholder={field.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+              className="input input-bordered focus:outline-none"
+            />
+          ))}
 
-                    <input type="text" name="category"
-                     value={student.category || ""}
-                      onChange={handleChange}
-                       placeholder="Category" 
-                       className="input input-bordered focus:outline-none" />
+          <div className="md:col-span-2">
+            <label className="block mb-2 font-medium">Upload Profile Picture</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="file-input file-input-bordered w-full focus:outline-none"
+            />
+          </div>
 
-                    <input type="number" name="height" 
-                    value={student.height || ""}
-                     onChange={handleChange} 
-                     placeholder="Height (cm)" 
-                     className="input input-bordered focus:outline-none" />
-
-                    <input type="number" name="weight"
-                     value={student.weight || ""}
-                      onChange={handleChange}
-                       placeholder="Weight (kg)"
-                        className="input input-bordered focus:outline-none" />
-
-                    <input type="number" name="number_of_siblings"
-                     value={student.number_of_siblings || ""} 
-                     onChange={handleChange}
-                      placeholder="Number of Siblings" 
-                      className="input input-bordered focus:outline-none" />
-
-                    <input type="text" name="father_name"
-                     value={student.father_name || ""} 
-                     onChange={handleChange} 
-                     placeholder="Father's Name" 
-                     className="input input-bordered focus:outline-none" />
-
-                    <input type="text" name="mother_name"
-                     value={student.mother_name || ""}
-                      onChange={handleChange} 
-                      placeholder="Mother's Name" 
-                      className="input input-bordered focus:outline-none" />
-
-                    <div className="col-span-2 text-center mt-6">
-                        <button type="submit" className="btn btn-primary"><i className="fa-solid fa-floppy-disk mr-2"></i>Save Changes</button>
-                    </div>
-                </form>
-                </div>
-            </div>
-        </div>
-    );
+          <div className="col-span-2 text-center mt-6">
+            <button type="submit" className="btn btn-primary">
+              <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default UpdateStudentDetail;

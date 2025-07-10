@@ -71,7 +71,7 @@ const AllStaff = () => {
               <tbody>
                 {teachers.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>
@@ -81,7 +81,7 @@ const AllStaff = () => {
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4">
                         <Link
-                          to={`/staffDetail/teacher/${record.id}`} // lowercase "staffdetail"
+                          to={`/staffDetail/teacher/${record.id}`}
                           state={{ level_name: record.level_name }}
                           className="text-blue-600 hover:underline"
                         >
@@ -115,7 +115,7 @@ const AllStaff = () => {
               <tbody>
                 {officestaff.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>

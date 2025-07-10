@@ -1,3 +1,5 @@
+
+
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -36,11 +38,13 @@ export const allRouterLink = {
     editAddmisionDetails: '/editAddmisionDetails/:id',
     allClasses: '/allClasses',
     allStudentsperClass: '/allStudentsPerClass/:id',
-    studentDetails: '/studentdetails/:id',
+    studentDetails: '/studentDetails/:id',
     updateStudentdetail:'/updateStudentdetail/:id',
     allStaffMembers: '/allStaffMembers',
     staffDetail: '/staffDetail/:type/:id',
     updateStaffDetails: '/staffdetail/update/:type/:id',
+    myAttendance: '/myAttendance/:id',
+
 
     // all routes before this
     unAuthorized: '/unauthorized',

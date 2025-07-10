@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { allRouterLink } from "../router/AllRouterLinks";
 import { constants } from "../global/constants";
 import { AuthContext } from "../context/AuthContext";
@@ -9,6 +9,8 @@ export const Sidebar = () => {
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
+  const studentId = localStorage.getItem("student_id");
+
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -67,30 +69,44 @@ export const Sidebar = () => {
                       <i className="fa-solid fa-house w-5"></i> Dashboard
                     </Link>
                   </li>
+                  {role === constants.roles.student && isAuthenticated && (
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.myAttendance.replace(":id", studentId))
+                        }
+
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-calendar-check"></i> My Attendance
+                      </Link>
+                    </li>
+                  )}
+
                   <div>
 
-                    {(role === constants.roles.director 
-                    || role === constants.roles.officeStaff) 
-                    && (
-                      <ul className="space-y-1">
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.allClasses)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-graduation-cap"></i> All Classes
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.allStaffMembers)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                           <i className="fa-solid fa-id-card-clip"></i>Staff Members
-                          </Link>
-                        </li>
-                      </ul>
-                    )}
+                    {(role === constants.roles.director
+                      || role === constants.roles.officeStaff)
+                      && (
+                        <ul className="space-y-1">
+                          <li>
+                            <Link
+                              onClick={(e) => handleNavigation(e, allRouterLink.allClasses)}
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-graduation-cap"></i> All Classes
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              onClick={(e) => handleNavigation(e, allRouterLink.allStaffMembers)}
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-id-card-clip"></i>Staff Members
+                            </Link>
+                          </li>
+                        </ul>
+                      )}
 
                   </div>
                 </ul>
@@ -243,7 +259,7 @@ export const Sidebar = () => {
                       </Link>
                     </li>
 
-                 
+
                     <li>
                       <Link
                         onClick={(e) =>
@@ -256,18 +272,18 @@ export const Sidebar = () => {
                     </li>
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.feeSummary)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-envelope w-5"></i> Fee
-                          Record
-                        </Link>
-                      </li>
-                    )}
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.feeSummary)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-envelope w-5"></i> Fee
+                            Record
+                          </Link>
+                        </li>
+                      )}
                   </ul>
                 </div>
               )}

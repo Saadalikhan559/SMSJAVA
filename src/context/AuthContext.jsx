@@ -28,27 +28,31 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(
     () => localStorage.getItem("userRole") || ""
   );
+  const [studentID, setStudentID] = useState(
+  () => localStorage.getItem("student_id") || ""
+);
+
   const [loading, setLoading] = useState(true);
 
   // Function to normalize profile URL by replacing localhost with BASE_URL
   const normalizeProfileUrl = (url) => {
     if (!url) return "";
-    
+
     // Replace localhost URL with BASE_URL if found
     if (url.includes(`http://localhost:${constants.PORT}`)) {
       return url.replace(`http://localhost:${constants.PORT}`, BASE_URL);
     }
-    
+
     // Handle case where URL might be just a path
     if (!url.startsWith("http") && !url.startsWith("/")) {
       return `${BASE_URL}/${url}`;
     }
-    
+
     // Handle case where URL is a path starting with slash
     if (!url.startsWith("http") && url.startsWith("/")) {
       return `${BASE_URL}${url}`;
     }
-    
+
     return url;
   };
 
@@ -119,79 +123,87 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-const LoginUser = async (userDetails) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
-    const data = response.data;
+  const LoginUser = async (userDetails) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
+      const data = response.data;
 
-    if (!data["Access Token"] || !data["Refresh Token"] || !data.Roles) {
-      throw new Error("Invalid login response structure");
+      if (!data["Access Token"] || !data["Refresh Token"] || !data.Roles) {
+        throw new Error("Invalid login response structure");
+      }
+
+      const tokens = {
+        access: data["Access Token"],
+        refresh: data["Refresh Token"],
+      };
+
+      setAuthTokens(tokens);
+      localStorage.setItem("authTokens", JSON.stringify(tokens));
+
+      const role = data.Roles[0];
+      setUserRole(role);
+      localStorage.setItem("userRole", role);
+
+      // Set user ID from response
+      if (data["User ID"]) {
+        localStorage.setItem("user_id", data["User ID"]);
+        setUSerID(data["User ID"]);
+      }
+
+      if (data.teacher_id) {
+        localStorage.setItem("teacher_id", data.teacher_id);
+        setTeacherID(data.teacher_id);
+      }
+
+      if (data.guardian_id) {
+        localStorage.setItem("guardian_id", data.guardian_id);
+        setGuardianID(data.guardian_id);
+      }
+
+      if (data.student_id) {
+        localStorage.setItem("student_id", data.student_id);
+        setStudentID(data.student_id);
+      }
+
+
+      if (data.name) {
+        localStorage.setItem("user_name", data.name);
+        setUserName(data.name);
+      }
+
+      if (data.user_profile) {
+        const normalizedProfile = normalizeProfileUrl(data.user_profile);
+        localStorage.setItem("user_profile", normalizedProfile);
+        setUserProfile(normalizedProfile);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
     }
-
-    const tokens = {
-      access: data["Access Token"],
-      refresh: data["Refresh Token"],
-    };
-
-    setAuthTokens(tokens);
-    localStorage.setItem("authTokens", JSON.stringify(tokens));
-
-    const role = data.Roles[0];
-    setUserRole(role);
-    localStorage.setItem("userRole", role);
-
-    // Set user ID from response
-    if (data["User ID"]) {
-      localStorage.setItem("user_id", data["User ID"]);
-      setUSerID(data["User ID"]);
-    }
-
-    if (data.teacher_id) {
-      localStorage.setItem("teacher_id", data.teacher_id);
-      setTeacherID(data.teacher_id);
-    }
-    
-    if (data.guardian_id) {
-      localStorage.setItem("guardian_id", data.guardian_id);
-      setGuardianID(data.guardian_id);
-    }
-
-    if (data.name) {
-      localStorage.setItem("user_name", data.name);
-      setUserName(data.name);
-    }
-
-    if (data.user_profile) {
-      const normalizedProfile = normalizeProfileUrl(data.user_profile);
-      localStorage.setItem("user_profile", normalizedProfile);
-      setUserProfile(normalizedProfile);
-    }
-    
-    return data;
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
-};
-const LogoutUser = async () => {
-  setAuthTokens(null);
-  setUserRole("");
-  setUSerID(""); // Add this line
-  setTeacherID("");
-  setGuardianID("");
-  setUserName("");
-  setUserProfile("");
-  localStorage.removeItem("authTokens");
-  localStorage.removeItem("userRole");
-  localStorage.removeItem("user_id"); // Add this line
-  localStorage.removeItem("teacher_id");
-  localStorage.removeItem("guardian_id");
-  localStorage.removeItem("user_name");
-  localStorage.removeItem("user_profile");
-  localStorage.removeItem("rzp_stored_checkout_id");
-  localStorage.removeItem("rzp_device_id");
-  localStorage.removeItem("rzp_checkout_anon_id");
-};
+  };
+  const LogoutUser = async () => {
+    setAuthTokens(null);
+    setUserRole("");
+    setUSerID(""); // Add this line
+    setTeacherID("");
+    setGuardianID("");
+    setUserName("");
+    setUserProfile("");
+    setStudentID("");
+    localStorage.removeItem("authTokens");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("user_id"); // Add this line
+    localStorage.removeItem("teacher_id");
+    localStorage.removeItem("guardian_id");
+    localStorage.removeItem("student_id");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_profile");
+    localStorage.removeItem("rzp_stored_checkout_id");
+    localStorage.removeItem("rzp_device_id");
+    localStorage.removeItem("rzp_checkout_anon_id");
+  };
 
   const ResetPassword = async (userDetails) => {
     try {
@@ -231,26 +243,27 @@ const LogoutUser = async () => {
     setLoading(false);
   }, []);
 
-const contextValue = useMemo(
-  () => ({
-    authTokens,
-    isAuthenticated: !!authTokens?.access,
-    userRole,
-    userID, // Add this line
-    loading,
-    axiosInstance,
-    LoginUser,
-    LogoutUser,
-    RegisterUser,
-    ResetPassword,
-    ChangePassword,
-    teacherID,
-    guardianID,
-    userName,
-    userProfile: normalizeProfileUrl(userProfile)
-  }),
-  [authTokens, userRole, userID, loading, axiosInstance, teacherID, guardianID, userName, userProfile]
-);
+  const contextValue = useMemo(
+    () => ({
+      authTokens,
+      isAuthenticated: !!authTokens?.access,
+      userRole,
+      userID, // Add this line
+      loading,
+      axiosInstance,
+      LoginUser,
+      LogoutUser,
+      RegisterUser,
+      ResetPassword,
+      ChangePassword,
+      teacherID,
+      guardianID,
+      studentID,
+      userName,
+      userProfile: normalizeProfileUrl(userProfile)
+    }),
+    [authTokens, userRole, userID, loading, axiosInstance, teacherID, guardianID, userName, userProfile]
+  );
 
   return (
     <AuthContext.Provider value={contextValue}>
