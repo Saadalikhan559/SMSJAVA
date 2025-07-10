@@ -30,12 +30,12 @@ const StudentAttendance = ({ guardianId = 1 }) => {
 
   return (
     <div className="p-5 bg-gray-50 min-h-screen">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen overflow-x-auto">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           <i className="fa-solid fa-chalkboard-user mr-2 " />
           Attendance Report
         </h1>
-
+        <div className='overflow-x-auto'>
         {loading ? (
           <div className="flex justify-center items-center text-gray-600 py-10">
             Loading Attendance...
@@ -67,6 +67,7 @@ const StudentAttendance = ({ guardianId = 1 }) => {
             </tbody>
           </table>
         )}
+        </div>
       </div>
     </div>
   );

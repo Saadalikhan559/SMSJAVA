@@ -38,7 +38,7 @@ export const allRouterLink = {
     editAddmisionDetails: '/editAddmisionDetails/:id',
     allClasses: '/allClasses',
     allStudentsperClass: '/allStudentsPerClass/:id',
-    studentDetails: '/studentdetails/:id',
+    studentDetails: '/studentDetails/:id',
     updateStudentdetail:'/updateStudentdetail/:id',
     allStaffMembers: '/allStaffMembers',
     staffDetail: '/staffDetail/:type/:id',

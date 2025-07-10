@@ -81,7 +81,7 @@ const AllStaff = () => {
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4">
                         <Link
-                          to={`/staffDetail/teacher/${record.id}`} // lowercase "staffdetail"
+                          to={`/staffDetail/teacher/${record.id}`}
                           state={{ level_name: record.level_name }}
                           className="text-blue-600 hover:underline"
                         >

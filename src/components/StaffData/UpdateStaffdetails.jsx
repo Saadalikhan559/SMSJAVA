@@ -146,7 +146,6 @@ const UpdateStaffDetails = () => {
                 className="input input-bordered focus:outline-none"
               />
             ))}
-
             <div className="md:col-span-2">
               <label className="block mb-2 font-medium">Update Profile Picture</label>
               <input
@@ -156,8 +155,6 @@ const UpdateStaffDetails = () => {
                 className="file-input file-input-bordered w-full focus:outline-none"
               />
             </div>
-
-
             <div className="col-span-2 text-center mt-6">
               <button type="submit" className="btn btn-primary">
                 <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
