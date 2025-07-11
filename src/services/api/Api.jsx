@@ -334,7 +334,7 @@ export const fetchAdmissionDetailsById = async (id) => {
   }
 };
 
-// fetch View upload documents api
+// fetch View upload documents api  
 export const fetchViewDocuments = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/Document/`);
