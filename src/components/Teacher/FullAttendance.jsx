@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAttendance } from '../../services/api/Api';
 import { useParams } from 'react-router-dom';
+import { fetchClassAttendance } from '../../services/api/Api';
 
 const FullAttendance = () => {
   const { className } = useParams();
@@ -24,19 +24,20 @@ const FullAttendance = () => {
     return `${day}/${month}/${year} (${weekday})`;
   };
 
-  useEffect(() => {
-    fetchAttendance(className)
-      .then((data) => {
-        setData(data);
-        setFilteredData(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error.message);
-        setError(error.message);
-        setLoading(false);
-      });
-  }, []);
+useEffect(() => {
+  fetchClassAttendance(className)
+    .then((data) => {
+      console.log("Class attendance data:", data);
+      setData(data);
+      setFilteredData(data);
+      setLoading(false);
+    })
+    .catch((error) => {
+      setError(error.message);
+      setLoading(false);
+    });
+}, [className]);
+
 
   const getAllHeaders = () => {
     const headersSet = new Set();

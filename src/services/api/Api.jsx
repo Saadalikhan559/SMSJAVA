@@ -418,18 +418,30 @@ export const fetchAttendanceData = async (date = "") => {
 export const fetchAttendance = async (studentId, month, year) => {
   try {
     let url = `${BASE_URL}/a/api/report/`;
-
     if (studentId) {
       url += `?student_id=${studentId}`;
       if (month) url += `&month=${month}`;
+
       if (year) url += `&year=${year}`;
     }
-
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch attendance:", error.response?.data || error.message);
     throw error.response?.data || new Error("Something went wrong.");
+  }
+};
+
+
+export const fetchClassAttendance = async (className) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/a/api/report/?class=${className}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
   }
 };
 
