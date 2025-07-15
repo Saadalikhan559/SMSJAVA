@@ -291,7 +291,6 @@ export const Sidebar = () => {
             {/* Reports */}
             {(role === constants.roles.director ||
               role === constants.roles.teacher ||
-              role === constants.roles.student ||
               role === constants.roles.officeStaff) &&
               isAuthenticated && (
                 <div>
