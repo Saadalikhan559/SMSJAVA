@@ -45,6 +45,7 @@ import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
 import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
 import MyAttendance from "../components/Student Dashboard/MyAttendance";
+import PeriodAssignment from "../screens/Assignments/PeriodAssignment";
 
 export const routes = [
   {
@@ -315,6 +316,17 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.student],
   },
+  {
+    path: allRouterLink.periodAssignment,
+    element: <PeriodAssignment/>,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
+    ],
+  },
+
 
   // include all routes before this please
 

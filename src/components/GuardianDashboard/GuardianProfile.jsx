@@ -247,7 +247,7 @@ const GuardianProfile = () => {
               </label>
               <input
                 type="text"
-                value={guardianData.annual_income ? `$${guardianData.annual_income.toLocaleString()}` : 'N/A'}
+                value={guardianData.annual_income ? `₹${guardianData.annual_income.toLocaleString()}` : 'N/A'}
                 className="input input-bordered w-full text-sm"
                 readOnly
               />

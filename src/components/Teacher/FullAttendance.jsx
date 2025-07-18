@@ -24,20 +24,18 @@ const FullAttendance = () => {
     return `${day}/${month}/${year} (${weekday})`;
   };
 
-useEffect(() => {
-  fetchClassAttendance(className)
-    .then((data) => {
-      console.log("Class attendance data:", data);
-      setData(data);
-      setFilteredData(data);
-      setLoading(false);
-    })
-    .catch((error) => {
-      setError(error.message);
-      setLoading(false);
-    });
-}, [className]);
-
+  useEffect(() => {
+    fetchClassAttendance(className)
+      .then((data) => {
+        setData(data);
+        setFilteredData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message || 'Failed to fetch attendance.');
+        setLoading(false);
+      });
+  }, [className]);
 
   const getAllHeaders = () => {
     const headersSet = new Set();
@@ -91,7 +89,7 @@ useEffect(() => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+        <i className="fa-solid fa-spinner fa-spin text-4xl text-blue-600" />
       </div>
     );
   }
@@ -99,31 +97,24 @@ useEffect(() => {
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="flex flex-col items-center justify-center text-red-600">
-          <p className="text-black text-2xl">
-            <i className="fa-solid fa-chalkboard-user ml-2" />
-            Attendance Table
-          </p>
-          <p className="text-xl">{error}</p>
+        <div className="text-red-600 text-center space-y-3">
+          <h2 className="text-2xl font-bold">Attendance Table</h2>
+          <p className="text-lg">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-5 bg-gray-50 min-h-screen">
-      <div
-        className={`bg-white p-6 rounded-lg shadow-lg mx-auto ${
-          dateFilter ? 'max-w-fit' : 'max-w-screen'
-        }`}
-      >
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          <i className="fa-solid fa-chalkboard-user ml-2" />
+    <div className="p-6 bg-gray-50 min-h-screen flex justify-center items-start">
+      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-screen overflow-x-auto">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+          <i className="fa-solid fa-chalkboard-user mr-2" />
           Attendance Table
         </h1>
 
         {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <div className="flex flex-wrap justify-center gap-6 mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Name:</label>
             <input
@@ -131,7 +122,7 @@ useEffect(() => {
               placeholder="Enter student name"
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
-              className="border rounded px-3 py-2 text-sm w-56"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -141,26 +132,22 @@ useEffect(() => {
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="border rounded px-3 py-2 text-sm w-56"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         {/* Table */}
-        <div
-          className={`overflow-x-auto ${
-            dateFilter ? 'flex justify-center' : ''
-          }`}
-        >
-          <table
-            className={`${
-              dateFilter ? 'w-auto' : 'min-w-full'
-            } table-auto rounded-lg overflow-hidden`}
-          >
+        <div className="w-full overflow-auto">
+          <table className="min-w-[900px] w-full border-collapse rounded-lg overflow-hidden border border-gray-200">
             <thead className="bgTheme text-white">
               <tr>
-                {headers.map((header, index) => (
-                  <th key={index} className="px-4 py-3 text-left whitespace-nowrap font-semibold">
+                {headers.map((header, idx) => (
+                  <th
+                    key={idx}
+                    className="px-4 py-3 text-center font-semibold border-b border-gray-300 whitespace-nowrap"
+                    style={{ minWidth: '120px' }}
+                  >
                     {header}
                   </th>
                 ))}
@@ -169,15 +156,22 @@ useEffect(() => {
             <tbody>
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={headers.length} className="text-center py-6 text-gray-500">
-                    Attendance Not found.
+                  <td
+                    colSpan={headers.length}
+                    className="text-center py-6 text-gray-500"
+                  >
+                    Attendance Not Found.
                   </td>
                 </tr>
               ) : (
                 filteredData.map((item, idx) => (
                   <tr key={idx} className="hover:bg-blue-50 transition">
                     {headers.map((header, i) => (
-                      <td key={i} className="px-4 py-3 text-center text-sm text-gray-700">
+                      <td
+                        key={i}
+                        className="px-4 py-3 text-center text-sm text-gray-800 border-t border-gray-200"
+                        style={{ minWidth: '120px', wordBreak: 'break-word' }}
+                      >
                         {item[header] || '--'}
                       </td>
                     ))}
@@ -190,15 +184,16 @@ useEffect(() => {
 
         {/* Pagination */}
         {!dateFilter && (
-          <div className="flex justify-center mt-4 gap-4">
+          <div className="flex justify-center mt-6 gap-4">
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
               disabled={page === 0}
               className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
             >
-              <i className="fa-solid fa-arrow-left mr-1" /> Previous
+              <i className="fa-solid fa-arrow-left mr-1" />
+              Previous
             </button>
-            <span className="px-4 py-1 text-sm text-gray-700">
+            <span className="text-sm text-gray-700 py-2">
               Page {page + 1} of {totalPages}
             </span>
             <button
@@ -206,7 +201,8 @@ useEffect(() => {
               disabled={page >= totalPages - 1}
               className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
             >
-              Next <i className="fa-solid fa-arrow-right ml-1" />
+              Next
+              <i className="fa-solid fa-arrow-right ml-1" />
             </button>
           </div>
         )}
@@ -216,3 +212,4 @@ useEffect(() => {
 };
 
 export default FullAttendance;
+

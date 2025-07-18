@@ -184,6 +184,17 @@ export const fetchCity = async () => {
   }
 };
 
+export const fetchPeriodsByYearLevel = async (yearLevelId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch periods:", err);
+    throw err;
+  }
+};
+
+
 // DASHBOARD
 
 // Director Dashboard
@@ -457,17 +468,28 @@ export const fetchStudentById = async (student_id) => {
   }
 };
 
-export const fetchStudentFee = async (student_id = 12) => {
+export const fetchStudentFee = async (student_id) => {
   try {
+    console.log("Fetching student fee for ID:", student_id); // Log before fetch
+
     const response = await axios.get(
       `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
+
     );
+
+    console.log("Fetched student fee data:", response.data); // Log after fetch
+
     return response.data;
+
   } catch (error) {
     console.error("Failed to fetch student fees details:", error);
     throw error;
   }
 };
+
+
+
+
 
 // POST APIS
 
