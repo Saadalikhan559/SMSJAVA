@@ -10,13 +10,7 @@ export const Sidebar = () => {
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
-  // const studentId = localStorage.getItem("student_id");
-  const studentId = localStorage.getItem("student_id") || localStorage.getItem("guardian_student_id");
-  const yearLevelID = localStorage.getItem("yearLevelID") 
-  
-
-
-
+  const studentId = localStorage.getItem("student_id");
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -232,12 +226,13 @@ export const Sidebar = () => {
                         <li>
                           <Link
                             onClick={(e) =>
-                              handleNavigation(e, `${allRouterLink.periodAssignment.replace(':Year_level_id', yearId)}`)
+                              handleNavigation(e, allRouterLink.periodsByClass)
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
                             <i className="fa-solid fa-clock w-5"></i> Periods Assigned
                           </Link>
+
                         </li>
                       )}
 

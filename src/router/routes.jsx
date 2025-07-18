@@ -46,6 +46,7 @@ import { StudentDashboard } from "../components/Student Dashboard/StudentDashboa
 import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
 import MyAttendance from "../components/Student Dashboard/MyAttendance";
 import PeriodAssignment from "../screens/Assignments/PeriodAssignment";
+import PeriodsByClass from "../components/Classesdata/PeriodsByClass";
 
 export const routes = [
   {
@@ -315,6 +316,16 @@ export const routes = [
     element: <MyAttendance />,
     protected: true,
     allowedRoles: [constants.roles.student],
+  },
+    {
+    path: allRouterLink.periodsByClass,
+    element: <PeriodsByClass />,
+    protected: true,
+      allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
+    ],
   },
   {
     path: allRouterLink.periodAssignment,

@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { fetchStudentFee } from "../../services/api/Api";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useParams } from "react-router-dom";
 
 export const StudentFeeCard = () => {
-
 
   const [details, setDetails] = useState(null);
   const [filteredSummary, setFilteredSummary] = useState([]);
@@ -14,8 +13,6 @@ export const StudentFeeCard = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const { student_id } = useParams();
-
-
 
   const getStudentFeeDetails = async () => {
     if (!student_id) {
@@ -43,8 +40,12 @@ export const StudentFeeCard = () => {
   };
 
   useEffect(() => {
-    getStudentFeeDetails();
+    if (student_id) {
+      getStudentFeeDetails();
+    }
   }, [student_id]);
+
+
 
   useEffect(() => {
     if (!details) return;

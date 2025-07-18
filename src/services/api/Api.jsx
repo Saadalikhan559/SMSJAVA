@@ -470,14 +470,14 @@ export const fetchStudentById = async (student_id) => {
 
 export const fetchStudentFee = async (student_id) => {
   try {
-    console.log("Fetching student fee for ID:", student_id); // Log before fetch
+    console.log("Fetching student fee for ID:", student_id); 
 
     const response = await axios.get(
       `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
 
     );
 
-    console.log("Fetched student fee data:", response.data); // Log after fetch
+    console.log("Fetched student fee data:", response.data);
 
     return response.data;
 
@@ -486,6 +486,9 @@ export const fetchStudentFee = async (student_id) => {
     throw error;
   }
 };
+
+
+
 
 
 

@@ -42,7 +42,8 @@ export const allRouterLink = {
     staffDetail: '/staffDetail/:type/:id',
     updateStaffDetails: '/staffdetail/update/:type/:id',
     myAttendance: '/myAttendance/:id',
-    periodAssignment: 'periodAssignment/:year_level_id',
+    periodsByClass:'/periodsByClass',
+    periodAssignment: "periodAssignment/:year_level_id",
 
     // all routes before this
     unAuthorized: '/unauthorized',

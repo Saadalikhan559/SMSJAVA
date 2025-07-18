@@ -162,12 +162,15 @@ export const AuthProvider = ({ children }) => {
       if (data.guardian_id) {
         localStorage.setItem("guardian_id", data.guardian_id);
         setGuardianID(data.guardian_id);
+        localStorage.setItem("student_id", data.student_id)
+        setStudentID(data.student_id)
       }
 
       if (data.student_id) {
         localStorage.setItem("student_id", data.student_id);
         setStudentID(data.student_id);
       }
+
       if (data.students && Array.isArray(data.students)) {
         localStorage.setItem("guardian_students", JSON.stringify(data.students));
       }
@@ -197,7 +200,7 @@ export const AuthProvider = ({ children }) => {
   const LogoutUser = async () => {
     setAuthTokens(null);
     setUserRole("");
-    setUSerID(""); // Add this line
+    setUSerID("");
     setTeacherID("");
     setGuardianID("");
     setUserName("");
@@ -206,7 +209,7 @@ export const AuthProvider = ({ children }) => {
     setYearLevelID("");
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
-    localStorage.removeItem("user_id"); // Add this line
+    localStorage.removeItem("user_id");
     localStorage.removeItem("teacher_id");
     localStorage.removeItem("guardian_id");
     localStorage.removeItem("student_id");
