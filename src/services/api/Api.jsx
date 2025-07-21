@@ -23,6 +23,16 @@ export const fetchSchoolYear = async () => {
   }
 };
 
+export const fetchExamType = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/Exam-Type/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
 export const fetchGuardianType = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/s/guardian-types/`);
@@ -107,6 +117,16 @@ export const fetchGuardians = async () => {
   }
 };
 
+export const fetchAllTeachers = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/t/teacher/`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch teachers:", err);
+    throw err;
+  }
+};
+
 export const fetchPeriods = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/Period/`);
@@ -120,6 +140,17 @@ export const fetchPeriods = async () => {
 export const fetchSubjects = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/subject/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch subjects:", err);
+    throw err;
+  }
+};
+
+
+export const fetchTerms = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/terms/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch subjects:", err);
