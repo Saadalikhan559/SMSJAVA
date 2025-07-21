@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAttendanceByGuardianId } from '../../services/api/Api';
 
-const StudentAttendance = ({ guardianId = 1 }) => {
+const StudentAttendance = ({ guardianId}) => {
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);

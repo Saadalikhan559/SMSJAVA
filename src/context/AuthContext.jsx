@@ -29,8 +29,12 @@ export const AuthProvider = ({ children }) => {
     () => localStorage.getItem("userRole") || ""
   );
   const [studentID, setStudentID] = useState(
-  () => localStorage.getItem("student_id") || ""
-);
+    () => localStorage.getItem("student_id") || ""
+  );
+  const [yearLevelID, setYearLevelID] = useState(
+    () => localStorage.getItem("year_level_id") || "");
+
+
 
   const [loading, setLoading] = useState(true);
 
@@ -158,11 +162,21 @@ export const AuthProvider = ({ children }) => {
       if (data.guardian_id) {
         localStorage.setItem("guardian_id", data.guardian_id);
         setGuardianID(data.guardian_id);
+        localStorage.setItem("student_id", data.student_id)
+        setStudentID(data.student_id)
       }
 
       if (data.student_id) {
         localStorage.setItem("student_id", data.student_id);
         setStudentID(data.student_id);
+      }
+
+      if (data.students && Array.isArray(data.students)) {
+        localStorage.setItem("guardian_students", JSON.stringify(data.students));
+      }
+      if (data.year_level_id) {
+        localStorage.setItem("year_level_id", data.year_level_id);
+        setYearLevelID(data.year_level_id);
       }
 
 
@@ -186,15 +200,16 @@ export const AuthProvider = ({ children }) => {
   const LogoutUser = async () => {
     setAuthTokens(null);
     setUserRole("");
-    setUSerID(""); // Add this line
+    setUSerID("");
     setTeacherID("");
     setGuardianID("");
     setUserName("");
     setUserProfile("");
     setStudentID("");
+    setYearLevelID("");
     localStorage.removeItem("authTokens");
     localStorage.removeItem("userRole");
-    localStorage.removeItem("user_id"); // Add this line
+    localStorage.removeItem("user_id");
     localStorage.removeItem("teacher_id");
     localStorage.removeItem("guardian_id");
     localStorage.removeItem("student_id");
@@ -203,6 +218,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("rzp_stored_checkout_id");
     localStorage.removeItem("rzp_device_id");
     localStorage.removeItem("rzp_checkout_anon_id");
+    localStorage.removeItem("year_level_id");
+
   };
 
   const ResetPassword = async (userDetails) => {
@@ -260,6 +277,7 @@ export const AuthProvider = ({ children }) => {
       guardianID,
       studentID,
       userName,
+      yearLevelID,
       userProfile: normalizeProfileUrl(userProfile)
     }),
     [authTokens, userRole, userID, loading, axiosInstance, teacherID, guardianID, userName, userProfile]

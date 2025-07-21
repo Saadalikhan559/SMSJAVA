@@ -1,5 +1,3 @@
-
-
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -9,7 +7,7 @@ export const allRouterLink = {
     resetPassword: "/resetPassword",
     admissionForm: "/admissionForm",
     admissionFees: "/admissionFees/",
-    studentFeeCard: "/studentFeeCard",
+    studentFeeCard: "/studentFeeCard/:student_id",
     documentUpload: "/documentUpload",
     viewDocuments: "/viewDocuments",
     subjectAssignment: "/subjectAssignment",
@@ -44,7 +42,8 @@ export const allRouterLink = {
     staffDetail: '/staffDetail/:type/:id',
     updateStaffDetails: '/staffdetail/update/:type/:id',
     myAttendance: '/myAttendance/:id',
-
+    periodsByClass:'/periodsByClass',
+    periodAssignment: "periodAssignment/:year_level_id",
 
     // all routes before this
     unAuthorized: '/unauthorized',

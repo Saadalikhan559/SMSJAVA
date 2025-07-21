@@ -34,6 +34,8 @@ export const DocumentUpload = () => {
     { files: null, document_types: "", identities: "" },
   ]);
 
+  console.log('students', students);
+
   const [formData, setFormData] = useState({
     student: "",
     teacher: "",
@@ -454,7 +456,7 @@ export const DocumentUpload = () => {
                     <option disabled>No students found</option>
                   ) : (
                     students.map((studentObj) => (
-                      <option key={studentObj.id} value={studentObj.id}>
+                      <option key={studentObj.student_id} value={studentObj.student_id}>
                         {studentObj.student_name}
                       </option>
                     ))

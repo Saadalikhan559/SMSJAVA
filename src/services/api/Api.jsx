@@ -184,6 +184,17 @@ export const fetchCity = async () => {
   }
 };
 
+export const fetchPeriodsByYearLevel = async (yearLevelId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch periods:", err);
+    throw err;
+  }
+};
+
+
 // DASHBOARD
 
 // Director Dashboard
@@ -334,7 +345,7 @@ export const fetchAdmissionDetailsById = async (id) => {
   }
 };
 
-// fetch View upload documents api
+// fetch View upload documents api  
 export const fetchViewDocuments = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/Document/`);
@@ -418,18 +429,30 @@ export const fetchAttendanceData = async (date = "") => {
 export const fetchAttendance = async (studentId, month, year) => {
   try {
     let url = `${BASE_URL}/a/api/report/`;
-
     if (studentId) {
       url += `?student_id=${studentId}`;
       if (month) url += `&month=${month}`;
+
       if (year) url += `&year=${year}`;
     }
-
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch attendance:", error.response?.data || error.message);
     throw error.response?.data || new Error("Something went wrong.");
+  }
+};
+
+
+export const fetchClassAttendance = async (className) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/a/api/report/?class=${className}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
   }
 };
 
@@ -445,17 +468,31 @@ export const fetchStudentById = async (student_id) => {
   }
 };
 
-export const fetchStudentFee = async (student_id = 12) => {
+export const fetchStudentFee = async (student_id) => {
   try {
+    console.log("Fetching student fee for ID:", student_id); 
+
     const response = await axios.get(
       `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
+
     );
+
+    console.log("Fetched student fee data:", response.data);
+
     return response.data;
+
   } catch (error) {
     console.error("Failed to fetch student fees details:", error);
     throw error;
   }
 };
+
+
+
+
+
+
+
 
 // POST APIS
 

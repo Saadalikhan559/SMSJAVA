@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from "react";
 import { fetchTeacherDashboard } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
@@ -7,7 +7,9 @@ import { AuthContext } from "../../context/AuthContext";
 export const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {userID} = useContext(AuthContext);
+  const { userID } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   const getGuardianDashboardData = async () => {
     try {
@@ -31,6 +33,9 @@ export const TeacherDashboard = () => {
   if (!dashboardData) {
     return <div className="p-4 text-center">Failed to load dashboard data</div>;
   }
+  const handleShowAttendance = (className) => {
+    navigate(`/fullAttendance/${className}`);
+  };
   return (
     <div className="p-4 space-y-6">
       <h3 className="text-3xl font-bold text-center text-gray-800">
@@ -55,7 +60,7 @@ export const TeacherDashboard = () => {
                   <span className="font-medium text-gray-600">Class:</span>
                   <span className="text-gray-800 font-semibold">
                     {detail.level_name}
-                   </span>
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">
@@ -79,13 +84,13 @@ export const TeacherDashboard = () => {
                     {detail.student_count}
                   </span>
                 </div>
-                <Link to="/fullAttendance">
-                      <span className='flex justify-center'>
-                      <button type="submit" className="btn btn-primary w-full "><i className="fa-solid fa-chalkboard-user"/>Full Attendance {detail.level_name}</button>
-                      </span>
-                 </Link>
+                {/* <Link to="/fullAttendance"> */}
+                <span className='flex justify-center'>
+                  <button type="submit" className="btn btn-primary w-full " onClick={() => handleShowAttendance(detail.level_name)}><i className="fa-solid fa-chalkboard-user" />Full Attendance {detail.level_name}</button>
+                </span>
+                {/* </Link> */}
               </div>
-               
+
             </div>
           ))
         ) : (
