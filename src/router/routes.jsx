@@ -8,6 +8,7 @@ import { ClassStudent } from "../components/ClassStudents/ClassStudent";
 import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashboard";
 import DirectorProfile from "../components/DirectorDashboard/DirectorProfile";
 import GuardianAttendanceRecord from "../components/GuardianDashboard/GuardianAttendanceRecord";
+import StudentAttendance from "../components/GuardianDashboard/StudentAttendance";
 import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
 import GuardianProfile from "../components/GuardianDashboard/GuardianProfile";
 import { NotFound } from "../components/NotFound";
@@ -49,6 +50,9 @@ import TimeTable from "../components/Teacher/TimeTable";
 import UploadExamPaper from "../components/Teacher/UploadExamPaper";
 import ViewExamPaper from "../components/Teacher/ViewExamPaper";
 import UpdateExamPaper from "../components/Teacher/UpdateExamPaper";
+import MyAttendance from "../components/Student Dashboard/MyAttendance";
+import PeriodAssignment from "../screens/Assignments/PeriodAssignment";
+import PeriodsByClass from "../components/Classesdata/PeriodsByClass";
 
 export const routes = [
   {
@@ -261,6 +265,12 @@ export const routes = [
     allowedRoles: [constants.roles.guardian],
   },
   {
+    path: allRouterLink.studentAttendance,
+    element: <StudentAttendance />,
+    protected: true,
+    allowedRoles: [constants.roles.guardian],
+  },
+  {
     path: allRouterLink.studentProfile,
     element: <StudentProfile />,
     protected: true,
@@ -356,6 +366,34 @@ export const routes = [
     element: <UpdateStaffdetails />,
     protected: false,
   },
+  {
+    path: allRouterLink.myAttendance,
+    element: <MyAttendance />,
+    protected: true,
+    allowedRoles: [constants.roles.student],
+  },
+    {
+    path: allRouterLink.periodsByClass,
+    element: <PeriodsByClass />,
+    protected: true,
+      allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
+    ],
+  },
+  {
+    path: allRouterLink.periodAssignment,
+    element: <PeriodAssignment/>,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
+    ],
+  },
+
+
   // include all routes before this please
 
   {

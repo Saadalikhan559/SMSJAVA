@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchYearLevels } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 
-const Allclasses = () => {
+const AllChildren = () => {
     const [yearLevels, setYearLevels] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -87,4 +87,5 @@ const Allclasses = () => {
     );
 };
 
-export default Allclasses;
+export default AllChildren;
+

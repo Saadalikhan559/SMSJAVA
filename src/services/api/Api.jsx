@@ -97,9 +97,7 @@ export const fetchTeachers = async (id) => {
 
 export const fetchOfficeStaff = async (id) => {
   try {
-    const res = await axios.get(
-      `${BASE_URL}/d/officestaff/${id ? `${id}/` : ""}`
-    );
+    const res = await axios.get(`${BASE_URL}/d/officestaff/${id ? `${id}/` : ""}`);
     return res.data;
   } catch (err) {
     console.error("Failed to fetch office staff:", err);
@@ -217,6 +215,17 @@ export const fetchCity = async () => {
   }
 };
 
+export const fetchPeriodsByYearLevel = async (yearLevelId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch periods:", err);
+    throw err;
+  }
+};
+
+
 // DASHBOARD
 
 // Director Dashboard
@@ -281,6 +290,20 @@ export const fetchGuardianDashboard = async (id) => {
     throw err;
   }
 };
+
+export const getAttendanceByGuardianId = async (guardianId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/api/report/?guardian_id=${guardianId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching attendance data:', error);
+    throw error;
+  }
+};
+
+
+
+
 
 // Guardian Dashboard
 
@@ -353,7 +376,7 @@ export const fetchAdmissionDetailsById = async (id) => {
   }
 };
 
-// fetch View upload documents api
+// fetch View upload documents api  
 export const fetchViewDocuments = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/Document/`);
@@ -433,7 +456,26 @@ export const fetchAttendanceData = async (date = "") => {
   }
 };
 
-export const fetchAttendance = async (className) => {
+
+export const fetchAttendance = async (studentId, month, year) => {
+  try {
+    let url = `${BASE_URL}/a/api/report/`;
+    if (studentId) {
+      url += `?student_id=${studentId}`;
+      if (month) url += `&month=${month}`;
+
+      if (year) url += `&year=${year}`;
+    }
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch attendance:", error.response?.data || error.message);
+    throw error.response?.data || new Error("Something went wrong.");
+  }
+};
+
+
+export const fetchClassAttendance = async (className) => {
   try {
     const response = await axios.get(
       `${BASE_URL}/a/api/report/?class=${className}`
@@ -445,6 +487,8 @@ export const fetchAttendance = async (className) => {
   }
 };
 
+
+
 export const fetchStudentById = async (student_id) => {
   try {
     const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
@@ -455,17 +499,31 @@ export const fetchStudentById = async (student_id) => {
   }
 };
 
-export const fetchStudentFee = async (student_id = 12) => {
+export const fetchStudentFee = async (student_id) => {
   try {
+    console.log("Fetching student fee for ID:", student_id); 
+
     const response = await axios.get(
       `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
+
     );
+
+    console.log("Fetched student fee data:", response.data);
+
     return response.data;
+
   } catch (error) {
     console.error("Failed to fetch student fees details:", error);
     throw error;
   }
 };
+
+
+
+
+
+
+
 
 // POST APIS
 
@@ -511,24 +569,44 @@ export const handleEditAdmissionForm = async (formData, id) => {
   }
 };
 
-// Update Student Detail
-export const updateStudentById = async (id, updatedData) => {
+export const updateStudentById = async (id, formData) => {
   try {
     const response = await axios.put(
       `${BASE_URL}/s/students/${id}/`,
-      updatedData
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
+    console.log("Student profile updated response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Failed to update student profile:", error);
-    throw error;
+    console.error(
+      "Failed to update student profile:",
+      error.response?.data || error.message
+    );
+    throw (
+      error.response?.data ||
+      new Error("Something went wrong while updating student profile.")
+    );
   }
 };
 
-export const editTeachersdetails = async (id, formdata) => {
+export const editTeachersdetails = async (id, formData) => {
   try {
-    const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formdata);
-    return response.data; 
+    const response = await axios.put(
+      `${BASE_URL}/t/teacher/${id}/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("Teacher details updated response:", response.data);
+    return response.data;
   } catch (error) {
     console.error(
       "Failed to update teacher details:",
@@ -541,12 +619,18 @@ export const editTeachersdetails = async (id, formdata) => {
   }
 };
 
-export const editOfficeStaffdetails = async (id, formdata) => {
+export const editOfficeStaffdetails = async (id, formData) => {
   try {
     const response = await axios.put(
       `${BASE_URL}/d/officestaff/${id}/`,
-      formdata
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
+    console.log("Office staff updated response:", response.data);
     return response.data;
   } catch (error) {
     console.error(
@@ -559,6 +643,7 @@ export const editOfficeStaffdetails = async (id, formdata) => {
     );
   }
 };
+
 
 export const fetchGuardianAttendance = async (id, month, year) => {
   try {
