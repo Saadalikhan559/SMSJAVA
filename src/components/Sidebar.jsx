@@ -1,16 +1,14 @@
 import React, { useContext, useRef } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { allRouterLink } from "../router/AllRouterLinks";
 import { constants } from "../global/constants";
 import { AuthContext } from "../context/AuthContext";
-
 
 export const Sidebar = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
-  const studentId = localStorage.getItem("student_id");
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -69,20 +67,6 @@ export const Sidebar = () => {
                       <i className="fa-solid fa-house w-5"></i> Dashboard
                     </Link>
                   </li>
-                  {role === constants.roles.student && isAuthenticated && (
-                    <li>
-                      <Link
-                        onClick={(e) =>
-                          handleNavigation(e, allRouterLink.myAttendance.replace(":id", studentId))
-                        }
-
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                      >
-                        <i className="fa-solid fa-calendar-check"></i> My Attendance
-                      </Link>
-                    </li>
-                  )}
-
                   <div>
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
@@ -111,7 +95,6 @@ export const Sidebar = () => {
                         </li>
                       </ul>
                     )}
-
                   </div>
                 </ul>
               </div>
@@ -190,14 +173,12 @@ export const Sidebar = () => {
             {/* Management */}
             {(role === constants.roles.director ||
               role === constants.roles.teacher || role === constants.roles.student) &&
-
               isAuthenticated && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                     Management
                   </h3>
                   <ul className="space-y-1">
-
                     {role === constants.roles.director && (
                       <>
                         <li>
@@ -212,7 +193,6 @@ export const Sidebar = () => {
                           >
                             <i className="fa-solid fa-tasks w-5"></i> Assign
                             Subjects
-
                           </Link>
                         </li>
                         <li>
@@ -304,7 +284,6 @@ export const Sidebar = () => {
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
                             <i className="fa-solid fa-eye w-5"></i> View Exam Paper
-
                           </Link>
                         </li>
                       </>
@@ -327,29 +306,6 @@ export const Sidebar = () => {
                   </ul>
                 </div>
               )}
-
-
-                    {/* This is for director, teacher, and office staff */}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff ||
-                      role === constants.roles.teacher) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.periodsByClass)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-clock w-5"></i> Periods Assigned
-                          </Link>
-
-                        </li>
-                      )}
-
-                  </ul>
-                </div>
-              )}
-
 
             {/* Teaching */}
             {role === constants.roles.teacher && isAuthenticated && (
@@ -399,30 +355,28 @@ export const Sidebar = () => {
                     <li>
                       <Link
                         onClick={(e) =>
-                          handleNavigation(e, allRouterLink.studentFeeCard.replace(":student_id", studentId))
+                          handleNavigation(e, allRouterLink.studentFeeCard)
                         }
                         className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                       >
                         <i className="fa-solid fa-envelope w-5"></i> Student Fee
                         Card
                       </Link>
-
-
                     </li>
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.feeSummary)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-envelope w-5"></i> Fee
-                            Record
-                          </Link>
-                        </li>
-                      )}
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.feeSummary)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-envelope w-5"></i> Fee
+                          Record
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -430,6 +384,7 @@ export const Sidebar = () => {
             {/* Reports */}
             {(role === constants.roles.director ||
               role === constants.roles.teacher ||
+              role === constants.roles.student ||
               role === constants.roles.officeStaff) &&
               isAuthenticated && (
                 <div>
@@ -470,20 +425,6 @@ export const Sidebar = () => {
                     >
                       <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
                       Attendance Record
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      onClick={(e) =>
-                        handleNavigation(
-                          e,
-                          allRouterLink.studentAttendance
-                        )
-                      }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                    >
-                      <i className="fa-solid fa-chart-simple"></i>{" "}
-                      Full Attendance
                     </Link>
                   </li>
                 </ul>

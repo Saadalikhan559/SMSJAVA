@@ -317,7 +317,7 @@ const DirectorProfile = () => {
           >
             <span className="mr-2 text-lg leading-none">↑</span> Update
           </button>
-
+        </div>  */}
       </div>
 
       {/* Dialog Box */}
@@ -488,7 +488,7 @@ const DirectorProfile = () => {
                     </div>
 
                     <div className="flex flex-col gap-1">
-                      <label className="text-sm font-semibolhttps://github.com/sms-admin-technohub/SMS-Frontend2025/pull/57/conflict?name=src%252Fcomponents%252FSidebar.jsx&ancestor_oid=e0fffc1103374c771930a4c588ee0fb0f9f083a6&base_oid=a0151dd6a313f486d42da47ce81b199527b9e29d&head_oid=ba9fd0889fea1ac44e66a345234296cb27756ce4d text-gray-500">
+                      <label className="text-sm font-semibold text-gray-500">
                         Phone Number
                       </label>
                       <input
