@@ -13,8 +13,6 @@ const AllStaff = () => {
     try {
       const data = await fetchOfficeStaff();
       setofficestaff(data);
-      console.log(data);
-
     } catch (err) {
       setError("Failed to fetch office staff. Please try again later.");
     } finally {
@@ -27,8 +25,6 @@ const AllStaff = () => {
     try {
       const data = await fetchTeachers();
       setteachers(data);
-      console.log(data);
-
     } catch (err) {
       setError("Failed to fetch teachers. Please try again later.");
     } finally {
@@ -54,32 +50,33 @@ const AllStaff = () => {
       {error && (
         <div className="text-red-600 text-center mb-4 font-medium">{error}</div>
       )}
-      <div className="flex flex-col md:flex-row gap-6">
+
+      <div className="flex flex-col md:flex-row gap-6 justify-center">
         {/* Teachers Section */}
-        <div className="flex-1 bg-white p-6 rounded-lg shadow-lg max-h-[80vh] overflow-auto">
+        <div className="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
           <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
             <i className="fa-solid fa-person-chalkboard mr-2"></i> Teachers
           </h1>
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead className="bgTheme text-white">
+          <div className="overflow-x-auto text-center">
+            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+              <thead className="bgTheme text-white text-center">
                 <tr>
-                  <th className="px-6 py-3 text-left">S.NO</th>
-                  <th className="px-6 py-3 text-left">Name</th>
+                  <th className="px-4 py-3">S.NO</th>
+                  <th className="px-4 py-3">Name</th>
                 </tr>
               </thead>
               <tbody>
                 {teachers.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-red-600">
+                    <td colSpan="2" className="text-center py-6 text-gray-500">
                       No data found.
                     </td>
                   </tr>
                 ) : (
                   teachers.map((record, index) => (
-                    <tr key={record.id || index} className="hover:bg-blue-50">
-                      <td className="px-6 py-4">{index + 1}</td>
-                      <td className="px-6 py-4">
+                    <tr key={record.id || index} className="hover:bg-blue-50 text-center">
+                      <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
+                      <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/teacher/${record.id}`}
                           state={{ level_name: record.level_name }}
@@ -89,7 +86,6 @@ const AllStaff = () => {
                             .filter(Boolean)
                             .join(" ")}
                         </Link>
-
                       </td>
                     </tr>
                   ))
@@ -100,30 +96,30 @@ const AllStaff = () => {
         </div>
 
         {/* Office Staff Section */}
-        <div className="flex-1 bg-white p-6 rounded-lg shadow-lg max-h-[80vh] overflow-auto">
+        <div className="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
           <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
             <i className="fa-solid fa-clipboard-user mr-2"></i> Office Staff
           </h1>
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead className="bgTheme text-white">
+          <div className="overflow-x-auto text-center">
+            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+              <thead className="bgTheme text-white text-center">
                 <tr>
-                  <th className="px-6 py-3 text-left">S.NO</th>
-                  <th className="px-6 py-3 text-left">Name</th>
+                  <th className="px-4 py-3">S.NO</th>
+                  <th className="px-4 py-3">Name</th>
                 </tr>
               </thead>
               <tbody>
                 {officestaff.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-red-600">
+                    <td colSpan="2" className="text-center py-6 text-gray-500">
                       No data found.
                     </td>
                   </tr>
                 ) : (
                   officestaff.map((record, index) => (
-                    <tr key={record.id || index} className="hover:bg-blue-50">
-                      <td className="px-6 py-4">{index + 1}</td>
-                      <td className="px-6 py-4">
+                    <tr key={record.id || index} className="hover:bg-blue-50 text-center">
+                      <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
+                      <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/office/${record.id}`}
                           state={{ level_name: record.level_name }}
@@ -133,7 +129,6 @@ const AllStaff = () => {
                             .filter(Boolean)
                             .join(" ")}
                         </Link>
-
                       </td>
                     </tr>
                   ))

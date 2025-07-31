@@ -64,7 +64,7 @@ const PeriodsByClass = () => {
                             ) : (
                                 yearLevels.map((record, index) => (
                                     <tr key={record.id || index} className="hover:bg-blue-50 text-center">
-                                        <td className="px-4 py-3">{index + 1}</td>
+                                        <td className="px-4 py-3">{index + 1}.</td>
                                         <td className="px-4 py-3">
                                             <Link
                                                 to={`/periodAssignment/${record.id}`}  // This is the year_level_id

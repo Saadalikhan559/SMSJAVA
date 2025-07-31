@@ -44,6 +44,7 @@ export const allRouterLink = {
     myAttendance: '/myAttendance/:id',
     periodsByClass:'/periodsByClass',
     periodAssignment: "periodAssignment/:year_level_id",
+    guardianChildren: "/guardianChildren",
 
     // all routes before this
     unAuthorized: '/unauthorized',

@@ -264,58 +264,77 @@ export const Sidebar = () => {
             )}
 
             {/* Fees */}
-            {(role === constants.roles.director ||
-              role === constants.roles.guardian ||
-              role === constants.roles.student ||
-              role === constants.roles.officeStaff) &&
-              isAuthenticated && (
+            {isAuthenticated &&
+              (role === constants.roles.director ||
+                role === constants.roles.student ||
+                role === constants.roles.officeStaff ||
+                role === constants.roles.guardian) && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                     Fees
                   </h3>
                   <ul className="space-y-1">
-                    <li>
-                      <Link
-                        onClick={(e) =>
-                          handleNavigation(e, allRouterLink.admissionFees)
-                        }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                      >
-                        <i className="fa-solid fa-money-bill-wave w-5"></i> Fee
-                        Submission
-                      </Link>
-                    </li>
 
+                    {/* Fee Submission: director, office staff, student */}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff ||
+                      role === constants.roles.student ||
+                    role === constants.roles.guardian) && (
+                        <li>
+                          <Link
+                            onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-money-bill-wave w-5"></i> Fee Submission
+                          </Link>
+                        </li>
+                      )}
 
-                    <li>
-                      <Link
-                        onClick={(e) =>
-                          handleNavigation(e, allRouterLink.studentFeeCard.replace(":student_id", studentId))
-                        }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                      >
-                        <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
-                      </Link>
+                    {/* Student Fee Card: student only */}
+                    {role === constants.roles.student && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(
+                              e,
+                              allRouterLink.studentFeeCard.replace(":student_id", studentId)
+                            )
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                        </Link>
+                      </li>
+                    )}
 
+                    {/* Student Fee Card List: guardian only */}
+                    {role === constants.roles.guardian && (
+                      <li>
+                        <Link
+                          onClick={(e) => handleNavigation(e, allRouterLink.guardianChildren)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                        </Link>
+                      </li>
+                    )}
 
-                    </li>
+                    {/* Fee Record: director and office staff only */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
                         <li>
                           <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.feeSummary)
-                            }
+                            onClick={(e) => handleNavigation(e, allRouterLink.feeSummary)}
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-envelope w-5"></i> Fee
-                            Record
+                            <i className="fa-solid fa-envelope w-5"></i> Fee Record
                           </Link>
                         </li>
                       )}
                   </ul>
                 </div>
               )}
+
 
             {/* Reports */}
             {(role === constants.roles.director ||

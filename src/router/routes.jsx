@@ -47,6 +47,7 @@ import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
 import MyAttendance from "../components/Student Dashboard/MyAttendance";
 import PeriodAssignment from "../screens/Assignments/PeriodAssignment";
 import PeriodsByClass from "../components/Classesdata/PeriodsByClass";
+import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
 
 export const routes = [
   {
@@ -337,6 +338,15 @@ export const routes = [
       constants.roles.officeStaff,
     ],
   },
+    {
+    path: allRouterLink.guardianChildren,
+    element: <GuardianChildren/>,
+    protected: true,
+    allowedRoles: [
+      constants.roles.guardian,
+    ],
+  },
+
 
 
   // include all routes before this please

@@ -11,20 +11,20 @@ const PeriodAssignment = () => {
   const [assignedPeriods, setAssignedPeriods] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getPeriods = async () => {
-    if (!year_level_id) return;
+    const getPeriods = async () => {
+      if (!year_level_id) return;
 
-    setLoading(true);
-    try {
-      const data = await fetchPeriodsByYearLevel(year_level_id);
-      setAssignedPeriods(data.assigned_periods || []);
-    } catch (error) {
-      console.error("Failed to fetch periods:", error);
-      setAssignedPeriods([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(true);
+      try {
+        const data = await fetchPeriodsByYearLevel(year_level_id);
+        setAssignedPeriods(data.assigned_periods || []);
+      } catch (error) {
+        console.error("Failed to fetch periods:", error);
+        setAssignedPeriods([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
     getPeriods();

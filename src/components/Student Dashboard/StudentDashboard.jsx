@@ -1,71 +1,112 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { fetchStudentDashboard } from "../../services/api/Api";
-import { Link } from 'react-router-dom';
+import {
+  fetchStudentDashboard,
+  fetchPeriodsByYearLevel,
+} from "../../services/api/Api";
 
 export const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
+  const [assignedPeriods, setAssignedPeriods] = useState([]);
   const [loading, setLoading] = useState(true);
   const { userID } = useContext(AuthContext);
 
-  const getGuardianDashboardData = async () => {
-    try {
-      const data = await fetchStudentDashboard(userID);
-      setDashboardData(data);
-      setLoading(false);
-    } catch (error) {
-      console.log("failed to fetch guardian dashboard data", error);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    getGuardianDashboardData();
-  }, []);
+    const getStudentDashboardData = async () => {
+      try {
+        const data = await fetchStudentDashboard(userID);
+        setDashboardData(data);
+        const yearLevelId = data?.children?.[0]?.year_level_id;
+
+        if (yearLevelId) {
+          const periodData = await fetchPeriodsByYearLevel(yearLevelId);
+          setAssignedPeriods(periodData.assigned_periods || []);
+        }
+      } catch (error) {
+        console.error("Failed to load dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getStudentDashboardData();
+  }, [userID]);
 
   if (loading) {
-    return <div className="p-4 text-center">Loading dashboard...</div>;
+    return (
+      <div className="p-6 text-center text-gray-600 text-lg font-medium">
+        Loading dashboard...
+      </div>
+    );
   }
 
-  if (!dashboardData) {
-    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  const student = dashboardData?.children?.[0];
+
+  if (!student) {
+    return (
+      <div className="p-6 text-center text-red-600 font-semibold">
+        No student data available.
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 space-y-6">
-      <h3 className="text-3xl font-bold text-center text-gray-800">
+    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+      <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         Student Dashboard
-      </h3>
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {dashboardData.children && dashboardData.children.length > 0 ? (
-          dashboardData.children.map((child, idx) => (
-            <div
-              key={idx}
-              className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white"
-            >
-              {/* Header */}
-              <div className="p-4 bgTheme text-white">
-                <h2 className="text-xl font-bold truncate">{child.student_name}</h2>
-              </div>
+      <div className="rounded-lg shadow-md border borderTheme bg-white">
+        <div className="rounded-t-lg overflow-hidden">
+          <div className="p-5 bgTheme text-white flex items-center justify-between">
+            <h3 className="text-2xl font-semibold uppercase">
+              {student.student_name}
+            </h3>
+            <p className="text-2xl font-semibold">{student.class}</p>
+          </div>
 
-              {/* Detail Section */}
-              <div className="p-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">Class:</span>
-                  <span className="text-gray-800 font-semibold">
-                    {child.class}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))
+          {/* Daily Class Schedule Heading */}
+          <div className="bg-white text-blue-700 px-5 py-2 border-t border-white flex justify-center">
+            <h4 className="text-xl font-semibold tracking-wide uppercase">
+              Daily Class Schedule
+            </h4>
+          </div>
+        </div>
+
+        {/* Assigned Periods Table */}
+        {assignedPeriods.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto text-sm">
+              <thead className="bg-gray-100 text-gray-700 text-left">
+                <tr>
+                  <th className="px-5 py-3 border-b">Period.No</th>
+                  <th className="px-5 py-3 border-b">Subject</th>
+                  <th className="px-5 py-3 border-b">Teacher</th>
+                  <th className="px-5 py-3 border-b">Start Time</th>
+                  <th className="px-5 py-3 border-b">End Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assignedPeriods.map((period, index) => (
+                  <tr key={index} className="hover:bg-blue-50 border-b text-gray-800 last:border-b-0">
+
+                    <td className="px-5 py-3">{index + 1}</td>
+                    <td className="px-5 py-3">{period.subject}</td>
+                    <td className="px-5 py-3">{period.teacher}</td>
+                    <td className="px-5 py-3">{period.start_time}</td>
+                    <td className="px-5 py-3">{period.end_time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <div className="text-center col-span-full text-gray-500">
-            No student data available.
+          <div className="p-5 text-center text-gray-500">
+            No periods assigned for this class.
           </div>
         )}
       </div>
     </div>
   );
 };
+
