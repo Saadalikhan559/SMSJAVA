@@ -546,7 +546,9 @@ export const DocumentUpload = () => {
           type="button"
           onClick={prev}
           disabled={step === 0}
-          className="btn btn-outline w-40"
+          // className="btn btn-primry w-40"
+          className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
+    
         >
           Back
         </button>
@@ -554,7 +556,8 @@ export const DocumentUpload = () => {
           <button
             type="button"
             onClick={next}
-            className="btn btn-primary w-40"
+            // className="btn btn-primary w-40"
+          className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
             disabled={
               role.length === 0 ||
               (role === constants.roles.student && !formData.year_level)

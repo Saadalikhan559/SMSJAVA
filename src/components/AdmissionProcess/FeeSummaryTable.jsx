@@ -83,32 +83,52 @@ const FeeSummaryTable = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+        <i className="fa-solid fa-spinner fa-spin text-4xl text-blue-600" />
       </div>
     );
   }
-
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="text-center max-w-md p-6 bg-white shadow-lg rounded-lg border border-red-300">
+          <i className="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h2>
+          <p className="text-sm text-gray-600">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              getFeeData();
+            }}
+            className="mt-5 px-4 py-2 bgTheme text-white rounded hover:bg-blue-700 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 text-center relative">
-          {/* Centered Heading */}
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 w-full mb-3 md:mb-0">
-            <i className="fa-solid fa-graduation-cap mr-2"></i> Student Fee
-            Record
-          </h1>
+        <div className="mb-6">
+          <div className="relative mb-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
+              <i className="fa-solid fa-graduation-cap mr-2"></i> Students Fee Record
+            </h1>
+            <Link
+              to={allRouterLink.feeDashboard}
+              className="absolute right-0 top-1/2 -translate-y-1/2 bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+            >
+              Fee Dashboard
+            </Link>
+          </div>
 
-          {/* Fee Dashboard Button */}
-          <Link
-            to={allRouterLink.feeDashboard}
-            className="self-center md:self-auto bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition whitespace-nowrap"
-          >
-            Fee Dashboard
-          </Link>
+
+
         </div>
 
         {/* Filter Section */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <div className="flex flex-wrap justify-center gap-4 mb-4">
           {/* Month Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -171,14 +191,6 @@ const FeeSummaryTable = () => {
             Reset Filters
           </button>
         </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="text-red-600 text-center mb-4 font-medium">
-            {error}
-          </div>
-        )}
-
         {/* Table Section */}
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">

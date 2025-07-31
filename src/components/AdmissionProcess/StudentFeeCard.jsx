@@ -1,17 +1,17 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { fetchStudentFee } from "../../services/api/Api";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useParams } from "react-router-dom";
 
 export const StudentFeeCard = () => {
-
   const [details, setDetails] = useState(null);
   const [filteredSummary, setFilteredSummary] = useState([]);
   const [loading, setLoading] = useState(true);
   const [allFeeTypes, setAllFeeTypes] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+
   const { student_id } = useParams();
 
   const getStudentFeeDetails = async () => {
@@ -23,16 +23,29 @@ export const StudentFeeCard = () => {
     setLoading(true);
     try {
       const data = await fetchStudentFee(student_id);
-      setDetails(data || null);
+      console.log("Student Fee Data:", data);
+
+      if (
+        !data ||
+        !Array.isArray(data.monthly_summary) ||
+        data.monthly_summary.length === 0
+      ) {
+        setDetails(null);
+        setFilteredSummary([]);
+        setAllFeeTypes([]);
+        return;
+      }
+
+      setDetails(data);
 
       const uniqueTypes = new Set();
-      data.monthly_summary.forEach((item) =>
-        item.fee_type.forEach((f) => uniqueTypes.add(f.type))
-      );
+      data.monthly_summary.forEach((item) => {
+        item.fee_type?.forEach((f) => uniqueTypes.add(f.type));
+      });
       setAllFeeTypes([...uniqueTypes]);
       setFilteredSummary(data.monthly_summary);
     } catch (error) {
-      console.error("Failed to fetch student fee data", error);
+      console.error("Failed to fetch student fee data", error.response?.data || error);
       setDetails(null);
     } finally {
       setLoading(false);
@@ -44,8 +57,6 @@ export const StudentFeeCard = () => {
       getStudentFeeDetails();
     }
   }, [student_id]);
-
-
 
   useEffect(() => {
     if (!details) return;
@@ -138,14 +149,19 @@ export const StudentFeeCard = () => {
   }
 
   if (!details) {
-    return <div className="p-4 text-center text-red-600 font-medium">Failed to load data</div>;
+    return (
+      <div className="p-4 text-center text-red-600 font-medium">
+        No fee data available for this student.
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          <i className="fa-solid fa-money-check-alt mr-2"></i> {details.student_name}'s Fee Report Card
+          <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
+          {details.student_name}'s Fee Report Card
         </h1>
 
         <div className="flex gap-4 justify-center mb-6 flex-wrap">
@@ -168,11 +184,13 @@ export const StudentFeeCard = () => {
             className="border border-gray-300 rounded px-3 py-2"
           >
             <option value="">All Years</option>
-            {[...new Set(details.monthly_summary.map((item) => item.year).filter(Boolean))].map((year, idx) => (
-              <option key={idx} value={year}>
-                {year}
-              </option>
-            ))}
+            {[...new Set(details.monthly_summary.map((item) => item.year).filter(Boolean))].map(
+              (year, idx) => (
+                <option key={idx} value={year}>
+                  {year}
+                </option>
+              )
+            )}
           </select>
 
           <button
@@ -228,4 +246,3 @@ export const StudentFeeCard = () => {
     </div>
   );
 };
-
