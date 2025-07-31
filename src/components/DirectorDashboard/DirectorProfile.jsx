@@ -304,7 +304,7 @@ const DirectorProfile = () => {
 
         {/* Buttons section */}
 
-        <div className="flex justify-end gap-4 mt-8">
+        {/* <div className="flex justify-end gap-4 mt-8">
           <button
             className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             onClick={() => window.history.back()}
@@ -317,7 +317,7 @@ const DirectorProfile = () => {
           >
             <span className="mr-2 text-lg leading-none">↑</span> Update
           </button>
-        </div> 
+        </div>  */}
       </div>
 
       {/* Dialog Box */}

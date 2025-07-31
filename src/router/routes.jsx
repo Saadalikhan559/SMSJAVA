@@ -44,6 +44,12 @@ import DirectorMarkHolidays from "../components/DirectorDashboard/DirectorMarkHo
 import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
 import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
+import ExamSchedule from "../components/Teacher/ExamSchedule";
+import UpdateExamSchedule from "../components/Teacher/UpdateExamSchedule";
+import TimeTable from "../components/Teacher/TimeTable";
+import UploadExamPaper from "../components/Teacher/UploadExamPaper";
+import ViewExamPaper from "../components/Teacher/ViewExamPaper";
+import UpdateExamPaper from "../components/Teacher/UpdateExamPaper";
 import MyAttendance from "../components/Student Dashboard/MyAttendance";
 import PeriodAssignment from "../screens/Assignments/PeriodAssignment";
 import PeriodsByClass from "../components/Classesdata/PeriodsByClass";
@@ -140,6 +146,33 @@ export const routes = [
     ],
   },
   {
+    path: allRouterLink.UploadExamPaper,
+    element: <UploadExamPaper />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+    ],
+  },
+  {
+    path: allRouterLink.ViewExamPaper,
+    element: <ViewExamPaper />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+    ],
+  },
+  {
+    path: allRouterLink.UpdateExamPaper,
+    element: <UpdateExamPaper />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+    ],
+  },
+  {
     path: allRouterLink.viewDocuments,
     element: <ViewDocuments />,
     protected: true,
@@ -148,6 +181,28 @@ export const routes = [
       constants.roles.officeStaff,
       constants.roles.teacher,
     ],
+  },
+  {
+    path: allRouterLink.TimeTable,
+    element: <TimeTable />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.student,
+    ],
+  },
+  {
+    path: allRouterLink.ExamSchedule,
+    element: <ExamSchedule/>,
+    protected: true,
+    allowedRoles: [constants.roles.teacher],
+  },
+  {
+    path: allRouterLink.UpdateExamSchedule,
+    element: <UpdateExamSchedule/>,
+    protected: true,
+    allowedRoles: [constants.roles.teacher],
   },
   {
     path: allRouterLink.subjectAssignment,
