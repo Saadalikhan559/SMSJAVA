@@ -65,7 +65,7 @@ const GuardianChildren = () => {
                             ) : (
                                 Children.map((record, index) => (
                                     <tr key={record.id || index} className="hover:bg-blue-50 text-center">
-                                        <td className="px-4 py-3">{index + 1}.</td>
+                                        <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
                                         <td className="px-4 py-3 text-blue-600 hover:underline">
                                             <Link
                                                 to={allRouterLink.studentFeeCard.replace(
@@ -88,4 +88,7 @@ const GuardianChildren = () => {
 };
 
 export default GuardianChildren;
+
+
+
 
