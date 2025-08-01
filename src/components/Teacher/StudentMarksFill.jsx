@@ -1,26 +1,26 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+// import { useNavigate } from "react-router-dom";
 import {
+  fetchSchoolYear,
   fetchExamType,
   fetchYearLevels,
   fetchSubjects,
-  fetchTerms,
   fetchAllTeachers,
+  fetchStudents2,
 } from "../../services/api/Api";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { allRouterLink } from "../../router/AllRouterLinks";
 import { constants } from "../../global/constants";
+import axios from "axios";
 
-const UpdateExamPaper = () => {
-  const navigate = useNavigate();
-
-  const [examType, setExamType] = useState([]);
-  const [className1, setClassName] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [terms, setTerms] = useState([]);
-  const [teachers, setTeachers] = useState([]);
+const StudentMarksFill = () => {
+  //   const navigate = useNavigate();
+  const [schoolYear, setSchoolYear] = useState([]);
+  const [examType1, setExamType] = useState([]);
   const [accessToken, setAccessToken] = useState("");
+  const [className, setClassName] = useState([]);
+  const [subjects1, setSubjects] = useState([]);
+  const [teachers1, setTeachers] = useState([]);
+  const [Students, setStudents] = useState([]);
 
   const BASE_URL = constants.baseUrl;
 
@@ -28,18 +28,7 @@ const UpdateExamPaper = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      exam_type: "",
-      term: "",
-      subject: "",
-      year_level: "",
-      total_marks: "",
-      paper_code: "",
-      teacher: "",
-      uploaded_file: null,
-    },
-  });
+  } = useForm();
 
   useEffect(() => {
     const tokenData = localStorage.getItem("authTokens");
@@ -54,6 +43,16 @@ const UpdateExamPaper = () => {
       }
     }
   }, []);
+
+  // Fetch school_year
+  const getSchool_year = async () => {
+    try {
+      const obj = await fetchSchoolYear();
+      setSchoolYear(obj);
+    } catch (err) {
+      console.log("Failed to load classes. Please try again." + err);
+    }
+  };
 
   const getExamType = async () => {
     try {
@@ -94,16 +93,6 @@ const UpdateExamPaper = () => {
   };
 
   // Fetch terms
-  const getTerms = async () => {
-    try {
-      const obj = await fetchTerms();
-      setTerms(obj);
-    } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
-    }
-  };
-
-  // Fetch terms
   const getTeachers = async () => {
     try {
       const obj = await fetchAllTeachers();
@@ -113,51 +102,84 @@ const UpdateExamPaper = () => {
     }
   };
 
+  // Fetch Students
+  const getStudents = async () => {
+    try {
+      const obj = await fetchStudents2();
+      setStudents(obj);
+    } catch (err) {
+      console.log("Failed to load classes. Please try again." + err);
+    }
+  };
+
   useEffect(() => {
+    getTeachers();
+    getsubjects();
+    getClassName();
+    getSchool_year();
+    getStudents();
     if (accessToken) {
       // Only call getExamType if we have a token
       getExamType();
     }
-    getClassName();
-    getsubjects();
-    getTerms();
-    getTeachers();
-  }, [accessToken]);
+  }, [accessToken]); // Add accessToken as dependency
 
-  const handleNavigate = () => {
-    navigate(allRouterLink.UploadExamPaper);
-  };
+  // Static data for dropdowns - replace with your actual data sources
+  const examType = examType1;
+
+  const className1 = className;
+
+  const schoolYears = schoolYear;
+
+  const subjects = subjects1;
+
+  const teachers = teachers1;
+
+  const students = Students;
+
+  //   const handleNavigate = () => {
+  //     navigate(-1);
+  //   };
 
   const onSubmit = async (data) => {
-    // Create FormData for file upload
-    const formData = new FormData();
-    formData.append("exam_type", data.exam_type);
-    formData.append("term", data.term);
-    formData.append("subject", data.subject);
-    formData.append("year_level", data.year_level);
-    formData.append("total_marks", data.total_marks);
-    formData.append("paper_code", data.paper_code);
-    formData.append("teacher", data.teacher);
-    formData.append("uploaded_file", data.uploaded_file[0]);
+    // Format the data according to the static payload structure
+    const payload = {
+      school_year_id: parseInt(data.school_year),
+      exam_type_id: parseInt(data.exam_type),
+      year_level_id: parseInt(data.year_level),
+      data: [
+        {
+          teacher_id: parseInt(data.teacher),
+          subject_id: parseInt(data.subject),
+          student_marks: [
+            {
+              student_id: parseInt(data.student),
+              marks: parseInt(data.marks),
+            },
+          ],
+        },
+      ],
+    };
 
+    console.log("Form submitted with payload:", payload);
     try {
       if (!accessToken) return;
       // Replace with your actual API call
-      const response = await axios.put(
-        `${BASE_URL}/d/Exam-Paper/update_exampaper/`,
-        formData,
+      const response = await axios.post(
+        `${BASE_URL}/d/Student-Marks/create_marks/`,
+        payload,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-      console.log("Form submitted:", formData);
+
       if (response.status === 200 || response.status === 201) {
         console.error("ExamPaper submitted successfully");
-        alert(`ExamPaper Updated successfully`);
-        // window.location.reload();
+        alert(`Student marks filled successfully`);
+        window.location.reload();
       } else {
         throw new Error(
           response.data.message || "Failed to create exam schedule"
@@ -171,45 +193,38 @@ const UpdateExamPaper = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-      <button
-        className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 text-blue-600"
-        onClick={handleNavigate}
-      >
-        Create Exam Paper <span>&rarr;</span>
-      </button>
-
       <form onSubmit={handleSubmit(onSubmit)}>
         <h1 className="text-3xl font-bold text-center mb-8">
-          Update Exam Paper <i className="fa-solid fa-pen-nib ml-2"></i>
+          Fill Student Marks <i className="fa-solid fa-file-pen ml-2"></i>
         </h1>
 
-        {/* Error and Success messages would go here */}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Exam Type */}
+          {/* School Year */}
           <div className="form-control">
             <label className="label">
               <span className="label-text">
-                Exam Type <span className="text-error">*</span>
+                School Year <span className="text-error">*</span>
               </span>
             </label>
             <select
               className={`select select-bordered w-full ${
-                errors.exam_type ? "select-error" : ""
+                errors.school_year ? "select-error" : ""
               }`}
-              {...register("exam_type", { required: "Exam type is required" })}
+              {...register("school_year", {
+                required: "School year is required",
+              })}
             >
-              <option value="">Select Exam Type</option>
-              {examType?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.name}
+              <option value="">Select School Year</option>
+              {schoolYears?.map((year) => (
+                <option key={year.id} value={year.id}>
+                  {year.year_name}
                 </option>
               ))}
             </select>
-            {errors.exam_type && (
+            {errors.school_year && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {errors.exam_type.message}
+                  {errors.school_year.message}
                 </span>
               </label>
             )}
@@ -231,9 +246,9 @@ const UpdateExamPaper = () => {
               })}
             >
               <option value="">Select Year Level</option>
-              {className1?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.level_name}
+              {className1?.map((level) => (
+                <option key={level.id} value={level.id}>
+                  {level.level_name}
                 </option>
               ))}
             </select>
@@ -246,30 +261,30 @@ const UpdateExamPaper = () => {
             )}
           </div>
 
-          {/* Term */}
+          {/* Exam Type */}
           <div className="form-control">
             <label className="label">
               <span className="label-text">
-                Term <span className="text-error">*</span>
+                Exam Type <span className="text-error">*</span>
               </span>
             </label>
             <select
               className={`select select-bordered w-full ${
-                errors.term ? "select-error" : ""
+                errors.exam_type ? "select-error" : ""
               }`}
-              {...register("term", { required: "Term is required" })}
+              {...register("exam_type", { required: "Exam type is required" })}
             >
-              <option value="">Select Term</option>
-              {terms?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.year}
+              <option value="">Select Exam Type</option>
+              {examType?.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
                 </option>
               ))}
             </select>
-            {errors.term && (
+            {errors.exam_type && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {errors.term.message}
+                  {errors.exam_type.message}
                 </span>
               </label>
             )}
@@ -289,9 +304,9 @@ const UpdateExamPaper = () => {
               {...register("subject", { required: "Subject is required" })}
             >
               <option value="">Select Subject</option>
-              {subjects?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.subject_name}
+              {subjects?.map((subject) => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.subject_name}
                 </option>
               ))}
             </select>
@@ -299,63 +314,6 @@ const UpdateExamPaper = () => {
               <label className="label">
                 <span className="label-text-alt text-error">
                   {errors.subject.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Total Marks */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Total Marks <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="number"
-              className={`input input-bordered w-full ${
-                errors.total_marks ? "input-error" : ""
-              }`}
-              placeholder="Enter total marks"
-              {...register("total_marks", {
-                required: "Total marks is required",
-                min: { value: 1, message: "Marks must be positive" },
-              })}
-            />
-            {errors.total_marks && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.total_marks.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Paper Code */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Paper Code <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              className={`input input-bordered w-full ${
-                errors.paper_code ? "input-error" : ""
-              }`}
-              placeholder="Enter paper code"
-              {...register("paper_code", {
-                required: "Paper code is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9-]+$/,
-                  message: "Only letters, numbers and hyphens allowed",
-                },
-              })}
-            />
-            {errors.paper_code && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.paper_code.message}
                 </span>
               </label>
             )}
@@ -375,9 +333,9 @@ const UpdateExamPaper = () => {
               {...register("teacher", { required: "Teacher is required" })}
             >
               <option value="">Select Teacher</option>
-              {teachers?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.first_name} {student.last_name}
+              {teachers?.map((teacher) => (
+                <option key={teacher.id} value={teacher.id}>
+                  {teacher.first_name} {teacher.last_name}
                 </option>
               ))}
             </select>
@@ -390,39 +348,58 @@ const UpdateExamPaper = () => {
             )}
           </div>
 
-          {/* File Upload */}
-          <div className="form-control md:col-span-2">
+          {/* Student */}
+          <div className="form-control">
             <label className="label">
               <span className="label-text">
-                Exam Paper File <span className="text-error">*</span>
+                Student <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              className={`select select-bordered w-full ${
+                errors.student ? "select-error" : ""
+              }`}
+              {...register("student", { required: "Student is required" })}
+            >
+              <option value="">Select Student</option>
+              {students?.map((student) => (
+                <option key={student.student_id} value={student.student_id}>
+                  {student.student_name}
+                </option>
+              ))}
+            </select>
+            {errors.student && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {errors.student.message}
+                </span>
+              </label>
+            )}
+          </div>
+
+          {/* Marks */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">
+                Marks <span className="text-error">*</span>
               </span>
             </label>
             <input
-              type="file"
-              className={`file-input file-input-bordered w-full ${
-                errors.uploaded_file ? "file-input-error" : ""
+              type="number"
+              className={`input input-bordered w-full ${
+                errors.marks ? "input-error" : ""
               }`}
-              accept=".pdf,.doc,.docx"
-              {...register("uploaded_file", {
-                required: "File is required",
-                validate: {
-                  fileSize: (files) =>
-                    files[0]?.size <= 5 * 1024 * 1024 ||
-                    "File size must be less than 5MB",
-                  fileType: (files) =>
-                    [
-                      "application/pdf",
-                      "application/msword",
-                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    ].includes(files[0]?.type) ||
-                    "Only PDF and Word documents are allowed",
-                },
+              placeholder="Enter marks"
+              {...register("marks", {
+                required: "Marks is required",
+                min: { value: 0, message: "Marks cannot be negative" },
+                max: { value: 100, message: "Marks cannot exceed 100" },
               })}
             />
-            {errors.uploaded_file && (
+            {errors.marks && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  {errors.uploaded_file.message}
+                  {errors.marks.message}
                 </span>
               </label>
             )}
@@ -439,9 +416,9 @@ const UpdateExamPaper = () => {
             {isSubmitting ? (
               <i className="fa-solid fa-spinner fa-spin mr-2" />
             ) : (
-              <i className="fa-solid fa-upload mr-2" />
+              <i className="fa-solid fa-save mr-2" />
             )}
-            {isSubmitting ? "Updating..." : "Update Paper"}
+            {isSubmitting ? "Saving..." : "Save Marks"}
           </button>
         </div>
       </form>
@@ -449,4 +426,4 @@ const UpdateExamPaper = () => {
   );
 };
 
-export default UpdateExamPaper;
+export default StudentMarksFill;

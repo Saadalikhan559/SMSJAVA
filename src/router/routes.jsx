@@ -53,6 +53,9 @@ import UpdateExamPaper from "../components/Teacher/UpdateExamPaper";
 import MyAttendance from "../components/Student Dashboard/MyAttendance";
 import PeriodAssignment from "../screens/Assignments/PeriodAssignment";
 import PeriodsByClass from "../components/Classesdata/PeriodsByClass";
+import HolidayCalendar from "../screens/HolidayCalendar";
+import StudentMarksFill from "../components/Teacher/StudentMarksFill";
+
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
 
 export const routes = [
@@ -124,6 +127,18 @@ export const routes = [
     ],
   },
   {
+    path: allRouterLink.HolidayCalendar,
+    element: <HolidayCalendar />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.officeStaff,
+      constants.roles.student,
+      constants.roles.teacher,
+      constants.roles.guardian,
+    ],
+  },
+  {
     path: allRouterLink.studentFeeCard,
     element: <StudentFeeCard />,
     protected: true,
@@ -148,6 +163,15 @@ export const routes = [
   {
     path: allRouterLink.UploadExamPaper,
     element: <UploadExamPaper />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+    ],
+  },
+  {
+    path: allRouterLink.StudentMarksFill,
+    element: <StudentMarksFill />,
     protected: true,
     allowedRoles: [
       constants.roles.director,

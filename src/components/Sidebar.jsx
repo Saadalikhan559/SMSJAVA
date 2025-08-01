@@ -634,7 +634,8 @@ export const Sidebar = () => {
 
             {/* Management */}
             {(role === constants.roles.director ||
-              role === constants.roles.teacher || role === constants.roles.student) &&
+              role === constants.roles.teacher ||
+              role === constants.roles.student) &&
               isAuthenticated && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
@@ -703,7 +704,8 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-file-upload w-5"></i> Upload Exam Paper
+                            <i className="fa-solid fa-file-upload w-5"></i>{" "}
+                            Upload Exam Paper
                           </Link>
                         </li>
                         <li>
@@ -713,7 +715,8 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-eye w-5"></i> View Exam Paper
+                            <i className="fa-solid fa-eye w-5"></i> View Exam
+                            Paper
                           </Link>
                         </li>
                       </>
@@ -749,7 +752,8 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-file-upload w-5"></i> Upload Exam Paper
+                            <i className="fa-solid fa-file-upload w-5"></i>{" "}
+                            Upload Exam Paper
                           </Link>
                         </li>
                         <li>
@@ -759,7 +763,8 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-eye w-5"></i> View Exam Paper
+                            <i className="fa-solid fa-eye w-5"></i> View Exam
+                            Paper
                           </Link>
                         </li>
                       </>
@@ -901,6 +906,31 @@ export const Sidebar = () => {
                         Attendance Record
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        onClick={(e) =>
+                          handleNavigation(e, allRouterLink.HolidayCalendar)
+                        }
+                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      >
+                        <i className="fa-solid fa-calendar-days w-5"></i>{" "}
+                        Holiday Calendar
+                      </Link>
+                    </li>
+                    {(role === constants.roles.director ||
+                      role === constants.roles.teacher) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.StudentMarksFill)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-fill-drip w-5"></i> Student
+                          Marks Fill
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -923,6 +953,17 @@ export const Sidebar = () => {
                     >
                       <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
                       Attendance Record
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={(e) =>
+                        handleNavigation(e, allRouterLink.HolidayCalendar)
+                      }
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                    >
+                      <i className="fa-solid fa-calendar-days w-5"></i> Holiday
+                      Calendar
                     </Link>
                   </li>
                 </ul>
