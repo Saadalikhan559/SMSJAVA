@@ -47,22 +47,17 @@ const UpdateExamSchedule = () => {
 
   useEffect(() => {
     const tokenData = localStorage.getItem("authTokens");
-
     if (tokenData) {
       try {
-        // Parse the JSON string to get the token object
         const tokens = JSON.parse(tokenData);
-        console.log(tokens.access);
-
-        // Set the access token from the parsed object
-        if (tokens && tokens.access) {
+        if (tokens?.access && tokens.access !== accessToken) {
           setAccessToken(tokens.access);
         }
       } catch (error) {
         console.error("Error parsing auth tokens:", error);
       }
     }
-  }, [accessToken]);
+  }, []);
 
   // Fetch all classes
   const getClassName = async () => {
@@ -84,13 +79,21 @@ const UpdateExamSchedule = () => {
     }
   };
 
-  // Fetch ExamType
   const getExamType = async () => {
     try {
-      const obj = await fetchExamType();
-      setExamType(obj);
+      if (!accessToken) {
+        console.error("No access token available");
+        return;
+      }
+
+      const obj = await fetchExamType(accessToken);
+      if (obj) {
+        setExamType(obj);
+      } else {
+        console.error("Received empty response from fetchExamType");
+      }
     } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
+      console.error("Failed to load exam types:", err);
     }
   };
 
@@ -107,9 +110,12 @@ const UpdateExamSchedule = () => {
   useEffect(() => {
     getClassName();
     getSchool_year();
-    getExamType();
+    if (accessToken) {
+      // Only call getExamType if we have a token
+      getExamType();
+    }
     getsubjects();
-  }, []);
+  }, [accessToken]);
 
   const { fields, append, remove } = useFieldArray({
     control,

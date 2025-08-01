@@ -23,9 +23,23 @@ export const fetchSchoolYear = async () => {
   }
 };
 
-export const fetchExamType = async () => {
+export const fetchExamType = async (accessToken) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/Exam-Type/`);
+    // Add debug logging
+    console.log("Access token being used:", accessToken);
+    
+    // Trim the token in case it has whitespace
+    const token = accessToken ? accessToken.trim() : '';
+    
+    if (!token) {
+      throw new Error("No access token provided");
+    }
+
+    const response = await axios.get(`${BASE_URL}/d/Exam-Type/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`  // Using trimmed token
+      }
+    });
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -97,7 +111,9 @@ export const fetchTeachers = async (id) => {
 
 export const fetchOfficeStaff = async (id) => {
   try {
-    const res = await axios.get(`${BASE_URL}/d/officestaff/${id ? `${id}/` : ""}`);
+    const res = await axios.get(
+      `${BASE_URL}/d/officestaff/${id ? `${id}/` : ""}`
+    );
     return res.data;
   } catch (err) {
     console.error("Failed to fetch office staff:", err);
@@ -144,7 +160,6 @@ export const fetchSubjects = async () => {
     throw err;
   }
 };
-
 
 export const fetchTerms = async () => {
   try {
@@ -217,14 +232,15 @@ export const fetchCity = async () => {
 
 export const fetchPeriodsByYearLevel = async (yearLevelId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`);
+    const response = await axios.get(
+      `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to fetch periods:", err);
     throw err;
   }
 };
-
 
 // DASHBOARD
 
@@ -293,17 +309,15 @@ export const fetchGuardianDashboard = async (id) => {
 
 export const getAttendanceByGuardianId = async (guardianId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/a/api/report/?guardian_id=${guardianId}`);
+    const response = await axios.get(
+      `${BASE_URL}/a/api/report/?guardian_id=${guardianId}`
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching attendance data:', error);
+    console.error("Error fetching attendance data:", error);
     throw error;
   }
 };
-
-
-
-
 
 // Guardian Dashboard
 
@@ -376,7 +390,7 @@ export const fetchAdmissionDetailsById = async (id) => {
   }
 };
 
-// fetch View upload documents api  
+// fetch View upload documents api
 export const fetchViewDocuments = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/Document/`);
@@ -400,11 +414,24 @@ export const fetchStudents1 = async (classId) => {
   }
 };
 
+export const fetchStudents2 = async (classId) => {
+  console.log(classId);
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/s/studentyearlevels/`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
 
 export const fetchyearLevelData = async (classId) => {
-
   try {
-    const response = await axios.get(`${BASE_URL}/d/year-level-fee/${classId}/`);
+    const response = await axios.get(
+      `${BASE_URL}/d/year-level-fee/${classId}/`
+    );
     return response.data;
   } catch (err) {
     console.log("Failed to load year level data. Please try again." + err);
@@ -456,7 +483,6 @@ export const fetchAttendanceData = async (date = "") => {
   }
 };
 
-
 export const fetchAttendance = async (studentId, month, year) => {
   try {
     let url = `${BASE_URL}/a/api/report/`;
@@ -469,11 +495,13 @@ export const fetchAttendance = async (studentId, month, year) => {
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch attendance:", error.response?.data || error.message);
+    console.error(
+      "Failed to fetch attendance:",
+      error.response?.data || error.message
+    );
     throw error.response?.data || new Error("Something went wrong.");
   }
 };
-
 
 export const fetchClassAttendance = async (className) => {
   try {
@@ -487,8 +515,6 @@ export const fetchClassAttendance = async (className) => {
   }
 };
 
-
-
 export const fetchStudentById = async (student_id) => {
   try {
     const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
@@ -501,29 +527,20 @@ export const fetchStudentById = async (student_id) => {
 
 export const fetchStudentFee = async (student_id) => {
   try {
-    console.log("Fetching student fee for ID:", student_id); 
+    console.log("Fetching student fee for ID:", student_id);
 
     const response = await axios.get(
       `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
-
     );
 
     console.log("Fetched student fee data:", response.data);
 
     return response.data;
-
   } catch (error) {
     console.error("Failed to fetch student fees details:", error);
     throw error;
   }
 };
-
-
-
-
-
-
-
 
 // POST APIS
 
@@ -596,15 +613,11 @@ export const updateStudentById = async (id, formData) => {
 
 export const editTeachersdetails = async (id, formData) => {
   try {
-    const response = await axios.put(
-      `${BASE_URL}/t/teacher/${id}/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     console.log("Teacher details updated response:", response.data);
     return response.data;
   } catch (error) {
@@ -644,7 +657,6 @@ export const editOfficeStaffdetails = async (id, formData) => {
   }
 };
 
-
 export const fetchGuardianAttendance = async (id, month, year) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/guardian/attendance/`, {
@@ -659,5 +671,67 @@ export const fetchGuardianAttendance = async (id, month, year) => {
   } catch (err) {
     console.error("Failed to fetch guardian attendance:", err);
     throw err;
+  }
+};
+
+export const fetchCalendar = async (month, year) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/a/calendar/?month=${month}&year=${year}`
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch calendar:", err);
+    throw err;
+  }
+};
+
+export const importHolidays = async (year) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/a/holidays/import/?year=${year}`,
+      { year },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to import holidays"
+      );
+    } else if (error.request) {
+      throw new Error("No response received from server");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+};
+
+export const createEvent = async (eventData) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/a/events/`,
+      eventData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Failed to create event");
+    } else if (error.request) {
+      throw new Error("No response received from server");
+    } else {
+      throw new Error(error.message || "Failed to create event");
+    }
   }
 };
