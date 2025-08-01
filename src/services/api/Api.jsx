@@ -331,6 +331,7 @@ export const fetchStudentDashboard = async (id) => {
   }
 };
 
+
 // Teacher Dashboard
 
 export const fetchTeacherDashboard = async (id) => {
@@ -369,7 +370,7 @@ export const fetchFeeDashboardByMonth = async (month) => {
   }
 };
 
-// admission details get api
+// admission detailos get api
 export const fetchAdmissionDetails = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/d/admission/`);
@@ -542,6 +543,34 @@ export const fetchStudentFee = async (student_id) => {
   }
 };
 
+
+export const fetchGuardianChildren = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    if (!token) {
+      throw new Error("No auth token found. User might not be logged in.");
+    }
+    const response = await axios.get(
+      `${constants.baseUrl}/s/studentguardian/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch guardian's children:", err);
+    throw err;
+  }
+};
+
+
+
+
+
+
+
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {
@@ -553,7 +582,7 @@ export const handleAdmissionForm = async (formData) => {
       },
     });
     if (response.status === 200 || response.status === 201) {
-      alert("successfully submitted the form");
+      // alert("successfully submitted the form");
     }
 
     return response.data;

@@ -86,7 +86,7 @@ const AllStudentsPerClass = () => {
               ) : (
                 filteredStudents.map((record, index) => (
                   <tr key={record.id || index} className="hover:bg-blue-50">
-                    <td className="px-4 py-3">{index + 1}</td>
+                    <td className="px-4 py-3">{index + 1}.</td>
                     <td className="px-4 py-3">
                       <Link
                         to={`/Studentdetails/${record.student_id}`}

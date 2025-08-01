@@ -5,10 +5,7 @@ import image from "../../assets/auth-hero.png";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 import { allRouterLink } from "../../router/AllRouterLinks";
-import {
-  validloginemail,
-  validloginpassword,
-} from "../../Validations/Validations";
+import { validloginemail, validloginpassword, } from "../../Validations/Validations";
 
 export const Login = () => {
   const { LoginUser, userRole } = useContext(AuthContext);
@@ -34,10 +31,25 @@ export const Login = () => {
     };
 
     try {
-      const isSuccess = await LoginUser(userData);
-      if (isSuccess) {
+      const isSuccess = await LoginUser(userData); // Your login function
 
-        setLoginTriggered(true); 
+      if (isSuccess) {
+        const userRole = localStorage.getItem("userRole"); // or from context/session
+
+        let redirectPath = "";
+
+        if (userRole === constants.roles.director) {
+          redirectPath = allRouterLink.directorDashboard;
+        } else if (userRole === constants.roles.officeStaff) {
+          redirectPath = allRouterLink.officeStaffDashboard;
+        } else if (userRole === constants.roles.guardian) {
+          redirectPath = allRouterLink.guardianDashboard;
+        } else if (userRole === constants.roles.teacher) {
+          redirectPath = allRouterLink.teacherDashboard;
+        } else if (userRole === constants.roles.student) {
+          redirectPath = allRouterLink.studentDashboard;
+        }
+        navigate(redirectPath, { state: { showSuccess: true } });
       } else {
         setFormError("Invalid email or password");
       }
@@ -48,28 +60,27 @@ export const Login = () => {
     }
   };
 
+
+
+
   useEffect(() => {
-  if (!loginTriggered || !userRole) return;
+    if (!loginTriggered || !userRole) return;
 
-  if (userRole === constants.roles.director) {
-    navigate(allRouterLink.directorDashboard);
-  }
-   else if (userRole === constants.roles.officeStaff) {
-    navigate(allRouterLink.officeStaffDashboard);
-  }
-   else if (userRole === constants.roles.guardian) {
-    navigate(allRouterLink.guardianDashboard);
-  }
-   else if (userRole === constants.roles.teacher) {
-    navigate(allRouterLink.teacherDashboard);
-  }
-   else if (userRole === constants.roles.student) {
-    navigate(allRouterLink.studentDashboard);
-  }
+    if (userRole === constants.roles.director) {
+      navigate(allRouterLink.directorDashboard);
+    } else if (userRole === constants.roles.officeStaff) {
+      navigate(allRouterLink.officeStaffDashboard);
+    } else if (userRole === constants.roles.guardian) {
+      navigate(allRouterLink.guardianDashboard);
+    } else if (userRole === constants.roles.teacher) {
+      navigate(allRouterLink.teacherDashboard);
+    } else if (userRole === constants.roles.student) {
+      navigate(allRouterLink.studentDashboard);
+    }
 
-  // Reset loginTriggered after navigation
-  setLoginTriggered(false);
-}, [userRole, loginTriggered]);
+    setLoginTriggered(false);
+  }, [userRole, loginTriggered]);
+
 
   return (
     <>
@@ -140,9 +151,8 @@ export const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <i
-                  className={`fa-solid ${
-                    showPassword ? "fa-eye" : "fa-eye-slash"
-                  }`}
+                  className={`fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"
+                    }`}
                 ></i>
               </button>
               {errors.password && (

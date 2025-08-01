@@ -56,6 +56,8 @@ import PeriodsByClass from "../components/Classesdata/PeriodsByClass";
 import HolidayCalendar from "../screens/HolidayCalendar";
 import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
+import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
+
 export const routes = [
   {
     path: allRouterLink.homeScreen,
@@ -415,6 +417,15 @@ export const routes = [
       constants.roles.officeStaff,
     ],
   },
+    {
+    path: allRouterLink.guardianChildren,
+    element: <GuardianChildren/>,
+    protected: true,
+    allowedRoles: [
+      constants.roles.guardian,
+    ],
+  },
+
 
 
   // include all routes before this please

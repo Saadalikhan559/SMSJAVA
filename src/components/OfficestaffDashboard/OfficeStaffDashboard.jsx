@@ -97,7 +97,7 @@ const options = {
   return (
     <div className="p-4 space-y-9">
       {/* Header */}
-      <h3 className="text-3xl font-bold text-center text-gray-800">
+      <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         Office Staff Dashboard
       </h3>
 
