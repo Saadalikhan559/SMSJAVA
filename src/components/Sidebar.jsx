@@ -9,6 +9,7 @@ export const Sidebar = () => {
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
+  const { studentID } = useContext(AuthContext);
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -382,7 +383,7 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(
                               e,
-                              allRouterLink.studentFeeCard.replace(":student_id", studentId)
+                              allRouterLink.studentFeeCard.replace(":student_id", studentID)
                             )
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"

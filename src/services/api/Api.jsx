@@ -582,7 +582,7 @@ export const handleAdmissionForm = async (formData) => {
       },
     });
     if (response.status === 200 || response.status === 201) {
-      alert("successfully submitted the form");
+      // alert("successfully submitted the form");
     }
 
     return response.data;
