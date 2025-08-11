@@ -57,6 +57,7 @@ import HolidayCalendar from "../screens/HolidayCalendar";
 import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
+import UnpaidFees from "../components/AdmissionProcess/UnpaidFees";
 
 export const routes = [
   {
@@ -143,8 +144,8 @@ export const routes = [
     element: <StudentFeeCard />,
     protected: true,
     allowedRoles: [
-      // constants.roles.director,
-      // constants.roles.officeStaff,
+      constants.roles.director,
+      constants.roles.officeStaff,
       constants.roles.student,
       // constants.roles.teacher,
       constants.roles.guardian,
@@ -423,6 +424,16 @@ export const routes = [
     protected: true,
     allowedRoles: [
       constants.roles.guardian,
+    ],
+  },
+    {
+    path: allRouterLink.overdueAccounts,
+    element: <UnpaidFees/>,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
     ],
   },
 

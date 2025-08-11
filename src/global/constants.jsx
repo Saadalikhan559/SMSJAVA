@@ -21,18 +21,18 @@ export const constants = {
 
 
   //  baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
-  //  baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
+   baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
 
   // baseUrl: "https://8c1zb9f3-8000.inc1.devtunnels.ms",
 
-  baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
+  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
 
 
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
 
   // baseUrl: "https://sms-backend-385f.onrender.com",
 
-
+  //  baseUrl: "https://958cp4w5-8000.inc1.devtunnels.ms",
 
 
   hideEdgeRevealStyle: `

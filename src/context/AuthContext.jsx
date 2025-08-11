@@ -144,6 +144,9 @@ export const AuthProvider = ({ children }) => {
       setAuthTokens(tokens);
       localStorage.setItem("authTokens", JSON.stringify(tokens));
 
+      localStorage.setItem("access_token", tokens.access);
+      localStorage.setItem("refresh_token", tokens.refresh);
+
       const role = data.Roles[0];
       setUserRole(role);
       localStorage.setItem("userRole", role);
@@ -258,6 +261,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
     setLoading(false);
+
   }, []);
 
   const contextValue = useMemo(
@@ -282,6 +286,7 @@ export const AuthProvider = ({ children }) => {
     }),
     [authTokens, userRole, userID, loading, axiosInstance, teacherID, guardianID, userName, userProfile]
   );
+
 
   return (
     <AuthContext.Provider value={contextValue}>
