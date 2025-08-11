@@ -610,10 +610,6 @@ export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => 
 };
 
 
-
-
-
-
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {
