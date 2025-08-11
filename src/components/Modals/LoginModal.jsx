@@ -7,7 +7,7 @@ const LoginModal = ({ onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-md w-[95%] max-w-md p-6 border border-gray-200 "
+        className="bg-white rounded-lg shadow-md w-[95%] max-w-6xl p-6 border border-gray-200 "
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-center text-gray-700 mb-6 text-3xl font-medium">
@@ -19,7 +19,7 @@ const LoginModal = ({ onClose }) => {
             onClick={onClose}
           >
             Continue
-            <i class="fa-solid fa-right-to-bracket absolute right-3 top-[22px] transform -translate-y-1/2 text-white"></i>
+            <i className="fa-solid fa-right-to-bracket absolute right-3 top-[22px] transform -translate-y-1/2 text-white"></i>
           </button>
         </div>
       </div>

@@ -57,6 +57,7 @@ import HolidayCalendar from "../screens/HolidayCalendar";
 import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
+import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
 
 export const routes = [
   {
@@ -164,37 +165,25 @@ export const routes = [
     path: allRouterLink.UploadExamPaper,
     element: <UploadExamPaper />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.StudentMarksFill,
     element: <StudentMarksFill />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.ViewExamPaper,
     element: <ViewExamPaper />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.UpdateExamPaper,
     element: <UpdateExamPaper />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.viewDocuments,
@@ -218,13 +207,13 @@ export const routes = [
   },
   {
     path: allRouterLink.ExamSchedule,
-    element: <ExamSchedule/>,
+    element: <ExamSchedule />,
     protected: true,
     allowedRoles: [constants.roles.teacher],
   },
   {
     path: allRouterLink.UpdateExamSchedule,
-    element: <UpdateExamSchedule/>,
+    element: <UpdateExamSchedule />,
     protected: true,
     allowedRoles: [constants.roles.teacher],
   },
@@ -352,6 +341,12 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
+    path: allRouterLink.createDiscount,
+    element: <CreateDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
@@ -397,11 +392,11 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.student],
   },
-    {
+  {
     path: allRouterLink.periodsByClass,
     element: <PeriodsByClass />,
     protected: true,
-      allowedRoles: [
+    allowedRoles: [
       constants.roles.director,
       constants.roles.teacher,
       constants.roles.officeStaff,
@@ -409,7 +404,7 @@ export const routes = [
   },
   {
     path: allRouterLink.periodAssignment,
-    element: <PeriodAssignment/>,
+    element: <PeriodAssignment />,
     protected: true,
     allowedRoles: [
       constants.roles.director,
@@ -417,16 +412,12 @@ export const routes = [
       constants.roles.officeStaff,
     ],
   },
-    {
+  {
     path: allRouterLink.guardianChildren,
-    element: <GuardianChildren/>,
+    element: <GuardianChildren />,
     protected: true,
-    allowedRoles: [
-      constants.roles.guardian,
-    ],
+    allowedRoles: [constants.roles.guardian],
   },
-
-
 
   // include all routes before this please
 

@@ -27,18 +27,18 @@ export const fetchExamType = async (accessToken) => {
   try {
     // Add debug logging
     console.log("Access token being used:", accessToken);
-    
+
     // Trim the token in case it has whitespace
-    const token = accessToken ? accessToken.trim() : '';
-    
+    const token = accessToken ? accessToken.trim() : "";
+
     if (!token) {
       throw new Error("No access token provided");
     }
 
     const response = await axios.get(`${BASE_URL}/d/Exam-Type/`, {
       headers: {
-        'Authorization': `Bearer ${token}`  // Using trimmed token
-      }
+        Authorization: `Bearer ${token}`, // Using trimmed token
+      },
     });
     return response.data;
   } catch (err) {
@@ -331,7 +331,6 @@ export const fetchStudentDashboard = async (id) => {
   }
 };
 
-
 // Teacher Dashboard
 
 export const fetchTeacherDashboard = async (id) => {
@@ -403,7 +402,6 @@ export const fetchViewDocuments = async () => {
 };
 
 export const fetchStudents1 = async (classId) => {
-  console.log(classId);
   try {
     const response = await axios.get(
       `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
@@ -416,11 +414,8 @@ export const fetchStudents1 = async (classId) => {
 };
 
 export const fetchStudents2 = async (classId) => {
-  console.log(classId);
   try {
-    const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevels/`
-    );
+    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -543,7 +538,6 @@ export const fetchStudentFee = async (student_id) => {
   }
 };
 
-
 export const fetchGuardianChildren = async () => {
   try {
     const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
@@ -564,12 +558,6 @@ export const fetchGuardianChildren = async () => {
     throw err;
   }
 };
-
-
-
-
-
-
 
 // POST APIS
 
@@ -744,15 +732,11 @@ export const importHolidays = async (year) => {
 
 export const createEvent = async (eventData) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/a/events/`,
-      eventData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -761,6 +745,35 @@ export const createEvent = async (eventData) => {
       throw new Error("No response received from server");
     } else {
       throw new Error(error.message || "Failed to create event");
+    }
+  }
+};
+
+// DISCOUNT API
+
+export const createDiscount = async (accessToken, payload) => {
+  try {
+    if (!payload) {
+      throw new Error("Payload is required");
+    }
+
+    const response = await axios.post(`${BASE_URL}/d/fee-discounts/`, payload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data?.message || 
+        error.response.data?.detail || 
+        "Failed to create discount"
+      );
+    } else if (error.request) {
+      throw new Error("No response received from server");
+    } else {
+      throw new Error(error.message || "Failed to create discount");
     }
   }
 };
