@@ -48,6 +48,7 @@ export const AdmissionFees = () => {
   };
 
   const getStudents = async (classId) => {
+    console.log(classId);
     try {
       const Students = await fetchStudents1(classId);
       setStudents(Students);
@@ -138,6 +139,7 @@ export const AdmissionFees = () => {
   // Find the selected fees data
   const selectedFees = yearLevelData.length > 0 ? yearLevelData[0] : null;
 
+  console.log(yearLevelData);
 
   const months = [
     "January",

@@ -4,13 +4,14 @@ const LogoutModal = ({ show, onConfirm, onClose }) => {
     return (
         <div
             className={`fixed inset-0 flex items-center justify-center z-50 ${show ? "" : "hidden"
-                }`}
+                } bg-black/30 backdrop-blur-sm`}
             onClick={onClose}
         >
             <div
-                className="bg-white rounded-lg shadow-md w-[90%] max-w-md p-6 border border-gray-200"
+                className="bg-white rounded-lg shadow-md w-[80%] max-w-xl h-auto max-h-[80vh] p-6 border border-gray-200 overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
             >
+                <h1 className="text-4xl text-center text-blue-700">Logout</h1>
                 <p className="text-center text-gray-700 mb-6">
                     Are you sure you want to logout?
                 </p>
@@ -26,7 +27,7 @@ const LogoutModal = ({ show, onConfirm, onClose }) => {
                         onClick={onConfirm}
                     >
                         Logout
-                        <i className="fa-solid fa-arrow-right-from-bracket absolute right-12 top-[23px] transform -translate-y-1/2 text-white"></i>
+                        <i className="fa-solid fa-arrow-right-from-bracket absolute right-20 top-[23px] transform -translate-y-1/2 text-white"></i>
                     </button>
                 </div>
             </div>

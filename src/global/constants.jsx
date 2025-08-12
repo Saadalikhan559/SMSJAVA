@@ -29,10 +29,6 @@ export const constants = {
   baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
 
 
-  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-
-  // baseUrl: "https://sms-backend-385f.onrender.com",
-
 
 
 

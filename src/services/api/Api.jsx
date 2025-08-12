@@ -29,7 +29,7 @@ export const fetchExamType = async (accessToken) => {
     console.log("Access token being used:", accessToken);
 
     // Trim the token in case it has whitespace
-    const token = accessToken ? accessToken.trim() : "";
+    const token = accessToken ? accessToken.trim() : '';
 
     if (!token) {
       throw new Error("No access token provided");
@@ -37,8 +37,8 @@ export const fetchExamType = async (accessToken) => {
 
     const response = await axios.get(`${BASE_URL}/d/Exam-Type/`, {
       headers: {
-        Authorization: `Bearer ${token}`, // Using trimmed token
-      },
+        'Authorization': `Bearer ${token}`  // Using trimmed token
+      }
     });
     return response.data;
   } catch (err) {
@@ -402,6 +402,7 @@ export const fetchViewDocuments = async () => {
 };
 
 export const fetchStudents1 = async (classId) => {
+  console.log(classId);
   try {
     const response = await axios.get(
       `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
@@ -414,8 +415,11 @@ export const fetchStudents1 = async (classId) => {
 };
 
 export const fetchStudents2 = async (classId) => {
+  console.log(classId);
   try {
-    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
+    const response = await axios.get(
+      `${BASE_URL}/s/studentyearlevels/`
+    );
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -559,6 +563,51 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
+export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
+  try {
+    console.log("Fetching unpaid fees for role:", role);
+
+    let endpoint = "";
+    let params = {};
+
+    if (role === constants.roles.director || role === constants.roles.officeStaff) {
+      endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
+      if (class_id) params.class_id = class_id;
+      if (month) params.month = month;
+    }
+    // else if (role === constants.roles.teacher) {
+    //   endpoint = `${BASE_URL}/t/fee-record/overall_unpaid_fees/`;
+    //   if (class_id) params.class_id = class_id;
+    //   if (month) params.month = month;
+    // }
+    else if (role === constants.roles.student) {
+      endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
+      if (student_id) params.student_id = student_id;
+    }
+    else {
+      throw new Error("Invalid role provided");
+    }
+
+    const authTokens = localStorage.getItem('authTokens');
+    const accessToken = JSON.parse(authTokens).access; // Now it's an object/
+    console.log('parsed', accessToken);
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(endpoint, {
+      params,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching unpaid fees:", error);
+    throw error;
+  }
+};
+
+
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {
@@ -570,7 +619,7 @@ export const handleAdmissionForm = async (formData) => {
       },
     });
     if (response.status === 200 || response.status === 201) {
-      alert("successfully submitted the form");
+      // alert("successfully submitted the form");
     }
 
     return response.data;
@@ -732,11 +781,15 @@ export const importHolidays = async (year) => {
 
 export const createEvent = async (eventData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.post(
+      `${BASE_URL}/a/events/`,
+      eventData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
