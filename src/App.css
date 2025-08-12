@@ -26,6 +26,11 @@
 .bgTheme{
   background-color: #6e00ff;
 }
+
+.textTheme{
+  color: #6e00ff;
+}
+
 .borderTheme{
   border: 1px solid #6e00ff;
 }
@@ -41,3 +46,9 @@
 .borderTheme-l{
   border-left: 1px solid #6e00ff;
 } 
+
+.schoolBoyAnimation{
+  height: 150px;
+  width: 150px;
+}
+
