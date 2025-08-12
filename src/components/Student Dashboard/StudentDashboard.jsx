@@ -34,8 +34,8 @@ export const StudentDashboard = () => {
 
   if (loading) {
     return (
-      <div className="p-6 text-center text-gray-600 text-lg font-medium">
-        Loading dashboard...
+      <div className="flex items-center justify-center h-screen">
+        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
       </div>
     );
   }

@@ -140,13 +140,13 @@ export const StudentFeeCard = () => {
     doc.save(`${details.student_name}_fee_report.pdf`);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-      </div>
-    );
-  }
+if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
 
   if (!details) {
     return (

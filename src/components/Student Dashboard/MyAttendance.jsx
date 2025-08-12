@@ -9,7 +9,7 @@ const MyAttendance = () => {
   const [error, setError] = useState(null);
 
   const currentDate = new Date();
-  const [month, setMonth] = useState(currentDate.getMonth() + 1);   
+  const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [year, setYear] = useState(currentDate.getFullYear());
 
   const months = [
@@ -118,7 +118,7 @@ const MyAttendance = () => {
               )}
             </tbody>
           </table>
-        </div>  
+        </div>
       </div>
     </div>
   );

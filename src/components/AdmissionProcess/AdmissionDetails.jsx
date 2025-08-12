@@ -24,10 +24,14 @@ export const AdmissionDetails = () => {
   useEffect(() => {
     getAdmissionDetails();
   }, []);
-
+  
   if (loading) {
-    return <div className="p-4 text-center">Loading details...</div>;
-  }
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
 
   if (!details) {
     return <div className="p-4 text-center">Failed to load data</div>;
