@@ -9,6 +9,7 @@ export const Sidebar = () => {
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
+  const { studentID } = useContext(AuthContext);
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -70,31 +71,31 @@ export const Sidebar = () => {
                   <div>
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                      <ul className="space-y-1">
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.allClasses)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-graduation-cap"></i> All
-                            Classes
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.allStaffMembers)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-id-card-clip"></i>Staff
-                            Members
-                          </Link>
-                        </li>
-                      </ul>
-                    )}
+                        <ul className="space-y-1">
+                          <li>
+                            <Link
+                              onClick={(e) =>
+                                handleNavigation(e, allRouterLink.allClasses)
+                              }
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-graduation-cap"></i> All
+                              Classes
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              onClick={(e) =>
+                                handleNavigation(e, allRouterLink.allStaffMembers)
+                              }
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-id-card-clip"></i>Staff
+                              Members
+                            </Link>
+                          </li>
+                        </ul>
+                      )}
                   </div>
                 </ul>
               </div>
@@ -210,7 +211,7 @@ export const Sidebar = () => {
                             Holidays
                           </Link>
                         </li>
-                                                <li>
+                        <li>
                           <Link
                             onClick={(e) =>
                               handleNavigation(
@@ -364,7 +365,7 @@ export const Sidebar = () => {
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff ||
                       role === constants.roles.student ||
-                    role === constants.roles.guardian) && (
+                      role === constants.roles.guardian) && (
                         <li>
                           <Link
                             onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
@@ -376,21 +377,23 @@ export const Sidebar = () => {
                       )}
 
                     {/* Student Fee Card: student only */}
-                    {role === constants.roles.student && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(
-                              e,
-                              allRouterLink.studentFeeCard.replace(":student_id", studentId)
-                            )
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
-                        </Link>
-                      </li>
-                    )}
+                    {role === constants.roles.student ||
+                      role === constants.roles.director ||
+                      role === constants.roles.officeStaff && (
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(
+                                e,
+                                allRouterLink.studentFeeCard.replace(":student_id", studentID)
+                              )
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                          </Link>
+                        </li>
+                      )}
 
                     {/* Student Fee Card List: guardian only */}
                     {role === constants.roles.guardian && (
@@ -416,6 +419,21 @@ export const Sidebar = () => {
                           </Link>
                         </li>
                       )}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff ||
+                      role === constants.roles.classTeacher ||  
+                      role === constants.roles.guardian ||
+                      role === constants.roles.student) && (
+                        <li>
+                          <Link
+                            onClick={(e) => handleNavigation(e, allRouterLink.overdueAccounts)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-money-bill-wave w-5"></i> Overdue Accounts
+                          </Link>
+                        </li>
+                      )}
+
 
                   </ul>
                 </div>
@@ -457,18 +475,18 @@ export const Sidebar = () => {
                     </li>
                     {(role === constants.roles.director ||
                       role === constants.roles.teacher) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.StudentMarksFill)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-fill-drip w-5"></i> Student
-                          Marks Fill
-                        </Link>
-                      </li>
-                    )}
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.StudentMarksFill)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-fill-drip w-5"></i> Student
+                            Marks Fill
+                          </Link>
+                        </li>
+                      )}
                   </ul>
                 </div>
               )}

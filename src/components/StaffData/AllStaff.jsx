@@ -7,6 +7,9 @@ const AllStaff = () => {
   const [teachers, setteachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [teacherSearch, setTeacherSearch] = useState("");
+  const [staffSearch, setStaffSearch] = useState("");
+
 
   const getofficestaff = async () => {
     setLoading(true);
@@ -31,6 +34,22 @@ const AllStaff = () => {
       setLoading(false);
     }
   };
+  const filteredTeachers = teachers.filter((teacher) => {
+    const fullName = [teacher.first_name, teacher.middle_name, teacher.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return fullName.includes(teacherSearch.toLowerCase());
+  });
+
+  const filteredOfficeStaff = officestaff.filter((staff) => {
+    const fullName = [staff.first_name, staff.middle_name, staff.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return fullName.includes(staffSearch.toLowerCase());
+  });
+
 
   useEffect(() => {
     getofficestaff();
@@ -58,6 +77,16 @@ const AllStaff = () => {
             <i className="fa-solid fa-person-chalkboard mr-2"></i> Teachers
           </h1>
           <div className="overflow-x-auto text-center">
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search Teacher Name"
+                value={teacherSearch}
+                onChange={(e) => setTeacherSearch(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+              />
+
+            </div>
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white text-center">
                 <tr>
@@ -66,14 +95,14 @@ const AllStaff = () => {
                 </tr>
               </thead>
               <tbody>
-                {teachers.length === 0 ? (
+                {filteredTeachers.length === 0 ? (
                   <tr>
                     <td colSpan="2" className="text-center py-6 text-gray-500">
                       No data found.
                     </td>
                   </tr>
                 ) : (
-                  teachers.map((record, index) => (
+                  filteredTeachers.map((record, index) => (
                     <tr key={record.id || index} className="hover:bg-blue-50 text-center">
                       <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
                       <td className="px-4 py-3">
@@ -101,6 +130,17 @@ const AllStaff = () => {
             <i className="fa-solid fa-clipboard-user mr-2"></i> Office Staff
           </h1>
           <div className="overflow-x-auto text-center">
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search Staff Member Name"
+                value={staffSearch}
+                onChange={(e) => setStaffSearch(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+              />
+
+            </div>
+
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white text-center">
                 <tr>
@@ -109,14 +149,14 @@ const AllStaff = () => {
                 </tr>
               </thead>
               <tbody>
-                {officestaff.length === 0 ? (
+                {filteredOfficeStaff.length === 0 ? (
                   <tr>
                     <td colSpan="2" className="text-center py-6 text-gray-500">
                       No data found.
                     </td>
                   </tr>
                 ) : (
-                  officestaff.map((record, index) => (
+                  filteredOfficeStaff.map((record, index) => (
                     <tr key={record.id || index} className="hover:bg-blue-50 text-center">
                       <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
                       <td className="px-4 py-3">
