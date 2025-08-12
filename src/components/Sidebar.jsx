@@ -409,19 +409,36 @@ export const Sidebar = () => {
                     {/* Fee Record: director and office staff only */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.feeSummary)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-envelope w-5"></i> Fee
-                          Record
-                        </Link>
-                      </li>
-                    )}
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.feeSummary)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-envelope w-5"></i> Fee
+                            Record
+                          </Link>
+                        </li>
+                      )}
 
+                    {/* Overdue Accounts Summary */}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff ||
+                      role === constants.roles.teacher ||
+                      role === constants.roles.guardian ||
+                      role === constants.roles.student) && (
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.overdueAccounts)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i class="fa-solid fa-file-invoice"></i> Overdue Accounts
+                          </Link>
+                        </li>
+                      )}
                     {/* Create Discount Fees */}
                     {role === constants.roles.director && (
                       <li>
