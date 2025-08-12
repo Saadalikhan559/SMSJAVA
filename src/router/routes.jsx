@@ -57,6 +57,10 @@ import HolidayCalendar from "../screens/HolidayCalendar";
 import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
+import Marksheet from "../components/Student Dashboard/Marksheet";
+import ClassTeacherAssign from "../components/DirectorDashboard/ClassTeacherAssign";
+import ViewAllocatedClass from "../components/DirectorDashboard/ViewAllocatedClass";
+import MarksheetsTable from "../components/Student Dashboard/MarksheetsTable";
 
 export const routes = [
   {
@@ -217,6 +221,16 @@ export const routes = [
     ],
   },
   {
+    path: allRouterLink.Marksheet,
+    element: <Marksheet />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.student,
+    ],
+  },
+  {
     path: allRouterLink.ExamSchedule,
     element: <ExamSchedule/>,
     protected: true,
@@ -235,8 +249,26 @@ export const routes = [
     allowedRoles: [constants.roles.director],
   },
   {
+    path: allRouterLink.MarksheetsTable,
+    element: <MarksheetsTable/>,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.ClassTeacherAssign,
+    element: <ClassTeacherAssign />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
     path: allRouterLink.allTeacherAssignment,
     element: <AllTeacherAssignments />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.ViewAllocatedClass,
+    element: <ViewAllocatedClass />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },

@@ -210,13 +210,10 @@ export const Sidebar = () => {
                             Holidays
                           </Link>
                         </li>
-                                                <li>
+                        <li>
                           <Link
                             onClick={(e) =>
-                              handleNavigation(
-                                e,
-                                allRouterLink.periodsByClass
-                              )
+                              handleNavigation(e, allRouterLink.periodsByClass)
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
@@ -255,6 +252,16 @@ export const Sidebar = () => {
                           >
                             <i className="fa-solid fa-eye w-5"></i> View Exam
                             Paper
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.MarksheetsTable)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-eye w-5"></i>  View Marksheets
                           </Link>
                         </li>
                       </>
@@ -359,21 +366,23 @@ export const Sidebar = () => {
                     Fees
                   </h3>
                   <ul className="space-y-1">
-
                     {/* Fee Submission: director, office staff, student */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff ||
                       role === constants.roles.student ||
-                    role === constants.roles.guardian) && (
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-money-bill-wave w-5"></i> Fee Submission
-                          </Link>
-                        </li>
-                      )}
+                      role === constants.roles.guardian) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.admissionFees)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
+                          Fee Submission
+                        </Link>
+                      </li>
+                    )}
 
                     {/* Student Fee Card: student only */}
                     {role === constants.roles.student && (
@@ -382,12 +391,16 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(
                               e,
-                              allRouterLink.studentFeeCard.replace(":student_id", studentId)
+                              allRouterLink.studentFeeCard.replace(
+                                ":student_id",
+                                studentId
+                              )
                             )
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                          <i className="fa-solid fa-envelope w-5"></i> Student
+                          Fee Card
                         </Link>
                       </li>
                     )}
@@ -396,10 +409,13 @@ export const Sidebar = () => {
                     {role === constants.roles.guardian && (
                       <li>
                         <Link
-                          onClick={(e) => handleNavigation(e, allRouterLink.guardianChildren)}
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.guardianChildren)
+                          }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                          <i className="fa-solid fa-envelope w-5"></i> Student
+                          Fee Card
                         </Link>
                       </li>
                     )}
@@ -407,20 +423,21 @@ export const Sidebar = () => {
                     {/* Fee Record: director and office staff only */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.feeSummary)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-envelope w-5"></i> Fee Record
-                          </Link>
-                        </li>
-                      )}
-
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.feeSummary)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-envelope w-5"></i> Fee
+                          Record
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
-
 
             {/* Reports */}
             {(role === constants.roles.director ||
@@ -466,6 +483,22 @@ export const Sidebar = () => {
                         >
                           <i className="fa-solid fa-fill-drip w-5"></i> Student
                           Marks Fill
+                        </Link>
+                      </li>
+                    )}
+                    {role === constants.roles.director && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(
+                              e,
+                              allRouterLink.ClassTeacherAssign
+                            )
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
+                          Allocat Class 
                         </Link>
                       </li>
                     )}
