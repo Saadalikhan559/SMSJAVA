@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   createDiscount,
   fetchStudents1,
@@ -275,7 +275,7 @@ const CreateDiscount = () => {
             {loading ? (
               <>
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                ...
+                
               </>
             ) : (
               <>
