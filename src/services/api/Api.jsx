@@ -331,7 +331,6 @@ export const fetchStudentDashboard = async (id) => {
   }
 };
 
-
 // Teacher Dashboard
 
 export const fetchTeacherDashboard = async (id) => {
@@ -542,7 +541,6 @@ export const fetchStudentFee = async (student_id) => {
     throw error;
   }
 };
-
 
 export const fetchGuardianChildren = async () => {
   try {
@@ -800,6 +798,35 @@ export const createEvent = async (eventData) => {
       throw new Error("No response received from server");
     } else {
       throw new Error(error.message || "Failed to create event");
+    }
+  }
+};
+
+// DISCOUNT API
+
+export const createDiscount = async (accessToken, payload) => {
+  try {
+    if (!payload) {
+      throw new Error("Payload is required");
+    }
+
+    const response = await axios.post(`${BASE_URL}/d/fee-discounts/`, payload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data?.message || 
+        error.response.data?.detail || 
+        "Failed to create discount"
+      );
+    } else if (error.request) {
+      throw new Error("No response received from server");
+    } else {
+      throw new Error(error.message || "Failed to create discount");
     }
   }
 };

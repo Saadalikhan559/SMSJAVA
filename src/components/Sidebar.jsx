@@ -360,7 +360,6 @@ export const Sidebar = () => {
                     Fees
                   </h3>
                   <ul className="space-y-1">
-
                     {/* Fee Submission: director, office staff, student */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff ||
@@ -410,35 +409,36 @@ export const Sidebar = () => {
                     {/* Fee Record: director and office staff only */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.feeSummary)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-envelope w-5"></i> Fee Record
-                          </Link>
-                        </li>
-                      )}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff ||
-                      role === constants.roles.classTeacher ||  
-                      role === constants.roles.guardian ||
-                      role === constants.roles.student) && (
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.overdueAccounts)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-money-bill-wave w-5"></i> Overdue Accounts
-                          </Link>
-                        </li>
-                      )}
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.feeSummary)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-envelope w-5"></i> Fee
+                          Record
+                        </Link>
+                      </li>
+                    )}
 
-
+                    {/* Create Discount Fees */}
+                    {role === constants.roles.director && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.createDiscount)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-percentage w-5"></i> Create
+                          Discount
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
-
 
             {/* Reports */}
             {(role === constants.roles.director ||

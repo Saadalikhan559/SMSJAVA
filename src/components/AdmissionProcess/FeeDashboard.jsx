@@ -140,7 +140,6 @@ if (loading) {
       <h3 className="text-3xl font-bold text-center text-gray-800">
         Fee Dashboard
       </h3>
-
       {/* Month Filter */}
       <div className="flex justify-end mb-4">
         <select

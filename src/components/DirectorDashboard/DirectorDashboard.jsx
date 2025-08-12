@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import React, { useEffect, useState } from "react";
+=======
   import React, { useEffect, useState } from "react";
+>>>>>>> ab24c10119b6ef40498426370edd5aac88b31824
 import Chart from "react-apexcharts";
 import {
   fetchDirectorDashboard,
