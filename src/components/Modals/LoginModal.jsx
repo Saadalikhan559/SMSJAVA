@@ -7,20 +7,13 @@ const LoginModal = ({ onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-md w-[95%] max-w-md p-6 border border-gray-200 "
+        className="bg-white rounded-lg shadow-md w-[95%] max-w-6xl p-6 border border-gray-200 h-[50%]"
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="text-center text-gray-700 mb-6 text-3xl font-medium">
-          Welcome!
-        </p>
-        <div className="flex justify-center">
-          <button
-            className="py-2 px-8 bgTheme text-white rounded-md hover:bg-blue-600 transition relative"
-            onClick={onClose}
-          >
-            Continue
-            <i class="fa-solid fa-right-to-bracket absolute right-3 top-[22px] transform -translate-y-1/2 text-white"></i>
-          </button>
+        <div className="flex justify-center items-center min-h-[200px]">
+          <p className="text-center text-gray-700 text-9xl font-medium animate-bounce">
+            Welcome!
+          </p>
         </div>
       </div>
     </div>
@@ -28,7 +21,3 @@ const LoginModal = ({ onClose }) => {
 };
 
 export default LoginModal;
-
-
-
-
