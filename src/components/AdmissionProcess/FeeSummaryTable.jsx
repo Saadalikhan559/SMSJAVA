@@ -251,7 +251,6 @@ const FeeSummaryTable = () => {
                 ))
               )}
             </tbody>
-
           </table>
         </div>
       </div>

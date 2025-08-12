@@ -35,6 +35,7 @@ export const allRouterLink = {
     UpdateExamPaper: '/UpdateExamPaper',
     StudentMarksFill: '/StudentMarksFill',
     feeDashboard: '/feeDashboard',
+    createDiscount: '/createDiscount',
     attendanceRecord:'/attendanceRecord',
     fullAttendance:'/fullAttendance/:className',
     directorMarkHolidays:'/directorMarkHolidays',
