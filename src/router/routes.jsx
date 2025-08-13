@@ -354,6 +354,12 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
+    path: allRouterLink.createDiscount,
+    element: <CreateDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,

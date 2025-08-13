@@ -435,7 +435,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i class="fa-solid fa-file-invoice"></i> Overdue Accounts
+                            <i className="fa-solid fa-file-invoice"></i> Overdue Accounts
                           </Link>
                         </li>
                       )}

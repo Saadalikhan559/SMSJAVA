@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createDiscount,
   fetchStudents1,
   fetchYearLevels,
 } from "../../../services/api/Api";
+import { useForm } from "react-hook-form";
+import { validAdmissionFeeDiscount, validTuitionFeeDiscount, validDiscountReason } from "../../../Validations/Validations";
 
 const CreateDiscount = () => {
   const [loading, setLoading] = useState(false);
@@ -11,24 +13,26 @@ const CreateDiscount = () => {
   const [classes, setClasses] = useState([]);
   const [classId, setClassId] = useState("");
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
-  const [fieldDisbaled, setFieldDisabled] = useState(true);
-  const [btnDisabled, setBtnDisabled] = useState(true);
-  const [errors, setErrors] = useState({});
+  const [fieldDisabled, setFieldDisabled] = useState(true);
+  const [admissionFee, setAdmissionFee] = useState(0);
+  const [tuitionFee, setTuitionFee] = useState(0);
 
-  const [formData, setFormData] = useState({
-    student_id: "",
-    admission_fee_discount: "",
-    tuition_fee_discount: "",
-    discount_reason: "",
-    is_allowed: true,
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: {
+      student_id: "",
+      admission_fee_discount: "",
+      tuition_fee_discount: "",
+      discount_reason: "",
+      is_allowed: true,
+    },
   });
-
-  const handleChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   // Fetch all classes
   const getClasses = async () => {
@@ -40,6 +44,7 @@ const CreateDiscount = () => {
     }
   };
 
+  // Fetch students for selected class
   const getStudents = async (id) => {
     if (!id) return;
     try {
@@ -47,7 +52,7 @@ const CreateDiscount = () => {
       setStudents(Students);
       setFieldDisabled(Students.length === 0);
       if (Students.length === 0) {
-        setFormData({
+        reset({
           student_id: "",
           admission_fee_discount: "",
           tuition_fee_discount: "",
@@ -60,77 +65,64 @@ const CreateDiscount = () => {
     }
   };
 
+  // Fetch fees on student change
+  const handleStudentSelect = async (id) => {
+    setValue("student_id", id);
+    if (!id) {
+      setAdmissionFee(0);
+      setTuitionFee(0);
+      return;
+    }
+    try {
+      const res = await axios.get(`/api/student-fee/${id}`, {
+        headers: { Authorization: `Bearer ${access}` },
+      });
+      setAdmissionFee(res.data.admission_fee || 0);
+      setTuitionFee(res.data.tuition_fee || 0);
+    } catch (err) {
+      console.error("Failed to fetch student fees", err);
+    }
+  };
+
   useEffect(() => {
     getClasses();
   }, []);
 
   useEffect(() => {
     getStudents(classId);
+    reset((prev) => ({ ...prev, student_id: "" }));
   }, [classId]);
 
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      student_id: "",
-    }));
-  }, [classId]);
-
-  // Validation: Student is required AND either admission or tuition fee discount
-  useEffect(() => {
-    const hasFeeValue =
-      formData.admission_fee_discount.trim() !== "" ||
-      formData.tuition_fee_discount.trim() !== "";
-    const allRequiredFields = hasFeeValue && formData.student_id;
-    setBtnDisabled(!allRequiredFields);
-  }, [formData]);
-
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!formData.student_id) {
-      newErrors.student_id = "Please select a student.";
-    }
-
-    if (
-      formData.admission_fee_discount.trim() === "" &&
-      formData.tuition_fee_discount.trim() === ""
-    ) {
-      newErrors.fee_discount = "Please enter at least one fee discount.";
-    }
-
-    if (!formData.discount_reason.trim()) {
-      newErrors.discount_reason = "Discount reason is required.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
+  // Submit
+  const onSubmit = async (data) => {
     setLoading(true);
     try {
       const payload = {
-        ...formData,
-        student_id: parseInt(formData.student_id),
-        admission_fee_discount: formData.admission_fee_discount
-          ? parseFloat(formData.admission_fee_discount)
+        ...data,
+        student_id: parseInt(data.student_id),
+        admission_fee_discount: data.admission_fee_discount
+          ? parseFloat(data.admission_fee_discount)
           : 0,
-        tuition_fee_discount: formData.tuition_fee_discount
-          ? parseFloat(formData.tuition_fee_discount)
+        tuition_fee_discount: data.tuition_fee_discount
+          ? parseFloat(data.tuition_fee_discount)
           : 0,
       };
-
       const response = await createDiscount(access, payload);
       console.log(response);
+      reset();
     } catch (error) {
       console.error("Submission error:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  // Button disable condition
+  const admissionVal = watch("admission_fee_discount");
+  const tuitionVal = watch("tuition_fee_discount");
+  const studentVal = watch("student_id");
+  const btnDisabled =
+    (!admissionVal && !tuitionVal) || !studentVal || loading;
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
@@ -139,7 +131,7 @@ const CreateDiscount = () => {
         <i className="fa-solid fa-percentage ml-2"></i>
       </h1>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Class Selection */}
           <div className="form-control">
@@ -174,22 +166,26 @@ const CreateDiscount = () => {
             <select
               className="select w-full select-bordered focus:outline-none focus:ring-2 focus:ring-primary"
               disabled={!classId}
-              value={formData.student_id}
-              onChange={(e) => handleChange("student_id", e.target.value)}
+              {...register("student_id", {
+                required: "Please select a student.",
+              })}
+              onChange={(e) => handleStudentSelect(e.target.value)}
             >
               <option value="">Select Student</option>
               {students.length > 0
                 ? students.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.student_name} - {student.student_email}
-                    </option>
-                  ))
+                  <option key={student.student_id} value={student.student_id}>
+                    {student.student_name} - {student.student_email}
+                  </option>
+                ))
                 : classId && (
-                    <option disabled>No students found for this class</option>
-                  )}
+                  <option disabled>No students found for this class</option>
+                )}
             </select>
             {errors.student_id && (
-              <p className="text-error text-sm">{errors.student_id}</p>
+              <p className="text-error text-sm">
+                {errors.student_id.message}
+              </p>
             )}
           </div>
         </div>
@@ -208,13 +204,16 @@ const CreateDiscount = () => {
               className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="e.g. 100.00"
               min={0}
-              name="admission_fee_discount"
-              value={formData.admission_fee_discount}
-              onChange={(e) =>
-                handleChange("admission_fee_discount", e.target.value)
-              }
-              disabled={fieldDisbaled}
+              disabled={fieldDisabled}
+              {...register("admission_fee_discount", {
+                validate: validAdmissionFeeDiscount(admissionFee),
+              })}
             />
+            {errors.admission_fee_discount && (
+              <p className="text-error text-sm">
+                {errors.admission_fee_discount.message}
+              </p>
+            )}
           </div>
 
           {/* Tuition Fee Discount */}
@@ -230,18 +229,18 @@ const CreateDiscount = () => {
               className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="e.g. 800.00"
               min={0}
-              name="tuition_fee_discount"
-              value={formData.tuition_fee_discount}
-              onChange={(e) =>
-                handleChange("tuition_fee_discount", e.target.value)
-              }
-              disabled={fieldDisbaled}
+              disabled={fieldDisabled}
+              {...register("tuition_fee_discount", {
+                validate: validTuitionFeeDiscount(tuitionFee),
+              })}
             />
+            {errors.tuition_fee_discount && (
+              <p className="text-error text-sm">
+                {errors.tuition_fee_discount.message}
+              </p>
+            )}
           </div>
         </div>
-        {errors.fee_discount && (
-          <p className="text-error text-sm">{errors.fee_discount}</p>
-        )}
 
         {/* Discount Reason */}
         <div className="form-control">
@@ -255,13 +254,15 @@ const CreateDiscount = () => {
             className="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="e.g. Sibling concession"
             rows={3}
-            name="discount_reason"
-            disabled={fieldDisbaled}
-            value={formData.discount_reason}
-            onChange={(e) => handleChange("discount_reason", e.target.value)}
+            disabled={fieldDisabled}
+            {...register("discount_reason", {
+              validate: validDiscountReason,
+            })}
           ></textarea>
           {errors.discount_reason && (
-            <p className="text-error text-sm">{errors.discount_reason}</p>
+            <p className="text-error text-sm">
+              {errors.discount_reason.message}
+            </p>
           )}
         </div>
 
@@ -270,13 +271,10 @@ const CreateDiscount = () => {
           <button
             type="submit"
             className="btn btn-primary w-full md:w-52"
-            disabled={btnDisabled || loading}
+            disabled={loading || btnDisabled} // dono condition check ho jaye
           >
             {loading ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                ...
-              </>
+              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
             ) : (
               <>
                 <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
@@ -284,6 +282,7 @@ const CreateDiscount = () => {
               </>
             )}
           </button>
+
         </div>
       </form>
     </div>
@@ -291,3 +290,5 @@ const CreateDiscount = () => {
 };
 
 export default CreateDiscount;
+
+
