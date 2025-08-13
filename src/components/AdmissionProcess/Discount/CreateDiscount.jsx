@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createDiscount,
   fetchStudents1,
@@ -27,6 +27,12 @@ const CreateDiscount = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+
+    // Clear the error for this specific field when user changes it
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
     }));
   };
 
@@ -75,7 +81,6 @@ const CreateDiscount = () => {
     }));
   }, [classId]);
 
-  // Validation: Student is required AND either admission or tuition fee discount
   useEffect(() => {
     const hasFeeValue =
       formData.admission_fee_discount.trim() !== "" ||
@@ -84,53 +89,41 @@ const CreateDiscount = () => {
     setBtnDisabled(!allRequiredFields);
   }, [formData]);
 
-  const validateForm = () => {
-    let newErrors = {};
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setErrors({}); // clear previous errors
 
-    if (!formData.student_id) {
-      newErrors.student_id = "Please select a student.";
-    }
+  try {
+    const payload = {
+      ...formData,
+      student_id: formData.student_id,
+      admission_fee_discount: formData.admission_fee_discount,
+      tuition_fee_discount: formData.tuition_fee_discount,
+      is_allowed: true,
+    };
 
-    if (
-      formData.admission_fee_discount.trim() === "" &&
-      formData.tuition_fee_discount.trim() === ""
-    ) {
-      newErrors.fee_discount = "Please enter at least one fee discount.";
-    }
+    const response = await createDiscount(access, payload);
 
-    if (!formData.discount_reason.trim()) {
-      newErrors.discount_reason = "Discount reason is required.";
-    }
+    // ✅ Success alert
+    alert("Discount created successfully!");
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    // If success, reset form
+    setFormData({
+      student_id: "",
+      admission_fee_discount: "",
+      tuition_fee_discount: "",
+      discount_reason: "",
+      is_allowed: true,
+    });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  } catch (err) {
+    setErrors(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
-    setLoading(true);
-    try {
-      const payload = {
-        ...formData,
-        student_id: parseInt(formData.student_id),
-        admission_fee_discount: formData.admission_fee_discount
-          ? parseFloat(formData.admission_fee_discount)
-          : 0,
-        tuition_fee_discount: formData.tuition_fee_discount
-          ? parseFloat(formData.tuition_fee_discount)
-          : 0,
-      };
-
-      const response = await createDiscount(access, payload);
-      console.log(response);
-    } catch (error) {
-      console.error("Submission error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
@@ -215,6 +208,11 @@ const CreateDiscount = () => {
               }
               disabled={fieldDisbaled}
             />
+            {errors.admission_fee_discount && (
+              <p className="text-error text-sm">
+                {errors.admission_fee_discount[0]}
+              </p>
+            )}
           </div>
 
           {/* Tuition Fee Discount */}
@@ -237,6 +235,11 @@ const CreateDiscount = () => {
               }
               disabled={fieldDisbaled}
             />
+            {errors.tuition_fee_discount && (
+              <p className="text-error text-sm">
+                {errors.tuition_fee_discount[0]}
+              </p>
+            )}
           </div>
         </div>
         {errors.fee_discount && (
@@ -248,7 +251,7 @@ const CreateDiscount = () => {
           <label className="label">
             <span className="label-text flex items-center gap-1">
               <i className="fa-solid fa-comment-dots text-sm"></i>
-              Discount Reason <span className="text-error">*</span>
+              Discount Reason
             </span>
           </label>
           <textarea
@@ -260,9 +263,6 @@ const CreateDiscount = () => {
             value={formData.discount_reason}
             onChange={(e) => handleChange("discount_reason", e.target.value)}
           ></textarea>
-          {errors.discount_reason && (
-            <p className="text-error text-sm">{errors.discount_reason}</p>
-          )}
         </div>
 
         {/* Submit Button */}
@@ -270,12 +270,11 @@ const CreateDiscount = () => {
           <button
             type="submit"
             className="btn btn-primary w-full md:w-52"
-            disabled={btnDisabled || loading}
+            disabled={btnDisabled}
           >
             {loading ? (
               <>
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                
               </>
             ) : (
               <>

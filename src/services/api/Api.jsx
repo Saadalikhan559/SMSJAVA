@@ -835,18 +835,18 @@ export const createDiscount = async (accessToken, payload) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+    
+
     return response.data;
+
   } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data?.message || 
-        error.response.data?.detail || 
-        "Failed to create discount"
-      );
+    if (error.response && error.response.data) {
+      // Return full backend error object for field-wise handling
+      throw error.response.data;
     } else if (error.request) {
-      throw new Error("No response received from server");
+      throw { non_field_errors: ["No response received from server"] };
     } else {
-      throw new Error(error.message || "Failed to create discount");
+      throw { non_field_errors: [error.message || "Failed to create discount"] };
     }
   }
 };
