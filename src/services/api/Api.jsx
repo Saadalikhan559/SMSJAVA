@@ -29,6 +29,7 @@ export const fetchExamType = async (accessToken) => {
     console.log("Access token being used:", accessToken);
 
     // Trim the token in case it has whitespace
+
     const token = accessToken ? accessToken.trim() : '';
 
     if (!token) {
@@ -37,12 +38,35 @@ export const fetchExamType = async (accessToken) => {
 
     const response = await axios.get(`${BASE_URL}/d/Exam-Type/`, {
       headers: {
-        'Authorization': `Bearer ${token}`  // Using trimmed token
-      }
+        Authorization: `Bearer ${token}`, // Using trimmed token
+      },
     });
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
+export const fetchMarksheet = async (accessToken, id) => {
+  try {
+    // console.log("Access token being used:", accessToken);
+    // console.log("Fetching marksheet for ID:", id); // Debug log
+
+    const token = accessToken ? accessToken.trim() : "";
+
+    if (!token) {
+      throw new Error("No access token provided");
+    }
+
+    const response = await axios.get(`${BASE_URL}/d/report-cards/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch marksheet:", err);
     throw err;
   }
 };
@@ -417,9 +441,7 @@ export const fetchStudents1 = async (classId) => {
 export const fetchStudents2 = async (classId) => {
   console.log(classId);
   try {
-    const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevels/`
-    );
+    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -563,6 +585,7 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
+
 export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
   try {
     console.log("Fetching unpaid fees for role:", role);
@@ -606,6 +629,7 @@ export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => 
     throw error;
   }
 };
+
 
 
 // POST APIS
@@ -781,15 +805,11 @@ export const importHolidays = async (year) => {
 
 export const createEvent = async (eventData) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/a/events/`,
-      eventData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
