@@ -353,23 +353,21 @@ export const validConfirmPassword = (newPassword, confirmPassword) => {
 
 // -----------------------------------------------------Discount Validations-----------------------------------------------------------
 
-export const validAdmissionFeeDiscount = (admissionFee) => (value) => {
-    if (!value) return true;
-    const num = Number(value);
-    if (num < 0 || isNaN(num)) return "Enter a valid admission fee discount";
-    if (num > admissionFee) return `Should not be more than ₹${admissionFee}`;
-    return true;
-};
+// export const validAdmissionFeeDiscount = (value) => {
+//     if (!value) return true;
+//     const num = Number(value);
+//     if (num < 0 || isNaN(num)) return "Enter a valid admission fee discount";
+//     return true;
+// };
 
-export const validTuitionFeeDiscount = (tuitionFee) => (value) => {
-    if (!value) return true;
-    const num = Number(value);
-    if (num < 0 || isNaN(num)) return "Enter a valid tuition fee discount";
-    if (num > tuitionFee) return `Should not be more than ₹${tuitionFee}`;
-    return true;
-};
+// export const validTuitionFeeDiscount = (value) => {
+//     if (!value) return true;
+//     const num = Number(value);
+//     if (num < 0 || isNaN(num)) return "Enter a valid tuition fee discount";
+//     return true;
+// };
 
-export const validDiscountReason = (value) => {
-    if (value.trim().length < 5) return "Reason must be at least 5 characters";
-    return true;
-};
+// export const validDiscountReason = (value) => {
+//     if (value.trim().length < 5) return "Reason must be at least 10 characters";
+//     return true;
+// };

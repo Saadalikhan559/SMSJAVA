@@ -563,7 +563,7 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
-export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
+export const fetchUnpaidFees = async ({ role, class_id, month }) => {
   try {
     console.log("Fetching unpaid fees for role:", role);
 
@@ -575,14 +575,14 @@ export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => 
       if (class_id) params.class_id = class_id;
       if (month) params.month = month;
     }
-    // else if (role === constants.roles.teacher) {
-    //   endpoint = `${BASE_URL}/t/fee-record/overall_unpaid_fees/`;
-    //   if (class_id) params.class_id = class_id;
-    //   if (month) params.month = month;
-    // }
+    else if (role === constants.roles.teacher) {
+      endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
+      // class_id removed for teacher
+      if (month) params.month = month;
+    }
+
     else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
-      if (student_id) params.student_id = student_id;
     }
     else {
       throw new Error("Invalid role provided");
@@ -819,8 +819,8 @@ export const createDiscount = async (accessToken, payload) => {
   } catch (error) {
     if (error.response) {
       throw new Error(
-        error.response.data?.message || 
-        error.response.data?.detail || 
+        error.response.data?.message ||
+        error.response.data?.detail ||
         "Failed to create discount"
       );
     } else if (error.request) {

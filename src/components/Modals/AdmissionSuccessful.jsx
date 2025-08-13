@@ -1,6 +1,8 @@
 import React from "react";
 
 const AdmissionSuccessful = ({ handleCloseOnly, handleCloseAndNavigate }) => {
+        console.log("handleCloseOnly:", handleCloseOnly);
+    console.log("handleCloseAndNavigate:", handleCloseAndNavigate);
     return (
         <div className="modal modal-open bg-black/30 backdrop-blur-sm">
             <div className="modal-box text-center">

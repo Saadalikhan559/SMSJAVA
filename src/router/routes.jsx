@@ -58,7 +58,7 @@ import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
 import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
-import UnpaidFees from "../components/AdmissionProcess/UnpaidFees";
+import UnpaidFeesList from "../components/AdmissionProcess/UnpaidFees";
 
 export const routes = [
   {
@@ -435,12 +435,14 @@ export const routes = [
   },
     {
     path: allRouterLink.overdueAccounts,
-    element: <UnpaidFees/>,
+    element: <UnpaidFeesList/>,
     protected: true,
     allowedRoles: [
       constants.roles.director,
       constants.roles.teacher,
       constants.roles.officeStaff,
+      constants.roles.guardian,
+      constants.roles.student
     ],
   },
 

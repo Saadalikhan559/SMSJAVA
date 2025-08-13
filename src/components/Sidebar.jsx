@@ -353,6 +353,7 @@ export const Sidebar = () => {
             {isAuthenticated &&
               (role === constants.roles.director ||
                 role === constants.roles.student ||
+                role === constants.roles.teacher ||
                 role === constants.roles.officeStaff ||
                 role === constants.roles.guardian) && (
                 <div>
@@ -376,9 +377,9 @@ export const Sidebar = () => {
                       )}
 
                     {/* Student Fee Card: student only */}
-                    {role === constants.roles.student ||
+                    {(role === constants.roles.student ||
                       role === constants.roles.director ||
-                      role === constants.roles.officeStaff && (
+                      role === constants.roles.officeStaff) && (
                         <li>
                           <Link
                             onClick={(e) =>
@@ -393,6 +394,7 @@ export const Sidebar = () => {
                           </Link>
                         </li>
                       )}
+
 
                     {/* Student Fee Card List: guardian only */}
                     {role === constants.roles.guardian && (
