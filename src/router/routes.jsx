@@ -62,6 +62,9 @@ import ClassTeacherAssign from "../components/DirectorDashboard/ClassTeacherAssi
 import ViewAllocatedClass from "../components/DirectorDashboard/ViewAllocatedClass";
 import MarksheetsTable from "../components/Student Dashboard/MarksheetsTable";
 
+import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
+import UnpaidFees from "../components/AdmissionProcess/UnpaidFees";
+
 export const routes = [
   {
     path: allRouterLink.homeScreen,
@@ -147,8 +150,8 @@ export const routes = [
     element: <StudentFeeCard />,
     protected: true,
     allowedRoles: [
-      // constants.roles.director,
-      // constants.roles.officeStaff,
+      constants.roles.director,
+      constants.roles.officeStaff,
       constants.roles.student,
       // constants.roles.teacher,
       constants.roles.guardian,
@@ -384,6 +387,12 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
+    path: allRouterLink.createDiscount,
+    element: <CreateDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
@@ -455,6 +464,16 @@ export const routes = [
     protected: true,
     allowedRoles: [
       constants.roles.guardian,
+    ],
+  },
+    {
+    path: allRouterLink.overdueAccounts,
+    element: <UnpaidFees/>,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
     ],
   },
 

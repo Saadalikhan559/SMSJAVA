@@ -36,6 +36,8 @@ const FeeDashboard = () => {
 
   useEffect(() => {
     loadDashboardData();
+    console.log(dashboardData);
+
   }, [loadDashboardData]);
 
   const handleMonthChange = (e) => {
@@ -134,7 +136,6 @@ const FeeDashboard = () => {
       <h3 className="text-3xl font-bold text-center text-gray-800">
         Fee Dashboard
       </h3>
-      
       {/* Month Filter */}
       <div className="flex justify-end mb-4">
         <select
@@ -211,17 +212,15 @@ const FeeDashboard = () => {
             <h2 className="text-xl font-bold">Overdue Accounts</h2>
           </div>
           <div className="p-4">
-            {dashboardData.top_defaulters?.length > 0 ? (
-              <ul className="divide-y divide-gray-200">
-                {dashboardData.top_defaulters.map((defaulter, index) => (
-                  <li key={index} className="py-3">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{defaulter.name}</span>
-                      <span className="text-red-600">{defaulter.amount_due?.toLocaleString()}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+            {dashboardData.defaulter_summary?.count > 0 ? (
+              <div className="text-center space-y-2">
+                <p className="text-2xl font-bold text-red-600">
+                  {dashboardData.defaulter_summary.count} Accounts are overdue
+                </p>
+                <p className="text-gray-600 text-2xl">
+                  ({dashboardData.defaulter_summary.percent}% of total)
+                </p>
+              </div>
             ) : (
               <p className="text-center text-gray-500">No Overdue Accounts found</p>
             )}

@@ -9,6 +9,7 @@ export const Sidebar = () => {
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
+  const { studentID } = useContext(AuthContext);
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -70,31 +71,31 @@ export const Sidebar = () => {
                   <div>
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                      <ul className="space-y-1">
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.allClasses)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-graduation-cap"></i> All
-                            Classes
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.allStaffMembers)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-id-card-clip"></i>Staff
-                            Members
-                          </Link>
-                        </li>
-                      </ul>
-                    )}
+                        <ul className="space-y-1">
+                          <li>
+                            <Link
+                              onClick={(e) =>
+                                handleNavigation(e, allRouterLink.allClasses)
+                              }
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-graduation-cap"></i> All
+                              Classes
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              onClick={(e) =>
+                                handleNavigation(e, allRouterLink.allStaffMembers)
+                              }
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-id-card-clip"></i>Staff
+                              Members
+                            </Link>
+                          </li>
+                        </ul>
+                      )}
                   </div>
                 </ul>
               </div>
@@ -371,39 +372,35 @@ export const Sidebar = () => {
                       role === constants.roles.officeStaff ||
                       role === constants.roles.student ||
                       role === constants.roles.guardian) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.admissionFees)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
-                          Fee Submission
-                        </Link>
-                      </li>
-                    )}
+
+                        <li>
+                          <Link
+                            onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-money-bill-wave w-5"></i> Fee Submission
+                          </Link>
+                        </li>
+                      )}
 
                     {/* Student Fee Card: student only */}
-                    {role === constants.roles.student && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(
-                              e,
-                              allRouterLink.studentFeeCard.replace(
-                                ":student_id",
-                                studentId
+                    {role === constants.roles.student ||
+                      role === constants.roles.director ||
+                      role === constants.roles.officeStaff && (
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(
+                                e,
+                                allRouterLink.studentFeeCard.replace(":student_id", studentID)
                               )
-                            )
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-envelope w-5"></i> Student
-                          Fee Card
-                        </Link>
-                      </li>
-                    )}
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                          </Link>
+                        </li>
+                      )}
 
                     {/* Student Fee Card List: guardian only */}
                     {role === constants.roles.guardian && (
@@ -432,6 +429,22 @@ export const Sidebar = () => {
                         >
                           <i className="fa-solid fa-envelope w-5"></i> Fee
                           Record
+                        </Link>
+                      </li>
+                    )}
+
+
+                    {/* Create Discount Fees */}
+                    {role === constants.roles.director && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.createDiscount)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-percentage w-5"></i> Create
+                          Discount
                         </Link>
                       </li>
                     )}
@@ -502,6 +515,7 @@ export const Sidebar = () => {
                         </Link>
                       </li>
                     )}
+
                   </ul>
                 </div>
               )}
