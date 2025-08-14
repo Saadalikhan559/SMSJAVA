@@ -214,10 +214,7 @@ export const Sidebar = () => {
                         <li>
                           <Link
                             onClick={(e) =>
-                              handleNavigation(
-                                e,
-                                allRouterLink.periodsByClass
-                              )
+                              handleNavigation(e, allRouterLink.periodsByClass)
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
@@ -256,6 +253,16 @@ export const Sidebar = () => {
                           >
                             <i className="fa-solid fa-eye w-5"></i> View Exam
                             Paper
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.MarksheetsTable)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-eye w-5"></i>  View Marksheets
                           </Link>
                         </li>
                       </>
@@ -366,6 +373,7 @@ export const Sidebar = () => {
                       role === constants.roles.officeStaff ||
                       role === constants.roles.student ||
                       role === constants.roles.guardian) && (
+
                         <li>
                           <Link
                             onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
@@ -400,10 +408,13 @@ export const Sidebar = () => {
                     {role === constants.roles.guardian && (
                       <li>
                         <Link
-                          onClick={(e) => handleNavigation(e, allRouterLink.guardianChildren)}
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.guardianChildren)
+                          }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
+                          <i className="fa-solid fa-envelope w-5"></i> Student
+                          Fee Card
                         </Link>
                       </li>
                     )}
@@ -427,9 +438,7 @@ export const Sidebar = () => {
                     {/* Overdue Accounts Summary */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff ||
-                      role === constants.roles.teacher ||
-                      role === constants.roles.guardian ||
-                      role === constants.roles.student) && (
+                      role === constants.roles.teacher) && (
                         <li>
                           <Link
                             onClick={(e) =>
@@ -441,6 +450,7 @@ export const Sidebar = () => {
                           </Link>
                         </li>
                       )}
+
                     {/* Create Discount Fees */}
                     {role === constants.roles.director && (
                       <li>
@@ -494,18 +504,35 @@ export const Sidebar = () => {
                     </li>
                     {(role === constants.roles.director ||
                       role === constants.roles.teacher) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.StudentMarksFill)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-fill-drip w-5"></i> Student
-                            Marks Fill
-                          </Link>
-                        </li>
-                      )}
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.StudentMarksFill)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-fill-drip w-5"></i> Student
+                          Marks Fill
+                        </Link>
+                      </li>
+                    )}
+                    {role === constants.roles.director && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(
+                              e,
+                              allRouterLink.ClassTeacherAssign
+                            )
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
+                          Allocat Class 
+                        </Link>
+                      </li>
+                    )}
+
                   </ul>
                 </div>
               )}
