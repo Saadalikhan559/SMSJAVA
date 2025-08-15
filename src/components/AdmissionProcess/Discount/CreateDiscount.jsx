@@ -89,41 +89,39 @@ const CreateDiscount = () => {
     setBtnDisabled(!allRequiredFields);
   }, [formData]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setErrors({}); // clear previous errors
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrors({}); // clear previous errors
 
-  try {
-    const payload = {
-      ...formData,
-      student_id: formData.student_id,
-      admission_fee_discount: formData.admission_fee_discount,
-      tuition_fee_discount: formData.tuition_fee_discount,
-      is_allowed: true,
-    };
+    try {
+      const payload = {
+        ...formData,
+        student_id: formData.student_id,
+        admission_fee_discount: formData.admission_fee_discount,
+        tuition_fee_discount: formData.tuition_fee_discount,
+        is_allowed: true,
+      };
 
-    const response = await createDiscount(access, payload);
+      const response = await createDiscount(access, payload);
 
-    // ✅ Success alert
-    alert("Discount created successfully!");
+      // ✅ Success alert
+      alert("Discount created successfully!");
 
-    // If success, reset form
-    setFormData({
-      student_id: "",
-      admission_fee_discount: "",
-      tuition_fee_discount: "",
-      discount_reason: "",
-      is_allowed: true,
-    });
-
-  } catch (err) {
-    setErrors(err);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      // If success, reset form
+      setFormData({
+        student_id: "",
+        admission_fee_discount: "",
+        tuition_fee_discount: "",
+        discount_reason: "",
+        is_allowed: true,
+      });
+    } catch (err) {
+      setErrors(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
