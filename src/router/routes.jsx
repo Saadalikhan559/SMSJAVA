@@ -61,6 +61,8 @@ import Marksheet from "../components/Student Dashboard/Marksheet";
 import ClassTeacherAssign from "../components/DirectorDashboard/ClassTeacherAssign";
 import ViewAllocatedClass from "../components/DirectorDashboard/ViewAllocatedClass";
 import MarksheetsTable from "../components/Student Dashboard/MarksheetsTable";
+import TeacherSubstitute from "../components/OfficestaffDashboard/TeacherSubstitute";
+import SingleTeacher from "../components/OfficestaffDashboard/SingleTeacher";
 
 export const routes = [
   {
@@ -271,6 +273,18 @@ export const routes = [
     element: <ViewAllocatedClass />,
     protected: true,
     allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.TeacherSubstitute,
+    element: <TeacherSubstitute />,
+    protected: true,
+    allowedRoles: [constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.SingleTeacher,
+    element: <SingleTeacher />,
+    protected: true,
+    allowedRoles: [constants.roles.officeStaff],
   },
   {
     path: allRouterLink.attendance,

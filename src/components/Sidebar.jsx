@@ -93,6 +93,22 @@ export const Sidebar = () => {
                             Members
                           </Link>
                         </li>
+                        {role === constants.roles.officeStaff && (
+                          <li>
+                            <Link
+                              onClick={(e) =>
+                                handleNavigation(
+                                  e,
+                                  allRouterLink.TeacherSubstitute
+                                )
+                              }
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-person-chalkboard"></i>
+                              Teacher Substitute
+                            </Link>
+                          </li>
+                        )}
                       </ul>
                     )}
                   </div>
@@ -261,7 +277,8 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-eye w-5"></i>  View Marksheets
+                            <i className="fa-solid fa-eye w-5"></i> View
+                            Marksheets
                           </Link>
                         </li>
                       </>
@@ -498,7 +515,7 @@ export const Sidebar = () => {
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
                           <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
-                          Allocat Class 
+                          Allocat Class
                         </Link>
                       </li>
                     )}
