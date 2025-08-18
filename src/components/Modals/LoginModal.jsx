@@ -1,4 +1,5 @@
-import React from "react";
+import Lottie from "lottie-react";
+import schoolboyAnimation from "../../assets/backtoschool.json";
 
 const LoginModal = ({ onClose }) => {
   return (
@@ -6,20 +7,41 @@ const LoginModal = ({ onClose }) => {
       className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm"
       onClick={onClose}
     >
-      <div
-        className="bg-white rounded-lg shadow-md w-[95%] max-w-md p-6 border border-gray-200 "
+      <div 
+        className="bg-white rounded-xl p-8 max-w-5xl w-full mx-4 flex flex-col items-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="text-center text-gray-700 mb-6 text-3xl font-medium">
-          Welcome!
-        </p>
-        <div className="flex justify-center">
-          <button
-            className="py-2 px-8 bgTheme text-white rounded-md hover:bg-blue-600 transition relative"
+        <div className="flex justify-center items-center min-h-[200px] w-full">
+          <div className="text-center">
+            <h1 className="textTheme text-6xl md:text-8xl font-medium animate-pulse">
+              Welcome!
+            </h1>
+            <p className="mt-4 text-xl text-gray-600">
+              To Our Vibrant Learning Community
+            </p>
+          </div>
+        </div>
+        
+        <div className="mt-4 w-full max-w-md flex justify-center">
+          <Lottie
+            animationData={schoolboyAnimation}
+            loop={true}
+            className="schoolBoyAnimation animate-bounce"
+          />
+        </div>     
+        <div className="mt-6 text-center max-w-2xl">
+          <p className="text-lg text-gray-700">
+            We're thrilled to have you here! Get ready for an exciting 
+            journey of discovery, growth, and achievement.
+          </p>
+          <p className="mt-3 text-gray-600">
+            Our doors are always open to curious minds and passionate learners.
+          </p>
+          <button 
+            className="mt-6 px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
             onClick={onClose}
           >
-            Continue
-            <i class="fa-solid fa-right-to-bracket absolute right-3 top-[22px] transform -translate-y-1/2 text-white"></i>
+            Let's Begin
           </button>
         </div>
       </div>
@@ -28,7 +50,3 @@ const LoginModal = ({ onClose }) => {
 };
 
 export default LoginModal;
-
-
-
-

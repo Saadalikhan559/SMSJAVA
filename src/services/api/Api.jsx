@@ -29,7 +29,8 @@ export const fetchExamType = async (accessToken) => {
     console.log("Access token being used:", accessToken);
 
     // Trim the token in case it has whitespace
-    const token = accessToken ? accessToken.trim() : "";
+
+    const token = accessToken ? accessToken.trim() : '';
 
     if (!token) {
       throw new Error("No access token provided");
@@ -586,6 +587,8 @@ export const fetchStudentFee = async (student_id) => {
   }
 };
 
+
+
 export const fetchGuardianChildren = async () => {
   try {
     const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
@@ -607,6 +610,52 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
+export const fetchUnpaidFees = async ({ role, class_id, month }) => {
+  try {
+    console.log("Fetching unpaid fees for role:", role);
+
+    let endpoint = "";
+    let params = {};
+
+    if (role === constants.roles.director || role === constants.roles.officeStaff) {
+      endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
+      if (class_id) params.class_id = class_id;
+      if (month) params.month = month;
+    }
+    else if (role === constants.roles.teacher) {
+      endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
+      // class_id removed for teacher
+      if (month) params.month = month;
+    }
+
+    else if (role === constants.roles.student) {
+      endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
+    }
+    else {
+      throw new Error("Invalid role provided");
+    }
+
+    const authTokens = localStorage.getItem('authTokens');
+    const accessToken = JSON.parse(authTokens).access; // Now it's an object/
+    console.log('parsed', accessToken);
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(endpoint, {
+      params,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching unpaid fees:", error);
+    throw error;
+  }
+};
+
+
+
 // POST APIS
 
 export const handleAdmissionForm = async (formData) => {
@@ -618,7 +667,7 @@ export const handleAdmissionForm = async (formData) => {
       },
     });
     if (response.status === 200 || response.status === 201) {
-      alert("successfully submitted the form");
+      // alert("successfully submitted the form");
     }
 
     return response.data;
@@ -793,6 +842,35 @@ export const createEvent = async (eventData) => {
       throw new Error("No response received from server");
     } else {
       throw new Error(error.message || "Failed to create event");
+    }
+  }
+};
+
+// DISCOUNT API
+
+export const createDiscount = async (accessToken, payload) => {
+  try {
+    if (!payload) {
+      throw new Error("Payload is required");
+    }
+
+    const response = await axios.post(`${BASE_URL}/d/fee-discounts/`, payload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+
+    return response.data;
+
+  } catch (error) {
+    if (error.response && error.response.data) {
+      // Return full backend error object for field-wise handling
+      throw error.response.data;
+    } else if (error.request) {
+      throw { non_field_errors: ["No response received from server"] };
+    } else {
+      throw { non_field_errors: [error.message || "Failed to create discount"] };
     }
   }
 };

@@ -24,9 +24,12 @@ const StudentDetails = () => {
     useEffect(() => {
         getStudent();
     }, [id]);
-
-    if (loading) {
-        return <div className="p-4 text-center">Loading student details...</div>;
+if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
     }
 
     if (!student) {
@@ -37,7 +40,7 @@ const StudentDetails = () => {
         <div className="flex justify-center">
             <div className="p-6 bg-gray-100 w-3xl">
                 <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
-                    <div className="bgTheme text-white px-4 py-2 rounded-t-md">
+                    <div className="bgTheme text-white px-4 py-2 rounded-t-md flex items-center justify-between">
                         <h2 className="text-3xl font-semibold">
                             Student Profile - {student.first_name} {student.last_name}
                         </h2>
@@ -55,6 +58,7 @@ const StudentDetails = () => {
                                 ) : (
                                     <span className="italic text-gray-400">No profile picture</span>
                                 )}
+                                <div></div>
                             </div>
                         </div>
 
@@ -73,13 +77,44 @@ const StudentDetails = () => {
                             <div><strong>Mother's Name:</strong><br />{student.mother_name}</div>
                         </div>
 
-                        <div className="flex justify-center p-8 gap-4">
+                        <div className="flex justify-center p-8 gap-4 flex-wrap">
                             <Link to={`/updateStudentdetail/${id}`}>
-                                <button type="button" className="btn btn-primary">
+                                <button
+                                    type="button"
+                                    className="btn btn-primary bgTheme min-w-[150px]"
+                                >
                                     <i className="fa-solid fa-pen-to-square"></i> Update Profile
                                 </button>
                             </Link>
+
+                            <Link
+                                to={`/admissionFees`}
+                                state={{
+                                    studentName: `${student.first_name} ${student.middle_name} ${student.last_name}`
+                                        .replace(/\s+/g, " ")
+                                        .trim(),
+                                    studentClass:
+                                        student.classes.length > 0 ? student.classes[0].name : "N/A",
+                                }}
+                            >
+                                <button
+                                    type="button"
+                                    className="btn btn-primary bgTheme min-w-[150px]"
+                                >
+                                    Fee Submission
+                                </button>
+                            </Link>
+
+                            <Link to={`/studentFeeCard/${student.id}`}>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary bgTheme min-w-[150px]"
+                                >
+                                    Fee Card
+                                </button>
+                            </Link>
                         </div>
+
                     </div>
                 </div>
             </div>

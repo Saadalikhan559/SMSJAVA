@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchGuardianChildren } from "../../services/api/Api";
 import { Link } from "react-router-dom";
-import { allRouterLink } from "../../router/AllRouterLinks"; // Ensure this is imported
+import { allRouterLink } from "../../router/AllRouterLinks";
 
 const GuardianChildren = () => {
     const [Children, setChildren] = useState([]);
@@ -26,7 +26,7 @@ const GuardianChildren = () => {
         getGuardianChildren();
     }, []);
 
-    if (loading) {
+ if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchStudentById, updateStudentById } from "../../services/api/Api";
+import UpdateSuccessful from "../Modals/UpdateModal";
 
 const UpdateStudentDetail = () => {
   const { id } = useParams();
@@ -26,6 +27,8 @@ const UpdateStudentDetail = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [UpdateModal, setUpdateModal] = useState(false);
+
 
   const fetchStudent = async () => {
     try {
@@ -69,14 +72,20 @@ const UpdateStudentDetail = () => {
 
     try {
       await updateStudentById(id, payload);
-      alert("Student profile updated successfully.");
-      navigate(`/studentDetails/${id}`);
+      setUpdateModal(true);
+
     } catch (err) {
       setError("Failed to update student details.");
     }
   };
 
-  if (loading) return <div className="p-4 text-center">Loading student data...</div>;
+  if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
   if (error) return <div className="text-red-500 text-center">{error}</div>;
 
   const fields = [
@@ -96,7 +105,7 @@ const UpdateStudentDetail = () => {
     "mother_name",
   ];
 
-  return (
+  return (<>
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
         <h1 className="text-3xl font-bold mb-8 text-center">
@@ -138,6 +147,14 @@ const UpdateStudentDetail = () => {
         </form>
       </div>
     </div>
+    {UpdateModal && (
+      <UpdateSuccessful
+        handleCloseOnly={() => setUpdateModal(false)}
+        handleCloseAndNavigate={() => navigate(`/studentDetails/${id}`)}
+      />
+    )}
+
+  </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+  import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import {
   fetchDirectorDashboard,
@@ -36,10 +36,13 @@ export const DirectorDashboard = () => {
   useEffect(() => {
     loadAllDashboardData();
   }, []);
-
-  if (loading) {
-    return <div className="p-4 text-center">Loading dashboard...</div>;
-  }
+if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
 
   if (
     !dashboardData ||

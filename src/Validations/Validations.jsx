@@ -351,10 +351,23 @@ export const validConfirmPassword = (newPassword, confirmPassword) => {
 // -------------------------------------------------Forget Password-----------------------------------------------------------
 // -----------------------------------------------------Email-----------------------------------------------------------
 
-export const validForgetEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) return "Email is required";
-    if (!emailRegex.test(email)) return ("Enter a valid email address");
-    return "";
-}
+// -----------------------------------------------------Discount Validations-----------------------------------------------------------
 
+// export const validAdmissionFeeDiscount = (value) => {
+//     if (!value) return true;
+//     const num = Number(value);
+//     if (num < 0 || isNaN(num)) return "Enter a valid admission fee discount";
+//     return true;
+// };
+
+// export const validTuitionFeeDiscount = (value) => {
+//     if (!value) return true;
+//     const num = Number(value);
+//     if (num < 0 || isNaN(num)) return "Enter a valid tuition fee discount";
+//     return true;
+// };
+
+// export const validDiscountReason = (value) => {
+//     if (value.trim().length < 5) return "Reason must be at least 10 characters";
+//     return true;
+// };
