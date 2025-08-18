@@ -140,6 +140,7 @@ export const AuthProvider = ({ children }) => {
         access: data["Access Token"],
         refresh: data["Refresh Token"],
       };
+      
 
       setAuthTokens(tokens);
       localStorage.setItem("authTokens", JSON.stringify(tokens));
