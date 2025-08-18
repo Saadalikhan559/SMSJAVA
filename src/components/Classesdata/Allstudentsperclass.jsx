@@ -35,13 +35,13 @@ const AllStudentsPerClass = () => {
 
   );
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin text-4xl" />
-      </div>
-    );
-  }
+if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">

@@ -38,11 +38,8 @@ const Marksheet = () => {
       }
 
       const obj = await fetchMarksheet(accessToken, id); 
-      if (obj && obj.length > 0) {
-        setMarksheet(obj);
-      } else {
-        throw new Error("Received empty response from fetchMarksheet");
-      }
+      console.log(obj);
+      setMarksheet(obj);
     } catch (err) {
       console.error("Failed to load marksheet:", err);
       setError(err.message || "Failed to load marksheet data");

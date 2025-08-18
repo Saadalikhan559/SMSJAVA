@@ -44,9 +44,13 @@ const FeeDashboard = () => {
     setSelectedMonth(e.target.value);
   };
 
-  if (loading) {
-    return <div className="p-4 text-center">Loading dashboard...</div>;
-  }
+if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
 
   if (error || !dashboardData) {
     return <div className="p-4 text-center">Failed to load dashboard data</div>;

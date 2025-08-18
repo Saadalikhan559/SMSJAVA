@@ -228,11 +228,11 @@ export const AdmissionForm = () => {
   };
 
   const handleCloseOnly = () => {
-    setShowSuccessModal(false);
+    setShowAdmissionSuccessModal(false);
   };
 
   const handleCloseAndNavigate = () => {
-    setShowSuccessModal(false);
+    setShowAdmissionSuccessModal(false);
     navigate("/addmissionDetails");
   };
 
@@ -1775,11 +1775,8 @@ export const AdmissionForm = () => {
       </form>
       {showAdmissionSuccessModal && (
         <AdmissionSuccessful
-          handleCloseOnly={() => setShowSuccessModal(false)}
-          handleCloseAndNavigate={() => {
-            setShowSuccessModal(false);
-            navigate("/addmissionDetails");
-          }}
+          handleCloseOnly={handleCloseOnly}
+          handleCloseAndNavigate={handleCloseAndNavigate}
         />
       )}
     </>
