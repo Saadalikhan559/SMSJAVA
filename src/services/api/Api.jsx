@@ -573,16 +573,31 @@ export const fetchStudentById = async (student_id) => {
 export const fetchStudentFee = async (student_id) => {
   try {
     console.log("Fetching student fee for ID:", student_id);
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    if (!accessToken) {
+      throw new Error("Access token missing! Please login again.");
+    }
 
     const response = await axios.get(
-      `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
+      `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
 
     console.log("Fetched student fee data:", response.data);
 
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch student fees details:", error);
+    console.error("Failed to fetch student fees details:", {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
     throw error;
   }
 };
