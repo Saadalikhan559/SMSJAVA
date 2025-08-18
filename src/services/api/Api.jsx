@@ -71,6 +71,29 @@ export const fetchMarksheet = async (accessToken, id) => {
   }
 };
 
+export const fetchMarksheets = async (accessToken) => {
+  try {
+    // console.log("Access token being used:", accessToken);
+    // console.log("Fetching marksheet for ID:", id); // Debug log
+
+    const token = accessToken ? accessToken.trim() : "";
+
+    if (!token) {
+      throw new Error("No access token provided");
+    }
+
+    const response = await axios.get(`${BASE_URL}/d/report-cards/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch marksheet:", err);
+    throw err;
+  }
+};
+
 export const fetchGuardianType = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/s/guardian-types/`);

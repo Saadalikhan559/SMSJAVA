@@ -71,31 +71,48 @@ export const Sidebar = () => {
                   <div>
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                        <ul className="space-y-1">
+                      <ul className="space-y-1">
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.allClasses)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-graduation-cap"></i> All
+                            Classes
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.allStaffMembers)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-id-card-clip"></i>Staff
+                            Members
+                          </Link>
+                        </li>
+                        {role === constants.roles.officeStaff && (
                           <li>
                             <Link
                               onClick={(e) =>
-                                handleNavigation(e, allRouterLink.allClasses)
+                                handleNavigation(
+                                  e,
+                                  allRouterLink.TeacherSubstitute
+                                )
                               }
                               className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                             >
-                              <i className="fa-solid fa-graduation-cap"></i> All
-                              Classes
+                              <i className="fa-solid fa-person-chalkboard"></i>
+                              Teacher Substitute
                             </Link>
                           </li>
-                          <li>
-                            <Link
-                              onClick={(e) =>
-                                handleNavigation(e, allRouterLink.allStaffMembers)
-                              }
-                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                            >
-                              <i className="fa-solid fa-id-card-clip"></i>Staff
-                              Members
-                            </Link>
-                          </li>
-                        </ul>
-                      )}
+                        )}
+                      </ul>
+                    )}
+
                   </div>
                 </ul>
               </div>
@@ -262,7 +279,8 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-eye w-5"></i>  View Marksheets
+                            <i className="fa-solid fa-eye w-5"></i> View
+                            Marksheets
                           </Link>
                         </li>
                       </>
@@ -528,7 +546,7 @@ export const Sidebar = () => {
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
                           <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
-                          Allocat Class 
+                          Allocat Class
                         </Link>
                       </li>
                     )}
