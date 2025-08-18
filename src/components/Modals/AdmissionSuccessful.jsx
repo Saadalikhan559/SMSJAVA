@@ -9,7 +9,7 @@ const AdmissionSuccessful = ({ handleCloseOnly, handleCloseAndNavigate }) => {
                 <p className="mb-6 text-gray-600">
                     Your admission form has been submitted successfully.
                 </p>
-                                <div className="flex flex-col gap-3 justify-center px-4 md:flex-row md:items-center">
+                <div className="flex flex-col gap-3 justify-center px-4 md:flex-row md:items-center">
                     <button
                         className="btn border border-gray-400 text-gray-600 bg-transparent hover:bg-gray-100 min-w-[200px] text-sm"
                         onClick={handleCloseOnly}

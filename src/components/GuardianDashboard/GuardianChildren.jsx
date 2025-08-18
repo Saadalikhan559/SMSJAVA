@@ -26,7 +26,7 @@ const GuardianChildren = () => {
         getGuardianChildren();
     }, []);
 
-    if (loading) {
+ if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />

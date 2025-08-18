@@ -360,6 +360,7 @@ export const Sidebar = () => {
             {isAuthenticated &&
               (role === constants.roles.director ||
                 role === constants.roles.student ||
+                role === constants.roles.teacher ||
                 role === constants.roles.officeStaff ||
                 role === constants.roles.guardian) && (
                 <div>
@@ -384,9 +385,9 @@ export const Sidebar = () => {
                       )}
 
                     {/* Student Fee Card: student only */}
-                    {role === constants.roles.student ||
+                    {(role === constants.roles.student ||
                       role === constants.roles.director ||
-                      role === constants.roles.officeStaff && (
+                      role === constants.roles.officeStaff) && (
                         <li>
                           <Link
                             onClick={(e) =>
@@ -401,6 +402,7 @@ export const Sidebar = () => {
                           </Link>
                         </li>
                       )}
+
 
                     {/* Student Fee Card List: guardian only */}
                     {role === constants.roles.guardian && (
@@ -420,19 +422,34 @@ export const Sidebar = () => {
                     {/* Fee Record: director and office staff only */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.feeSummary)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                        >
-                          <i className="fa-solid fa-envelope w-5"></i> Fee
-                          Record
-                        </Link>
-                      </li>
-                    )}
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.feeSummary)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-envelope w-5"></i> Fee
+                            Record
+                          </Link>
+                        </li>
+                      )}
 
+                    {/* Overdue Accounts Summary */}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff ||
+                      role === constants.roles.teacher) && (
+                        <li>
+                          <Link
+                            onClick={(e) =>
+                              handleNavigation(e, allRouterLink.overdueAccounts)
+                            }
+                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          >
+                            <i className="fa-solid fa-file-invoice"></i> Overdue Accounts
+                          </Link>
+                        </li>
+                      )}
 
                     {/* Create Discount Fees */}
                     {role === constants.roles.director && (

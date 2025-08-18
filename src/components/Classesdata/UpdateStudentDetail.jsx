@@ -79,7 +79,13 @@ const UpdateStudentDetail = () => {
     }
   };
 
-  if (loading) return <div className="p-4 text-center">Loading student data...</div>;
+  if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
   if (error) return <div className="text-red-500 text-center">{error}</div>;
 
   const fields = [

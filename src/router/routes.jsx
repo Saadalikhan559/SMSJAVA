@@ -43,7 +43,6 @@ import Staffdetail from "../components/StaffData/Staffdetail";
 import DirectorMarkHolidays from "../components/DirectorDashboard/DirectorMarkHolidays";
 import UpdateStaffdetails from "../components/StaffData/UpdateStaffdetails";
 import { StudentDashboard } from "../components/Student Dashboard/StudentDashboard";
-import { StudentFeeCard } from "../components/AdmissionProcess/StudentFeeCard";
 import ExamSchedule from "../components/Teacher/ExamSchedule";
 import UpdateExamSchedule from "../components/Teacher/UpdateExamSchedule";
 import TimeTable from "../components/Teacher/TimeTable";
@@ -63,7 +62,8 @@ import ViewAllocatedClass from "../components/DirectorDashboard/ViewAllocatedCla
 import MarksheetsTable from "../components/Student Dashboard/MarksheetsTable";
 
 import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
-import UnpaidFees from "../components/AdmissionProcess/UnpaidFees";
+import UnpaidFeesList from "../components/AdmissionProcess/UnpaidFees";
+import StudentFeeAndUnpaidSummary from "../components/AdmissionProcess/StudentFeeandUnpaidSummary";
 
 export const routes = [
   {
@@ -147,13 +147,13 @@ export const routes = [
   },
   {
     path: allRouterLink.studentFeeCard,
-    element: <StudentFeeCard />,
+    element: <StudentFeeAndUnpaidSummary />,
     protected: true,
     allowedRoles: [
       constants.roles.director,
       constants.roles.officeStaff,
       constants.roles.student,
-      // constants.roles.teacher,
+      constants.roles.teacher,
       constants.roles.guardian,
     ],
   },
@@ -235,13 +235,13 @@ export const routes = [
   },
   {
     path: allRouterLink.ExamSchedule,
-    element: <ExamSchedule/>,
+    element: <ExamSchedule />,
     protected: true,
     allowedRoles: [constants.roles.teacher],
   },
   {
     path: allRouterLink.UpdateExamSchedule,
-    element: <UpdateExamSchedule/>,
+    element: <UpdateExamSchedule />,
     protected: true,
     allowedRoles: [constants.roles.teacher],
   },
@@ -253,7 +253,7 @@ export const routes = [
   },
   {
     path: allRouterLink.MarksheetsTable,
-    element: <MarksheetsTable/>,
+    element: <MarksheetsTable />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },
@@ -438,11 +438,11 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.student],
   },
-    {
+  {
     path: allRouterLink.periodsByClass,
     element: <PeriodsByClass />,
     protected: true,
-      allowedRoles: [
+    allowedRoles: [
       constants.roles.director,
       constants.roles.teacher,
       constants.roles.officeStaff,
@@ -450,7 +450,7 @@ export const routes = [
   },
   {
     path: allRouterLink.periodAssignment,
-    element: <PeriodAssignment/>,
+    element: <PeriodAssignment />,
     protected: true,
     allowedRoles: [
       constants.roles.director,
@@ -458,17 +458,17 @@ export const routes = [
       constants.roles.officeStaff,
     ],
   },
-    {
+  {
     path: allRouterLink.guardianChildren,
-    element: <GuardianChildren/>,
+    element: <GuardianChildren />,
     protected: true,
     allowedRoles: [
       constants.roles.guardian,
     ],
   },
-    {
+  {
     path: allRouterLink.overdueAccounts,
-    element: <UnpaidFees/>,
+    element: <UnpaidFeesList />,
     protected: true,
     allowedRoles: [
       constants.roles.director,

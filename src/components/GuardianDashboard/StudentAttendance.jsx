@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAttendanceByGuardianId } from '../../services/api/Api';
 
-const StudentAttendance = ({ guardianId}) => {
+const StudentAttendance = ({ guardianId }) => {
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,37 +36,38 @@ const StudentAttendance = ({ guardianId}) => {
           Attendance Report
         </h1>
         <div className='overflow-x-auto'>
-        {loading ? (
-          <div className="flex justify-center items-center text-gray-600 py-10">
-            Loading Attendance...
-          </div>
-        ) : (
-          <table className="min-w-full table-auto rounded-lg overflow-hidden border border-gray-200">
-            <thead className="bgTheme text-white">
-              <tr>
-                {columns.map((col, index) => (
-                  <th
-                    key={index}
-                    className="px-4 py-3 text-left whitespace-nowrap font-semibold"
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, idx) => (
-                <tr key={idx} className="hover:bg-blue-50 transition">
-                  {columns.map((col, i) => (
-                    <td key={i} className="px-4 py-3 text-sm text-center text-gray-700">
-                      {row[col] ?? '--'}
-                    </td>
+          {loading ? (
+            <div className="flex items-center justify-center h-screen">
+              <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+
+          ) : (
+            <table className="min-w-full table-auto rounded-lg overflow-hidden border border-gray-200">
+              <thead className="bgTheme text-white">
+                <tr>
+                  {columns.map((col, index) => (
+                    <th
+                      key={index}
+                      className="px-4 py-3 text-left whitespace-nowrap font-semibold"
+                    >
+                      {col}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {data.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-blue-50 transition">
+                    {columns.map((col, i) => (
+                      <td key={i} className="px-4 py-3 text-sm text-center text-gray-700">
+                        {row[col] ?? '--'}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
