@@ -526,11 +526,10 @@ const CreateDiscount = () => {
     setBtnDisabled(!allRequiredFields);
   }, [formData]);
 
-  // 🔹 Manual submit ka naam change kiya
-  const handleManualSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrors({});
+    setErrors({}); // clear previous errors
 
     try {
       const payload = {
@@ -541,8 +540,12 @@ const CreateDiscount = () => {
         is_allowed: true,
       };
 
-      await createDiscount(access, payload);
+      const response = await createDiscount(access, payload);
+
+      // ✅ Success alert
       alert("Discount created successfully!");
+
+      // If success, reset form
       setFormData({
         student_id: "",
         admission_fee_discount: "",
@@ -556,12 +559,8 @@ const CreateDiscount = () => {
       setLoading(false);
     }
   };
+  // 🔹 Manual submit ka naam change kiya
 
-  const admissionVal = watch("admission_fee_discount");
-  const tuitionVal = watch("tuition_fee_discount");
-  const studentVal = watch("student_id");
-  const btnDisabledFinal =
-    (!admissionVal && !tuitionVal) || !studentVal || loading;
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
