@@ -494,26 +494,41 @@ export const fetchYearLevels = async () => {
   }
 };
 
-export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
+
+export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
 
   const params = {};
+  if (selectedMonth) params.month = selectedMonth;
+  if (selectedClass) params.year_level = selectedClass;
 
-  // Add month parameter if selectedMonth is provided
-  if (selectedMonth) {
-    params.month = selectedMonth;
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = JSON.parse(authTokens).access;
+
+    const response = await axios.get(url, {
+      params,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    // 👉 agar 404 ya "No records found." aaye to empty array return kar do
+    if (
+      error.response &&
+      (error.response.status === 404 ||
+        error.response.data?.detail === "No records found.")
+    ) {
+      return [];
+    }
+
+    // baaki errors throw karo (modal dikhane ke liye)
+    throw error;
   }
-
-  // Add class parameter if selectedClass is provided
-  if (selectedClass) {
-    // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-    params.year_level = selectedClass;
-  }
-
-  // If both selectedMonth and selectedClass are empty, the 'params' object will be empty.
-  // Your backend API for '/d/fee-record/monthly-summary/' should then return all records.
-  return axios.get(url, { params });
 };
+
 
 export const fetchAttendanceData = async (date = "") => {
   try {
