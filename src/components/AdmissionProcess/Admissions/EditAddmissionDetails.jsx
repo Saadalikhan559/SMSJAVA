@@ -11,6 +11,8 @@ import {
   handleEditAdmissionForm,
 } from "../../../services/api/Api";
 import { constants } from "../../../global/constants";
+// import AdmissionSuccessful from "../Modals/AdmissionSuccessful";
+import AdmissionEditedSuccessfully from "../../Modals/AdmissionEditedSuccessfully";
 
 export const EditAddmissionDetails = () => {
   const { id } = useParams();
@@ -26,6 +28,7 @@ export const EditAddmissionDetails = () => {
   const [formData, setFormData] = useState(null);
   const [isRTE, setIsRTE] = useState(false);
   const [rteNumber, setRteNumber] = useState("");
+  const [showEditSuccessModal, setShowEditSuccessModal] = useState(false);
   const formRef = useRef(null);
 
   const handleGuardianTypeChange = (e) => {
@@ -153,6 +156,15 @@ export const EditAddmissionDetails = () => {
     getAdmissionData();
   }, [id]);
 
+  const handleCloseOnly = () => {
+    setShowEditSuccessModal(false);
+  };
+
+  const handleCloseAndNavigate = () => {
+    setShowEditSuccessModal(false);
+    navigate("/addmissionDetails");
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -261,7 +273,7 @@ export const EditAddmissionDetails = () => {
 
     try {
       await handleEditAdmissionForm(submitFormData, id);
-      navigate("/addmissionDetails");
+      setShowEditSuccessModal(true);
     } catch (error) {
       console.error("Update error:", error.response?.data || error.message);
       alert(
@@ -1213,6 +1225,12 @@ export const EditAddmissionDetails = () => {
           </button>
         </div>
       </form>
+      {showEditSuccessModal && (
+        <AdmissionEditedSuccessfully
+          handleCloseOnly={handleCloseOnly}
+          handleCloseAndNavigate={handleCloseAndNavigate}
+        />
+      )}
     </>
   );
 };
