@@ -87,14 +87,13 @@ const FeeSummaryTable = () => {
     setSearchTerm("");
   };
 
-
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin text-4xl text-blue-600" />
-      </div>
-    );
-  }
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">

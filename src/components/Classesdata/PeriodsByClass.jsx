@@ -25,14 +25,13 @@ const PeriodsByClass = () => {
         getYearLevels();
     }, []);
 
-    if (loading) {
+if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
             </div>
         );
     }
-
     return (
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen-md mx-auto">

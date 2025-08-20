@@ -71,6 +71,29 @@ export const fetchMarksheet = async (accessToken, id) => {
   }
 };
 
+export const fetchMarksheets = async (accessToken) => {
+  try {
+    // console.log("Access token being used:", accessToken);
+    // console.log("Fetching marksheet for ID:", id); // Debug log
+
+    const token = accessToken ? accessToken.trim() : "";
+
+    if (!token) {
+      throw new Error("No access token provided");
+    }
+
+    const response = await axios.get(`${BASE_URL}/d/report-cards/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch marksheet:", err);
+    throw err;
+  }
+};
+
 export const fetchGuardianType = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/s/guardian-types/`);
@@ -550,19 +573,36 @@ export const fetchStudentById = async (student_id) => {
 export const fetchStudentFee = async (student_id) => {
   try {
     console.log("Fetching student fee for ID:", student_id);
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    if (!accessToken) {
+      throw new Error("Access token missing! Please login again.");
+    }
 
     const response = await axios.get(
-      `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`
+      `${BASE_URL}/d/fee-record/student-fee-card/?student_id=${student_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
 
     console.log("Fetched student fee data:", response.data);
 
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch student fees details:", error);
+    console.error("Failed to fetch student fees details:", {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
     throw error;
   }
 };
+
+
 
 export const fetchGuardianChildren = async () => {
   try {
@@ -585,8 +625,7 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
-
-export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
+export const fetchUnpaidFees = async ({ role, class_id, month }) => {
   try {
     console.log("Fetching unpaid fees for role:", role);
 
@@ -598,14 +637,14 @@ export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => 
       if (class_id) params.class_id = class_id;
       if (month) params.month = month;
     }
-    // else if (role === constants.roles.teacher) {
-    //   endpoint = `${BASE_URL}/t/fee-record/overall_unpaid_fees/`;
-    //   if (class_id) params.class_id = class_id;
-    //   if (month) params.month = month;
-    // }
+    else if (role === constants.roles.teacher) {
+      endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
+      // class_id removed for teacher
+      if (month) params.month = month;
+    }
+
     else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
-      if (student_id) params.student_id = student_id;
     }
     else {
       throw new Error("Invalid role provided");
@@ -835,7 +874,7 @@ export const createDiscount = async (accessToken, payload) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    
+
 
     return response.data;
 

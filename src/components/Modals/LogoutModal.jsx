@@ -15,7 +15,7 @@ const LogoutModal = ({ show, onConfirm, onClose }) => {
                 <p className="text-center text-gray-700 mb-6">
                     Are you sure you want to logout?
                 </p>
-                <div className="flex justify-between space-x-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                     <button
                         className="flex-1 py-2 border borderTheme text-blue-500 rounded-md hover:bg-blue-50"
                         onClick={onClose}
@@ -23,11 +23,11 @@ const LogoutModal = ({ show, onConfirm, onClose }) => {
                         Cancel
                     </button>
                     <button
-                        className="flex-1 py-2 bgTheme text-white rounded-md relative"
+                        className="flex-1 py-2 bgTheme text-white rounded-md flex items-center justify-center gap-2"
                         onClick={onConfirm}
                     >
                         Logout
-                        <i className="fa-solid fa-arrow-right-from-bracket absolute right-20 top-[23px] transform -translate-y-1/2 text-white"></i>
+                        <i className="fa-solid fa-arrow-right-from-bracket"></i>
                     </button>
                 </div>
             </div>

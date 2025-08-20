@@ -1,58 +1,66 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { fetchMarksheets } from "../../services/api/Api";
 
 const MarksheetsTable = () => {
-  const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+  const [marksheet, setMarksheet] = useState([]);
 
-  // Static payload data
-  const staticPayload = [
-    {
-      "id": 47,
-      "student_name": "Ayaan Mohammad Sheikh",
-      "father_name": "Salman Sheikh",
-      "date_of_birth": "2010-03-10",
-      "contact_number": "9952115463",
-      "standard": "Class 7",
-      "academic_year": "2025-2026",
-    },
-    {
-      "id": 48,
-      "student_name": "Rahul Sharma",
-      "father_name": "Amit Sharma",
-      "date_of_birth": "2011-05-15",
-      "contact_number": "9876543210",
-      "standard": "Class 8",
-      "academic_year": "2025-2026",
+  useEffect(() => {
+    const tokenData = localStorage.getItem("authTokens");
+    if (tokenData) {
+      try {
+        const tokens = JSON.parse(tokenData);
+        if (tokens?.access && tokens.access !== accessToken) {
+          setAccessToken(tokens.access);
+        }
+      } catch (error) {
+        console.error("Error parsing auth tokens:", error);
+        setLoading(false); // Set loading to false if there's an error
+      }
+    } else {
+      setLoading(false); // Set loading to false if no token data
     }
-  ];
+  }, []);
 
-  const getMarksheetDetails = async () => {
+  const getMarksheet = async () => {
     try {
-      // Simulating API call with static data
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-      setDetails(staticPayload);
-      setLoading(false);
-    } catch (error) {
-      console.log("failed to fetch marksheet data", error);
-      setLoading(false);
+      if (!accessToken) {
+        throw new Error("No access token available");
+      }
+
+      const obj = await fetchMarksheets(accessToken);
+      if (obj && obj.length > 0) {
+        setMarksheet(obj);
+      } else {
+        throw new Error("Received empty response from fetchMarksheet");
+      }
+    } catch (err) {
+      console.error("Failed to load marksheet:", err);
+    } finally {
+      setLoading(false); // Always set loading to false when the operation is complete
     }
   };
 
   useEffect(() => {
-    getMarksheetDetails();
-  }, []);
+    if (accessToken) {
+      getMarksheet();
+    }
+  }, [accessToken]);
+
+  const staticPayload = marksheet;
 
   if (loading) {
     return <div className="p-4 text-center">Loading marksheets...</div>;
   }
 
-  if (!details) {
-    return <div className="p-4 text-center">Failed to load data</div>;
+  if (!staticPayload || staticPayload.length === 0) {
+    return <div className="p-4 text-center">No marksheet data available</div>;
   }
 
-  const filterData = details.filter((detail) =>
+  const filterData = staticPayload.filter((detail) =>
     detail.student_name.toLowerCase().includes(searchInput.toLowerCase())
   );
 
@@ -62,7 +70,7 @@ const MarksheetsTable = () => {
         {/* Search Input */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-2 gap-4">
           <h2 className="text-3xl font-semibold text-gray-800">
-            Marksheets <i class="fa-solid fa-address-card ml-2"></i>
+            Marksheets <i className="fa-solid fa-address-card ml-2"></i>
           </h2>
           <input
             type="text"
@@ -74,7 +82,7 @@ const MarksheetsTable = () => {
         </div>
 
         {filterData.length === 0 ? (
-          <p className="text-gray-600">No marksheet records found.</p>
+          <p className="text-gray-600">No matching records found.</p>
         ) : (
           <div className="overflow-x-auto">
             <div className="inline-block min-w-full align-middle">
