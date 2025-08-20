@@ -24,10 +24,24 @@ export const EditAddmissionDetails = () => {
   const [state, setState] = useState([]);
   const [city, setCity] = useState([]);
   const [formData, setFormData] = useState(null);
+  const [isRTE, setIsRTE] = useState(false);
+  const [rteNumber, setRteNumber] = useState("");
   const formRef = useRef(null);
 
   const handleGuardianTypeChange = (e) => {
     setSelectedGuardianType(e.target.value);
+  };
+
+  const handleRTECheckboxChange = (e) => {
+    const isChecked = e.target.checked;
+    setIsRTE(isChecked);
+    if (!isChecked) {
+      setRteNumber("");
+    }
+  };
+
+  const handleRTENumberChange = (e) => {
+    setRteNumber(e.target.value);
   };
 
   const getYearLevels = async () => {
@@ -91,12 +105,10 @@ export const EditAddmissionDetails = () => {
         throw new Error("No response received from API");
       }
 
-      // Get all countries, states, cities first
       const countries = await fetchCountry();
       const states = await fetchState();
       const cities = await fetchCity();
 
-      // Find matching IDs for the names
       const countryObj = countries.find(
         (c) => c.name === response.address.country_name
       );
@@ -105,7 +117,6 @@ export const EditAddmissionDetails = () => {
       );
       const cityObj = cities.find((c) => c.name === response.address.city_name);
 
-      // Transform the API response
       const transformedData = {
         ...response,
         student: response.student_input,
@@ -115,9 +126,9 @@ export const EditAddmissionDetails = () => {
           country: countryObj?.id || null,
           state: stateObj?.id || null,
           city: cityObj?.id || null,
-          country_name: response.address.country_name, // Keep for display
-          state_name: response.address.state_name, // Keep for display
-          city_name: response.address.city_name, // Keep for display
+          country_name: response.address.country_name,
+          state_name: response.address.state_name,
+          city_name: response.address.city_name,
         },
         banking_detail: response.banking_detail,
         guardian_type: response.guardian_type,
@@ -125,10 +136,13 @@ export const EditAddmissionDetails = () => {
 
       setFormData(transformedData);
       setSelectedGuardianType(response.guardian_type || "");
+      setIsRTE(response.is_rte || false);
+      setRteNumber(response.rte_number || "");
     } catch (error) {
       console.error("Error fetching admission details:", error);
     }
   };
+
   useEffect(() => {
     getYearLevels();
     getSchoolYears();
@@ -145,7 +159,6 @@ export const EditAddmissionDetails = () => {
 
     const formData = new FormData(formRef.current);
 
-    // Create the payload object with nested structure that matches API expectations
     const payload = {
       student: {
         first_name: formData.get("student_first_name") || "",
@@ -210,12 +223,12 @@ export const EditAddmissionDetails = () => {
         formData.get("entire_road_distance_from_home_to_school") || "",
       obtain_marks: parseFloat(formData.get("obtain_marks")) || null,
       total_marks: parseFloat(formData.get("total_marks")) || null,
+      is_rte: isRTE,
+      rte_number: isRTE ? rteNumber : "",
     };
 
-    // Create FormData for submission
     const submitFormData = new FormData();
 
-    // Append all payload data to FormData
     Object.entries(payload).forEach(([key, value]) => {
       if (
         typeof value === "object" &&
@@ -233,7 +246,6 @@ export const EditAddmissionDetails = () => {
       }
     });
 
-    // Append files separately if they've been changed
     if (formData.get("student_user_profile")) {
       submitFormData.append(
         "student[user_profile]",
@@ -284,6 +296,23 @@ export const EditAddmissionDetails = () => {
         {/* Student Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Student Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-1 mb-3">
+            <div className="form-control">
+              <label className="label cursor-pointer">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-child-reaching text-sm"></i>
+                  Is RTE Student?
+                </span>
+                <input
+                  type="checkbox"
+                  onChange={handleRTECheckboxChange}
+                  checked={isRTE}
+                  className="checkbox checkbox-primary"
+                  name="is_rte"
+                />
+              </label>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="form-control">
               <label className="label">
@@ -517,6 +546,25 @@ export const EditAddmissionDetails = () => {
                 placeholder="Number of Siblings"
                 className="input input-bordered w-full focus:outline-none"
                 defaultValue={formData.student?.number_of_siblings}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-people-group text-sm"></i>
+                  RTE Number
+                </span>
+              </label>
+              <input
+                type="text"
+                name="rte_number"
+                placeholder="RTE Number"
+                className={`input input-bordered w-full focus:outline-none ${
+                  !isRTE ? "input-disabled bg-gray-200 cursor-not-allowed" : ""
+                }`}
+                value={rteNumber}
+                onChange={handleRTENumberChange}
+                disabled={!isRTE}
               />
             </div>
           </div>
@@ -992,7 +1040,6 @@ export const EditAddmissionDetails = () => {
                   City <span className="text-error">*</span>
                 </span>
               </label>
-              {/* City Dropdown */}
               <select
                 name="student_address_city"
                 className="select select-bordered w-full focus:outline-none"
@@ -1030,7 +1077,6 @@ export const EditAddmissionDetails = () => {
                   State <span className="text-error">*</span>
                 </span>
               </label>
-              {/* State Dropdown */}
               <select
                 name="student_address_state"
                 className="select select-bordered w-full focus:outline-none"
