@@ -705,10 +705,6 @@ export const handleEditAdmissionForm = async (formData, id) => {
         },
       }
     );
-    if (response.status === 200 || response.status === 201) {
-      alert("successfully submitted the form");
-    }
-
     return response.data;
   } catch (err) {
     throw err;
