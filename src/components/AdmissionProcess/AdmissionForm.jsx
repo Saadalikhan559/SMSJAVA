@@ -26,8 +26,8 @@ export const AdmissionForm = () => {
   const [loading, setLoading] = useState(false);
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const formRef = useRef(null);
-  const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] =
-    useState(false);
+  const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] = useState(false);
+  const [isRTE, setIsRTE] = useState(false);
 
   const {
     register,
@@ -35,6 +35,7 @@ export const AdmissionForm = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    resetField,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -113,6 +114,17 @@ export const AdmissionForm = () => {
     setValue("guardian_type_input", e.target.value);
   };
 
+  const handleRTECheckboxChange = (e) => {
+    const isChecked = e.target.checked;
+    setIsRTE(isChecked);
+    setValue("is_rte", isChecked);
+    
+    // Clear RTE number field when unchecked
+    if (!isChecked) {
+      resetField("rte_number");
+    }
+  };
+
   const getYearLevels = async () => {
     try {
       const yearLevels = await fetchYearLevels();
@@ -183,7 +195,7 @@ export const AdmissionForm = () => {
     data.student.roll_number = null;
     data.student.scholar_number = null;
     data.student.contact_number = data.guardian.phone_no;
-    setShowAdmissionSuccessModal(true);
+
     // Append all payload data to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (typeof value === "object" && value !== null) {
@@ -211,10 +223,11 @@ export const AdmissionForm = () => {
 
     try {
       await handleAdmissionForm(submitFormData);
-      // Reset form after successful submission
+      // Show success modal after successful submission
       setShowAdmissionSuccessModal(true);
       formRef.current.reset();
       setSelectedGuardianType("");
+      setIsRTE(false);
     } catch (error) {
       console.error("Submission error:", error.response?.data || error.message);
       alert(
@@ -261,6 +274,7 @@ export const AdmissionForm = () => {
                 <input
                   type="checkbox"
                   {...register("is_rte")}
+                  onChange={handleRTECheckboxChange}
                   className="checkbox checkbox-primary"
                 />
               </label>
@@ -686,7 +700,7 @@ export const AdmissionForm = () => {
               <input
                 type="text"
                 {...register("rte_number", {
-                  required: watch("is_rte")
+                  required: isRTE
                     ? "RTE number is required for RTE students"
                     : false,
                   maxLength: {
@@ -698,7 +712,7 @@ export const AdmissionForm = () => {
                 className={`input input-bordered w-full focus:outline-none ${
                   errors.rte_number ? "input-error" : ""
                 }`}
-                disabled={!watch("is_rte")}
+                disabled={!isRTE}
               />
               {errors.rte_number && (
                 <span className="text-error text-sm">

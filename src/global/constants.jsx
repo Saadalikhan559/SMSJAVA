@@ -3,52 +3,11 @@ export const constants = {
   isOffline: true,
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
+  baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-  //farheen
-  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms",
-
-
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms",
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms",
-
-
-  // baseUrl1: "https://187gwsw1-8000.inc1.devtunnels.ms",
-  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
-  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
-
-
-  //  baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms",
-   baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms",
-
-  // baseUrl: "https://8c1zb9f3-8000.inc1.devtunnels.ms",
-
   // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
-
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
-
-
-  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-
-  //   baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-  // // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
-
-  // baseUrl: "https://958cp4w5-8000.inc1.devtunnels.ms", //saba
-  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
-
-
-  // baseUrl: "https://958cp4w5-8000.inc1.devtunnels.ms", // Saba
-
-
-  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", // Naz
-
-
-
-
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,
       input[type="password"]::-ms-clear {
