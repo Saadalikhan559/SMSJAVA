@@ -886,22 +886,6 @@ export const EditAddmissionDetails = () => {
                 defaultValue={formData.total_marks}
               />
             </div>
-            {/* <div className="form-control">
-                <label className="label">
-                  <span className="label-text flex items-center gap-2">
-                    <i className="fa-solid fa-percent text-sm"></i>
-                    Previous Percentage
-                  </span>
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  name="previous_percentage"
-                  placeholder="Percentage"
-                  className="input input-bordered w-full focus:outline-none"
-                  defaultValue={formData.previous_percentage}
-                />
-              </div> */}
           </div>
         </div>
 
@@ -1153,21 +1137,6 @@ export const EditAddmissionDetails = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* <div className="form-control">
-                <label className="label">
-                  <span className="label-text flex items-center gap-2">
-                    <i className="fa-solid fa-building text-sm"></i>
-                    Bank Name <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  name="student_banking_bank_name"
-                  placeholder="Bank Name"
-                  className="input input-bordered w-full focus:outline-none"
-                  defaultValue={formData.banking_detail?.bank_name}
-                />
-              </div> */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">

@@ -462,7 +462,7 @@ export const fetchStudents1 = async (classId) => {
 };
 
 export const fetchStudents2 = async (classId) => {
-  console.log(classId);
+
   try {
     const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
     return response.data;
