@@ -9,6 +9,7 @@ export const constants = {
   // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
+  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,
       input[type="password"]::-ms-clear {
