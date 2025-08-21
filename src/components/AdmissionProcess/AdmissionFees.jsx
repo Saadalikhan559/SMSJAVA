@@ -17,6 +17,10 @@ export const AdmissionFees = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [studentFeeData, setStudentFeeData] = useState([]);
+  const [isLoadingFees, setIsLoadingFees] = useState(false);
+  const authTokens = JSON.parse(localStorage.getItem("authTokens"));
+  const accessToken = authTokens?.access;
 
   const BASE_URL = constants.baseUrl;
 
@@ -48,18 +52,45 @@ export const AdmissionFees = () => {
     }
   };
 
-  // Fix the fetchStudentDiscount function
+  // Fetch student-specific fee data
+  const fetchStudentFeeData = async (studentId) => {
+    try {
+      setIsLoadingFees(true);
+      const response = await axios.get(
+        `${BASE_URL}/d/fee-record/?student_id=${studentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("No fee data found for student:", error);
+      return [];
+    } finally {
+      setIsLoadingFees(false);
+    }
+  };
+
+  // Fetch student discount
   const fetchStudentDiscount = async (studentId) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/d/fee-record/?student_id=${studentId}`
+        `${BASE_URL}/d/fee-record/?student_id=${studentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
-      // Your API returns the discount value directly (e.g., 10)
-      // So we need to handle both object and number responses
-      if (typeof response.data === "number") {
-        return { discount: response.data, discount_reason: "" };
-      } else if (response.data && typeof response.data.discount === "number") {
-        return response.data;
+
+      if (response.data && response.data.length > 0) {
+        const latestRecord = response.data[response.data.length - 1];
+        return { 
+          discount: latestRecord.discount || 0, 
+          discount_reason: latestRecord.discount_reason || "" 
+        };
       } else {
         return { discount: 0, discount_reason: "" };
       }
@@ -74,7 +105,6 @@ export const AdmissionFees = () => {
     try {
       setIsLoading(true);
       const Students = await fetchStudents1(classId);
-      // Add discount information to each student
       const studentsWithDiscounts = await Promise.all(
         Students.map(async (student) => {
           const discountData = await fetchStudentDiscount(student.student_id);
@@ -126,6 +156,7 @@ export const AdmissionFees = () => {
     });
     setSelectedFeeIds([]);
     setSelectedStudent(null);
+    setStudentFeeData([]);
   };
 
   // When class is selected, fetch year level data
@@ -147,6 +178,36 @@ export const AdmissionFees = () => {
       setSelectedStudent(null);
     }
   }, [selectedClassId, selectedMonth]);
+
+  // When student is selected, fetch their fee data
+  const selectedStudentId = watch("student_id");
+  useEffect(() => {
+    if (selectedStudentId) {
+      const student = students.find(
+        (s) => s.student_id === parseInt(selectedStudentId)
+      );
+      setSelectedStudent(student);
+      
+      // Fetch student-specific fee data
+      const fetchStudentData = async () => {
+        const feeData = await fetchStudentFeeData(selectedStudentId);
+        setStudentFeeData(feeData);
+        
+        // Auto-select unpaid fees
+        const unpaidFeeIds = feeData
+          .filter(fee => fee.paid_status === false || fee.paid_status === "unpaid")
+          .map(fee => fee.fee_type_id || fee.id);
+        
+        setSelectedFeeIds(unpaidFeeIds);
+      };
+      
+      fetchStudentData();
+    } else {
+      setSelectedStudent(null);
+      setStudentFeeData([]);
+      setSelectedFeeIds([]);
+    }
+  }, [selectedStudentId, students]);
 
   // Automatically update paid amount when fees are selected (with discount)
   useEffect(() => {
@@ -202,19 +263,6 @@ export const AdmissionFees = () => {
     role === constants.roles.officeStaff || constants.roles.director
       ? ["Cash", "Cheque", "Online"]
       : ["Online"];
-
-  const selectedStudentId = watch("student_id");
-
-  useEffect(() => {
-    if (selectedStudentId) {
-      const student = students.find(
-        (s) => s.student_id === parseInt(selectedStudentId)
-      );
-      setSelectedStudent(student);
-    } else {
-      setSelectedStudent(null);
-    }
-  }, [selectedStudentId, students]);
 
   const handleFeeSelection = (feeId) => {
     setSelectedFeeIds((prev) => {
@@ -462,7 +510,7 @@ export const AdmissionFees = () => {
           </div>
         </div>
 
-        {/* Fee Structure Display */}
+        {/* Fee Structure Display with Student-Specific Filtering */}
         {selectedFees && selectedFees.fees && selectedStudent && (
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
@@ -471,7 +519,7 @@ export const AdmissionFees = () => {
               </h2>
               <div className="flex flex-col items-end">
                 <div className="badge badge-primary mb-1">
-                  Original: ₹
+                  Total: ₹
                   {selectedFees.fees
                     .filter((fee) => selectedFeeIds.includes(fee.id))
                     .reduce((sum, fee) => sum + parseFloat(fee.amount), 0)
@@ -500,29 +548,45 @@ export const AdmissionFees = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {selectedFees.fees.map((fee) => (
-                <div key={fee.id} className="card bg-base-200 shadow-sm">
-                  <div className="card-body p-4">
-                    <div className="form-control">
-                      <label className="label cursor-pointer justify-start gap-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedFeeIds.includes(fee.id)}
-                          onChange={() => handleFeeSelection(fee.id)}
-                          className="checkbox checkbox-primary"
-                          disabled={!selectedStudent}
-                        />
-                        <div>
-                          <h3 className="card-title text-lg font-bold">
-                            {fee.fee_type}
-                          </h3>
-                          <p className="text-2xl">₹{fee.amount}</p>
-                        </div>
-                      </label>
+              {selectedFees.fees.map((fee) => {
+                const studentFee = studentFeeData.find(
+                  (sf) => sf.fee_type_id === fee.id || sf.fee_id === fee.id
+                );
+                const isPaid = studentFee?.paid_status === true || studentFee?.paid_status === "paid";
+                const isPending = studentFee?.paid_status === false || studentFee?.paid_status === "unpaid";
+
+                return (
+                  <div key={fee.id} className="card bg-base-200 shadow-sm">
+                    <div className="card-body p-4">
+                      <div className="form-control">
+                        <label className="label cursor-pointer justify-start gap-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedFeeIds.includes(fee.id)}
+                            onChange={() => handleFeeSelection(fee.id)}
+                            className="checkbox checkbox-primary"
+                            disabled={!selectedStudent || isPaid}
+                          />
+                          <div>
+                            <h3 className="card-title text-lg font-bold">
+                              {fee.fee_type}
+                              {isPaid && <span className="badge badge-success ml-2">Paid</span>}
+                              {isPending && <span className="badge badge-warning ml-2">Pending</span>}
+                            </h3>
+                            <p className="text-2xl">₹{fee.amount}</p>
+                            {isPaid && (
+                              <p className="text-sm text-success">Already paid</p>
+                            )}
+                            {isPending && (
+                              <p className="text-sm text-warning">Payment pending</p>
+                            )}
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -644,7 +708,7 @@ export const AdmissionFees = () => {
           <button
             type="submit"
             className="btn btn-primary w-52"
-            disabled={isSubmitting || !selectedStudent}
+            disabled={isSubmitting || !selectedStudent || selectedFeeIds.length === 0}
           >
             {isSubmitting ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
