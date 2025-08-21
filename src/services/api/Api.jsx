@@ -640,7 +640,8 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
-export const fetchUnpaidFees = async ({ role, class_id, month }) => {
+
+export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
   try {
     console.log("Fetching unpaid fees for role:", role);
 
@@ -654,20 +655,18 @@ export const fetchUnpaidFees = async ({ role, class_id, month }) => {
     }
     else if (role === constants.roles.teacher) {
       endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
-      // class_id removed for teacher
       if (month) params.month = month;
     }
-
     else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
+      if (student_id) params.student_id = student_id;  // sirf student role ke liye
     }
     else {
       throw new Error("Invalid role provided");
     }
 
     const authTokens = localStorage.getItem('authTokens');
-    const accessToken = JSON.parse(authTokens).access; // Now it's an object/
-    console.log('parsed', accessToken);
+    const accessToken = JSON.parse(authTokens).access;
     if (!accessToken) throw new Error("No access token found");
 
     const response = await axios.get(endpoint, {
@@ -677,7 +676,13 @@ export const fetchUnpaidFees = async ({ role, class_id, month }) => {
       },
     });
 
-    return response.data;
+    let data = response.data;
+
+    if ((role === constants.roles.director || role === constants.roles.officeStaff) && student_id) {
+      data = data.filter(fee => fee.student_id === student_id);
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching unpaid fees:", error);
     throw error;
