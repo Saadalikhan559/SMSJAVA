@@ -171,13 +171,13 @@ const CreateDiscount = () => {
               <option value="">Select Student</option>
               {students.length > 0
                 ? students.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.student_name} - {student.student_email}
-                    </option>
-                  ))
+                  <option key={student.student_id} value={student.student_id}>
+                    {student.student_name} - {student.student_email}
+                  </option>
+                ))
                 : classId && (
-                    <option disabled>No students found for this class</option>
-                  )}
+                  <option disabled>No students found for this class</option>
+                )}
             </select>
             {errors.student_id && (
               <p className="text-error text-sm">{errors.student_id}</p>

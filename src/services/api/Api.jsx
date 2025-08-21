@@ -494,26 +494,41 @@ export const fetchYearLevels = async () => {
   }
 };
 
-export const fetchFeeSummary = ({ selectedMonth, selectedClass }) => {
+
+export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
 
   const params = {};
+  if (selectedMonth) params.month = selectedMonth;
+  if (selectedClass) params.year_level = selectedClass;
 
-  // Add month parameter if selectedMonth is provided
-  if (selectedMonth) {
-    params.month = selectedMonth;
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = JSON.parse(authTokens).access;
+
+    const response = await axios.get(url, {
+      params,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    // 👉 agar 404 ya "No records found." aaye to empty array return kar do
+    if (
+      error.response &&
+      (error.response.status === 404 ||
+        error.response.data?.detail === "No records found.")
+    ) {
+      return [];
+    }
+
+    // baaki errors throw karo (modal dikhane ke liye)
+    throw error;
   }
-
-  // Add class parameter if selectedClass is provided
-  if (selectedClass) {
-    // Make sure 'year_level' is the exact parameter name your backend expects for class filtering
-    params.year_level = selectedClass;
-  }
-
-  // If both selectedMonth and selectedClass are empty, the 'params' object will be empty.
-  // Your backend API for '/d/fee-record/monthly-summary/' should then return all records.
-  return axios.get(url, { params });
 };
+
 
 export const fetchAttendanceData = async (date = "") => {
   try {
@@ -625,7 +640,8 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
-export const fetchUnpaidFees = async ({ role, class_id, month }) => {
+
+export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
   try {
     console.log("Fetching unpaid fees for role:", role);
 
@@ -639,20 +655,18 @@ export const fetchUnpaidFees = async ({ role, class_id, month }) => {
     }
     else if (role === constants.roles.teacher) {
       endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
-      // class_id removed for teacher
       if (month) params.month = month;
     }
-
     else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
+      if (student_id) params.student_id = student_id;  // sirf student role ke liye
     }
     else {
       throw new Error("Invalid role provided");
     }
 
     const authTokens = localStorage.getItem('authTokens');
-    const accessToken = JSON.parse(authTokens).access; // Now it's an object/
-    console.log('parsed', accessToken);
+    const accessToken = JSON.parse(authTokens).access;
     if (!accessToken) throw new Error("No access token found");
 
     const response = await axios.get(endpoint, {
@@ -662,7 +676,13 @@ export const fetchUnpaidFees = async ({ role, class_id, month }) => {
       },
     });
 
-    return response.data;
+    let data = response.data;
+
+    if ((role === constants.roles.director || role === constants.roles.officeStaff) && student_id) {
+      data = data.filter(fee => fee.student_id === student_id);
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching unpaid fees:", error);
     throw error;
