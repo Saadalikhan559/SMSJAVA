@@ -193,7 +193,7 @@ export const DocumentUpload = () => {
         }
 
         const formDataToSend = new FormData();
-        formDataToSend.append("uploaded_files", field.files);
+        formDataToSend.append("files", field.files);
         formDataToSend.append("document_types", field.document_types);
 
         // Append role-specific fields
