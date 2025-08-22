@@ -1,6 +1,7 @@
 import Chart from "react-apexcharts";
 import React, { useCallback, useEffect, useState } from "react";
 import { fetchFeeDashboard, fetchFeeDashboardByMonth } from "../../services/api/Api";
+import { constants } from "../../global/constants";
 
 const FeeDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -102,13 +103,13 @@ if (loading) {
                 name: {
                   show: true,
                   fontSize: "14px",
-                  color: "#666",
+                  color: `${constants.textColor}`,
                 },
                 value: {
                   show: true,
                   fontSize: "22px",
                   fontWeight: "bold",
-                  color: "#333",
+                  color: `${constants.textColor}`,
                   formatter: (val) => `${val.toLocaleString()}`,
                 },
                 total: {
@@ -166,7 +167,7 @@ if (loading) {
             {renderDonutChart(
               ["Paid Amount", "Due Amount"],
               [currentSummary.paid_amount || 0, currentSummary.due_amount || 0],
-              ["#6e00ff", "violet"]
+              [constants.usColor, constants.canadaPink]
             )}
           </div>
         </div>
@@ -179,7 +180,7 @@ if (loading) {
             {renderDonutChart(
               paymentModes.map(mode => mode.payment_mode),
               paymentModes.map(mode => mode.count),
-              ["#6e00ff", "violet", "#FF8042"]
+              [constants.usColor, constants.canadaPink, constants.saffronOrange]
             )}
           </div>
         </div>

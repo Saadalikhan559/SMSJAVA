@@ -4,11 +4,11 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import PaymentStatusDialog from "./PaymentStatusDialog";
 import PaymentStatusDialogOffline from "./PaymentStatusDialogOffline";
-import { fetchStudents1, fetchyearLevelData } from "../../services/api/Api";
+import { fetchStudents1 } from "../../services/api/Api";
 
 export const AdmissionFees = () => {
   const [students, setStudents] = useState([]);
-  const [yearLevelData, setyearLevelData] = useState([]);
+  const [availableFees, setAvailableFees] = useState([]);
   const [selectedFeeIds, setSelectedFeeIds] = useState([]);
   const [paymentStatus, setPaymentStatus] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -17,7 +17,6 @@ export const AdmissionFees = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [studentFeeData, setStudentFeeData] = useState([]);
   const [isLoadingFees, setIsLoadingFees] = useState(false);
   const [availableMonths, setAvailableMonths] = useState([]);
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
@@ -30,12 +29,12 @@ export const AdmissionFees = () => {
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       student_id: "",
       month: "",
-      year_level: "",
       paid_amount: "",
       payment_mode: "",
       remarks: "",
@@ -53,30 +52,23 @@ export const AdmissionFees = () => {
     }
   };
 
-  // Fetch student-specific fee data with discounts
-  const fetchStudentFeeData = async (studentId) => {
+  // Fetch available fees for a student
+  const fetchAvailableFees = async (studentId) => {
     try {
       setIsLoadingFees(true);
       const response = await axios.get(
-        `${BASE_URL}/d/fee-record/?student_id=${studentId}`,
+        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-      
-      // Extract unpaid months from the response
-      const unpaidMonths = [...new Set(response.data
-        .filter(fee => fee.payment_status === "Unpaid" || fee.payment_status === "unpaid")
-        .map(fee => fee.month)
-      )];
-      
-      setAvailableMonths(unpaidMonths);
+      setAvailableFees(response.data);
       return response.data;
     } catch (error) {
       console.log("No fee data found for student:", error);
-      setAvailableMonths([]);
+      setAvailableFees([]);
       return [];
     } finally {
       setIsLoadingFees(false);
@@ -96,20 +88,6 @@ export const AdmissionFees = () => {
     }
   };
 
-  const getyearLevelData = async (classId) => {
-    try {
-      const YearLevelData = await fetchyearLevelData(classId);
-      setyearLevelData([YearLevelData]);
-      reset({
-        ...watch(),
-        year_level: YearLevelData.year_level,
-      });
-    } catch (err) {
-      setyearLevelData([]);
-      console.log("Failed to load school years. Please try again." + err);
-    }
-  };
-
   useEffect(() => {
     getClasses();
   }, []);
@@ -121,7 +99,6 @@ export const AdmissionFees = () => {
     reset({
       student_id: "",
       month: "",
-      year_level: "",
       paid_amount: "",
       payment_mode: "",
       remarks: "",
@@ -129,22 +106,20 @@ export const AdmissionFees = () => {
     });
     setSelectedFeeIds([]);
     setSelectedStudent(null);
-    setStudentFeeData([]);
+    setAvailableFees([]);
     setAvailableMonths([]);
   };
 
-  // When class is selected, fetch year level data
+  // When class is selected, fetch students
   useEffect(() => {
     if (selectedClassId) {
-      getyearLevelData(selectedClassId);
       getStudents(selectedClassId);
     } else {
-      setyearLevelData([]);
       setStudents([]);
     }
   }, [selectedClassId]);
 
-  // When student is selected, fetch their fee data
+  // When student is selected, fetch their available fees
   const selectedStudentId = watch("student_id");
   useEffect(() => {
     if (selectedStudentId) {
@@ -152,76 +127,39 @@ export const AdmissionFees = () => {
         (s) => s.student_id === parseInt(selectedStudentId)
       );
       setSelectedStudent(student);
-      
-      // Fetch student-specific fee data
+
+      // Fetch student's available fees
       const fetchStudentData = async () => {
-        const feeData = await fetchStudentFeeData(selectedStudentId);
-        setStudentFeeData(feeData);
+        await fetchAvailableFees(selectedStudentId);
       };
-      
+
       fetchStudentData();
     } else {
       setSelectedStudent(null);
-      setStudentFeeData([]);
+      setAvailableFees([]);
       setSelectedFeeIds([]);
       setAvailableMonths([]);
     }
   }, [selectedStudentId, students]);
 
-  // When month is selected, update selected fees
-  const selectedMonth = watch("month");
+  // When fee selection changes, update the total amount
   useEffect(() => {
-    if (selectedMonth && selectedStudentId && studentFeeData.length > 0) {
-      // Find fees for the selected month
-      const monthFees = studentFeeData.filter(
-        fee => fee.month === selectedMonth && 
-        (fee.payment_status === "Unpaid" || fee.payment_status === "unpaid")
-      );
-      
-      // Extract fee IDs for the selected month
-      const feeIds = monthFees.flatMap(fee => 
-        fee.year_level_fees_grouped.flatMap(group => 
-          group.fees.map(f => f.id)
-        )
-      );
-      
-      setSelectedFeeIds(feeIds);
-    } else {
-      setSelectedFeeIds([]);
-    }
-  }, [selectedMonth, selectedStudentId, studentFeeData]);
-
-  // Automatically update paid amount when month/student changes
-  useEffect(() => {
-    if (selectedMonth && selectedStudentId && studentFeeData.length > 0 && selectedFeeIds.length > 0) {
-      // Calculate total amount for selected fees with discounts applied
-      const monthFees = studentFeeData.filter(
-        fee => fee.month === selectedMonth
-      );
-      
+    if (selectedFeeIds.length > 0 && availableFees.length > 0) {
       let totalAmount = 0;
-      
-      monthFees.forEach(fee => {
-        fee.year_level_fees_grouped.forEach(group => {
-          group.fees.forEach(f => {
-            if (selectedFeeIds.includes(f.id)) {
-              // Add the fee amount (which already includes discount)
-              totalAmount += parseFloat(f.amount);
-            }
-          });
+
+      availableFees.forEach((yearLevel) => {
+        yearLevel.fees.forEach((fee) => {
+          if (selectedFeeIds.includes(fee.id)) {
+            totalAmount += parseFloat(fee.final_amount);
+          }
         });
       });
-      
-      // Add any late fees if applicable
-      const lateFee = monthFees[0]?.late_fee || 0;
-      totalAmount += parseFloat(lateFee);
 
-      reset({
-        ...watch(),
-        paid_amount: totalAmount.toFixed(2),
-      });
+      setValue("paid_amount", totalAmount.toFixed(2));
+    } else {
+      setValue("paid_amount", "0.00");
     }
-  }, [selectedFeeIds, selectedMonth, selectedStudentId, studentFeeData, reset, watch]);
+  }, [selectedFeeIds, availableFees, setValue]);
 
   const role = localStorage.getItem("userRole");
 
@@ -239,11 +177,19 @@ export const AdmissionFees = () => {
     });
   };
 
-  const selectedFees = yearLevelData.length > 0 ? yearLevelData[0] : null;
-
   const allMonths = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const paymentModes =
@@ -348,6 +294,7 @@ export const AdmissionFees = () => {
       paid_amount: parseFloat(data.paid_amount).toFixed(2),
       year_level_fees: selectedFeeIds,
       payment_mode: data.payment_mode,
+      is_cheque_cleared: data.payment_mode === "Cheque" ? false : true,
     };
 
     try {
@@ -357,7 +304,15 @@ export const AdmissionFees = () => {
         payload.payment_mode === "Cash" ||
         payload.payment_mode === "Cheque"
       ) {
-        const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload);
+        const response = await axios.post(
+          `${BASE_URL}/d/fee-record/`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         setPaymentStatus(response.data);
         setShowPaymentDialog1(true);
       }
@@ -375,6 +330,15 @@ export const AdmissionFees = () => {
       } else {
         alert(`Error: ${error.message}`);
       }
+    }
+  };
+
+  // Handle fee selection
+  const handleFeeSelection = (feeId, isSelected) => {
+    if (isSelected) {
+      setSelectedFeeIds((prev) => [...prev, feeId]);
+    } else {
+      setSelectedFeeIds((prev) => prev.filter((id) => id !== feeId));
     }
   };
 
@@ -455,7 +419,7 @@ export const AdmissionFees = () => {
           {/* Month Selection */}
           <div className="form-control">
             <label className="label">
-              <span className="label-text flex items-center gap-2">
+              <span className="label-text flex items-center gap-1">
                 <i className="fa-solid fa-calendar text-sm"></i>
                 Month <span className="text-error">*</span>
               </span>
@@ -470,19 +434,11 @@ export const AdmissionFees = () => {
               disabled={!selectedStudentId}
             >
               <option value="">Select Month</option>
-              {availableMonths.length > 0 ? (
-                availableMonths.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))
-              ) : (
-                allMonths.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))
-              )}
+              {allMonths.map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
             </select>
             {errors.month && (
               <label className="label">
@@ -494,62 +450,47 @@ export const AdmissionFees = () => {
           </div>
         </div>
 
-        {/* Fee Structure Display with Discounts Applied */}
-        {selectedFees && selectedFees.fees && selectedStudent && selectedMonth && (
+        {/* Available Fees Display */}
+        {availableFees.length > 0 && selectedStudent && (
           <div className="mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">
-                Fee Structure for {selectedFees.year_level} - {selectedMonth}
-              </h2>
-              <div className="flex flex-col items-end">
-                <div className="badge badge-primary mb-1">
-                  Total: ₹
-                  {watch("paid_amount")}
-                </div>
-              </div>
-            </div>
+            <h2 className="text-xl font-semibold mb-4">
+              Available Fees for {selectedStudent.student_name}
+            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {studentFeeData
-                .filter(fee => fee.month === selectedMonth)
-                .flatMap(fee => fee.year_level_fees_grouped)
-                .flatMap(group => group.fees)
-                .map((fee) => {
-                  const isPaid = !selectedFeeIds.includes(fee.id);
-                  
-                  return (
+            {availableFees.map((yearLevel) => (
+              <div key={yearLevel.id} className="mb-6">
+                <h3 className="text-lg font-medium mb-3">
+                  {yearLevel.year_level} Fees
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {yearLevel.fees.map((fee) => (
                     <div key={fee.id} className="card bg-base-200 shadow-sm">
                       <div className="card-body p-4">
                         <div className="form-control">
                           <label className="label cursor-pointer justify-start gap-4">
                             <input
                               type="checkbox"
-                              checked={!isPaid}
+                              checked={selectedFeeIds.includes(fee.id)}
+                              onChange={(e) =>
+                                handleFeeSelection(fee.id, e.target.checked)
+                              }
                               className="checkbox checkbox-primary"
-                              disabled={isPaid}
-                              readOnly
                             />
                             <div>
                               <h3 className="card-title text-lg font-bold">
                                 {fee.fee_type}
-                                {isPaid && <span className="badge badge-success ml-2">Paid</span>}
-                                {!isPaid && <span className="badge badge-warning ml-2">Pending</span>}
                               </h3>
-                              <p className="text-2xl">₹{fee.amount}</p>
-                              {isPaid && (
-                                <p className="text-sm text-success">Already paid</p>
-                              )}
-                              {!isPaid && (
-                                <p className="text-sm text-warning">Payment pending</p>
-                              )}
+                              <p className="text-2xl">₹{fee.final_amount}</p>
                             </div>
                           </label>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-            </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -569,7 +510,7 @@ export const AdmissionFees = () => {
               {...register("payment_mode", {
                 required: "Payment mode is required",
               })}
-              disabled={!selectedMonth}
+              disabled={selectedFeeIds.length === 0}
             >
               <option value="">Select Payment Mode</option>
               {paymentModes.map((mode) => (
@@ -632,7 +573,7 @@ export const AdmissionFees = () => {
               className="input input-bordered w-full focus:outline-none"
               {...register("remarks")}
               placeholder="Enter any remarks"
-              disabled={!selectedMonth}
+              disabled={selectedFeeIds.length === 0}
             />
           </div>
 
@@ -653,7 +594,7 @@ export const AdmissionFees = () => {
                 required: "Signature is required",
               })}
               placeholder="Enter your name as signature"
-              disabled={!selectedMonth}
+              disabled={selectedFeeIds.length === 0}
             />
             {errors.received_by && (
               <label className="label">
@@ -670,7 +611,7 @@ export const AdmissionFees = () => {
           <button
             type="submit"
             className="btn btn-primary w-52"
-            disabled={isSubmitting || !selectedMonth || selectedFeeIds.length === 0}
+            disabled={isSubmitting || selectedFeeIds.length === 0}
           >
             {isSubmitting ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
