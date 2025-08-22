@@ -192,14 +192,14 @@ export const Sidebar = () => {
             {/* Management */}
             {(role === constants.roles.director ||
               role === constants.roles.teacher ||
-              role === constants.roles.student) &&
+              role === constants.roles.student  || role === constants.roles.officeStaff) &&
               isAuthenticated && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                     Management
                   </h3>
                   <ul className="space-y-1">
-                    {role === constants.roles.director && (
+                    {(role === constants.roles.director  || role === constants.roles.officeStaff)  &&  (
                       <>
                         <li>
                           <Link

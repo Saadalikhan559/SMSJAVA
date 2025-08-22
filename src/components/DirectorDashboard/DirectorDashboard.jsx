@@ -6,6 +6,7 @@ import {
   fetchStudentCategoryDashboard,
 } from "../../services/api/Api";
 import LoginSuccessHandler from "../Modals/LoginSucces";
+import { constants } from "../../global/constants";
 
 export const DirectorDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -66,6 +67,8 @@ if (loading) {
     (item) => item.count
   );
 
+
+
   return (
     <div className="p-4 space-y-6">
       <LoginSuccessHandler />
@@ -115,7 +118,7 @@ if (loading) {
                   width="100%"
                   options={{
                     labels: ["Male", "Female"],
-                    colors: ["#6e00ff", "rgb(255, 174, 0)"], //rgb(255, 174, 0) is gold
+                    colors: [constants.usColor, constants.canadaPink], 
                     legend: { position: "bottom" },
                   }}
                   series={[data.count.male, data.count.female]}
@@ -139,7 +142,7 @@ if (loading) {
               width="100%"
               options={{
                 labels: studentCategoryLabel,
-                colors: ["#6e00ff", "#E65C00", "#00C49F", "rgb(255, 174, 0)"],
+                colors: [constants.italianGreen, constants.canadaPink, constants.saffronOrange, constants.usColor],
                 legend: { position: "bottom" },
               }}
               series={studentCategorySeries}
@@ -164,7 +167,7 @@ if (loading) {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: "#333",
+                      color: `${constants.textColor}`,
                     },
                   },
                 },
@@ -174,11 +177,11 @@ if (loading) {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: "#333",
+                      color: `${constants.textColor}`,
                     },
                   },
                 },
-                colors: ["#00C49F"],
+                colors: [constants.usColor],
                 plotOptions: {
                   bar: {
                     borderRadius: 6,
@@ -217,7 +220,7 @@ if (loading) {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: "#333",
+                      color: `${constants.textColor}`,
                     },
                   },
                 },
@@ -227,11 +230,11 @@ if (loading) {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: "#333",
+                      color: `${constants.textColor}`,
                     },
                   },
                 },
-                colors: ["#00C49F"],
+                colors: [constants.usColor],
                 plotOptions: {
                   bar: {
                     borderRadius: 6,
@@ -273,7 +276,7 @@ if (loading) {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: "#333",
+                      color: `${constants.textColor}`,
                     },
                   },
                 },
@@ -283,7 +286,7 @@ if (loading) {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: "#333",
+                      color: `${constants.textColor}`,
                     },
                   },
                 },
@@ -291,7 +294,7 @@ if (loading) {
                   text: "Yearly Admissions",
                   align: "left",
                 },
-                colors: ["rgb(255, 174, 0)"],
+                colors: [constants.usColor],
               }}
               series={[
                 {
