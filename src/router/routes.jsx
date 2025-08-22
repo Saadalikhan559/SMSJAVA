@@ -206,15 +206,17 @@ export const routes = [
     ],
   },
   {
-    path: allRouterLink.viewDocuments,
-    element: <ViewDocuments />,
-    protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.officeStaff,
-      constants.roles.teacher,
-    ],
-  },
+  path: allRouterLink.viewDocuments,
+  element: <ViewDocuments />,
+  protected: true,
+  allowedRoles: [
+    constants.roles.director,
+    constants.roles.officeStaff,
+    constants.roles.student, 
+    // constants.roles.teacher// 
+  ],
+}
+,
   {
     path: allRouterLink.TimeTable,
     element: <TimeTable />,
