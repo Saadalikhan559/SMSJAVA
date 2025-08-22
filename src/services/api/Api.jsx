@@ -289,6 +289,28 @@ export const fetchPeriodsByYearLevel = async (yearLevelId) => {
   }
 };
 
+// fetchAbsentTeachers
+export const fetchAbsentTeachers = async (date) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/t/absent-teacher/?date_value=${date}`
+    );
+    return data?.absent_teachers || [];
+  } catch (error) {
+    console.error("API Error:", error);
+    return [];
+  }
+};
+
+// substitute teacher 
+export const fetchSubAssignments = async () => {
+  const response = await axios.get(
+    `${BASE_URL}/t/substitute-assign/`
+
+  );
+  return response.data;
+};
+
 // DASHBOARD
 
 // Director Dashboard
@@ -341,32 +363,6 @@ export const fetchOfficeStaffDashboard = async () => {
     throw err;
   }
 };
-
-
-// fetchAbsentTeachers
-export const fetchAbsentTeachers = async (date) => {
-  try {
-    const { data } = await axios.get(
-      `${BASE_URL}/t/newabsent-teacher/?date_value=${date}`
-    );
-    return data?.absent_teachers || [];
-  } catch (error) {
-    console.error("API Error:", error);
-    return [];
-  }
-};
-
-// Assign substitute
-export const assignSubstitute = async (payload) => {
-  try {
-    const { data } = await axios.post(`${BASE_URL}/t/substitute-assign/`, payload);
-    return data;
-  } catch (error) {
-    console.error("API Error in assignSubstitute:", error.response?.data || error);
-    throw error;
-  }
-};
-
 
 // Guardian Dashboard
 
@@ -913,5 +909,17 @@ export const createDiscount = async (accessToken, payload) => {
     } else {
       throw { non_field_errors: [error.message || "Failed to create discount"] };
     }
+  }
+};
+
+
+// Assign substitute
+export const assignSubstitute = async (payload) => {
+  try {
+    const { data } = await axios.post(`${BASE_URL}/t/substitute-assign/`, payload);
+    return data;
+  } catch (error) {
+    console.error("API Error in assignSubstitute:", error.response?.data || error);
+    throw error;
   }
 };
