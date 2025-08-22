@@ -2,6 +2,7 @@ import Chart from "react-apexcharts";
 import React, { useEffect, useState } from "react";
 
 import { fetchOfficeStaffDashboard } from "../../services/api/Api";
+import { constants } from "../../global/constants";
 
 const payload = {
   staff: "Tanveer khan",
@@ -61,7 +62,7 @@ const options = {
       style: {
         fontSize: "14px",
         fontWeight: 600,
-        color: "#333",
+        color: `${constants.textColor}`,
       },
     },
   },
@@ -71,7 +72,7 @@ const options = {
       style: {
         fontSize: "14px",
         fontWeight: 600,
-        color: "#333",
+        color: `${constants.textColor}`,
       },
     },
   },
@@ -83,7 +84,7 @@ const options = {
     text: "Yearly Admissions",
     align: "left",
   },
-  colors: ["#6e00ff"],
+  colors: [constants.canadaPink],
 };
 
 
