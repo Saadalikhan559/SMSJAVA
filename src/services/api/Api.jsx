@@ -342,6 +342,32 @@ export const fetchOfficeStaffDashboard = async () => {
   }
 };
 
+
+// fetchAbsentTeachers
+export const fetchAbsentTeachers = async (date) => {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/t/newabsent-teacher/?date_value=${date}`
+    );
+    return data?.absent_teachers || [];
+  } catch (error) {
+    console.error("API Error:", error);
+    return [];
+  }
+};
+
+// Assign substitute
+export const assignSubstitute = async (payload) => {
+  try {
+    const { data } = await axios.post(`${BASE_URL}/t/substitute-assign/`, payload);
+    return data;
+  } catch (error) {
+    console.error("API Error in assignSubstitute:", error.response?.data || error);
+    throw error;
+  }
+};
+
+
 // Guardian Dashboard
 
 export const fetchGuardianDashboard = async (id) => {
