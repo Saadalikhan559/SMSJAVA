@@ -78,7 +78,7 @@ export const AllTeacherAssignments = () => {
   return (
     <div className="p-4">
       {/* Tabs  */}
-      <div className="flex border-b mb-6">
+      <div className="flex justify-center border-b mb-6">
         <button
           className={`px-6 py-2 font-semibold ${activeTab === "teachers"
             ? "border-b-2 border-blue-600 text-blue-600"
@@ -128,7 +128,7 @@ export const AllTeacherAssignments = () => {
                     className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl bg-white"
                   >
                     <div className="p-4 bgTheme text-white">
-                      <h2 className="text-xl font-bold truncate">
+                      <h2 className="text-xl font-bold truncate capitalize">
                         {data.teacher_name}
                       </h2>
                     </div>
@@ -195,26 +195,30 @@ export const AllTeacherAssignments = () => {
       )}
 
       {/* Substitute Assignments  */}
+
       {activeTab === "substitutes" && (
         <div className="p-4">
+          <h2 className="text-2xl font-semibold text-gray-800">
+              Substitute Assignments
+            </h2><br/>
           {subLoading ? (
             <div className="flex items-center justify-center h-40">
               <i className="fa-solid fa-spinner fa-spin mr-2 text-2xl" />
             </div>
           ) : subAssignments.length === 0 ? (
-            <p className="text-center font-medium p-6">
+            <div className="col-span-full text-center py-10">
               No substitute assignments found.
-            </p>
+            </div>
           ) : (
             <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
-              <table className="min-w-full text-sm text-left text-gray-700">
+              <table className="min-w-full table-fixed text-sm text-left text-gray-700">
                 <thead className="bgTheme text-white text-sm uppercase tracking-wide">
                   <tr>
-                    <th className="px-6 py-3">Date</th>
-                    <th className="px-6 py-3">Absent Teacher</th>
-                    <th className="px-6 py-3">Class</th>
-                    <th className="px-6 py-3">Period</th>
-                    <th className="px-6 py-3">Substitute Teacher</th>
+                    <th className="px-6 py-3 w-[20%]">Date</th>
+                    <th className="px-6 py-3 w-[20%]">Absent Teacher</th>
+                    <th className="px-6 py-3 w-[20%]">Class</th>
+                    <th className="px-6 py-3 w-[20%]">Period</th>
+                    <th className="px-6 py-3 w-[20%]">Substitute Teacher</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
