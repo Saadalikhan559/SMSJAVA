@@ -23,6 +23,7 @@ export const constants = {
     student: "student",
     guardian: "guardian",
   },
+
   // roles: {
   //   director: "Director",
   //   officeStaff: "Office staff",
@@ -30,12 +31,19 @@ export const constants = {
   //   student: "Student",
   //   guardian: "Guardain",
   // },
+
+  bgTheme: "#5E35B1",
+  saffronOrange: "#FF9933",
+  usColor: "#5cb7ffd9",
+  italianGreen: "#4bcd89d9",
+  neutralGrey: "#a6a6a6ff",
+  canadaPink: "#ff6c88d9",
+  textColor: "#333"
 };
 
-
-const urlParts = constants.baseUrl.split('-');
+const urlParts = constants.baseUrl.split("-");
 if (urlParts.length > 1) {
-  const portPart = urlParts[1].split('.')[0];
+  const portPart = urlParts[1].split(".")[0];
   if (!isNaN(portPart)) {
     constants.PORT = parseInt(portPart, 10);
   }
