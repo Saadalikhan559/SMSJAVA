@@ -32,25 +32,18 @@ const FeeSummaryTable = () => {
     setStudents([]);
 
     try {
-      const response = await fetchFeeSummary({ selectedMonth, selectedClass });
+      const data = await fetchFeeSummary({ selectedMonth, selectedClass });
 
-      if (response.status === 200) {
-        const data = response.data;
-
-        if (
-          data &&
-          typeof data === "object" &&
-          data.detail === "No records found."
-        ) {
-          setError("No records found.");
-          setStudents([]);
-        } else if (Array.isArray(data)) {
-          setStudents(data);
-        } else {
-          setError("Unexpected response from server.");
-        }
+      if (
+        data &&
+        typeof data === "object" &&
+        data.detail === "No records found."
+      ) {
+        setStudents([]);
+      } else if (Array.isArray(data)) {
+        setStudents(data);
       } else {
-        setError("Unexpected status from server.");
+        setError("Unexpected response from server.");
       }
     } catch (err) {
       console.error("Error fetching fee records:", err);
@@ -88,12 +81,12 @@ const FeeSummaryTable = () => {
   };
 
   if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+      </div>
+    );
+  }
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -198,7 +191,7 @@ const FeeSummaryTable = () => {
                 placeholder="Enter student name"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded px-3 py-2 text-sm w-64"
+                className="border rounded px-3 py-2 text-sm w-64 focus:outline-none"
               />
             </div>
 

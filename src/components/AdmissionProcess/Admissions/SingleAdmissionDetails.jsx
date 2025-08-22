@@ -36,19 +36,24 @@ export const SingleAdmissionDetails = () => {
         {/* Header Section */}
         <div className="bgTheme text-white px-6 py-4">
           <h1 className="text-2xl font-bold">
-            {details.student_input.first_name || "Unknown"} {details.student_input.last_name || ""}'s Admission Details
+            {details.student_input.first_name || "Unknown"}{" "}
+            {details.student_input.last_name || ""}'s Admission Details
           </h1>
         </div>
 
         <div className="p-6">
           {/* Student Information Section */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">Student Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+              Student Information
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="font-medium">Full Name:</p>
                 <p>
-                  {details.student_input.first_name || "Unknown"} {details.student_input.middle_name || ""} {details.student_input.last_name || ""}
+                  {details.student_input.first_name || "Unknown"}{" "}
+                  {details.student_input.middle_name || ""}{" "}
+                  {details.student_input.last_name || ""}
                 </p>
               </div>
               <div>
@@ -90,7 +95,8 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">Height/Weight:</p>
                 <p>
-                  {details.student_input.height || "Not Measured"} cm / {details.student_input.weight || "Not Measured"} kg
+                  {details.student_input.height || "Not Measured"} cm /{" "}
+                  {details.student_input.weight || "Not Measured"} kg
                 </p>
               </div>
               <div>
@@ -109,13 +115,57 @@ export const SingleAdmissionDetails = () => {
                 <p className="font-medium">Scholar Number:</p>
                 <p>{details.student_input.scholar_number || "Not Assigned"}</p>
               </div>
+              <div>
+                <p className="font-medium">Has RTE?</p>
+                {details.is_rte === true ? (
+                  <svg
+                    className="w-6 h-6 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-6 h-6 text-red-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div>
+                <p className="font-medium"> RTE Number: </p>
+                <p>
+                  {details.is_rte === true
+                    ? details.rte_number
+                    : "Not Applicable"}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Parent/Guardian Information */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">Parent/Guardian Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+              Parent/Guardian Information
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="font-medium">Guardian Type:</p>
                 <p>{details.guardian_type || "Not Specified"}</p>
@@ -123,7 +173,8 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">Name:</p>
                 <p>
-                  {details.guardian_input.first_name || "Unknown"} {details.guardian_input.last_name || ""}
+                  {details.guardian_input.first_name || "Unknown"}{" "}
+                  {details.guardian_input.last_name || ""}
                 </p>
               </div>
               <div>
@@ -159,12 +210,15 @@ export const SingleAdmissionDetails = () => {
 
           {/* Address Information */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">Address Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+              Address Information
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="font-medium">Address:</p>
                 <p>
-                  {details.address.house_no || "Not Provided"}, {details.address.address_line || "Not Provided"}
+                  {details.address.house_no || "Not Provided"},{" "}
+                  {details.address.address_line || "Not Provided"}
                 </p>
               </div>
               <div>
@@ -174,7 +228,8 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">City/State:</p>
                 <p>
-                  {details.address.city_name || "Not Provided"}, {details.address.state_name || "Not Provided"}
+                  {details.address.city_name || "Not Provided"},{" "}
+                  {details.address.state_name || "Not Provided"}
                 </p>
               </div>
               <div>
@@ -198,8 +253,10 @@ export const SingleAdmissionDetails = () => {
 
           {/* Admission Details */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">Admission Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+              Admission Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="font-medium">Class:</p>
                 <p>{details.year_level || "Not Assigned"}</p>
@@ -218,7 +275,10 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Distance to School:</p>
-                <p>{details.entire_road_distance_from_home_to_school || "Not Provided"}</p>
+                <p>
+                  {details.entire_road_distance_from_home_to_school ||
+                    "Not Provided"}
+                </p>
               </div>
               <div>
                 <p className="font-medium">Previous School:</p>
@@ -230,7 +290,11 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Previous Percentage:</p>
-                <p>{details.previous_percentage != null ? `${details.previous_percentage.toFixed(2)}%` : "Not Available"}</p>
+                <p>
+                  {details.previous_percentage != null
+                    ? `${details.previous_percentage.toFixed(2)}%`
+                    : "Not Available"}
+                </p>
               </div>
               <div>
                 <p className="font-medium">TC Letter:</p>
@@ -245,8 +309,10 @@ export const SingleAdmissionDetails = () => {
 
           {/* Banking Details */}
           <div>
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">Banking Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+              Banking Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="font-medium">Account Holder:</p>
                 <p>{details.banking_detail.holder_name || "Not Provided"}</p>
