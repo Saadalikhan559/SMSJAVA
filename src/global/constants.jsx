@@ -3,9 +3,11 @@ export const constants = {
   isOffline: true,
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
-  baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
+  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
+  baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms/", //naaz
+
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,
       input[type="password"]::-ms-clear {
@@ -34,7 +36,8 @@ export const constants = {
   italianGreen: "#4bcd89d9",
   neutralGrey: "#a6a6a6ff",
   canadaPink: "#ff6c88d9",
-  textColor: "#333"
+  textColor: "#333",
+  whiteColor: "#fff"
 };
 
 const urlParts = constants.baseUrl.split("-");
