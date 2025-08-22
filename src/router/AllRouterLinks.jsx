@@ -40,6 +40,7 @@ export const allRouterLink = {
     StudentMarksFill: '/StudentMarksFill',
     feeDashboard: '/feeDashboard',
     createDiscount: '/createDiscount',
+    editDiscount: '/createDiscount/:id',
     attendanceRecord: '/attendanceRecord',
     fullAttendance: '/fullAttendance/:className',
     directorMarkHolidays: '/directorMarkHolidays',

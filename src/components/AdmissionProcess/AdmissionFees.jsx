@@ -146,14 +146,22 @@ export const AdmissionFees = () => {
   useEffect(() => {
     if (selectedFeeIds.length > 0 && availableFees.length > 0) {
       let totalAmount = 0;
+      let lateFeeAmount = 0;
 
       availableFees.forEach((yearLevel) => {
         yearLevel.fees.forEach((fee) => {
           if (selectedFeeIds.includes(fee.id)) {
             totalAmount += parseFloat(fee.final_amount);
+            // Add late fee if it exists for this fee
+            if (fee.late_fee) {
+              lateFeeAmount += parseFloat(fee.late_fee);
+            }
           }
         });
       });
+
+      // Add late fee to total amount
+      totalAmount += lateFeeAmount;
 
       setValue("paid_amount", totalAmount.toFixed(2));
     } else {
@@ -342,6 +350,31 @@ export const AdmissionFees = () => {
     }
   };
 
+  // Calculate total amount including late fees
+  const calculateTotalAmount = () => {
+    let total = 0;
+    let lateFeeTotal = 0;
+    
+    availableFees.forEach((yearLevel) => {
+      yearLevel.fees.forEach((fee) => {
+        if (selectedFeeIds.includes(fee.id)) {
+          total += parseFloat(fee.final_amount);
+          if (fee.late_fee) {
+            lateFeeTotal += parseFloat(fee.late_fee);
+          }
+        }
+      });
+    });
+    
+    return {
+      baseAmount: total,
+      lateFee: lateFeeTotal,
+      totalAmount: total + lateFeeTotal
+    };
+  };
+
+  const totalAmount = calculateTotalAmount();
+
   return (
     <>
       <form
@@ -482,6 +515,11 @@ export const AdmissionFees = () => {
                                 {fee.fee_type}
                               </h3>
                               <p className="text-2xl">₹{fee.final_amount}</p>
+                              {fee.late_fee && (
+                                <p className="text-sm text-warning mt-1">
+                                  Late Fee: ₹{fee.late_fee}
+                                </p>
+                              )}
                             </div>
                           </label>
                         </div>
@@ -491,6 +529,29 @@ export const AdmissionFees = () => {
                 </div>
               </div>
             ))}
+
+            {/* Total Amount Summary */}
+            {selectedFeeIds.length > 0 && (
+              <div className="bg-base-300 p-4 rounded-lg mt-6">
+                <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>Base Amount:</div>
+                  <div className="text-right">₹{totalAmount.baseAmount.toFixed(2)}</div>
+                  
+                  {totalAmount.lateFee > 0 && (
+                    <>
+                      <div>Late Fee:</div>
+                      <div className="text-right text-warning">₹{totalAmount.lateFee.toFixed(2)}</div>
+                    </>
+                  )}
+                  
+                  <div className="font-bold mt-2 border-t pt-2">Total Amount:</div>
+                  <div className="text-right font-bold mt-2 border-t pt-2">
+                    ₹{totalAmount.totalAmount.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -565,16 +626,27 @@ export const AdmissionFees = () => {
             <label className="label">
               <span className="label-text flex items-center gap-2">
                 <i className="fa-solid fa-comment text-sm"></i>
-                Remarks
+                Remarks <span className="text-error">*</span>
               </span>
             </label>
             <input
               type="text"
-              className="input input-bordered w-full focus:outline-none"
-              {...register("remarks")}
+              className={`input w-full focus:outline-none ${
+                errors.remarks ? "input-error" : "input-bordered"
+              }`}
+              {...register("remarks", {
+                required: "Remarks are required",
+              })}
               placeholder="Enter any remarks"
               disabled={selectedFeeIds.length === 0}
             />
+            {errors.remarks && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {errors.remarks.message}
+                </span>
+              </label>
+            )}
           </div>
 
           {/* Signature */}
@@ -610,7 +682,7 @@ export const AdmissionFees = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-52"
+            className="btn bgTheme text-white w-52"
             disabled={isSubmitting || selectedFeeIds.length === 0}
           >
             {isSubmitting ? (
