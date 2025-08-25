@@ -19,6 +19,8 @@ export const AdmissionFees = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFees, setIsLoadingFees] = useState(false);
   const [availableMonths, setAvailableMonths] = useState([]);
+  const [apiError, setApiError] = useState("");
+
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const accessToken = authTokens?.access;
 
@@ -42,6 +44,9 @@ export const AdmissionFees = () => {
     },
   });
 
+  const selectedStudentId = watch("student_id");
+  const selectedMonth = watch("month");
+
   // Fetch all classes
   const getClasses = async () => {
     try {
@@ -49,25 +54,73 @@ export const AdmissionFees = () => {
       setClasses(response.data);
     } catch (err) {
       console.log("Failed to load classes. Please try again." + err);
+      setApiError("Failed to load classes");
     }
   };
 
-  // Fetch available fees for a student
-  const fetchAvailableFees = async (studentId) => {
+  // Fetch available fees for a student with proper error handling
+  const fetchAvailableFees = async (studentId, month) => {
+    if (!studentId || !month) {
+      console.log("Student ID or Month missing");
+      setAvailableFees([]);
+      return [];
+    }
+
+    if (!accessToken) {
+      console.error("Access token not available");
+      setApiError("Authentication required. Please login again.");
+      setAvailableFees([]);
+      return [];
+    }
+
     try {
       setIsLoadingFees(true);
+      setApiError("");
+
+      console.log("Fetching fees for:", { studentId, month });
+
       const response = await axios.get(
-        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
+        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}&month=${month}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
           },
         }
       );
+
       setAvailableFees(response.data);
       return response.data;
     } catch (error) {
-      console.log("No fee data found for student:", error);
+      console.error("Fee fetch error:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url,
+      });
+
+      let errorMessage = "Failed to load fees";
+
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 401) {
+          errorMessage = "Authentication failed. Please login again.";
+        } else if (error.response.status === 404) {
+          errorMessage = "No fees found for selected student and month";
+        } else if (error.response.status === 500) {
+          errorMessage = "Server error. Please try again later.";
+        } else if (error.response.data?.detail) {
+          errorMessage = error.response.data.detail;
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        errorMessage = "Network error. Please check your connection.";
+      } else {
+        // Something else happened
+        errorMessage = error.message;
+      }
+
+      setApiError(errorMessage);
       setAvailableFees([]);
       return [];
     } finally {
@@ -79,10 +132,12 @@ export const AdmissionFees = () => {
   const getStudents = async (classId) => {
     try {
       setIsLoading(true);
+      setApiError("");
       const Students = await fetchStudents1(classId);
       setStudents(Students);
     } catch (err) {
       console.log("Failed to load students. Please try again." + err);
+      setApiError("Failed to load students");
     } finally {
       setIsLoading(false);
     }
@@ -108,6 +163,7 @@ export const AdmissionFees = () => {
     setSelectedStudent(null);
     setAvailableFees([]);
     setAvailableMonths([]);
+    setApiError("");
   };
 
   // When class is selected, fetch students
@@ -119,10 +175,9 @@ export const AdmissionFees = () => {
     }
   }, [selectedClassId]);
 
-  // When student is selected, fetch their available fees
-  const selectedStudentId = watch("student_id");
+  // When student or month changes, fetch available fees
   useEffect(() => {
-    if (selectedStudentId) {
+    if (selectedStudentId && selectedMonth) {
       const student = students.find(
         (s) => s.student_id === parseInt(selectedStudentId)
       );
@@ -130,7 +185,7 @@ export const AdmissionFees = () => {
 
       // Fetch student's available fees
       const fetchStudentData = async () => {
-        await fetchAvailableFees(selectedStudentId);
+        await fetchAvailableFees(selectedStudentId, selectedMonth);
       };
 
       fetchStudentData();
@@ -140,20 +195,28 @@ export const AdmissionFees = () => {
       setSelectedFeeIds([]);
       setAvailableMonths([]);
     }
-  }, [selectedStudentId, students]);
+  }, [selectedStudentId, selectedMonth, students]);
 
   // When fee selection changes, update the total amount
   useEffect(() => {
     if (selectedFeeIds.length > 0 && availableFees.length > 0) {
       let totalAmount = 0;
+      let lateFeeAmount = 0;
 
       availableFees.forEach((yearLevel) => {
         yearLevel.fees.forEach((fee) => {
           if (selectedFeeIds.includes(fee.id)) {
             totalAmount += parseFloat(fee.final_amount);
+            // Add late fee if it exists for this fee
+            if (fee.late_fee) {
+              lateFeeAmount += parseFloat(fee.late_fee);
+            }
           }
         });
       });
+
+      // Add late fee to total amount
+      totalAmount += lateFeeAmount;
 
       setValue("paid_amount", totalAmount.toFixed(2));
     } else {
@@ -206,7 +269,12 @@ export const AdmissionFees = () => {
 
       const orderResponse = await axios.post(
         `${BASE_URL}/d/fee-record/initiate-payment/`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
 
       const {
@@ -233,25 +301,35 @@ export const AdmissionFees = () => {
         description: `receipt_number: ${receipt_number}`,
         order_id: orderId,
         handler: async function (response) {
-          const verificationResponse = await axios.post(
-            `${BASE_URL}/d/fee-record/confirm-payment/`,
-            {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature_id: response.razorpay_signature,
-              student_id: parseInt(student_id),
-              month,
-              year_level_fees,
-              received_by,
-              payment_mode,
-              paid_amount,
-            }
-          );
+          try {
+            const verificationResponse = await axios.post(
+              `${BASE_URL}/d/fee-record/confirm-payment/`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature_id: response.razorpay_signature,
+                student_id: parseInt(student_id),
+                month,
+                year_level_fees,
+                received_by,
+                payment_mode,
+                paid_amount,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
 
-          if (verificationResponse.data) {
-            setPaymentStatus(verificationResponse.data);
-            setShowPaymentDialog(true);
-          } else {
+            if (verificationResponse.data) {
+              setPaymentStatus(verificationResponse.data);
+              setShowPaymentDialog(true);
+            } else {
+              setPaymentStatus("Payment verification failed");
+            }
+          } catch (error) {
+            console.error("Payment verification error:", error);
             setPaymentStatus("Payment verification failed");
           }
         },
@@ -288,6 +366,11 @@ export const AdmissionFees = () => {
   };
 
   const onSubmit = async (data) => {
+    if (selectedFeeIds.length === 0) {
+      alert("Please select at least one fee to pay");
+      return;
+    }
+
     const payload = {
       ...data,
       student_id: parseInt(data.student_id),
@@ -342,6 +425,38 @@ export const AdmissionFees = () => {
     }
   };
 
+  // Calculate total amount including late fees
+  const calculateTotalAmount = () => {
+    let total = 0;
+    let lateFeeTotal = 0;
+
+    availableFees.forEach((yearLevel) => {
+      yearLevel.fees.forEach((fee) => {
+        if (selectedFeeIds.includes(fee.id)) {
+          total += parseFloat(fee.final_amount);
+          if (fee.late_fee) {
+            lateFeeTotal += parseFloat(fee.late_fee);
+          }
+        }
+      });
+    });
+
+    return {
+      baseAmount: total,
+      lateFee: lateFeeTotal,
+      totalAmount: total + lateFeeTotal,
+    };
+  };
+
+  const totalAmount = calculateTotalAmount();
+
+  // Retry fetching fees
+  const handleRetry = () => {
+    if (selectedStudentId && selectedMonth) {
+      fetchAvailableFees(selectedStudentId, selectedMonth);
+    }
+  };
+
   return (
     <>
       <form
@@ -352,6 +467,35 @@ export const AdmissionFees = () => {
           Fee Payment
           <i className="fa-solid fa-money-bill-wave ml-2"></i>
         </h1>
+
+        {/* Error Display */}
+        {apiError && (
+          <div className="alert alert-error mb-6">
+            <div className="flex-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="w-6 h-6 mx-2 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                ></path>
+              </svg>
+              <label>{apiError}</label>
+            </div>
+            <button
+              type="button"
+              onClick={handleRetry}
+              className="btn btn-sm btn-ghost"
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           {/* Class Selection */}
@@ -450,6 +594,14 @@ export const AdmissionFees = () => {
           </div>
         </div>
 
+        {/* Loading State */}
+        {isLoadingFees && (
+          <div className="flex justify-center my-6">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+            <span className="ml-3 text-lg">Loading fees data...</span>
+          </div>
+        )}
+
         {/* Available Fees Display */}
         {availableFees.length > 0 && selectedStudent && (
           <div className="mt-8">
@@ -469,19 +621,46 @@ export const AdmissionFees = () => {
                       <div className="card-body p-4">
                         <div className="form-control">
                           <label className="label cursor-pointer justify-start gap-4">
-                            <input
-                              type="checkbox"
-                              checked={selectedFeeIds.includes(fee.id)}
-                              onChange={(e) =>
-                                handleFeeSelection(fee.id, e.target.checked)
-                              }
-                              className="checkbox checkbox-primary"
-                            />
+                            {fee.final_amount > 0 ? (
+                              // Fee is payable - show checkbox
+                              <input
+                                type="checkbox"
+                                checked={selectedFeeIds.includes(fee.id)}
+                                onChange={(e) =>
+                                  handleFeeSelection(fee.id, e.target.checked)
+                                }
+                                className="checkbox checkbox-primary"
+                              />
+                            ) : (
+                              // Fee is already paid or zero - show appropriate indicator
+                              <div className="w-6 h-6 flex items-center justify-center">
+                                {fee.final_amount === 0 ? (
+                                  <i className="fa-solid fa-check text-success text-lg"></i>
+                                ) : (
+                                  <i className="fa-solid fa-check-double text-success text-lg"></i>
+                                )}
+                              </div>
+                            )}
                             <div>
                               <h3 className="card-title text-lg font-bold">
                                 {fee.fee_type}
                               </h3>
-                              <p className="text-2xl">₹{fee.final_amount}</p>
+                              <p className>
+                                {fee.final_amount > 0 ? (
+                                  `₹${fee.final_amount}`
+                                ) : fee.final_amount === 0 ? (
+                                  "No Fee"
+                                ) : (
+                                  <span className="text-success">
+                                    Already Paid
+                                  </span>
+                                )}
+                              </p>
+                              {fee.late_fee && fee.final_amount > 0 && (
+                                <p className="text-sm text-warning mt-1">
+                                  Late Fee: ₹{fee.late_fee}
+                                </p>
+                              )}
                             </div>
                           </label>
                         </div>
@@ -491,8 +670,62 @@ export const AdmissionFees = () => {
                 </div>
               </div>
             ))}
+
+            {/* Total Amount Summary */}
+            {selectedFeeIds.length > 0 && (
+              <div className="bg-base-300 p-4 rounded-lg mt-6">
+                <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>Base Amount:</div>
+                  <div className="text-right">
+                    ₹{totalAmount.baseAmount.toFixed(2)}
+                  </div>
+
+                  {totalAmount.lateFee > 0 && (
+                    <>
+                      <div>Late Fee:</div>
+                      <div className="text-right text-warning">
+                        ₹{totalAmount.lateFee.toFixed(2)}
+                      </div>
+                    </>
+                  )}
+
+                  <div className="font-bold mt-2 border-t pt-2">
+                    Total Amount:
+                  </div>
+                  <div className="text-right font-bold mt-2 border-t pt-2">
+                    ₹{totalAmount.totalAmount.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
+
+        {/* No Fees Message */}
+        {!isLoadingFees &&
+          availableFees.length === 0 &&
+          selectedStudentId &&
+          selectedMonth && (
+            <div className="alert alert-info mt-6">
+              <div className="flex-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="w-6 h-6 mx-2 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <label>No fees found for the selected student and month</label>
+              </div>
+            </div>
+          )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           {/* Payment Mode Selection */}
@@ -565,16 +798,27 @@ export const AdmissionFees = () => {
             <label className="label">
               <span className="label-text flex items-center gap-2">
                 <i className="fa-solid fa-comment text-sm"></i>
-                Remarks
+                Remarks <span className="text-error">*</span>
               </span>
             </label>
             <input
               type="text"
-              className="input input-bordered w-full focus:outline-none"
-              {...register("remarks")}
+              className={`input w-full focus:outline-none ${
+                errors.remarks ? "input-error" : "input-bordered"
+              }`}
+              {...register("remarks", {
+                required: "Remarks are required",
+              })}
               placeholder="Enter any remarks"
               disabled={selectedFeeIds.length === 0}
             />
+            {errors.remarks && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  {errors.remarks.message}
+                </span>
+              </label>
+            )}
           </div>
 
           {/* Signature */}
@@ -610,7 +854,7 @@ export const AdmissionFees = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-52"
+            className="btn bgTheme text-white w-52"
             disabled={isSubmitting || selectedFeeIds.length === 0}
           >
             {isSubmitting ? (
@@ -618,7 +862,7 @@ export const AdmissionFees = () => {
             ) : (
               <i className="fa-solid fa-money-bill-wave ml-2"></i>
             )}
-            {isSubmitting ? "" : "Submit Payment"}
+            {isSubmitting ? "Processing..." : "Submit Payment"}
           </button>
         </div>
       </form>

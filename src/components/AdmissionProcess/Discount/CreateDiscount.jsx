@@ -4,8 +4,12 @@ import {
   fetchStudents1,
   fetchYearLevels,
 } from "../../../services/api/Api";
+import { useNavigate } from "react-router-dom";
+import { constants } from "../../../global/constants";
 
 const CreateDiscount = () => {
+  const navigation = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -123,8 +127,17 @@ const CreateDiscount = () => {
     }
   };
 
+  // Placeholder functions for the new buttons
+  const handleEdit = () => {
+    navigation.navigate(`/createDiscount/${id}`)
+  };
+
+  const handleRemove = () => {
+    alert("Remove functionality would be implemented here");
+  };
+
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+    <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">
         Create Discount
         <i className="fa-solid fa-percentage ml-2"></i>
@@ -263,24 +276,48 @@ const CreateDiscount = () => {
           ></textarea>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-center pt-6">
+        {/* Action Buttons */}
+        <div className="flex flex-col md:flex-row justify-between pt-6 gap-4">
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="btn bgTheme text-white w-full md:w-40"
+              disabled={btnDisabled}
+            >
+              {loading ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                  Create
+                </>
+              )}
+            </button>
+          </div>
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                        {/* Edit Button */}
+            <button
+              type="button"
+              className="btn btn-info text-white w-full md:w-32"
+              onClick={handleEdit}
+            >
+              <i className="fa-solid fa-pen-to-square mr-2"></i>
+              Edit
+            </button>
           <button
-            type="submit"
-            className="btn btn-primary w-full md:w-52"
-            disabled={btnDisabled}
-          >
-            {loading ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-                Create
-              </>
-            )}
+            type="button"
+            className="btn btn-error text-white w-full md:w-32"
+            onClick={handleRemove}          >
+            <i className="fa-solid fa-trash mr-2"></i>
+            Remove
           </button>
+          </div>
+          
+          {/* Remove Button */}
+
         </div>
       </form>
     </div>
