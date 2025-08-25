@@ -167,7 +167,7 @@ const TeacherSubstitute = () => {
         </div>
 
 
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto rounded-lg">
           <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
             <thead className="bgTheme text-white">
               <tr>

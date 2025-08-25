@@ -21,6 +21,7 @@ export const Navbar = () => {
   const handleImageError = () => {
     setProfileImageError(true);
   };
+
   const handleLogout = async () => {
     try {
       await LogoutUser();
@@ -28,21 +29,19 @@ export const Navbar = () => {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      setShowLogoutModal(false); // Close modal in all cases
+      setShowLogoutModal(false);
     }
   };
 
   const handleModalClose = () => {
-    setShowLogoutModal(false); // Reset state when modal is closed
+    setShowLogoutModal(false);
   };
-
 
   useEffect(() => {
     if (showLogoutModal && logoutDialogRef.current) {
       logoutDialogRef.current.showModal();
     }
   }, [showLogoutModal]);
-
 
   const getProfileRoute = (role) => {
     switch (role) {
@@ -125,6 +124,13 @@ export const Navbar = () => {
                     </Link>
                   </li>
 
+                  
+                  <li>
+                    <Link to={allRouterLink.viewDocuments || "/view-documents"}>
+                      <i className="fa-solid fa-folder-open"></i> View Documents
+                    </Link>
+                  </li>
+
                   {userRole === constants.roles.director && (
                     <>
                       <li>
@@ -150,10 +156,10 @@ export const Navbar = () => {
                   )}
                   <li onClick={() => setShowLogoutModal(true)}>
                     <a className="text-orange-600 cursor-pointer">
-                      <i className="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                      <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
+                      Logout
                     </a>
                   </li>
-
                 </ul>
               </div>
             </>
