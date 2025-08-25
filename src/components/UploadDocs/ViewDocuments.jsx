@@ -27,7 +27,7 @@ export const ViewDocuments = () => {
     getViewDocuments();
   }, []);
 
-  if (loading) return <div className="p-4 text-center">Loading documents...</div>;
+  if (loading ) return <div className="p-4 text-center">Loading documents...</div>;
   if (!details || details.length === 0) return <div className="p-4 text-center">No documents available.</div>;
 
   const allDocTypes = [...new Set(details.flatMap(d => d.document_types_read.map(dt => dt.name.toLowerCase())))];

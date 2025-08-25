@@ -3,14 +3,12 @@ export const constants = {
   isOffline: true,
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
-  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
+  baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
-  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
-  //baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
-  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
-   baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
+  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
+ // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms/", //naaz
+
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,
       input[type="password"]::-ms-clear {
@@ -24,6 +22,7 @@ export const constants = {
     student: "student",
     guardian: "guardian",
   },
+
   // roles: {
   //   director: "Director",
   //   officeStaff: "Office staff",
@@ -31,12 +30,20 @@ export const constants = {
   //   student: "Student",
   //   guardian: "Guardain",
   // },
+
+  bgTheme: "#5E35B1",
+  saffronOrange: "#FF9933",
+  usColor: "#5cb7ffd9",
+  italianGreen: "#4bcd89d9",
+  neutralGrey: "#a6a6a6ff",
+  canadaPink: "#ff6c88d9",
+  textColor: "#333",
+  whiteColor: "#fff"
 };
 
-
-const urlParts = constants.baseUrl.split('-');
+const urlParts = constants.baseUrl.split("-");
 if (urlParts.length > 1) {
-  const portPart = urlParts[1].split('.')[0];
+  const portPart = urlParts[1].split(".")[0];
   if (!isNaN(portPart)) {
     constants.PORT = parseInt(portPart, 10);
   }

@@ -253,11 +253,12 @@ export const routes = [
     path: allRouterLink.subjectAssignment,
     element: <SubjectAssignments />,
     protected: true,
-    allowedRoles: [constants.roles.director],
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.MarksheetsTable,
     element: <MarksheetsTable />,
+    
     protected: true,
     allowedRoles: [constants.roles.director],
   },
@@ -271,7 +272,7 @@ export const routes = [
     path: allRouterLink.allTeacherAssignment,
     element: <AllTeacherAssignments />,
     protected: true,
-    allowedRoles: [constants.roles.director],
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.ViewAllocatedClass,
