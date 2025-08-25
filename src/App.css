@@ -11,11 +11,11 @@
 }
 
 
-.formBgColor{
+.formBgColor {
   background-color: #ffe9d1;
 }
 
-.passwordEyes{
+.passwordEyes {
   position: absolute;
   top: 35px;
   right: 15px;
@@ -23,32 +23,48 @@
   z-index: 1;
 }
 
-.bgTheme{
+.bgTheme {
   background-color: #5E35B1;
 }
 
-.textTheme{
+.textTheme {
   color: #5E35B1;
 }
 
-.borderTheme{
+.borderTheme {
   border: 1px solid #5E35B1;
 }
-.borderTheme-b{
+
+.borderTheme-b {
   border-bottom: 1px solid #5E35B1;
 }
-.borderTheme-t{
+
+.borderTheme-t {
   border-top: 1px solid #5E35B1;
 }
-.borderTheme-r{
+
+.borderTheme-r {
   border-right: 1px solid #5E35B1;
 }
-.borderTheme-l{
-  border-left: 1px solid #5E35B1;
-} 
 
-.schoolBoyAnimation{
+.borderTheme-l {
+  border-left: 1px solid #5E35B1;
+}
+
+.schoolBoyAnimation {
   height: 150px;
   width: 150px;
 }
 
+
+.btn-theme {
+  border: 1px solid #5E35B1;
+  color: #5E35B1;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-theme:hover {
+  background: #5E35B1;
+  color: white;
+}
