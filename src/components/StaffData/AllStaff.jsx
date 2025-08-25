@@ -9,7 +9,7 @@ const AllStaff = () => {
   const [error, setError] = useState(null);
   const [teacherSearch, setTeacherSearch] = useState("");
   const [staffSearch, setStaffSearch] = useState("");
-
+  const [activeTab, setActiveTab] = useState("teachers");
 
   const getofficestaff = async () => {
     setLoading(true);
@@ -34,6 +34,7 @@ const AllStaff = () => {
       setLoading(false);
     }
   };
+
   const filteredTeachers = teachers.filter((teacher) => {
     const fullName = [teacher.first_name, teacher.middle_name, teacher.last_name]
       .filter(Boolean)
@@ -50,7 +51,6 @@ const AllStaff = () => {
     return fullName.includes(staffSearch.toLowerCase());
   });
 
-
   useEffect(() => {
     getofficestaff();
     getteachers();
@@ -61,7 +61,6 @@ const AllStaff = () => {
       <div className="flex items-center justify-center h-screen">
         <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
       </div>
-
     );
   }
 
@@ -71,22 +70,45 @@ const AllStaff = () => {
         <div className="text-red-600 text-center mb-4 font-medium">{error}</div>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6 justify-center">
-        {/* Teachers Section */}
-        <div className="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-            <i className="fa-solid fa-person-chalkboard mr-2"></i> Teachers
-          </h1>
-          <div className="overflow-x-auto text-center">
-            <div className="mb-4">
+      {/* tab */}
+
+      <div className="flex justify-center border-b mb-6">
+        <button
+          onClick={() => setActiveTab("teachers")}
+          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-600 hover:text-blue-600"
+            }`}
+        >
+          <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
+        </button>
+        <button
+          onClick={() => setActiveTab("staff")}
+          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-600 hover:text-blue-600"
+            }`}
+        >
+          <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        {activeTab === "teachers" && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Teachers
+              </h2><br />
               <input
                 type="text"
                 placeholder="Search Teacher Name"
                 value={teacherSearch}
                 onChange={(e) => setTeacherSearch(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
-              />
+                className="input input-bordered w-full sm:max-w-xs focus:outline-none"
 
+              />
             </div>
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white text-center">
@@ -104,7 +126,10 @@ const AllStaff = () => {
                   </tr>
                 ) : (
                   filteredTeachers.map((record, index) => (
-                    <tr key={record.id || index} className="hover:bg-blue-50 text-center">
+                    <tr
+                      key={record.id || index}
+                      className="hover:bg-gray-50 text-center"
+                    >
                       <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
@@ -122,26 +147,24 @@ const AllStaff = () => {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
+          </>
+        )}
 
-        {/* Office Staff Section */}
-        <div className="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-            <i className="fa-solid fa-clipboard-user mr-2"></i> Office Staff
-          </h1>
-          <div className="overflow-x-auto text-center">
-            <div className="mb-4">
+        {activeTab === "staff" && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Office Staff
+              </h2><br />
               <input
                 type="text"
                 placeholder="Search Staff Member Name"
                 value={staffSearch}
                 onChange={(e) => setStaffSearch(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+                className="input input-bordered w-full sm:max-w-xs focus:outline-none"
+
               />
-
             </div>
-
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white text-center">
                 <tr>
@@ -158,7 +181,10 @@ const AllStaff = () => {
                   </tr>
                 ) : (
                   filteredOfficeStaff.map((record, index) => (
-                    <tr key={record.id || index} className="hover:bg-blue-50 text-center">
+                    <tr
+                      key={record.id || index}
+                      className="hover:bg-gray-50 text-center"
+                    >
                       <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
@@ -176,8 +202,8 @@ const AllStaff = () => {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
