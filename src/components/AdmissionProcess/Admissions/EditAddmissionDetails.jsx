@@ -303,6 +303,14 @@ export const EditAddmissionDetails = () => {
     navigate("/addmissionDetails");
   };
 
+  // Autofill/Fake filler sync
+  useEffect(() => {
+    const genderSelect = document.querySelector("select[name='student.gender']");
+    if (genderSelect && genderSelect.value) {
+      setValue("student.gender", genderSelect.value, { shouldValidate: true });
+    }
+  }, [setValue]);
+
   const onSubmit = async (data) => {
     setLoading(true);
 
@@ -421,6 +429,8 @@ export const EditAddmissionDetails = () => {
       <div className="text-center py-10">Loading admission details...</div>
     );
   }
+
+
 
   return (
     <>
@@ -582,6 +592,31 @@ export const EditAddmissionDetails = () => {
                 </span>
               )}
             </div>
+            {/* <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-venus-mars text-sm"></i>
+                  Gender <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                {...register("student.gender", {
+                  required: "Gender is required",
+                })}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.gender ? "select-error" : ""
+                  }`}
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              {errors.student?.gender && (
+                <span className="text-error text-sm">
+                  {errors.student.gender.message}
+                </span>
+              )}
+            </div> */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -601,6 +636,7 @@ export const EditAddmissionDetails = () => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+
               {errors.student?.gender && (
                 <span className="text-error text-sm">
                   {errors.student.gender.message}
