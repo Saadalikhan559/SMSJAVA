@@ -512,10 +512,10 @@ export const fetchYearLevels = async () => {
   }
 };
 
-export const fetchEmployee = async (accessToken) => {
+export const fetchEmployee = async (accessToken, role) => {
   try {
     const response = await axios.get(
-      `${constants.baseUrl}/d/Employee/get_emp/`,
+      `${constants.baseUrl}/d/Employee/get_emp/?role=${role}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -528,6 +528,7 @@ export const fetchEmployee = async (accessToken) => {
     throw err;
   }
 };
+
 
 export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
@@ -729,6 +730,24 @@ export const fetchUnpaidFees = async ({
 };
 
 // POST APIS
+
+export const createSalary = async (accessToken, payload) => {
+  try {
+    const response = await axios.post(
+      `${constants.baseUrl}/d/Employee/create_emp/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to create Employee:", err);
+    throw err;
+  }
+};
 
 export const handleAdmissionForm = async (formData) => {
   try {

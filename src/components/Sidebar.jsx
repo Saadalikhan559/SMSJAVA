@@ -507,8 +507,7 @@ export const Sidebar = () => {
                   </h3>
                   <ul className="space-y-1">
                     {/* Fee Submission: director, office staff, student */}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff) && (
+                    {role === constants.roles.director && (
                       <li>
                         <Link
                           onClick={(e) =>
