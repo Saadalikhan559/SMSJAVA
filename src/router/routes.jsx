@@ -66,7 +66,9 @@ import SingleTeacher from "../components/OfficestaffDashboard/SingleTeacher";
 import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
 import UnpaidFeesList from "../components/AdmissionProcess/UnpaidFees";
 import StudentFeeAndUnpaidSummary from "../components/AdmissionProcess/StudentFeeandUnpaidSummary";
-import { EditDiscount } from "../components/AdmissionProcess/Discount/EditDiscount";
+import DiscountedStudents from "../components/AdmissionProcess/Discount/DiscountedStudents";
+import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
+
 
 export const routes = [
   {
@@ -500,6 +502,16 @@ export const routes = [
       constants.roles.teacher,
       constants.roles.officeStaff,
     ],
+  },{
+    path: allRouterLink.discountedStudents,
+    element: <DiscountedStudents />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },{
+    path: `${allRouterLink.editStudentDiscount}/:id`,
+    element: <EditDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
   },
 
 
