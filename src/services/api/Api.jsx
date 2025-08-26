@@ -747,6 +747,68 @@ export const fetchUnpaidFees = async ({
   }
 };
 
+// Fetch all discounts
+export const fetchDiscounts = async (accessToken) => {
+  try {
+    const token = accessToken?.trim();
+    if (!token) throw new Error("No access token provided");
+
+    const response = await axios.get(`${BASE_URL}/d/fee-discounts/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch discounts:", err);
+    throw err;
+  }
+};
+
+// Delete discount by ID
+export const deleteDiscount = async (accessToken, id) => {
+  try {
+    const token = accessToken?.trim();
+    if (!token) throw new Error("No access token provided");
+
+    await axios.delete(`${BASE_URL}/d/fee-discounts/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return true;
+  } catch (err) {
+    console.error("Failed to delete discount:", err);
+    throw err;
+  }
+};
+
+// Update discount by ID
+export const updateDiscount = async (accessToken, id, payload) => {
+  try {
+    const token = accessToken?.trim();
+    if (!token) throw new Error("No access token provided");
+
+    const response = await axios.put(
+      `${BASE_URL}/d/fee-discounts/${id}/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update discount:", err);
+    throw err;
+  }
+};
+
+
+
 // POST APIS
 
 export const createSalary = async (accessToken, payload) => {

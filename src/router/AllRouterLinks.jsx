@@ -62,8 +62,13 @@ export const allRouterLink = {
     periodAssignment: "periodAssignment/:year_level_id",
     guardianChildren: "/guardianChildren",
     overdueAccounts: "/overdueAccounts",
+<<<<<<< HEAD
     createSalaryExpense: "/createSalaryExpense",
     viewSalaryExpense: "/viewSalaryExpense",
+=======
+    discountedStudents: "/discountedStudents",
+    editStudentDiscount: "/editStudentDiscount/:id",
+>>>>>>> 1a54ee0ea77950d9f7f0f3ca6be35dbfd2a67c06
 
     // all routes before this
     unAuthorized: '/unauthorized',

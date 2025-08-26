@@ -69,6 +69,9 @@ import StudentFeeAndUnpaidSummary from "../components/AdmissionProcess/StudentFe
 import { EditDiscount } from "../components/AdmissionProcess/Discount/EditDiscount";
 import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/CreateSalaryExpense";
 import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
+import DiscountedStudents from "../components/AdmissionProcess/Discount/DiscountedStudents";
+import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
+
 
 export const routes = [
   {
@@ -487,6 +490,16 @@ export const routes = [
       constants.roles.teacher,
       constants.roles.officeStaff,
     ],
+  },{
+    path: allRouterLink.discountedStudents,
+    element: <DiscountedStudents />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },{
+    path: `${allRouterLink.editStudentDiscount}/:id`,
+    element: <EditDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.createSalaryExpense,
