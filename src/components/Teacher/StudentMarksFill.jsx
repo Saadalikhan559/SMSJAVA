@@ -410,7 +410,7 @@ const StudentMarksFill = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-52"
+            className="btn text-white bgTheme w-52"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

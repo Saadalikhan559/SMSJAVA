@@ -194,7 +194,7 @@ const StudentProfile = () => {
 
         {/* Title and Subtitle */}
         <div className="text-center md:text-left">
-          <h1 className="text-xl sm:text-2xl font-bold text-[#167bff] uppercase">
+          <h1 className="text-xl sm:text-2xl font-bold textTheme uppercase">
             Student Profile
           </h1>
           <p className="text-sm sm:text-base text-gray-600">

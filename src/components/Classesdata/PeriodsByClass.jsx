@@ -62,13 +62,13 @@ if (loading) {
                                 </tr>
                             ) : (
                                 yearLevels.map((record, index) => (
-                                    <tr key={record.id || index} className="hover:bg-blue-50 text-center">
+                                    <tr key={record.id || index} className="hover:bg-blue-50 text-center textTheme">
                                         <td className="px-4 py-3">{index + 1}.</td>
                                         <td className="px-4 py-3">
                                             <Link
                                                 to={`/periodAssignment/${record.id}`}  // This is the year_level_id
                                                 state={{ level_name: record.level_name }}
-                                                className="text-blue-600 hover:underline"
+                                                className="textTheme hover:underline"
                                             >
                                                 {record.level_name}
                                             </Link>
