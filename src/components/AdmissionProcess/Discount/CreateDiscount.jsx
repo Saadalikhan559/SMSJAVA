@@ -305,7 +305,25 @@ const CreateDiscount = () => {
           </button>
         </div>
       </form>
+      {/* Modal */}
+    {showAlert && (
+      <dialog open className="modal modal-open">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">{alertTitle}</h3>
+          <p className="py-4">{alertMessage}</p>
+          <div className="modal-action">
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowAlert(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </dialog>
+    )}
     </div>
+
   );
 };
 

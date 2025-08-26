@@ -508,7 +508,7 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director],
   },{
-    path: `${allRouterLink.editDiscount}/:id`,
+    path: `${allRouterLink.editStudentDiscount}/:id`,
     element: <EditDiscount />,
     protected: true,
     allowedRoles: [constants.roles.director],

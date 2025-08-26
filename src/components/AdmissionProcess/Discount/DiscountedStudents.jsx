@@ -139,9 +139,9 @@ const DiscountedStudents = () => {
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.admission_fee}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.tuition_fee}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap text-center">{s.discount_reason || "-"}</td>
-                        <td className="px-4 py-3 text-sm text-gray-500 flex gap-5">
+                        {/* <td className="px-4 py-3 text-sm text-gray-500 flex gap-5">
                           <Link
-                            to={`${allRouterLink.editDiscount}/${s.id}`}
+                            to={`${allRouterLink.editStudentDiscount}/${s.id}`}
                             className="btn bgTheme text-white w-23"
                           >
                             <i class="fa-solid fa-pen-to-square"></i> Edit
@@ -154,7 +154,27 @@ const DiscountedStudents = () => {
                             <i className="fa-solid fa-trash"></i> Delete
                           </button>
 
+                        </td> */}
+                        <td className="px-4 py-3 text-sm text-gray-500 flex gap-3">
+
+                          <Link
+                            to={`${allRouterLink.editStudentDiscount}/${s.id}`}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-200 shadow-sm"
+                          >
+                            <i className="fa-solid fa-pen-to-square"></i>
+                            Edit
+                          </Link>
+
+
+                          <button
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-200 shadow-sm"
+                            onClick={() => openDeleteModal(s.id)}
+                          >
+                            <i className="fa-solid fa-trash"></i>
+                            Delete
+                          </button>
                         </td>
+
                       </tr>
                     ))
                   ) : (
