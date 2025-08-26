@@ -1,3 +1,5 @@
+import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
+
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -61,6 +63,8 @@ export const allRouterLink = {
     periodAssignment: "periodAssignment/:year_level_id",
     guardianChildren: "/guardianChildren",
     overdueAccounts: "/overdueAccounts",
+    discountedStudents: "/discountedStudents",
+    editDiscount: "/editDiscount/:id",
 
     // all routes before this
     unAuthorized: '/unauthorized',

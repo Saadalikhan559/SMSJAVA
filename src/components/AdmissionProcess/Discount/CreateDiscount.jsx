@@ -14,6 +14,9 @@ const CreateDiscount = () => {
   const [fieldDisbaled, setFieldDisabled] = useState(true);
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [errors, setErrors] = useState({});
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
 
   const [formData, setFormData] = useState({
     student_id: "",
@@ -105,8 +108,9 @@ const CreateDiscount = () => {
 
       const response = await createDiscount(access, payload);
 
-      // ✅ Success alert
-      alert("Discount created successfully!");
+      setAlertTitle("Success");
+      setAlertMessage("Discount created successfully!");
+      setShowAlert(true)
 
       // If success, reset form
       setFormData({
@@ -118,172 +122,208 @@ const CreateDiscount = () => {
       });
     } catch (err) {
       setErrors(err);
+
+      setAlertTitle("Error");
+      setAlertMessage("Failed to create discount. Please try again.");
+      setShowAlert(true);
+
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Create Discount
-        <i className="fa-solid fa-percentage ml-2"></i>
-      </h1>
+    <>
+      <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Create Discount
+          <i className="fa-solid fa-percentage ml-2"></i>
+        </h1>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Class Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-school text-sm"></i>
-                Class <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className="select select-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
-              value={classId}
-              onChange={(e) => setClassId(e.target.value)}
-            >
-              <option value="">Select Class</option>
-              {classes?.map((classItem) => (
-                <option key={classItem.id} value={classItem.id}>
-                  {classItem.level_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Student Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-user-graduate text-sm"></i>
-                Student <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className="select w-full select-bordered focus:outline-none focus:ring-2 focus:ring-primary"
-              disabled={!classId}
-              value={formData.student_id}
-              onChange={(e) => handleChange("student_id", e.target.value)}
-            >
-              <option value="">Select Student</option>
-              {students.length > 0
-                ? students.map((student) => (
-                  <option key={student.student_id} value={student.student_id}>
-                    {student.student_name} - {student.student_email}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Class Selection */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-school text-sm"></i>
+                  Class <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className="select select-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                value={classId}
+                onChange={(e) => setClassId(e.target.value)}
+              >
+                <option value="">Select Class</option>
+                {classes?.map((classItem) => (
+                  <option key={classItem.id} value={classItem.id}>
+                    {classItem.level_name}
                   </option>
-                ))
-                : classId && (
-                  <option disabled>No students found for this class</option>
-                )}
-            </select>
-            {errors.student_id && (
-              <p className="text-error text-sm">{errors.student_id}</p>
-            )}
-          </div>
-        </div>
+                ))}
+              </select>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Admission Fee Discount */}
+            {/* Student Selection */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-user-graduate text-sm"></i>
+                  Student <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className="select w-full select-bordered focus:outline-none focus:ring-2 focus:ring-primary"
+                disabled={!classId}
+                value={formData.student_id}
+                onChange={(e) => handleChange("student_id", e.target.value)}
+              >
+                <option value="">Select Student</option>
+                {students.length > 0
+                  ? students.map((student) => (
+                    <option key={student.student_id} value={student.student_id}>
+                      {student.student_name} - {student.student_email}
+                    </option>
+                  ))
+                  : classId && (
+                    <option disabled>No students found for this class</option>
+                  )}
+              </select>
+              {errors.student_id && (
+                <p className="text-error text-sm">{errors.student_id}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Admission Fee Discount */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-tag text-sm"></i>
+                  Admission Fee Discount (₹)
+                </span>
+              </label>
+              <input
+                type="number"
+                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="e.g. 100.00"
+                min={0}
+                name="admission_fee_discount"
+                value={formData.admission_fee_discount}
+                onChange={(e) =>
+                  handleChange("admission_fee_discount", e.target.value)
+                }
+                disabled={fieldDisbaled}
+              />
+              {errors.admission_fee_discount && (
+                <p className="text-error text-sm">
+                  {errors.admission_fee_discount[0]}
+                </p>
+              )}
+            </div>
+
+            {/* Tuition Fee Discount */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-tags text-sm"></i>
+                  Tuition Fee Discount (₹)
+                </span>
+              </label>
+              <input
+                type="number"
+                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="e.g. 800.00"
+                min={0}
+                name="tuition_fee_discount"
+                value={formData.tuition_fee_discount}
+                onChange={(e) =>
+                  handleChange("tuition_fee_discount", e.target.value)
+                }
+                disabled={fieldDisbaled}
+              />
+              {errors.tuition_fee_discount && (
+                <p className="text-error text-sm">
+                  {errors.tuition_fee_discount[0]}
+                </p>
+              )}
+            </div>
+          </div>
+          {errors.fee_discount && (
+            <p className="text-error text-sm">{errors.fee_discount}</p>
+          )}
+
+          {/* Discount Reason */}
           <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-tag text-sm"></i>
-                Admission Fee Discount (₹)
+                <i className="fa-solid fa-comment-dots text-sm"></i>
+                Discount Reason
               </span>
             </label>
-            <input
-              type="number"
-              className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="e.g. 100.00"
-              min={0}
-              name="admission_fee_discount"
-              value={formData.admission_fee_discount}
-              onChange={(e) =>
-                handleChange("admission_fee_discount", e.target.value)
-              }
+            <textarea
+              className="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="e.g. Sibling concession"
+              rows={3}
+              name="discount_reason"
               disabled={fieldDisbaled}
-            />
-            {errors.admission_fee_discount && (
-              <p className="text-error text-sm">
-                {errors.admission_fee_discount[0]}
-              </p>
-            )}
+              value={formData.discount_reason}
+              onChange={(e) => handleChange("discount_reason", e.target.value)}
+            ></textarea>
           </div>
 
-          {/* Tuition Fee Discount */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-tags text-sm"></i>
-                Tuition Fee Discount (₹)
-              </span>
-            </label>
-            <input
-              type="number"
-              className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="e.g. 800.00"
-              min={0}
-              name="tuition_fee_discount"
-              value={formData.tuition_fee_discount}
-              onChange={(e) =>
-                handleChange("tuition_fee_discount", e.target.value)
-              }
-              disabled={fieldDisbaled}
-            />
-            {errors.tuition_fee_discount && (
-              <p className="text-error text-sm">
-                {errors.tuition_fee_discount[0]}
-              </p>
-            )}
+          {/* Submit Button */}
+          <div className="flex justify-center pt-6">
+            <button
+              type="submit"
+              className="btn btn-primary w-full md:w-52"
+              disabled={btnDisabled}
+            >
+              {loading ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                </>
+              ) : (
+                <>
+                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                  Create
+                </>
+              )}
+            </button>
           </div>
-        </div>
-        {errors.fee_discount && (
-          <p className="text-error text-sm">{errors.fee_discount}</p>
-        )}
+        </form>
+      </div>
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3
+              className={`font-bold text-lg ${alertTitle === "Success" ? "text-black" : "text-black"
+                }`}
+            >
+              {alertTitle}
+            </h3>
+            <p className="py-4 capitalize">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn btn-primary w-25"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
 
-        {/* Discount Reason */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text flex items-center gap-1">
-              <i className="fa-solid fa-comment-dots text-sm"></i>
-              Discount Reason
-            </span>
-          </label>
-          <textarea
-            className="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="e.g. Sibling concession"
-            rows={3}
-            name="discount_reason"
-            disabled={fieldDisbaled}
-            value={formData.discount_reason}
-            onChange={(e) => handleChange("discount_reason", e.target.value)}
-          ></textarea>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-center pt-6">
-          <button
-            type="submit"
-            className="btn btn-primary w-full md:w-52"
-            disabled={btnDisabled}
-          >
-            {loading ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-                Create
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-    </div>
+    </>
   );
 };
 
