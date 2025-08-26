@@ -28,6 +28,12 @@ export const CreateSalaryExpense = () => {
   const selectedRole = watch("role");
   const selectedEmployee = watch("employee");
 
+  // Helper function to get full name from employee object
+  const getFullName = (employee) => {
+    if (!employee) return "";
+    return `${employee.first_name || ""} ${employee.last_name || ""}`.trim();
+  };
+
   // fetch roles
   const getRole = async () => {
     try {
@@ -55,8 +61,8 @@ export const CreateSalaryExpense = () => {
   const filteredEmployees = employees.filter(
     (employee) =>
       employee &&
-      employee.name &&
-      employee.name.toLowerCase().includes(searchInput.toLowerCase())
+      getFullName(employee) &&
+      getFullName(employee).toLowerCase().includes(searchInput.toLowerCase())
   );
 
   // fetch employees when role changes
@@ -91,16 +97,13 @@ export const CreateSalaryExpense = () => {
       const employee = employees.find(
         (e) => e && e.id && e.id.toString() == selectedEmployee.toString()
       );
-      if (employee && employee.name) {
-        setSelectedEmployeeName(employee.name);
+      if (employee) {
+        setSelectedEmployeeName(getFullName(employee));
       }
     } else {
       setSelectedEmployeeName("");
     }
   }, [selectedEmployee, employees]);
-
-  console.log(employees);
-  
 
   // Form submission
   const onSubmit = async (data) => {
@@ -195,8 +198,7 @@ export const CreateSalaryExpense = () => {
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map(
                       (employee) =>
-                        employee &&
-                        employee.name && (
+                        employee && (
                           <p
                             key={employee.id}
                             className="p-2 hover:bg-gray-200 cursor-pointer"
@@ -204,12 +206,12 @@ export const CreateSalaryExpense = () => {
                               setValue("employee", employee.id.toString(), {
                                 shouldValidate: true,
                               });
-                              setSelectedEmployeeName(employee.name);
+                              setSelectedEmployeeName(getFullName(employee));
                               setSearchInput("");
                               setShowDropdown(false);
                             }}
                           >
-                            {employee.name}
+                            {getFullName(employee)}
                           </p>
                         )
                     )
