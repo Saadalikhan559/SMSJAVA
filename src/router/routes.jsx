@@ -66,11 +66,10 @@ import SingleTeacher from "../components/OfficestaffDashboard/SingleTeacher";
 import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
 import UnpaidFeesList from "../components/AdmissionProcess/UnpaidFees";
 import StudentFeeAndUnpaidSummary from "../components/AdmissionProcess/StudentFeeandUnpaidSummary";
-import { EditDiscount } from "../components/AdmissionProcess/Discount/EditDiscount";
-import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/CreateSalaryExpense";
-import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
 import DiscountedStudents from "../components/AdmissionProcess/Discount/DiscountedStudents";
 import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
+import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/CreateSalaryExpense";
+import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
 
 
 export const routes = [
