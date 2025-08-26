@@ -174,7 +174,7 @@ const DirectorMarkHolidays = () => {
 
         {/* Submit Button */}
         <div className="flex justify-center mt-10">
-          <button type="submit" className="btn btn-primary w-52" disabled={loading}>
+          <button type="submit" className="btn text-white bgTheme w-52" disabled={loading}>
             {loading ? (
               <i className="fa-solid fa-spinner fa-spin mr-2" />
             ) : (

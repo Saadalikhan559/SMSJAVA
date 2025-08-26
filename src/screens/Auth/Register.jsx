@@ -212,7 +212,7 @@ export const Register = () => {
 
             {/* Submit */}
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full">
+              <button type="submit" className="btn text-white bgTheme w-full">
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
@@ -225,7 +225,7 @@ export const Register = () => {
             {/* Redirect */}
             <p className="text-sm text-center mt-4">
               Already have an account?{" "}
-              <Link to="/login" className="text-blue-500 font-semibold">
+              <Link to="/login" className="textTheme font-semibold">
                 Login here
               </Link>
             </p>

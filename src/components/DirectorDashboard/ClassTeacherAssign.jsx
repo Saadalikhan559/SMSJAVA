@@ -86,7 +86,7 @@ const ClassTeacherAssign = () => {
       <div className="mb-6">
         <button
           onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
-          className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          className="flex items-center textTheme hover:text-blue-800 transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +178,7 @@ const ClassTeacherAssign = () => {
           <button
             type="submit"
             disabled={isSubmitting || loading}
-            className={`btn btn-primary py-3 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+            className={`btn text-white bgTheme py-3 px-4 rounded-md  font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
               isSubmitting || loading ? "opacity-75 cursor-not-allowed" : ""
             }`}
           >
