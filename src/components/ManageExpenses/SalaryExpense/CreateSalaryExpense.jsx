@@ -13,11 +13,10 @@ export const CreateSalaryExpense = () => {
   const [roles, setRoles] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedEmployeeName, setSelectedEmployeeName] = useState(""); // Add this state
+  const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
 
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -33,9 +32,10 @@ export const CreateSalaryExpense = () => {
   const getRole = async () => {
     try {
       const fetchedRoles = await fetchRoles();
-      setRoles(fetchedRoles);
+      setRoles(fetchedRoles || []); // Ensure we always have an array
     } catch (error) {
       console.log("Could not get roles", error.message);
+      setRoles([]); // Set empty array on error
     }
   };
 
@@ -46,11 +46,17 @@ export const CreateSalaryExpense = () => {
   };
 
   const filteredRoles = roles.filter((role) =>
-    role.name === "teacher" || role.name === "office staff" ? role : null
+    role && (role.name === "teacher" || role.name === "office staff")
+      ? role
+      : null
   );
 
-  const filteredEmployees = employees.filter((employee) =>
-    employee.name.toLowerCase().includes(searchInput.toLowerCase())
+  // Fixed: Filter out undefined/null employees and handle missing names
+  const filteredEmployees = employees.filter(
+    (employee) =>
+      employee &&
+      employee.name &&
+      employee.name.toLowerCase().includes(searchInput.toLowerCase())
   );
 
   // fetch employees when role changes
@@ -60,13 +66,14 @@ export const CreateSalaryExpense = () => {
         const roleName = getRoleNameById(selectedRole);
         if (roleName) {
           const fetchedEmployee = await fetchEmployee(access, roleName);
-          setEmployees(fetchedEmployee);
+          setEmployees(fetchedEmployee || []); // Ensure we always have an array
         }
       } else {
         setEmployees([]);
       }
     } catch (error) {
       console.log("Could not get employees", error.message);
+      setEmployees([]); // Set empty array on error
     }
   };
 
@@ -81,14 +88,19 @@ export const CreateSalaryExpense = () => {
   // Update selected employee name when employee changes
   useEffect(() => {
     if (selectedEmployee && employees.length > 0) {
-      const employee = employees.find((e) => e.id.toString() === selectedEmployee.toString());
-      if (employee) {
+      const employee = employees.find(
+        (e) => e && e.id && e.id.toString() == selectedEmployee.toString()
+      );
+      if (employee && employee.name) {
         setSelectedEmployeeName(employee.name);
       }
     } else {
       setSelectedEmployeeName("");
     }
   }, [selectedEmployee, employees]);
+
+  console.log(employees);
+  
 
   // Form submission
   const onSubmit = async (data) => {
@@ -132,11 +144,14 @@ export const CreateSalaryExpense = () => {
               {...register("role", { required: "Role is required" })}
             >
               <option value="">Select Role</option>
-              {filteredRoles?.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
+              {filteredRoles?.map(
+                (role) =>
+                  role && (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  )
+              )}
             </select>
             {errors.role && (
               <p className="text-error text-sm mt-1">{errors.role.message}</p>
@@ -178,22 +193,26 @@ export const CreateSalaryExpense = () => {
 
                 <div className="max-h-40 overflow-y-auto">
                   {filteredEmployees.length > 0 ? (
-                    filteredEmployees.map((employee) => (
-                      <p
-                        key={employee.id}
-                        className="p-2 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => {
-                          setValue("employee", employee.id.toString(), {
-                            shouldValidate: true,
-                          });
-                          setSelectedEmployeeName(employee.name); // Set the name directly
-                          setSearchInput("");
-                          setShowDropdown(false);
-                        }}
-                      >
-                        {employee.name}
-                      </p>
-                    ))
+                    filteredEmployees.map(
+                      (employee) =>
+                        employee &&
+                        employee.name && (
+                          <p
+                            key={employee.id}
+                            className="p-2 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => {
+                              setValue("employee", employee.id.toString(), {
+                                shouldValidate: true,
+                              });
+                              setSelectedEmployeeName(employee.name);
+                              setSearchInput("");
+                              setShowDropdown(false);
+                            }}
+                          >
+                            {employee.name}
+                          </p>
+                        )
+                    )
                   ) : (
                     <p className="p-2 text-gray-500">No employees found</p>
                   )}

@@ -529,6 +529,24 @@ export const fetchEmployee = async (accessToken, role) => {
   }
 };
 
+export const fetchSchoolExpense = async (accessToken, schoolYear, categoryId) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/School-Expense/?school_year=${schoolYear}&category=${categoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
+
+
 
 export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;

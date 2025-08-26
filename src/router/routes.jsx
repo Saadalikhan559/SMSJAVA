@@ -492,7 +492,7 @@ export const routes = [
     path: allRouterLink.createSalaryExpense,
     element: <CreateSalaryExpense />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+    allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.viewSalaryExpense,
