@@ -156,7 +156,9 @@ export const Sidebar = () => {
             {/* Documents */}
             {(role === constants.roles.director ||
               role === constants.roles.officeStaff ||
-            role === constants.roles.student )  &&
+            role === constants.roles.student ||
+          role === constants.roles.teacher ||
+        role ===constants.roles.guardian)  &&
               isAuthenticated && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">

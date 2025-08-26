@@ -69,6 +69,7 @@ import StudentFeeAndUnpaidSummary from "../components/AdmissionProcess/StudentFe
 import DiscountedStudents from "../components/AdmissionProcess/Discount/DiscountedStudents";
 import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
 
+
 export const routes = [
   {
     path: allRouterLink.homeScreen,
@@ -215,7 +216,8 @@ export const routes = [
     constants.roles.director,
     constants.roles.officeStaff,
     constants.roles.student, 
-    // constants.roles.teacher// 
+    constants.roles.teacher,
+    constants.roles.guardian
   ],
 }
 ,
@@ -408,6 +410,12 @@ export const routes = [
   {
     path: allRouterLink.createDiscount,
     element: <CreateDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.editDiscount,
+    element: <EditDiscount />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },

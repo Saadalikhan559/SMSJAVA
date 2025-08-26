@@ -4,8 +4,12 @@ import {
   fetchStudents1,
   fetchYearLevels,
 } from "../../../services/api/Api";
+import { useNavigate } from "react-router-dom";
+import { constants } from "../../../global/constants";
 
 const CreateDiscount = () => {
+  const navigation = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -132,13 +136,21 @@ const CreateDiscount = () => {
     }
   };
 
+  // Placeholder functions for the new buttons
+  const handleEdit = () => {
+    navigation.navigate(`/createDiscount/${id}`)
+  };
+
+  const handleRemove = () => {
+    alert("Remove functionality would be implemented here");
+  };
+
   return (
-    <>
-      <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Create Discount
-          <i className="fa-solid fa-percentage ml-2"></i>
-        </h1>
+    <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+      <h1 className="text-3xl font-bold text-center mb-8">
+        Create Discount
+        <i className="fa-solid fa-percentage ml-2"></i>
+      </h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -273,57 +285,27 @@ const CreateDiscount = () => {
             ></textarea>
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center pt-6">
-            <button
-              type="submit"
-              className="btn btn-primary w-full md:w-52"
-              disabled={btnDisabled}
-            >
-              {loading ? (
-                <>
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                </>
-              ) : (
-                <>
-                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-                  Create
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-      {showAlert && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3
-              className={`font-bold text-lg ${alertTitle === "Success" ? "text-black" : "text-black"
-                }`}
-            >
-              {alertTitle}
-            </h3>
-            <p className="py-4 capitalize">
-              {alertMessage.split("\n").map((line, idx) => (
-                <span key={idx}>
-                  {line}
-                  <br />
-                </span>
-              ))}
-            </p>
-            <div className="modal-action">
-              <button
-                className="btn btn-primary w-25"
-                onClick={() => setShowAlert(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
-
-    </>
+        {/* Submit Button */}
+        <div className="flex justify-center pt-6">
+          <button
+            type="submit"
+            className="btn btn-primary w-full md:w-52"
+            disabled={btnDisabled}
+          >
+            {loading ? (
+              <>
+                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+              </>
+            ) : (
+              <>
+                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                Create
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
