@@ -624,7 +624,6 @@ export const AdmissionFees = () => {
                         <div className="form-control">
                           <label className="label cursor-pointer justify-start gap-4">
                             {fee.final_amount > 0 ? (
-                              // Fee is payable - show checkbox
                               <input
                                 type="checkbox"
                                 checked={selectedFeeIds.includes(fee.id)}
@@ -634,31 +633,20 @@ export const AdmissionFees = () => {
                                 className="checkbox checkbox-primary"
                               />
                             ) : (
-                              // Fee is already paid or zero - show appropriate indicator
-                              <div className="w-6 h-6 flex items-center justify-center">
-                                {fee.final_amount === 0 ? (
-                                  <i className="fa-solid fa-check text-success text-lg"></i>
-                                ) : (
-                                  <i className="fa-solid fa-check-double text-success text-lg"></i>
-                                )}
+                              <div className="flex items-center gap-2 text-success">
+                                <i className="fa-solid fa-check-circle"></i>
                               </div>
                             )}
                             <div>
                               <h3 className="card-title text-lg font-bold">
                                 {fee.fee_type}
                               </h3>
-                              <p className>
-                                {fee.final_amount > 0 ? (
-                                  `₹${fee.final_amount}`
-                                ) : fee.final_amount === 0 ? (
-                                  "No Fee"
-                                ) : (
-                                  <span className="text-success">
-                                    Already Paid
-                                  </span>
-                                )}
-                              </p>
-                              {fee.late_fee && fee.final_amount > 0 && (
+                              {
+                                <div className="flex items-center gap-2 text-success">
+                                  <span>{fee.status}</span>
+                                </div>
+                              }
+                              {fee.late_fee && (
                                 <p className="text-sm text-warning mt-1">
                                   Late Fee: ₹{fee.late_fee}
                                 </p>
