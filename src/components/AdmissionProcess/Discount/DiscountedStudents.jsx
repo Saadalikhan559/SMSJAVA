@@ -139,22 +139,6 @@ const DiscountedStudents = () => {
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.admission_fee}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.tuition_fee}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap text-center">{s.discount_reason || "-"}</td>
-                        {/* <td className="px-4 py-3 text-sm text-gray-500 flex gap-5">
-                          <Link
-                            to={`${allRouterLink.editStudentDiscount}/${s.id}`}
-                            className="btn bgTheme text-white w-23"
-                          >
-                            <i class="fa-solid fa-pen-to-square"></i> Edit
-                          </Link>
-
-                          <button
-                            className="btn bgTheme text-white w-23"
-                            onClick={() => openDeleteModal(s.id)}
-                          >
-                            <i className="fa-solid fa-trash"></i> Delete
-                          </button>
-
-                        </td> */}
                         <td className="px-4 py-3 text-sm text-gray-500 flex gap-3">
 
                           <Link
