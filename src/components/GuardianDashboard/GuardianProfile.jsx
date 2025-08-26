@@ -136,15 +136,13 @@ const GuardianProfile = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      </div>
-    );
-  }
+if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
 
   if (error) {
     return (
@@ -187,7 +185,7 @@ const GuardianProfile = () => {
 
         {/* Title and Subtitle */}
         <div className="text-center md:text-left">
-          <h1 className="text-xl sm:text-2xl font-bold text-[#167bff] uppercase">
+          <h1 className="text-xl sm:text-2xl font-bold textTheme uppercase">
             Guardian Profile
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
