@@ -30,7 +30,7 @@ export const fetchExamType = async (accessToken) => {
 
     // Trim the token in case it has whitespace
 
-    const token = accessToken ? accessToken.trim() : '';
+    const token = accessToken ? accessToken.trim() : "";
 
     if (!token) {
       throw new Error("No access token provided");
@@ -302,12 +302,9 @@ export const fetchAbsentTeachers = async (date) => {
   }
 };
 
-// substitute teacher 
+// substitute teacher
 export const fetchSubAssignments = async () => {
-  const response = await axios.get(
-    `${BASE_URL}/t/substitute-assign/`
-
-  );
+  const response = await axios.get(`${BASE_URL}/t/substitute-assign/`);
   return response.data;
 };
 
@@ -484,7 +481,6 @@ export const fetchStudents1 = async (classId) => {
 };
 
 export const fetchStudents2 = async (classId) => {
-
   try {
     const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
     return response.data;
@@ -516,6 +512,22 @@ export const fetchYearLevels = async () => {
   }
 };
 
+export const fetchEmployee = async (accessToken) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/Employee/get_emp/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
 
 export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
@@ -550,7 +562,6 @@ export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
     throw error;
   }
 };
-
 
 export const fetchAttendanceData = async (date = "") => {
   try {
@@ -639,8 +650,6 @@ export const fetchStudentFee = async (student_id) => {
   }
 };
 
-
-
 export const fetchGuardianChildren = async () => {
   try {
     const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
@@ -662,32 +671,36 @@ export const fetchGuardianChildren = async () => {
   }
 };
 
-
-export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
+export const fetchUnpaidFees = async ({
+  role,
+  class_id,
+  student_id,
+  month,
+}) => {
   try {
     console.log("Fetching unpaid fees for role:", role);
 
     let endpoint = "";
     let params = {};
 
-    if (role === constants.roles.director || role === constants.roles.officeStaff) {
+    if (
+      role === constants.roles.director ||
+      role === constants.roles.officeStaff
+    ) {
       endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
       if (class_id) params.class_id = class_id;
       if (month) params.month = month;
-    }
-    else if (role === constants.roles.teacher) {
+    } else if (role === constants.roles.teacher) {
       endpoint = `${BASE_URL}/d/fee-record/overall_unpaid_fees/`;
       if (month) params.month = month;
-    }
-    else if (role === constants.roles.student) {
+    } else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
-      if (student_id) params.student_id = student_id;  // sirf student role ke liye
-    }
-    else {
+      if (student_id) params.student_id = student_id; // sirf student role ke liye
+    } else {
       throw new Error("Invalid role provided");
     }
 
-    const authTokens = localStorage.getItem('authTokens');
+    const authTokens = localStorage.getItem("authTokens");
     const accessToken = JSON.parse(authTokens).access;
     if (!accessToken) throw new Error("No access token found");
 
@@ -700,8 +713,12 @@ export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => 
 
     let data = response.data;
 
-    if ((role === constants.roles.director || role === constants.roles.officeStaff) && student_id) {
-      data = data.filter(fee => fee.student_id === student_id);
+    if (
+      (role === constants.roles.director ||
+        role === constants.roles.officeStaff) &&
+      student_id
+    ) {
+      data = data.filter((fee) => fee.student_id === student_id);
     }
 
     return data;
@@ -710,8 +727,6 @@ export const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => 
     throw error;
   }
 };
-
-
 
 // POST APIS
 
@@ -913,9 +928,7 @@ export const createDiscount = async (accessToken, payload) => {
       },
     });
 
-
     return response.data;
-
   } catch (error) {
     if (error.response && error.response.data) {
       // Return full backend error object for field-wise handling
@@ -923,19 +936,26 @@ export const createDiscount = async (accessToken, payload) => {
     } else if (error.request) {
       throw { non_field_errors: ["No response received from server"] };
     } else {
-      throw { non_field_errors: [error.message || "Failed to create discount"] };
+      throw {
+        non_field_errors: [error.message || "Failed to create discount"],
+      };
     }
   }
 };
 
-
 // Assign substitute
 export const assignSubstitute = async (payload) => {
   try {
-    const { data } = await axios.post(`${BASE_URL}/t/substitute-assign/`, payload);
+    const { data } = await axios.post(
+      `${BASE_URL}/t/substitute-assign/`,
+      payload
+    );
     return data;
   } catch (error) {
-    console.error("API Error in assignSubstitute:", error.response?.data || error);
+    console.error(
+      "API Error in assignSubstitute:",
+      error.response?.data || error
+    );
     throw error;
   }
 };

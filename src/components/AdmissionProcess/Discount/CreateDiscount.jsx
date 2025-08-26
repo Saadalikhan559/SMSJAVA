@@ -108,8 +108,6 @@ const CreateDiscount = () => {
       };
 
       const response = await createDiscount(access, payload);
-
-      // ✅ Success alert
       alert("Discount created successfully!");
 
       // If success, reset form
