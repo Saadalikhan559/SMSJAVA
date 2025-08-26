@@ -53,7 +53,7 @@ export const Login = () => {
         else if (normalizedRole === "teacher") redirectPath = allRouterLink.teacherDashboard;
         else if (normalizedRole === "student") redirectPath = allRouterLink.studentDashboard;
 
-        navigate(redirectPath, { state: { showSuccess: true } });
+        navigate(redirectPath, { replace:true,state: { showSuccess: true } });
       } else {
         setFormError("Invalid email or password");
       }
