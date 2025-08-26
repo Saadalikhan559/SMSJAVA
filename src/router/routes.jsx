@@ -214,7 +214,8 @@ export const routes = [
     constants.roles.director,
     constants.roles.officeStaff,
     constants.roles.student, 
-    // constants.roles.teacher// 
+    constants.roles.teacher,
+    constants.roles.guardian
   ],
 }
 ,
