@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import image from "../../assets/auth-hero.png";
@@ -8,9 +8,8 @@ import { allRouterLink } from "../../router/AllRouterLinks";
 import { validloginemail, validloginpassword } from "../../Validations/Validations";
 
 export const Login = () => {
-  const { LoginUser, userRole } = useContext(AuthContext);
+  const { LoginUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [loginTriggered, setLoginTriggered] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,32 +25,48 @@ export const Login = () => {
       console.log("Login response:", response);
 
       if (response && response["Message"] === "User logged in successfully") {
-        const role = response.Roles[0]; 
-        const userId = response["User ID"];
+        const role = response.Roles?.[0] || "";
+        const userId = response["User ID"] || "";
 
-        // IDs from backend (agar ho to save karo)
-        const studentId = response.student_id || "";
-        const guardianId = response.guardian_id || "";
-        const teacherId = response.teacher_id || "";
-        const officeStaffId = response.office_staff_id || "";
+        // Fetch IDs for all roles
+        const studentId = response.studentId || response.student_id || "";
+        const guardianId = response.guardianId || response.guardian_id || "";
+        const teacherId = response.teacherId || response.teacher_id || "";
+        const officeStaffId = response.officeStaffId || response.office_staff_id || "";
 
-        // Save in localStorage
+        console.log("Role:", role, "TeacherId:", teacherId, "StudentId:", studentId);
+
+        // Store in localStorage
+        localStorage.setItem("access", response.access);
         localStorage.setItem("userRole", role);
-        localStorage.setItem("userId", userId);
+        localStorage.setItem("userid", userId);
         if (studentId) localStorage.setItem("studentId", studentId);
         if (guardianId) localStorage.setItem("guardianId", guardianId);
         if (teacherId) localStorage.setItem("teacherId", teacherId);
         if (officeStaffId) localStorage.setItem("officeStaffId", officeStaffId);
 
-        // normalize role
+        // Normalize role for redirect
         const normalizedRole = role.toLowerCase().replace(/[_\s]/g, "");
-
         let redirectPath = "";
-        if (normalizedRole === "director") redirectPath = allRouterLink.directorDashboard;
-        else if (normalizedRole === "officestaff") redirectPath = allRouterLink.officeStaffDashboard;
-        else if (normalizedRole === "guardian") redirectPath = allRouterLink.guardianDashboard;
-        else if (normalizedRole === "teacher") redirectPath = allRouterLink.teacherDashboard;
-        else if (normalizedRole === "student") redirectPath = allRouterLink.studentDashboard;
+        switch (normalizedRole) {
+          case "director":
+            redirectPath = allRouterLink.directorDashboard;
+            break;
+          case "officestaff":
+            redirectPath = allRouterLink.officeStaffDashboard;
+            break;
+          case "guardian":
+            redirectPath = allRouterLink.guardianDashboard;
+            break;
+          case "teacher":
+            redirectPath = allRouterLink.teacherDashboard;
+            break;
+          case "student":
+            redirectPath = allRouterLink.studentDashboard;
+            break;
+          default:
+            redirectPath = allRouterLink.login; // fallback
+        }
 
         navigate(redirectPath, { state: { showSuccess: true } });
       } else {
@@ -64,19 +79,6 @@ export const Login = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!loginTriggered || !userRole) return;
-
-    const normalizedRole = userRole.toLowerCase().replace(/[_\s]/g, "");
-    if (normalizedRole === "director") navigate(allRouterLink.directorDashboard);
-    else if (normalizedRole === "officestaff") navigate(allRouterLink.officeStaffDashboard);
-    else if (normalizedRole === "guardian") navigate(allRouterLink.guardianDashboard);
-    else if (normalizedRole === "teacher") navigate(allRouterLink.teacherDashboard);
-    else if (normalizedRole === "student") navigate(allRouterLink.studentDashboard);
-
-    setLoginTriggered(false);
-  }, [userRole, loginTriggered, navigate]);
 
   return (
     <>
@@ -140,7 +142,7 @@ export const Login = () => {
               </button>
             </div>
 
-            {/* Forgot Password Link */}
+            {/* Forgot Password */}
             <div className="text-center mt-4">
               <Link
                 to={`${allRouterLink.forgotPassword}`}
