@@ -11,13 +11,13 @@ const LogoutModal = ({ show, onConfirm, onClose }) => {
                 className="bg-white rounded-lg shadow-md w-[80%] max-w-xl h-auto max-h-[80vh] p-6 border border-gray-200 overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
             >
-                <h1 className="text-4xl text-center text-blue-700">Logout</h1>
+                <h1 className="text-4xl text-center textTheme">Logout</h1>
                 <p className="text-center text-gray-700 mb-6">
                     Are you sure you want to logout?
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                     <button
-                        className="flex-1 py-2 border borderTheme text-blue-500 rounded-md hover:bg-blue-50"
+                        className="flex-1 py-2 border borderTheme textTheme rounded-md hover:bg-blue-50"
                         onClick={onClose}
                     >
                         Cancel

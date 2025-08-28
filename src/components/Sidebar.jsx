@@ -5,11 +5,10 @@ import { constants } from "../global/constants";
 import { AuthContext } from "../context/AuthContext";
 
 export const Sidebar = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, studentID } = useContext(AuthContext);
   const drawerRef = useRef(null);
   const navigate = useNavigate();
   const role = localStorage.getItem("userRole");
-  const { studentID } = useContext(AuthContext);
 
   const handleNavigation = (e, path) => {
     e.preventDefault();
@@ -79,7 +78,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-graduation-cap"></i> All
+                            <i className="fa-solid fa-graduation-cap w-5"></i> All
                             Classes
                           </Link>
                         </li>
@@ -90,7 +89,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-id-card-clip"></i>Staff
+                            <i className="fa-solid fa-id-card-clip w-5"></i>Staff
                             Members
                           </Link>
                         </li>
@@ -105,14 +104,13 @@ export const Sidebar = () => {
                               }
                               className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                             >
-                              <i className="fa-solid fa-person-chalkboard"></i>
+                              <i className="fa-solid fa-person-chalkboard w-5"></i>
                               Teacher Substitute
                             </Link>
                           </li>
                         )}
                       </ul>
                     )}
-
                   </div>
                 </ul>
               </div>
@@ -156,7 +154,9 @@ export const Sidebar = () => {
             {/* Documents */}
             {(role === constants.roles.director ||
               role === constants.roles.officeStaff ||
-            role === constants.roles.student )  &&
+              role === constants.roles.student ||
+              role === constants.roles.teacher ||
+              role === constants.roles.guardian) &&
               isAuthenticated && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
@@ -192,14 +192,16 @@ export const Sidebar = () => {
             {/* Management */}
             {(role === constants.roles.director ||
               role === constants.roles.teacher ||
-              role === constants.roles.student  || role === constants.roles.officeStaff) &&
+              role === constants.roles.student ||
+              role === constants.roles.officeStaff) &&
               isAuthenticated && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                     Management
                   </h3>
                   <ul className="space-y-1">
-                    {(role === constants.roles.director  || role === constants.roles.officeStaff)  &&  (
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
                       <>
                         <li>
                           <Link
@@ -225,7 +227,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-tasks w-5"></i> Assign
+                            <i className="fa-solid fa-calendar-day w-5"></i> Assign
                             Holidays
                           </Link>
                         </li>
@@ -236,7 +238,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-tasks w-5"></i> Assign
+                            <i className="fa-solid fa-clock w-5"></i> Assign
                             Periods
                           </Link>
                         </li>
@@ -280,7 +282,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-eye w-5"></i> View
+                            <i className="fa-solid fa-file-alt w-5"></i> View
                             Marksheets
                           </Link>
                         </li>
@@ -392,36 +394,43 @@ export const Sidebar = () => {
                       role === constants.roles.officeStaff ||
                       role === constants.roles.student ||
                       role === constants.roles.guardian) && (
-
-                        <li>
-                          <Link
-                            onClick={(e) => handleNavigation(e, allRouterLink.admissionFees)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-money-bill-wave w-5"></i> Fee Submission
-                          </Link>
-                        </li>
-                      )}
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.admissionFees)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
+                          Fee Submission
+                        </Link>
+                      </li>
+                    )}
 
                     {/* Student Fee Card: student only */}
                     {(role === constants.roles.student ||
                       role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(
-                                e,
-                                allRouterLink.studentFeeCard.replace(":student_id", studentID)
-                              )
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-envelope w-5"></i> Student Fee Card
-                          </Link>
-                        </li>
-                      )}
-
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(
+                              e,
+                              studentID ? 
+                                allRouterLink.studentFeeCard.replace(
+                                  ":student_id",
+                                  studentID
+                                ) : 
+                                allRouterLink.studentFeeCard
+                            )
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-envelope w-5"></i> Student
+                          Fee Card
+                        </Link>
+                      </li>
+                    )}
 
                     {/* Student Fee Card List: guardian only */}
                     {role === constants.roles.guardian && (
@@ -441,34 +450,35 @@ export const Sidebar = () => {
                     {/* Fee Record: director and office staff only */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.feeSummary)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-envelope w-5"></i> Fee
-                            Record
-                          </Link>
-                        </li>
-                      )}
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.feeSummary)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-receipt w-5"></i> Fee
+                          Record
+                        </Link>
+                      </li>
+                    )}
 
                     {/* Overdue Accounts Summary */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff ||
                       role === constants.roles.teacher) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.overdueAccounts)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
-                          >
-                            <i className="fa-solid fa-file-invoice"></i> Overdue Accounts
-                          </Link>
-                        </li>
-                      )}
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.overdueAccounts)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-file-invoice w-5"></i> Overdue
+                          Accounts
+                        </Link>
+                      </li>
+                    )}
 
                     {/* Create Discount Fees */}
                     {role === constants.roles.director && (
@@ -481,6 +491,67 @@ export const Sidebar = () => {
                         >
                           <i className="fa-solid fa-percentage w-5"></i> Create
                           Discount
+                        </Link>
+                      </li>
+                    )}
+
+                    {role === constants.roles.director && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.discountedStudents)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-percentage w-5"></i> Discounted Students
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+
+            {/* Expense */}
+            {isAuthenticated &&
+              (role === constants.roles.director ||
+                role === constants.roles.officeStaff) && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Manage Expenses
+                  </h3>
+                  <ul className="space-y-1">
+                    {/* Create Salary: director only */}
+                    {role === constants.roles.director && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(
+                              e,
+                              allRouterLink.createSalaryExpense
+                            )
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
+                          Create Salary
+                        </Link>
+                      </li>
+                    )}
+                    {/* View Salary Expense: director and office staff */}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(
+                              e,
+                              allRouterLink.viewSalaryExpense
+                            )
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                          View Salary Expense
                         </Link>
                       </li>
                     )}
@@ -546,16 +617,16 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
-                          Allocat Class
+                          <i className="fa-solid fa-chalkboard-teacher w-5"></i>{" "}
+                          Allocate Class
                         </Link>
                       </li>
                     )}
-
                   </ul>
                 </div>
               )}
-            {/* Reports */}
+            
+            {/* Guardian Reports */}
             {role === constants.roles.guardian && isAuthenticated && (
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">

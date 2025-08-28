@@ -40,6 +40,7 @@ export const allRouterLink = {
     StudentMarksFill: '/StudentMarksFill',
     feeDashboard: '/feeDashboard',
     createDiscount: '/createDiscount',
+    editDiscount: '/createDiscount/:id',
     attendanceRecord: '/attendanceRecord',
     fullAttendance: '/fullAttendance/:className',
     directorMarkHolidays: '/directorMarkHolidays',
@@ -61,6 +62,10 @@ export const allRouterLink = {
     periodAssignment: "periodAssignment/:year_level_id",
     guardianChildren: "/guardianChildren",
     overdueAccounts: "/overdueAccounts",
+    createSalaryExpense: "/createSalaryExpense",
+    viewSalaryExpense: "/viewSalaryExpense",
+    discountedStudents: "/discountedStudents",
+    editStudentDiscount: "/editStudentDiscount/:id",
 
     // all routes before this
     unAuthorized: '/unauthorized',

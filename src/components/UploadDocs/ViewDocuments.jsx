@@ -4,31 +4,39 @@ import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 
 export const ViewDocuments = () => {
-  const [details, setDetails] = useState(null);
+  const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedClass, setSelectedClass] = useState("All");
 
-  const studentId = localStorage.getItem("studentId"); // logged-in student ID
-  const userRole = localStorage.getItem("userRole");   // logged-in user role
-
-  const getViewDocuments = async () => {
-    try {
-      const data = await fetchViewDocuments();
-      setDetails(data);
-      setLoading(false);
-    } catch (error) {
-      console.log("Failed to fetch documents", error);
-      setLoading(false);
-    }
-  };
+  const studentId = localStorage.getItem("studentId");
+  const guardianId = localStorage.getItem("guardianId");
+  const teacherId = localStorage.getItem("teacherId");
+  const officeStaffId = localStorage.getItem("officeStaffId");
+  const userRole = localStorage.getItem("userRole");
 
   useEffect(() => {
-    getViewDocuments();
+    const getDocuments = async () => {
+      try {
+        const data = await fetchViewDocuments();
+        setDetails(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getDocuments();
   }, []);
 
-  if (loading) return <div className="p-4 text-center">Loading documents...</div>;
-  if (!details || details.length === 0) return <div className="p-4 text-center">No documents available.</div>;
+  if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
+  if (!details.length) return <div className="p-4 text-center">No documents available.</div>;
 
   const allDocTypes = [...new Set(details.flatMap(d => d.document_types_read.map(dt => dt.name.toLowerCase())))];
 
@@ -40,7 +48,6 @@ export const ViewDocuments = () => {
     return "Unknown";
   };
 
-  
   const grouped = {};
   details.forEach(doc => {
     const role = getRole(doc);
@@ -52,23 +59,35 @@ export const ViewDocuments = () => {
 
     doc.document_types_read.forEach(dt => {
       const type = dt.name.toLowerCase();
-      grouped[key].docs[type] = doc.files.map(file =>
-        file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
-      );
+      grouped[key].docs[type] = doc.files.map(file => file.file.replace("http://localhost:8000", constants.baseUrl));
     });
   });
 
   const allClasses = ["All", ...new Set(details.filter(d => d.student_id && d.year_level).map(d => d.year_level))];
 
-  
   const filteredData = Object.values(grouped).filter(person => {
-    // 🔹 Student own document
     if (userRole === "student") {
-      return person.role === "Student" && details.some(d => 
-        d.student_id && d.student_id.toString() === studentId && (d.student_name === person.name)
+      return person.role === "Student" && details.some(d => d.student_id?.toString() === studentId && d.student_name === person.name);
+    }
+
+    if (userRole === "guardian") {
+      return person.role === "Guardian" && details.some(d => d.guardian_id?.toString() === guardianId && d.guardian_name === person.name);
+    }
+
+    if (userRole === "teacher") {
+      // Teacher → apne aur apni assigned classes ke documents
+      return person.role === "Teacher" && details.some(d =>
+        d.teacher_id?.toString() === teacherId &&
+        d.teacher_name === person.name &&
+        (person.yearLevel === "N/A" || details.some(doc => doc.year_level === person.yearLevel && doc.teacher_id?.toString() === teacherId))
       );
     }
 
+    if (userRole === "officestaff") {
+      return person.role === "Office Staff" && details.some(d => d.office_staff_id?.toString() === officeStaffId && d.office_staff_name === person.name);
+    }
+
+    // Admin / director filters
     const roleMatch = selectedRole === "All" || person.role === selectedRole;
     const classMatch = selectedRole === "Student" ? selectedClass === "All" || person.yearLevel === selectedClass : true;
     return roleMatch && classMatch;
@@ -76,7 +95,6 @@ export const ViewDocuments = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-    
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
           <i className="fa-solid fa-folder-open"></i> Uploaded Documents
@@ -84,7 +102,7 @@ export const ViewDocuments = () => {
 
         {/* Filters */}
         <div className="mb-4 flex gap-4">
-          {userRole !== "student" && (
+          {userRole === "admin" && (
             <>
               <div>
                 <select
@@ -117,13 +135,13 @@ export const ViewDocuments = () => {
         {/* Table */}
         <div className="w-full overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow-sm  rounded-lg">
+            <div className="overflow-hidden shadow-sm rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bgTheme text-white">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
-                    {userRole !== "student" && selectedRole === "Student" && <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>}
+                    {userRole === "admin" && selectedRole === "Student" && <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>}
                     {allDocTypes.map(type => (
                       <th key={type} className="px-4 py-3 text-left text-sm font-semibold text-nowrap">{type}</th>
                     ))}
@@ -134,16 +152,16 @@ export const ViewDocuments = () => {
                     <tr key={idx} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-700">{person.name}</td>
                       <td className="px-4 py-3 text-sm text-gray-700">{person.role}</td>
-                      {userRole !== "student" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700">{person.yearLevel || "-"}</td>}
+                      {userRole === "admin" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700">{person.yearLevel || "-"}</td>}
                       {allDocTypes.map(type => (
                         <td key={type} className="px-4 py-3 text-sm text-blue-700">
-                          {person.docs[type] ? person.docs[type].map((url, i) => (
+                          {person.docs[type]?.map((url, i) => (
                             <div key={i} className="max-w-[150px] truncate">
-                              <Link to={url} target="_blank" rel="noreferrer" className="underline text-blue-600 hover:text-blue-800 truncate block" title={url.split("/").pop()}>
+                              <Link to={url} target="_blank" rel="noreferrer" className="underline textTheme hover:text-blue-800 truncate block" title={url.split("/").pop()}>
                                 {url.split("/").pop()}
                               </Link>
                             </div>
-                          )) : "-"}
+                          )) || "-"}
                         </td>
                       ))}
                     </tr>

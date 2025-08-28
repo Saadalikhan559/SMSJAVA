@@ -66,7 +66,7 @@ export const StudentDashboard = () => {
           </div>
 
           {/* Daily Class Schedule Heading */}
-          <div className="bg-white text-blue-700 px-5 py-2 border-t border-white flex justify-center">
+          <div className="bg-white textTheme px-5 py-2 border-t border-white flex justify-center">
             <h4 className="text-xl font-semibold tracking-wide uppercase">
               Daily Class Schedule
             </h4>

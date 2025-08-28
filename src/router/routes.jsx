@@ -66,6 +66,11 @@ import SingleTeacher from "../components/OfficestaffDashboard/SingleTeacher";
 import CreateDiscount from "../components/AdmissionProcess/Discount/CreateDiscount";
 import UnpaidFeesList from "../components/AdmissionProcess/UnpaidFees";
 import StudentFeeAndUnpaidSummary from "../components/AdmissionProcess/StudentFeeandUnpaidSummary";
+import DiscountedStudents from "../components/AdmissionProcess/Discount/DiscountedStudents";
+import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
+import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/CreateSalaryExpense";
+import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
+
 
 export const routes = [
   {
@@ -173,50 +178,38 @@ export const routes = [
     path: allRouterLink.UploadExamPaper,
     element: <UploadExamPaper />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.StudentMarksFill,
     element: <StudentMarksFill />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.ViewExamPaper,
     element: <ViewExamPaper />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
     path: allRouterLink.UpdateExamPaper,
     element: <UpdateExamPaper />,
     protected: true,
-    allowedRoles: [
-      constants.roles.director,
-      constants.roles.teacher,
-    ],
+    allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
   {
-  path: allRouterLink.viewDocuments,
-  element: <ViewDocuments />,
-  protected: true,
-  allowedRoles: [
-    constants.roles.director,
-    constants.roles.officeStaff,
-    constants.roles.student, 
-    // constants.roles.teacher// 
-  ],
-}
-,
+    path: allRouterLink.viewDocuments,
+    element: <ViewDocuments />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.officeStaff,
+      constants.roles.student,
+      constants.roles.teacher,
+      constants.roles.guardian,
+    ],
+  },
   {
     path: allRouterLink.TimeTable,
     element: <TimeTable />,
@@ -258,7 +251,7 @@ export const routes = [
   {
     path: allRouterLink.MarksheetsTable,
     element: <MarksheetsTable />,
-    
+
     protected: true,
     allowedRoles: [constants.roles.director],
   },
@@ -410,6 +403,12 @@ export const routes = [
     allowedRoles: [constants.roles.director],
   },
   {
+    path: allRouterLink.editDiscount,
+    element: <EditDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
     path: allRouterLink.fullAttendance,
     element: <FullAttendance />,
     protected: false,
@@ -479,9 +478,7 @@ export const routes = [
     path: allRouterLink.guardianChildren,
     element: <GuardianChildren />,
     protected: true,
-    allowedRoles: [
-      constants.roles.guardian,
-    ],
+    allowedRoles: [constants.roles.guardian],
   },
   {
     path: allRouterLink.overdueAccounts,
@@ -492,9 +489,29 @@ export const routes = [
       constants.roles.teacher,
       constants.roles.officeStaff,
     ],
+  },{
+    path: allRouterLink.discountedStudents,
+    element: <DiscountedStudents />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },{
+    path: `${allRouterLink.editStudentDiscount}/:id`,
+    element: <EditDiscount />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
   },
-
-
+  {
+    path: allRouterLink.createSalaryExpense,
+    element: <CreateSalaryExpense />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.viewSalaryExpense,
+    element: <ViewSalaryExpense />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
 
   // include all routes before this please
 

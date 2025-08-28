@@ -213,7 +213,7 @@ function HolidayCalendar() {
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-700 to-indigo-800 px-8 py-6 text-white">
+          <div className="bg-gradient-to-r from-[#5E35B1] to-[#400ea3] px-8 py-6 text-white">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex items-center space-x-4">
                 <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
@@ -311,7 +311,7 @@ function HolidayCalendar() {
                       }
                       min="2000"
                       max="2100"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#5E35B1] focus:border-[#5E35B1]"
                     />
                   </div>
 
@@ -342,8 +342,8 @@ function HolidayCalendar() {
                       disabled={isImporting}
                       className={`px-4 py-2 rounded-md text-sm font-medium text-white ${
                         isImporting
-                          ? "bg-blue-400 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700"
+                          ? "bgTheme cursor-not-allowed"
+                          : "bgTheme hover:bg-[#4e1bb3]"
                       }`}
                     >
                       {isImporting ? "Importing..." : "Import"}
@@ -400,7 +400,7 @@ function HolidayCalendar() {
                       onChange={(e) =>
                         setNewEvent({ ...newEvent, title: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#5E35B1] focus:border-[#5E35B1]"
                       placeholder="Enter event title"
                     />
                   </div>
@@ -420,7 +420,7 @@ function HolidayCalendar() {
                         onChange={(e) =>
                           setNewEvent({ ...newEvent, start_date: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#5E35B1] focus:border-[#5E35B1]"
                       />
                     </div>
                     <div>
@@ -437,7 +437,7 @@ function HolidayCalendar() {
                         onChange={(e) =>
                           setNewEvent({ ...newEvent, end_date: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#5E35B1] focus:border-[#5E35B1]"
                       />
                     </div>
                   </div>
@@ -456,7 +456,7 @@ function HolidayCalendar() {
                         setNewEvent({ ...newEvent, description: e.target.value })
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#5E35B1] focus:border-[#5E35B1]"
                       placeholder="Enter event description"
                     />
                   </div>
@@ -488,8 +488,8 @@ function HolidayCalendar() {
                       disabled={isCreatingEvent}
                       className={`px-4 py-2 rounded-md text-sm font-medium text-white ${
                         isCreatingEvent
-                          ? "bg-blue-400 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700"
+                          ? "bgTheme cursor-not-allowed"
+                          : "bgTheme hover:bg-[#4410ad]"
                       }`}
                     >
                       {isCreatingEvent ? "Creating..." : "Create Event"}
@@ -606,7 +606,7 @@ function HolidayCalendar() {
                         <div className="flex items-center mb-4">
                           <div className="bg-blue-100 p-2 rounded-lg mr-3">
                             <svg
-                              className="w-5 h-5 text-blue-600"
+                              className="w-5 h-5 textTheme"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -627,7 +627,7 @@ function HolidayCalendar() {
                           {getEventsForDate(date).map((event) => (
                             <li
                               key={event.id}
-                              className="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500"
+                              className="bg-gray-50 p-4 rounded-lg border-l-4 border-[#5E35B1]"
                             >
                               <div className="flex justify-between items-start">
                                 <p className="font-semibold text-gray-800">
@@ -725,7 +725,7 @@ function HolidayCalendar() {
             </button>
             <button
               onClick={() => setIsHolidayDialogOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
+              className="bgTheme hover:bg-[#4911b8] text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
             >
               <svg
                 className="w-5 h-5"
