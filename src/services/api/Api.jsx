@@ -807,6 +807,24 @@ export const updateDiscount = async (accessToken, id, payload) => {
   }
 };
 
+// fetch Allocated Class
+export const fetchAllocatedClasses = async (token) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch allocated classes:", error);
+    throw error;
+  }
+};
+
 
 
 // POST APIS
@@ -1058,3 +1076,4 @@ export const assignSubstitute = async (payload) => {
     throw error;
   }
 };
+

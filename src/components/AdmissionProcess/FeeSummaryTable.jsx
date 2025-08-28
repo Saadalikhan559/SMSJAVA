@@ -109,7 +109,7 @@ const FeeSummaryTable = () => {
   }
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen mx-auto">
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
         <div className="mb-6">
           <div className="relative mb-4">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
