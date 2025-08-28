@@ -34,7 +34,7 @@ export const DocumentUpload = () => {
     { files: null, document_types: "", identities: "" },
   ]);
 
-  console.log('students', students);
+  const [identityErrors, setIdentityErrors] = useState([]); // ✅ NEW STATE
 
   const [formData, setFormData] = useState({
     student: "",
@@ -43,6 +43,55 @@ export const DocumentUpload = () => {
     office_staff: "",
     year_level: "",
   });
+
+  // ✅ VALIDATION FUNCTION
+  const validateIdentity = (identity, docTypeId) => {
+    if (!docTypeId || !identity) return "";
+
+    const selectedDoc = documentType.find(
+      (doc) => doc.id.toString() === docTypeId.toString()
+    );
+    if (!selectedDoc) return "";
+
+    const name = selectedDoc.name.toLowerCase();
+
+    if (name.includes("aadhaar")) {
+      const aadhaarRegex = /^\d{12}$/;
+      return aadhaarRegex.test(identity)
+        ? ""
+        : "Aadhaar must be 12 digits (e.g. 123456789012)";
+    }
+
+    if (name.includes("passport")) {
+      const passportRegex = /^[A-Z]{1}[0-9]{7}$/;
+      return passportRegex.test(identity)
+        ? ""
+        : "Passport format: 1 letter + 7 digits (e.g. K1234567)";
+    }
+
+    if (name.includes("birth certificate")) {
+      const bcRegex = /^BRN-\d{4}-\d{3,}$/;
+      return bcRegex.test(identity)
+        ? ""
+        : "Birth Certificate format: BRN-YYYY-XXX (e.g. BRN-2021-000123)";
+    }
+
+    if (name.includes("transfer certificate")) {
+      const tcRegex = /^TC-\d{4}-\d{3,}$/;
+      return tcRegex.test(identity)
+        ? ""
+        : "Transfer Certificate format: TC-YYYY-XXX (e.g. TC-2022-00123)";
+    }
+
+    if (name.includes("caste certificate")) {
+      const ccRegex = /^CC-\d{4}-\d{3,}$/;
+      return ccRegex.test(identity)
+        ? ""
+        : "Caste Certificate format: CC-YYYY-XXX (e.g. CC-2020-0456)";
+    }
+
+    return "";
+  };
 
   // API fetch functions (unchanged)
   const getYearLevels = async () => {
@@ -84,9 +133,7 @@ export const DocumentUpload = () => {
     if (!formData.year_level) return;
     try {
       setLoadingStudents(true);
-      const allStudentsByClass = await fetchStudentYearLevelByClass(
-        yearLevelID
-      );
+      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelID);
       setStudents(allStudentsByClass);
     } catch (error) {
       console.error("Failed to load students:", error);
@@ -125,10 +172,8 @@ export const DocumentUpload = () => {
   // HANDLING CHANGES
 
   const handleAddField = () => {
-    setUploadFields([
-      ...uploadFields,
-      { files: null, document_types: "", identities_read: "" },
-    ]);
+    setUploadFields([...uploadFields, { files: null, document_types: "", identities: "" }]);
+    setIdentityErrors([...identityErrors, ""]); // ✅ maintain error array length
   };
 
   const handleFileChange = (e, index) => {
@@ -142,7 +187,18 @@ export const DocumentUpload = () => {
     const newFields = [...uploadFields];
     newFields[index][name] = value;
     setUploadFields(newFields);
+
+    // ✅ validate immediately if identity/doc type changes
+    if (name === "document_types" || name === "identities") {
+      const newErrors = [...identityErrors];
+      newErrors[index] = validateIdentity(
+        newFields[index].identities,
+        newFields[index].document_types
+      );
+      setIdentityErrors(newErrors);
+    }
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "year_level") {
@@ -170,13 +226,9 @@ export const DocumentUpload = () => {
 
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
-      .map(
-        (field, index) => (index !== currentIndex ? field.document_types : null) // Changed from document_type
-      )
+      .map((field, index) => (index !== currentIndex ? field.document_types : null))
       .filter((type) => type);
-    return documentType.filter(
-      (doc) => !selectedDocTypes.includes(doc.id.toString())
-    );
+    return documentType.filter((doc) => !selectedDocTypes.includes(doc.id.toString()));
   };
 
   const handleSubmit = async (e) => {
@@ -184,10 +236,16 @@ export const DocumentUpload = () => {
     setLoading(true);
 
     try {
-      // Iterate through each upload field and submit separately
-      for (const field of uploadFields) {
+      for (const [index, field] of uploadFields.entries()) {
         if (!field.files || !field.document_types) {
           alert("Please select a file and document type for all fields");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ prevent submit if identity invalid
+        if (identityErrors[index]) {
+          alert("Please fix identity errors before uploading.");
           setLoading(false);
           return;
         }
@@ -196,35 +254,18 @@ export const DocumentUpload = () => {
         formDataToSend.append("files", field.files);
         formDataToSend.append("document_types", field.document_types);
 
-        // Append role-specific fields
-        if (formData.student)
-          formDataToSend.append("student", formData.student);
-        if (formData.teacher)
-          formDataToSend.append("teacher", formData.teacher);
-        if (formData.guardian)
-          formDataToSend.append("guardian", formData.guardian);
-        if (formData.office_staff)
-          formDataToSend.append("office_staff", formData.office_staff);
-        if (field.identities)
-          formDataToSend.append("identities", field.identities);
+        if (formData.student) formDataToSend.append("student", formData.student);
+        if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities) formDataToSend.append("identities", field.identities);
 
-        const response = await axios.post(
-          `${constants.baseUrl}/d/Document/`,
-          formDataToSend,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (response.status !== 200 && response.status !== 201) {
-          throw new Error(response.data?.message || "Upload failed");
-        }
+        await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
       alert("All documents uploaded successfully!");
-      // Reset form
       setUploadFields([{ file: null, document_type: "" }]);
       setFormData({
         student: "",
@@ -236,14 +277,13 @@ export const DocumentUpload = () => {
       setRole("");
       setStep(0);
     } catch (error) {
-      console.error("Upload failed:", error.response?.data || error.message);
-      alert(`Upload failed: ${error.response?.data?.message || error.message}`);
+      alert("Upload failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // SIDE EFFECTS (unchanged)
+  // SIDE EFFECTS
   useEffect(() => {
     getDocumentTypes();
     getTeachers();
@@ -255,22 +295,17 @@ export const DocumentUpload = () => {
 
   useEffect(() => {
     if (formData.year_level && yearLevel.length > 0) {
-      const selected = yearLevel.find(
-        (yl) => yl.id === parseInt(formData.year_level)
-      );
-      if (selected) {
-        setYearLevelID(selected.id);
-      }
+      const selected = yearLevel.find((yl) => yl.id === parseInt(formData.year_level));
+      if (selected) setYearLevelID(selected.id);
     }
   }, [formData.year_level, yearLevel]);
 
   useEffect(() => {
-    if (yearLevelID) {
-      getStudentsYearLevel();
-    }
+    if (yearLevelID) getStudentsYearLevel();
   }, [yearLevelID]);
 
   return (
+   
     <form
       onSubmit={handleSubmit}
       className="w-full max-w-7xl  mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
@@ -344,94 +379,98 @@ export const DocumentUpload = () => {
             <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
           </h1>
           {uploadFields.map((field, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end mt-6 w-full"
-            >
-              {/* Document Upload */}
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text flex items-center gap-1">
-                    <i className="fa-solid fa-file-upload text-sm"></i> Document
-                    Upload
-                    <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  name="file"
-                  className="file-input file-input-bordered w-full focus:outline-none"
-                  required
-                  onChange={(e) => handleFileChange(e, index)}
-                />
-              </div>
+           <div
+  key={index}
+  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start mt-6 w-full"
+>
+  {/* Document Upload */}
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text flex items-center gap-1">
+        <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
+        <span className="text-error">*</span>
+      </span>
+    </label>
+    <input
+      type="file"
+      name="file"
+      className="file-input file-input-bordered w-full focus:outline-none"
+      required
+      onChange={(e) => handleFileChange(e, index)}
+    />
+  </div>
 
-              {/* Document Type */}
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text flex items-center gap-1">
-                    <i className="fa-solid fa-file text-sm"></i> Document Type
-                    <span className="text-error">*</span>
-                  </span>
-                </label>
-                <select
-                  name="document_types"
-                  className="select select-bordered w-full focus:outline-none cursor-pointer"
-                  required
-                  value={field.document_types}
-                  onChange={(e) => handleUploadChange(e, index)}
-                >
-                  <option value="">Select Document Type</option>
-                  {getAvailableDocumentTypes(index).map((doc) => (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+  {/* Document Type */}
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text flex items-center gap-1">
+        <i className="fa-solid fa-file text-sm"></i> Document Type
+        <span className="text-error">*</span>
+      </span>
+    </label>
+    <select
+      name="document_types"
+      className="select select-bordered w-full focus:outline-none cursor-pointer"
+      required
+      value={field.document_types}
+      onChange={(e) => handleUploadChange(e, index)}
+    >
+      <option value="">Select Document Type</option>
+      {getAvailableDocumentTypes(index).map((doc) => (
+        <option key={doc.id} value={doc.id}>
+          {doc.name}
+        </option>
+      ))}
+    </select>
+  </div>
 
-              {/* Identity */}
-              <div className="form-control w-full">
-                <label className="label">
-                  <span className="label-text flex items-center gap-1">
-                    <i className="fa-solid fa-id-card text-sm"></i> Identity
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  name="identities"
-                  className="input input-bordered w-full focus:outline-none"
-                  value={field.identities}
-                  onChange={(e) => handleUploadChange(e, index)}
-                  placeholder="Enter identity ID"
-                />
-              </div>
+  {/* Identity */}
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text flex items-center gap-1">
+        <i className="fa-solid fa-id-card text-sm"></i> Identity
+      </span>
+    </label>
+    <input
+      type="text"
+      name="identities"
+      className="input input-bordered w-full focus:outline-none"
+      value={field.identities}
+      onChange={(e) => handleUploadChange(e, index)}
+      placeholder="Enter identity ID"
+    />
+    <span className="text-red-500 text-sm mt-1 block min-h-[1.25rem]">
+      {identityErrors[index]}
+    </span>
+  </div>
 
-              {/* Add/Remove Button */}
-              <div className="form-control w-full">
-                {index === 0 ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary mt-auto w-full"
-                    onClick={handleAddField}
-                  >
-                    <i className="fa-solid fa-plus mr-1"></i> Add
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn btn-error mt-auto w-full"
-                    onClick={() =>
-                      setUploadFields(
-                        uploadFields.filter((_, i) => i !== index)
-                      )
-                    }
-                  >
-                    <i className="fa-solid fa-trash mr-1"></i> Remove
-                  </button>
-                )}
-              </div>
-            </div>
+  {/* Add/Remove Button */}
+{/* Add/Remove Button */}
+<div className="form-control w-full flex flex-col mt-auto">
+  {index === 0 ? (
+    <button
+      type="button"
+      className="btn btn-primary w-full"
+      onClick={handleAddField}
+    >
+      <i className="fa-solid fa-plus mr-1"></i> Add
+    </button>
+  ) : (
+    <button
+      type="button"
+      className="btn btn-error w-full"
+      onClick={() =>
+        setUploadFields(uploadFields.filter((_, i) => i !== index))
+      }
+    >
+      <i className="fa-solid fa-trash mr-1"></i> Remove
+    </button>
+  )}
+</div>
+
+
+</div>
+
           ))}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">

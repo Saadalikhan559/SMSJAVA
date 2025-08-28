@@ -23,6 +23,23 @@ export const fetchSchoolYear = async () => {
   }
 };
 
+export const fetchExpenseCategory = async (accessToken) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/d/Expense-Category/get_category/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch expense category:", err);
+    throw err;
+  }
+};
+
 export const fetchExamType = async (accessToken) => {
   try {
     // Add debug logging
@@ -529,7 +546,11 @@ export const fetchEmployee = async (accessToken, role) => {
   }
 };
 
-export const fetchSchoolExpense = async (accessToken, schoolYear, categoryId) => {
+export const fetchSchoolExpense = async (
+  accessToken,
+  schoolYear,
+  categoryId
+) => {
   try {
     const response = await axios.get(
       `${constants.baseUrl}/d/School-Expense/?school_year=${schoolYear}&category=${categoryId}`,
@@ -546,7 +567,22 @@ export const fetchSchoolExpense = async (accessToken, schoolYear, categoryId) =>
   }
 };
 
-
+export const fetchSalaryExpense = async (accessToken) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/Employee/get_emp/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
 
 export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
@@ -807,24 +843,6 @@ export const updateDiscount = async (accessToken, id, payload) => {
   }
 };
 
-// fetch Allocated Class
-export const fetchAllocatedClasses = async (token) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/t/teacheryearlevel/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch allocated classes:", error);
-    throw error;
-  }
-};
-
 
 
 // POST APIS
@@ -840,7 +858,10 @@ export const createSalary = async (accessToken, payload) => {
         },
       }
     );
-    return response.data;
+    if (response.status == 200 || response.status == 201) {
+      alert("Successfully created a salary");
+      return response.data;
+    }
   } catch (err) {
     console.error("Failed to create Employee:", err);
     throw err;
@@ -1076,4 +1097,3 @@ export const assignSubstitute = async (payload) => {
     throw error;
   }
 };
-

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { fetchViewDocuments } from "../../services/api/Api";
+import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 
 export const ViewDocuments = () => {
-  const [details, setDetails] = useState([]);
+  const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedClass, setSelectedClass] = useState("All");
+  const [teacherClasses, setTeacherClasses] = useState([]);
+  const [viewOption, setViewOption] = useState("my"); // 'my' or 'assigned'
 
+  // Logged-in user info
   const studentId = localStorage.getItem("studentId");
   const guardianId = localStorage.getItem("guardianId");
   const teacherId = localStorage.getItem("teacherId");
@@ -16,19 +19,28 @@ export const ViewDocuments = () => {
   const userRole = localStorage.getItem("userRole");
 
   useEffect(() => {
-    const getDocuments = async () => {
+    const fetchData = async () => {
       try {
-        const data = await fetchViewDocuments();
-        setDetails(data);
+        const docs = await fetchViewDocuments();
+        setDetails(docs);
+
+        if (userRole === "teacher") {
+          const classes = await fetchTeacherYearLevel(teacherId);
+          setTeacherClasses(classes.map(c => c.year_level_name));
+        }
+
+        setLoading(false);
       } catch (err) {
-        console.error(err);
-      } finally {
+        console.error("Failed to fetch data:", err);
         setLoading(false);
       }
     };
-    getDocuments();
-  }, []);
 
+    fetchData();
+  }, [teacherId, userRole]);
+
+  if (loading) return <div className="p-4 text-center">Loading documents...</div>;
+  if (!details || details.length === 0) return <div className="p-4 text-center">No documents available.</div>;
   if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -59,35 +71,47 @@ export const ViewDocuments = () => {
 
     doc.document_types_read.forEach(dt => {
       const type = dt.name.toLowerCase();
-      grouped[key].docs[type] = doc.files.map(file => file.file.replace("http://localhost:8000", constants.baseUrl));
+      grouped[key].docs[type] = doc.files.map(file =>
+        file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
+      );
     });
   });
 
   const allClasses = ["All", ...new Set(details.filter(d => d.student_id && d.year_level).map(d => d.year_level))];
 
+  // Filter data
   const filteredData = Object.values(grouped).filter(person => {
     if (userRole === "student") {
-      return person.role === "Student" && details.some(d => d.student_id?.toString() === studentId && d.student_name === person.name);
-    }
-
-    if (userRole === "guardian") {
-      return person.role === "Guardian" && details.some(d => d.guardian_id?.toString() === guardianId && d.guardian_name === person.name);
-    }
-
-    if (userRole === "teacher") {
-      // Teacher → apne aur apni assigned classes ke documents
-      return person.role === "Teacher" && details.some(d =>
-        d.teacher_id?.toString() === teacherId &&
-        d.teacher_name === person.name &&
-        (person.yearLevel === "N/A" || details.some(doc => doc.year_level === person.yearLevel && doc.teacher_id?.toString() === teacherId))
+      return person.role === "Student" && details.some(d =>
+        d.student_id && d.student_id.toString() === studentId && (d.student_name === person.name)
       );
     }
 
-    if (userRole === "officestaff") {
-      return person.role === "Office Staff" && details.some(d => d.office_staff_id?.toString() === officeStaffId && d.office_staff_name === person.name);
+    if (userRole === "guardian") {
+      return person.role === "Guardian" && details.some(d =>
+        d.guardian_id && d.guardian_id.toString() === guardianId && (d.guardian_name === person.name)
+      );
     }
 
-    // Admin / director filters
+    if (userRole === "teacher") {
+      if (viewOption === "my") {
+        // teacher's own documents
+        return person.role === "Teacher" && details.some(d =>
+          d.teacher_id && d.teacher_id.toString() === teacherId && (d.teacher_name === person.name)
+        );
+      } else if (viewOption === "assigned") {
+        // assigned classes documents
+        return person.role === "Student" && teacherClasses.includes(person.yearLevel);
+      }
+    }
+
+    if (userRole === "officestaff") {
+      return person.role === "Office Staff" && details.some(d =>
+        d.office_staff_id && d.office_staff_id.toString() === officeStaffId && (d.office_staff_name === person.name)
+      );
+    }
+
+    // Director/Admin
     const roleMatch = selectedRole === "All" || person.role === selectedRole;
     const classMatch = selectedRole === "Student" ? selectedClass === "All" || person.yearLevel === selectedClass : true;
     return roleMatch && classMatch;
@@ -100,37 +124,52 @@ export const ViewDocuments = () => {
           <i className="fa-solid fa-folder-open"></i> Uploaded Documents
         </h2>
 
-        {/* Filters */}
-        <div className="mb-4 flex gap-4">
-          {userRole === "admin" && (
-            <>
+        {/* Teacher options */}
+    {userRole === "teacher" && (
+  <div className="mb-4 flex gap-4 items-center">
+    <div>
+      <select
+        value={viewOption}
+        onChange={(e) => setViewOption(e.target.value)}
+        className="border p-2 rounded"
+      >
+        <option value="my">My Documents</option>
+        <option value="assigned">Assigned Class Documents</option>
+      </select>
+    </div>
+  </div>
+)}
+
+
+        {/* Admin filters */}
+        {userRole !== "student" && userRole !== "guardian" && userRole !== "teacher" && userRole !== "officestaff" && (
+          <div className="mb-4 flex gap-4">
+            <div>
+              <select
+                value={selectedRole}
+                onChange={e => {
+                  setSelectedRole(e.target.value);
+                  setSelectedClass("All");
+                }}
+                className="border p-2 rounded"
+              >
+                <option value="All">Select Role</option>
+                <option value="Student">Student</option>
+                <option value="Guardian">Guardian</option>
+                <option value="Office Staff">Office Staff</option>
+                <option value="Teacher">Teacher</option>
+              </select>
+            </div>
+            {selectedRole === "Student" && (
               <div>
-                <select
-                  value={selectedRole}
-                  onChange={e => {
-                    setSelectedRole(e.target.value);
-                    setSelectedClass("All");
-                  }}
-                  className="border p-2 rounded"
-                >
-                  <option value="All">Select Role</option>
-                  <option value="Student">Student</option>
-                  <option value="Guardian">Guardian</option>
-                  <option value="Office Staff">Office Staff</option>
-                  <option value="Teacher">Teacher</option>
+                <label className="mr-2 font-medium">Filter by Class:</label>
+                <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="border p-2 rounded">
+                  {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
                 </select>
               </div>
-              {selectedRole === "Student" && (
-                <div>
-                  <label className="mr-2 font-medium">Filter by Class:</label>
-                  <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="border p-2 rounded">
-                    {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
-                  </select>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Table */}
         <div className="w-full overflow-x-auto">
@@ -141,7 +180,7 @@ export const ViewDocuments = () => {
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
-                    {userRole === "admin" && selectedRole === "Student" && <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>}
+                    {userRole !== "student" && selectedRole === "Student" && <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>}
                     {allDocTypes.map(type => (
                       <th key={type} className="px-4 py-3 text-left text-sm font-semibold text-nowrap">{type}</th>
                     ))}
@@ -152,16 +191,16 @@ export const ViewDocuments = () => {
                     <tr key={idx} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-700">{person.name}</td>
                       <td className="px-4 py-3 text-sm text-gray-700">{person.role}</td>
-                      {userRole === "admin" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700">{person.yearLevel || "-"}</td>}
+                      {userRole !== "student" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700">{person.yearLevel || "-"}</td>}
                       {allDocTypes.map(type => (
                         <td key={type} className="px-4 py-3 text-sm text-blue-700">
-                          {person.docs[type]?.map((url, i) => (
+                          {person.docs[type] ? person.docs[type].map((url, i) => (
                             <div key={i} className="max-w-[150px] truncate">
                               <Link to={url} target="_blank" rel="noreferrer" className="underline textTheme hover:text-blue-800 truncate block" title={url.split("/").pop()}>
                                 {url.split("/").pop()}
                               </Link>
                             </div>
-                          )) || "-"}
+                          )) : "-"}
                         </td>
                       ))}
                     </tr>

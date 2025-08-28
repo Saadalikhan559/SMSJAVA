@@ -14,6 +14,7 @@ export const CreateSalaryExpense = () => {
   const [searchInput, setSearchInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
+  const [apiError, setApiError] = useState("");
 
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
 
@@ -109,29 +110,48 @@ export const CreateSalaryExpense = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
+      setApiError("");
       const payload = {
         user: Number(data.employee),
         joining_date: data.joiningDate,
         base_salary: data.baseSalary,
       };
       const response = await createSalary(access, payload);
-      if (response.status === 200 || response.status === 201) {
-        alert("Successfully created a salary");
-      }
+
     } catch (err) {
-      console.error("Submission failed", err);
+      if (err.response.data) {
+        setApiError(err.response.data.error);
+      }
+      else {
+        setApiError("Something Went Wrong. Try again");
+      } 
+      // console.log(err);
+      
     } finally {
       setLoading(false);
     }
   };
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen p-5 bg-gray-50">
+=======
+>>>>>>> 4071bfc78523fa82faa677e98791b4033e866dde
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">
         Create Salary
         <i className="fa-solid fa-percentage ml-2"></i>
       </h1>
+
+      {/* Display API error message */}
+      {apiError && (
+        <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
+          <div className="flex items-center text-error">
+            <i className="fa-solid fa-circle-exclamation mr-2"></i>
+            <span className="font-medium">{apiError}</span>
+          </div>
+        </div>
+      )}
 
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -262,6 +282,7 @@ export const CreateSalaryExpense = () => {
             <input
               type="number"
               min={0}
+              placeholder="Enter Base Salary e.g: 15000"
               className="input input-bordered w-full focus:outline-none"
               {...register("baseSalary", {
                 required: "Base salary is required",
