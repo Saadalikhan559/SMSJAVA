@@ -38,6 +38,7 @@ export const EditAddmissionDetails = () => {
     formState: { errors },
     setValue,
     resetField,
+    trigger,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -88,7 +89,7 @@ export const EditAddmissionDetails = () => {
         ifsc_code: "",
         holder_name: "",
       },
-      guardian_type: null,
+      guardian_type_input: null,
       year_level: "",
       school_year: "",
       admission_date: "",
@@ -106,7 +107,7 @@ export const EditAddmissionDetails = () => {
 
   const handleGuardianTypeChange = (e) => {
     setSelectedGuardianType(e.target.value);
-    setValue("guardian_type", e.target.value);
+    setValue("guardian_type_input", e.target.value);
   };
 
   const handleRTECheckboxChange = (e) => {
@@ -957,38 +958,6 @@ export const EditAddmissionDetails = () => {
               )}
             </div>
             <div className="form-control">
-  <label className="label">
-    <span className="label-text flex items-center gap-2">
-      <i className="fa-solid fa-user-shield text-sm"></i>
-      Guardian Type <span className="text-error">*</span>
-    </span>
-  </label>
-
-  <select
-    {...register("guardian_type", {
-      required: "Guardian type is required",
-    })}
-    className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-      errors.guardian_type ? "select-error" : ""
-    }`}
-    defaultValue={formData?.guardian_type || ""} // ✅ backend से आने वाला value दिखेगा
-  >
-    <option value="">Select Guardian Type</option>
-    {guardianTypes.map((guardianTy) => (
-      <option value={guardianTy.name} key={guardianTy.id}>
-        {guardianTy.name}
-      </option>
-    ))}
-  </select>
-
-  {errors.guardian_type && (
-    <span className="text-error text-sm">
-      {errors.guardian_type.message}
-    </span>
-  )}
-</div>
-
-            {/* <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-user-shield text-sm"></i>
@@ -996,10 +965,10 @@ export const EditAddmissionDetails = () => {
                 </span>
               </label>
               <select
-                {...register("guardian_type", {
+                {...register("guardian_type_input", {
                   required: "Guardian type is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type ? "select-error" : ""
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type_input ? "select-error" : ""
                   }`}
                 value={selectedGuardianType}
                 onChange={handleGuardianTypeChange}
@@ -1011,28 +980,12 @@ export const EditAddmissionDetails = () => {
                   </option>
                 ))}
               </select>
-              {errors.guardian_type && (
+              {errors.guardian_type_input && (
                 <span className="text-error text-sm">
-                  {errors.guardian_type.message}
+                  {errors.guardian_type_input.message}
                 </span>
               )}
-            </div> */}
-            {/* <div className="form-control">
-              <label className="label">Guardian Type</label>
-              <select
-                {...register("guardian.type", { required: "Guardian type is required" })}
-                className={`select select-bordered w-full ${errors.guardian?.type ? "select-error" : ""
-                  }`}
-              >
-                <option value="">Select Guardian Type</option>
-                <option value="father">Father</option>
-                <option value="mother">Mother</option>
-                <option value="other">Other</option>
-              </select>
-              {errors.guardian?.type && (
-                <span className="text-error">{errors.guardian.type.message}</span>
-              )}
-            </div> */}
+            </div>
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
