@@ -21,6 +21,9 @@ export const AdmissionFees = () => {
   const [availableMonths, setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
 
+
+  console.log(availableFees);
+  
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const accessToken = authTokens?.access;
 
@@ -461,6 +464,7 @@ export const AdmissionFees = () => {
 
   return (
     <>
+    
       <form
         className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
         onSubmit={handleSubmit(onSubmit)}
@@ -469,6 +473,7 @@ export const AdmissionFees = () => {
           Fee Payment
           <i className="fa-solid fa-money-bill-wave ml-2"></i>
         </h1>
+       
 
         {/* Error Display */}
         {apiError && (
