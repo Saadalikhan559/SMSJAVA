@@ -1735,7 +1735,7 @@ export const AdmissionForm = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-40"
+            className="btn bgTheme text-white w-40"
           >
             {loading ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>

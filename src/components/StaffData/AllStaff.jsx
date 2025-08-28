@@ -76,8 +76,8 @@ const AllStaff = () => {
         <button
           onClick={() => setActiveTab("teachers")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-600 hover:text-blue-600"
+              ? "border-[#5E35B1] textTheme"
+              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
         >
           <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
@@ -85,8 +85,8 @@ const AllStaff = () => {
         <button
           onClick={() => setActiveTab("staff")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-600 hover:text-blue-600"
+                ? "border-[#5E35B1] textTheme"
+              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
         >
           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
@@ -130,12 +130,12 @@ const AllStaff = () => {
                       key={record.id || index}
                       className="hover:bg-gray-50 text-center"
                     >
-                      <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
+                      <td className="px-4 py-3 textTheme">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/teacher/${record.id}`}
                           state={{ level_name: record.level_name }}
-                          className="text-blue-600 hover:underline"
+                          className="textTheme hover:underline"
                         >
                           {[record.first_name, record.middle_name, record.last_name]
                             .filter(Boolean)
@@ -185,12 +185,12 @@ const AllStaff = () => {
                       key={record.id || index}
                       className="hover:bg-gray-50 text-center"
                     >
-                      <td className="px-4 py-3 text-blue-600">{index + 1}.</td>
+                      <td className="px-4 py-3 textTheme">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/office/${record.id}`}
                           state={{ level_name: record.level_name }}
-                          className="text-blue-600 hover:underline"
+                          className="textTheme hover:underline"
                         >
                           {[record.first_name, record.middle_name, record.last_name]
                             .filter(Boolean)

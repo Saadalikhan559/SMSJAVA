@@ -47,12 +47,12 @@ export const Attendance = () => {
             className="relative group bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:border-blue-200/50"
           >
             {/* Gradient accent bar */}
-            <div className="absolute top-0 left-0 h-1.5 w-full bg-gradient-to-r from-indigo-500 via-blue-400 to-cyan-400"></div>
+            <div className="absolute top-0 left-0 h-1.5 w-full bg-gradient-to-r from-[#5E35B1] via-[#684d9e] to-[#5424b4]"></div>
 
             <div className="p-6">
               {/* Class header with icon */}
               <div className="flex items-start mb-5">
-                <div className="p-3 rounded-xl bg-blue-100/50 text-blue-600 group-hover:bg-blue-200/70 transition-colors duration-300">
+                <div className="p-3 rounded-xl bg-blue-100/50 textTheme group-hover:bg-blue-200/70 transition-colors duration-300">
                   <i className="fa-solid fa-chalkboard-user text-xl"></i>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 ml-4 mt-1">
@@ -62,11 +62,11 @@ export const Attendance = () => {
 
               {/* Stats row (customize with real data) */}
               <div className="flex gap-4 mb-6 text-sm">
-                <span className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full flex items-center">
+                <span className="px-3 py-1.5 bg-blue-50 textTheme rounded-full flex items-center">
                   <i className="fa-solid fa-users mr-2"></i>
                    students
                 </span>
-                <span className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full flex items-center">
+                <span className="px-3 py-1.5 bg-purple-50 textTheme rounded-full flex items-center">
                   <i className="fa-solid fa-calendar-day mr-2"></i>
                   Mon/Wed/Fri
                 </span>
@@ -76,7 +76,7 @@ export const Attendance = () => {
               <div className="space-y-3">
                 <button
                   onClick={() => handleNavigate(classItem.year_level_name, classItem.year_level_id)}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl font-medium flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-100"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-[#5E35B1] to-[#4314a1] hover:from-[#4614aa] hover:[#5E35B1] text-white rounded-xl font-medium flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-100"
                 >
                   <i className="fa-solid fa-pen-clip mr-3"></i>
                   Take Attendance

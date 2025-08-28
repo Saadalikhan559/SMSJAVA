@@ -172,7 +172,8 @@ const UploadExamPaper = () => {
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
       <button
-        className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 text-blue-600"
+        className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme
+"
         onClick={handleNavigate}
       >
         Update Exam Paper <span>&rarr;</span>
@@ -433,7 +434,7 @@ const UploadExamPaper = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-52"
+            className="btn bgTheme text-white w-52"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

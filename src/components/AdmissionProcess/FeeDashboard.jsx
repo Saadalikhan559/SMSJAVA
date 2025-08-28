@@ -8,6 +8,8 @@ const FeeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("");
+  console.log(dashboardData);
+  
 
   const height = 400;
   const months = [
