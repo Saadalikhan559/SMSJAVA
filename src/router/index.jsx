@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+"use client";
+import { ErrorBoundary } from "react-error-boundary";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { routes } from "./routes";
 import { ProtectedRoute } from "../protectedRoutes/Protected";
@@ -32,10 +34,12 @@ function getDashboardForRole(role) {
 
 export default function AppRouter() {
   const { isAuthenticated, userRole } = useContext(AuthContext);
+  const location = useLocation();
 
   return (
-    <BrowserRouter>
+    <ErrorBoundary fallback={<div>something went wrong</div>} resetKeys={[location.pathname]}>
       <Routes>
+        
         {/* Login page outside MainLayout */}
         {!isAuthenticated ? (
           <Route path="/" element={<Login />} />
@@ -46,6 +50,8 @@ export default function AppRouter() {
         )}
 
         <Route path="/login" element={<Login />} />
+   
+        
 
         {/* All authenticated routes */}
         <Route element={<MainLayout />}>
@@ -68,6 +74,6 @@ export default function AppRouter() {
 
         <Route path={allRouterLink.notFound} element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
+    </ErrorBoundary>
   );
 }

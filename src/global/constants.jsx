@@ -7,7 +7,7 @@ export const constants = {
 // <<<<<<< HEAD
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha                                                                                                             
+  baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha                                                                                                             
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   // baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
@@ -22,7 +22,11 @@ export const constants = {
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://958cp4w5-8000.inc1.devtunnels.ms", //saba
+// <<<<<<< HEAD
+  //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
+// =======
 //    baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
+// >>>>>>> 839ad33867b6d93a294ddacf04c5d022cca01a27
   // baseUrl: "https://94f38xkg-7000.inc1.devtunnels.ms/", //naaz
 
 
