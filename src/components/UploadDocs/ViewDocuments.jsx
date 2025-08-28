@@ -72,7 +72,7 @@ export const ViewDocuments = () => {
     doc.document_types_read.forEach(dt => {
       const type = dt.name.toLowerCase();
       grouped[key].docs[type] = doc.files.map(file =>
-        file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
+        file.file.replace("http://localhost:7000", `${constants.baseUrl}`)
       );
     });
   });

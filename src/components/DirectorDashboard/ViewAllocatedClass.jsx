@@ -1,51 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { constants } from "../../global/constants";
+import { AuthContext } from "../../context/AuthContext";
 
 const ViewAllocatedClass = () => {
-  // Static payload data
-  const allocatedClasses = [
-    {
-      id: 18,
-      teacher_name: "ibrahim khan",
-      year_level_name: "Class 1",
-    },
-    {
-      id: 22,
-      teacher_name: "ibrahim khan",
-      year_level_name: "Class 12",
-    },
-    {
-      id: 23,
-      teacher_name: "noor khan",
-      year_level_name: "Class 11",
-    },
-    {
-      id: 19,
-      teacher_name: "abuqata khan",
-      year_level_name: "UKG",
-    },
-    {
-      id: 20,
-      teacher_name: "arsalan khan",
-      year_level_name: "Class 2",
-    },
-    {
-      id: 21,
-      teacher_name: "arsalan khan",
-      year_level_name: "Class 3",
-    },
-    {
-      id: 25,
-      teacher_name: "saba khan",
-      year_level_name: "Nursery",
-    },
-    {
-      id: 24,
-      teacher_name: "kulsoom ali",
-      year_level_name: "Class 1",
-    },
-  ];
+  const { authTokens } = useContext(AuthContext);
 
+  const [allocatedClasses, setAllocatedClasses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAllocatedClasses = async () => {
+      try {
+        const response = await axios.get(
+          `${constants.baseUrl}/t/teacheryearlevel/`,
+          {
+            headers: {
+              Authorization: `Bearer ${authTokens.access}`,
+            },
+          }
+        );
+        setAllocatedClasses(response.data);
+      } catch (error) {
+        console.error("Failed to fetch allocated classes:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllocatedClasses();
+  }, [authTokens]);
 
   const filteredClasses = allocatedClasses.filter(
     (classItem) =>
@@ -56,13 +41,11 @@ const ViewAllocatedClass = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        {/* Heading + Search Bar in same line */}
+        {/* Heading + Search */}
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
             Allocated Classes <i className="fa-solid fa-landmark"></i>
           </h2>
-
-          {/* Search Bar */}
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
@@ -79,7 +62,7 @@ const ViewAllocatedClass = () => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500  sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 sm:text-sm"
               placeholder="Search by teacher or class..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -87,6 +70,7 @@ const ViewAllocatedClass = () => {
           </div>
         </div>
 
+        {/* Table */}
         <div className="w-full overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
@@ -102,7 +86,13 @@ const ViewAllocatedClass = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {filteredClasses.length > 0 ? (
+                  {loading ? (
+                    <tr>
+                      <td colSpan="2" className="px-4 py-6 text-center text-gray-500">
+                        Loading allocated classes...
+                      </td>
+                    </tr>
+                  ) : filteredClasses.length > 0 ? (
                     filteredClasses.map((classItem) => (
                       <tr key={classItem.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
@@ -115,10 +105,7 @@ const ViewAllocatedClass = () => {
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan="3"
-                        className="px-4 py-6 text-center text-sm text-gray-500"
-                      >
+                      <td colSpan="2" className="px-4 py-6 text-center text-gray-500">
                         No matching classes found
                       </td>
                     </tr>
