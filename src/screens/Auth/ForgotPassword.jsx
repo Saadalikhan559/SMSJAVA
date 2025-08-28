@@ -81,7 +81,7 @@ export const ForgotPassword = () => {
 
             {/* Submit Button */}
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full">
+              <button type="submit" className="btn bgTheme text-white w-full">
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
@@ -95,7 +95,7 @@ export const ForgotPassword = () => {
               Remember your password?{" "}
               <Link
                 to={allRouterLink.loginUser}
-                className="text-blue-600 hover:underline"
+                className="textTheme hover:underline"
               >
                 Login here
               </Link>

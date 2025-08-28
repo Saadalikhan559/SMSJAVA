@@ -41,6 +41,14 @@ export const ViewDocuments = () => {
 
   if (loading) return <div className="p-4 text-center">Loading documents...</div>;
   if (!details || details.length === 0) return <div className="p-4 text-center">No documents available.</div>;
+  if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            </div>
+        );
+    }
+  if (!details.length) return <div className="p-4 text-center">No documents available.</div>;
 
   const allDocTypes = [...new Set(details.flatMap(d => d.document_types_read.map(dt => dt.name.toLowerCase())))];
 
@@ -188,7 +196,7 @@ export const ViewDocuments = () => {
                         <td key={type} className="px-4 py-3 text-sm text-blue-700">
                           {person.docs[type] ? person.docs[type].map((url, i) => (
                             <div key={i} className="max-w-[150px] truncate">
-                              <Link to={url} target="_blank" rel="noreferrer" className="underline text-blue-600 hover:text-blue-800 truncate block" title={url.split("/").pop()}>
+                              <Link to={url} target="_blank" rel="noreferrer" className="underline textTheme hover:text-blue-800 truncate block" title={url.split("/").pop()}>
                                 {url.split("/").pop()}
                               </Link>
                             </div>

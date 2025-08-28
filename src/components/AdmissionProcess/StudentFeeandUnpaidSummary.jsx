@@ -186,8 +186,8 @@ const StudentFeeAndUnpaidSummary = () => {
                 <button
                     onClick={() => setActiveTab("fee")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
-                        ? "border-b-2 border-blue-600 text-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
+                        ? "border-b-2 border-textTheme textTheme"
+                        : "text-gray-600  hover:text-[#5E35B1]"
                         }`}
                 >
                     Fee Report Card
@@ -196,7 +196,7 @@ const StudentFeeAndUnpaidSummary = () => {
                     onClick={() => setActiveTab("unpaid")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
                         ? "border-b-2 border-blue-600 text-blue-600"
-                        : "text-gray-600 hover:text-blue-600"
+                        : "text-gray-600 hover:text-[#5E35B1]"
                         }`}
                 >
                     Unpaid Accounts Summary

@@ -167,7 +167,7 @@ export const ChangePassword = () => {
             </div>
 
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full">
+              <button type="submit" className="btn bgTheme text-white w-full">
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
@@ -178,7 +178,7 @@ export const ChangePassword = () => {
             </div>
 
             <div className="text-center mt-4">
-              <Link to="/login" className="text-sm text-blue-600 hover:underline font-medium">
+              <Link to="/login" className="text-sm textTheme hover:underline font-medium">
                 <i className="fa-solid fa-arrow-left mr-2"></i> Back to Login
               </Link>
             </div>

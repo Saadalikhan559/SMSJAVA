@@ -39,7 +39,7 @@ export const Login = () => {
         // Store in localStorage
         localStorage.setItem("access", response.access);
         localStorage.setItem("userRole", role);
-        localStorage.setItem("userid", userId);
+        localStorage.setItem("userId", userId);
         if (studentId) localStorage.setItem("studentId", studentId);
         if (guardianId) localStorage.setItem("guardianId", guardianId);
         if (teacherId) localStorage.setItem("teacherId", teacherId);
@@ -68,7 +68,7 @@ export const Login = () => {
             redirectPath = allRouterLink.login; // fallback
         }
 
-        navigate(redirectPath, { state: { showSuccess: true } });
+        navigate(redirectPath, { replace:true,state: { showSuccess: true } });
       } else {
         setFormError("Invalid email or password");
       }
@@ -136,7 +136,7 @@ export const Login = () => {
 
             {/* Submit Button */}
             <div className="form-control w-full mt-6">
-              <button type="submit" className="btn btn-primary w-full">
+              <button type="submit" className="btn bgTheme btn-primary w-full">
                 {loading ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : <i className="fa-solid fa-right-to-bracket mr-2"></i>}
                 {loading ? "" : "Login"}
               </button>
@@ -146,7 +146,7 @@ export const Login = () => {
             <div className="text-center mt-4">
               <Link
                 to={`${allRouterLink.forgotPassword}`}
-                className="text-sm text-blue-600 hover:underline hover:text-blue-800 font-medium"
+                className="text-sm textTheme hover:underline hover:text-[#4a17b1] font-medium"
               >
                 <i className="fa-solid fa-key mr-2"></i> Forgot Password
               </Link>

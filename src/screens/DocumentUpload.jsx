@@ -330,13 +330,13 @@ export const DocumentUpload = () => {
                 </span>
               </label>
               <select
-                className="select select-bordered w-full focus:outline-none cursor-pointer"
+                className="select select-bordered  w-full focus:outline-none cursor-pointer"
                 value={role}
                 onChange={handleRoleChange}
               >
-                <option value="">Select Role</option>
+                <option  value="">Select Role</option>
                 {filteredRoles.map((roleItem) => (
-                  <option key={roleItem.id} value={roleItem.name}>
+                  <option  key={roleItem.id} value={roleItem.name}>
                     {roleItem.name}
                   </option>
                 ))}
