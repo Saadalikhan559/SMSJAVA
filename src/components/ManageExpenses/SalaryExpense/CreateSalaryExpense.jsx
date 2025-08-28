@@ -261,6 +261,7 @@ export const CreateSalaryExpense = () => {
             <input
               type="number"
               min={0}
+              placeholder="Enter Base Salary e.g: 15000"
               className="input input-bordered w-full focus:outline-none"
               {...register("baseSalary", {
                 required: "Base salary is required",
