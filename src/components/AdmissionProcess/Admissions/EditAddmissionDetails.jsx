@@ -278,6 +278,10 @@ export const EditAddmissionDetails = () => {
       if (response.total_marks) setValue("total_marks", response.total_marks);
       if (response.is_rte) setValue("is_rte", response.is_rte);
       if (response.rte_number) setValue("rte_number", response.rte_number);
+      if (response.student_input.gender) setValue("student.gender", response.student_input.gender.toLowerCase())
+      if (response.guardian_type) {setValue("guardian_type_input", response.guardian_type.id); setSelectedGuardianType(response.guardian_type.id);}
+
+
 
     } catch (error) {
       console.error("Error fetching admission details:", error);
@@ -302,7 +306,6 @@ export const EditAddmissionDetails = () => {
     setShowEditSuccessModal(false);
     navigate("/addmissionDetails");
   };
-
 
 
   const onSubmit = async (data) => {
@@ -356,7 +359,7 @@ export const EditAddmissionDetails = () => {
         ifsc_code: data.banking_detail_input.ifsc_code || "",
         holder_name: data.banking_detail_input.holder_name || "",
       },
-      guardian_type: data.guardian_type || null,
+      guardian_type_input: data.guardian_type_input || null,
       year_level: data.year_level || null,
       school_year: data.school_year || null,
       admission_date: data.admission_date || null,
@@ -424,11 +427,13 @@ export const EditAddmissionDetails = () => {
     );
   }
 
+
+
   return (
     <>
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
-        className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
@@ -603,7 +608,6 @@ export const EditAddmissionDetails = () => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-
               {errors.student?.gender && (
                 <span className="text-error text-sm">
                   {errors.student.gender.message}

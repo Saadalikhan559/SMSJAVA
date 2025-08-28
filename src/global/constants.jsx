@@ -1,27 +1,24 @@
 export const constants = {
   isOnline: true,
   isOffline: true,
+
   // baseUrl: "https://gl8tx74f-8000.inc1.devtunnels.ms",
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
-  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
-  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen
-  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-  baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
+  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
+  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   // baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
-
-  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms/", //naaz
-
-//   baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms/", //naaz
-
+  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://958cp4w5-8000.inc1.devtunnels.ms", //saba
-  //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
+//    baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
   // baseUrl: "https://94f38xkg-7000.inc1.devtunnels.ms/", //naaz
+
 
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,
