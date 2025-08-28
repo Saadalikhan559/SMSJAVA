@@ -47,11 +47,13 @@ export const AdmissionFees = () => {
   const selectedStudentId = watch("student_id");
   const selectedMonth = watch("month");
 
+
   // Fetch all classes
   const getClasses = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/d/year-levels/`);
       setClasses(response.data);
+      
     } catch (err) {
       console.log("Failed to load classes. Please try again." + err);
       setApiError("Failed to load classes");
