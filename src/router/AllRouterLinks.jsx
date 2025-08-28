@@ -64,6 +64,8 @@ export const allRouterLink = {
     overdueAccounts: "/overdueAccounts",
     createSalaryExpense: "/createSalaryExpense",
     viewSalaryExpense: "/viewSalaryExpense",
+    viewAllExpenses: "/viewAllExpenses",
+    editSalaryExpense: "/editSalaryExpense/:id",
     discountedStudents: "/discountedStudents",
     editStudentDiscount: "/editStudentDiscount/:id",
 
