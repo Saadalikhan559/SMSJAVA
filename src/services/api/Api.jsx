@@ -750,7 +750,7 @@ export const fetchUnpaidFees = async ({
       if (month) params.month = month;
     } else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
-      if (student_id) params.student_id = student_id; // sirf student role ke liye
+      if (student_id) params.student_id = student_id; 
     } else {
       throw new Error("Invalid role provided");
     }

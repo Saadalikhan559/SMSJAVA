@@ -76,8 +76,8 @@ const AllStaff = () => {
         <button
           onClick={() => setActiveTab("teachers")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
-              ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+            ? "border-[#5E35B1] textTheme"
+            : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
         >
           <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
@@ -85,8 +85,8 @@ const AllStaff = () => {
         <button
           onClick={() => setActiveTab("staff")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
-                ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+            ? "border-[#5E35B1] textTheme"
+            : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
         >
           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
