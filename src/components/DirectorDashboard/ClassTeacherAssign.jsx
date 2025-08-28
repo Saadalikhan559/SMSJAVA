@@ -82,6 +82,7 @@ const ClassTeacherAssign = () => {
   };
 
   return (
+    <div className="min-h-screen p-5 bg-gray-50">
     <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md my-8">
       <div className="mb-6">
         <button
@@ -204,7 +205,7 @@ const ClassTeacherAssign = () => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                Assigning...
+                
               </span>
             ) : (
               "Assign Class Teacher"
@@ -212,6 +213,7 @@ const ClassTeacherAssign = () => {
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };

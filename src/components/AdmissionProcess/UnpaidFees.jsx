@@ -106,7 +106,7 @@ const UnpaidFeesList = () => {
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen mx-auto">
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
@@ -206,7 +206,7 @@ const UnpaidFeesList = () => {
                 filteredFees.map((item, index) =>
                   item.year_level_fees_grouped?.map((group) =>
                     group.fees?.map((fee) => (
-                      <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-blue-50">
+                      <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-gray-50">
                         <td className="px-4 py-3">{index + 1}</td>
                         <td className="px-4 py-3">{item.student?.name}</td>
                         <td className="px-4 py-3">{group.year_level}</td>

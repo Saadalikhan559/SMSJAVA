@@ -170,7 +170,8 @@ const UploadExamPaper = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
       <button
         className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme
 "
@@ -446,6 +447,7 @@ const UploadExamPaper = () => {
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };

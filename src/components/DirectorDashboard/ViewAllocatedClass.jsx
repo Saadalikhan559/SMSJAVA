@@ -3,6 +3,8 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import { AuthContext } from "../../context/AuthContext";
 
+import { fetchAllocatedClasses } from "../../services/api/Api";
+
 const ViewAllocatedClass = () => {
   const { authTokens } = useContext(AuthContext);
 
@@ -11,25 +13,22 @@ const ViewAllocatedClass = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAllocatedClasses = async () => {
+
+    const loadClasses = async () => {
       try {
-        const response = await axios.get(
-          `${constants.baseUrl}/t/teacheryearlevel/`,
-          {
-            headers: {
-              Authorization: `Bearer ${authTokens.access}`,
-            },
-          }
-        );
-        setAllocatedClasses(response.data);
+        const data = await fetchAllocatedClasses(authTokens.access);
+        setAllocatedClasses(data);
       } catch (error) {
-        console.error("Failed to fetch allocated classes:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAllocatedClasses();
+
+    if (authTokens?.access) {
+      loadClasses();
+    }
   }, [authTokens]);
 
   const filteredClasses = allocatedClasses.filter(
@@ -41,7 +40,7 @@ const ViewAllocatedClass = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        {/* Heading + Search */}
+
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
             Allocated Classes <i className="fa-solid fa-landmark"></i>
@@ -71,50 +70,51 @@ const ViewAllocatedClass = () => {
         </div>
 
         {/* Table */}
+
         <div className="w-full overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Teacher
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Class
-                    </th>
+          <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+            <thead className="bgTheme text-white text-center">
+              <tr>
+                <th scope="col" className="px-4 py-3">Teacher</th>
+                <th scope="col" className="px-4 py-3">Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="2"
+                    className="text-center py-6 text-gray-500"
+                  >
+                    Loading allocated classes...
+                  </td>
+                </tr>
+              ) : filteredClasses.length > 0 ? (
+                filteredClasses.map((classItem, index) => (
+                  <tr key={classItem.id || index} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-center text-sm text-gray-700 capitalize">
+                      {classItem.teacher_name}
+                    </td>
+                    <td className="px-4 py-3 text-center text-sm text-gray-700 capitalize">
+                      {classItem.year_level_name}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {loading ? (
-                    <tr>
-                      <td colSpan="2" className="px-4 py-6 text-center text-gray-500">
-                        Loading allocated classes...
-                      </td>
-                    </tr>
-                  ) : filteredClasses.length > 0 ? (
-                    filteredClasses.map((classItem) => (
-                      <tr key={classItem.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
-                          {classItem.teacher_name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
-                          {classItem.year_level_name}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="2" className="px-4 py-6 text-center text-gray-500">
-                        No matching classes found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="2"
+                    className="text-center py-6 text-gray-500"
+                  >
+                    No matching classes found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
+
       </div>
     </div>
   );

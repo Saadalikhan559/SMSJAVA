@@ -92,7 +92,7 @@ export const TeacherDashboard = () => {
                     type="button"
                     className="w-full font-semibold px-4 py-2 shadow-md rounded-md btn-theme"
                     onClick={() => handleShowAttendance(detail.level_name)}
-                  >
+                  > 
                     <i className="fa-solid fa-chalkboard-user mr-2" />
                     Full Attendance for {detail.level_name}
                   </button>
