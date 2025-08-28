@@ -38,7 +38,7 @@ if (loading) {
 
     return (
         <div className="flex justify-center">
-            <div className="p-6 bg-gray-100 w-3xl">
+            <div className="p-6 bg-gray-100 w-screen h-screen">
                 <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
                     <div className="bgTheme text-white px-4 py-2 rounded-t-md flex items-center justify-between">
                         <h2 className="text-3xl font-semibold">

@@ -46,7 +46,7 @@ export const AdmissionDetails = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+      <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
         {/* Search Input */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-2 gap-4">
           <h2 className="text-3xl font-semibold text-gray-800">

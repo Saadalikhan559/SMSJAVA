@@ -52,7 +52,7 @@ const Staffdetail = () => {
 
   return (
     <div className="flex justify-center">
-      <div className="p-6 bg-gray-100 w-3xl">
+      <div className="p-6 bg-gray-100 w-full h-screen">
         <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
           <div className="bgTheme text-white px-4 py-2 rounded-t-md">
             <h2 className="text-3xl font-semibold">
@@ -94,7 +94,7 @@ const Staffdetail = () => {
 
             <div className="flex justify-center p-8 gap-4">
               <Link to={`/staffdetail/update/${type}/${id}`}>
-                <button type="button" className="btn btn-primary">
+                <button type="button" className="btn bgTheme text-white">
                   <i className="fa-solid fa-pen-to-square"></i> Update Profile
                 </button>
               </Link>

@@ -843,6 +843,8 @@ export const updateDiscount = async (accessToken, id, payload) => {
   }
 };
 
+
+
 // POST APIS
 
 export const createSalary = async (accessToken, payload) => {
@@ -1093,25 +1095,5 @@ export const assignSubstitute = async (payload) => {
       error.response?.data || error
     );
     throw error;
-  }
-};
-
-export const fetchTeacherYearLevel = async (teacherId) => {
-  try {
-    const accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
-    if (!accessToken) throw new Error("No access token found");
-
-    const response = await axios.get(`${BASE_URL}/t/teacheryearlevel/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      params: {
-        teacher: teacherId, // optional filter if backend supports
-      },
-    });
-    return response.data; // ye array of assigned classes return karega
-  } catch (err) {
-    console.error("Failed to fetch teacher year levels:", err);
-    throw err;
   }
 };
