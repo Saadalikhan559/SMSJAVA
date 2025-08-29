@@ -587,7 +587,7 @@ export const fetchSalaryExpense = async (accessToken) => {
 export const fetchSalaryExpenseById = async (accessToken, id) => {
   try {
     const response = await axios.get(
-      `${constants.baseUrl}/d/Employee/get_emp/id`,
+      `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -1159,7 +1159,7 @@ export const fetchTeacherYearLevel = async (teacherId) => {
 export const editSalary = async (accessToken, payload, id) => {
   try {
     const response = await axios.put(
-      `${constants.baseUrl}/d/Employee/create_emp/${id}`,
+      `${constants.baseUrl}/d/Employee/${id}/`,
       payload,
       {
         headers: {

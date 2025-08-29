@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { editSalary, fetchSalaryExpense } from "../../../services/api/Api";
+import {
+  editSalary,
+  fetchSalaryExpense,
+  fetchSalaryExpenseById,
+} from "../../../services/api/Api";
 import { useParams } from "react-router-dom";
 
 export const EditSalaryExpense = () => {
   const { id } = useParams();
 
-  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [schoolExpense, setSchoolExpense] = useState([]);
 
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const {
     register,
@@ -22,11 +28,12 @@ export const EditSalaryExpense = () => {
 
   const getSchoolExpense = async () => {
     try {
-      const response = await fetchSalaryExpense(access, id);
+      const response = await fetchSalaryExpenseById(access, id);
       setSchoolExpense(response);
     } catch (error) {
       console.log("Cannot get the school salary expense", error.message);
-      setApiError("Failed to load salary data"); // Add this
+      setApiError("Failed to load salary data");
+      setError("Failed to load school years. Please try again later.");
     }
   };
 
@@ -39,16 +46,18 @@ export const EditSalaryExpense = () => {
       setValue("joiningDate", schoolExpense.joining_date);
       setValue("baseSalary", schoolExpense.base_salary);
       setValue("user", schoolExpense.user?.id);
+      setValue("name", schoolExpense.name);
     }
   }, [schoolExpense, setValue]);
 
+  console.log("user", schoolExpense);
   // Form submission
   const onSubmit = async (data) => {
     try {
       setLoading(true);
       setApiError("");
       const payload = {
-        user: Number(data.user),
+        // user: Number(data.user),
         joining_date: data.joiningDate,
         base_salary: data.baseSalary,
       };
@@ -63,6 +72,30 @@ export const EditSalaryExpense = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
@@ -91,15 +124,12 @@ export const EditSalaryExpense = () => {
                 Employee <span className="text-error">*</span>
               </span>
             </label>
-
-            <div className="p-2 shadow-sm">
-              <input
-                type="text"
-                className="input input-bordered w-full focus:outline-none"
-                disabled={true}
-                {...register("user")}
-              />
-            </div>
+            <input
+              type="text"
+              className="input input-bordered w-full focus:outline-none"
+              disabled={true}
+              {...register("name")}
+            />
             {errors.employee && (
               <p className="text-error text-sm mt-1">
                 {errors.employee.message}

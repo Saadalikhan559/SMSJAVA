@@ -6,33 +6,48 @@ import { constants } from "../../../global/constants";
 import axios from "axios";
 
 export const ViewSalaryExpense = () => {
-  const navigation = useNavigate();
   const [schoolExpense, setSchoolExpense] = useState([]);
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
   const [apiError, setApiError] = useState("");
+    const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(""); 
+    
+  
+  
 
   const getSchoolExpense = async () => {
+    setLoading(true);
     try {
       const response = await fetchSalaryExpense(access);
       setSchoolExpense(response);
     } catch (error) {
-      console.log("Cannot get the school salary expense", error.message);
+      console.log("Failed to get the school salary expense", error.message);
+      setError("Failed to get the school salary expense");
+    }
+    finally{
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `${constants.baseUrl}/d/Employee/get_emp/${id}`
+        `${constants.baseUrl}/d/Employee/${id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        }
       );
+
       if (response.status === 200) {
-        alert("successfully deleted");
+        alert("Successfully deleted");
       }
     } catch (err) {
-      if (err.response.data) {
+      if (err.response?.data) {
         setApiError(err.response.data.error);
       } else {
-        setApiError("Something Went Wrong. Try again");
+        setApiError("Something went wrong. Try again");
       }
     }
   };
@@ -40,6 +55,30 @@ export const ViewSalaryExpense = () => {
   useEffect(() => {
     getSchoolExpense();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -97,7 +136,7 @@ export const ViewSalaryExpense = () => {
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                           {expense.base_salary}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm" width={10}>
                           <div className="flex space-x-2">
                             <Link
                               to={allRouterLink.editSalaryExpense.replace(
