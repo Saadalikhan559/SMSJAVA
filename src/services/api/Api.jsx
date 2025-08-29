@@ -875,10 +875,7 @@ export const createSalary = async (accessToken, payload) => {
         },
       }
     );
-    if (response.status == 200 || response.status == 201) {
-      alert("Successfully created a salary");
       return response.data;
-    }
   } catch (err) {
     console.error("Failed to create Employee:", err);
     throw err;
@@ -1168,7 +1165,6 @@ export const editSalary = async (accessToken, payload, id) => {
       }
     );
     if (response.status == 200 || response.status == 201) {
-      alert("Successfully edit a salary");
       return response.data;
     }
   } catch (err) {

@@ -1,29 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import {
-  createDiscount,
-  createSalary,
-  fetchEmployee,
-  fetchRoles,
-} from "../../../services/api/Api";
+import React, { useRef, useState } from "react";
 import { SuccessModal } from "../../Modals/SuccessModal";
-import { AuthContext } from "../../../context/AuthContext";
+import { useForm } from "react-hook-form";
 
-export const CreateSalaryExpense = () => {
-  const [loading, setLoading] = useState(false);
-  const [employees, setEmployees] = useState([]);
-  const [roles, setRoles] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
-  const [apiError, setApiError] = useState("");
+export const PaySalaryExpense = () => {
   const modalRef = useRef();
-
-  
-
-  const {authTokens} = useContext(AuthContext);
-  const access = authTokens.access;
-  
+  const [apiError, setApiError] = useState("");
 
   const {
     register,
@@ -33,110 +14,14 @@ export const CreateSalaryExpense = () => {
     formState: { errors },
   } = useForm();
 
-  const selectedRole = watch("role");
-  const selectedEmployee = watch("employee");
-  const getFullName = (employee) => {
-    if (!employee) return "";
-    return `${employee.first_name || ""} ${employee.last_name || ""}`.trim();
-  };
+  const onSubmit = async ()=>{
 
-  const getRole = async () => {
-    try {
-      const fetchedRoles = await fetchRoles();
-      setRoles(fetchedRoles || []);
-    } catch (error) {
-      console.log("Could not get roles", error.message);
-      setRoles([]);
-    }
-  };
-
-  const getRoleNameById = (roleId) => {
-    if (!roleId) return null;
-    const role = roles.find((r) => r.id == roleId);
-    return role ? role.name : "";
-  };
-
-  const filteredRoles = roles.filter((role) =>
-    role && (role.name === "teacher" || role.name === "office staff")
-      ? role
-      : null
-  );
-
-
-  const filteredEmployees = employees.filter(
-    (employee) =>
-      employee &&
-      getFullName(employee) &&
-      getFullName(employee).toLowerCase().includes(searchInput.toLowerCase())
-  );
-
-
-  const getEmployee = async () => {
-    try {
-      if (selectedRole) {
-        const roleName = getRoleNameById(selectedRole);
-        if (roleName) {
-          const fetchedEmployee = await fetchEmployee(access, roleName);
-          setEmployees(fetchedEmployee || []); // Ensure we always have an array
-        }
-      } else {
-        setEmployees([]);
-      }
-    } catch (error) {
-      console.log("Could not get employees", error.message);
-      setEmployees([]); // Set empty array on error
-    }
-  };
-
-  useEffect(() => {
-    getRole();
-  }, []);
-
-  useEffect(() => {
-    getEmployee();
-  }, [selectedRole]);
-
-  useEffect(() => {
-    if (selectedEmployee && employees.length > 0) {
-      const employee = employees.find(
-        (e) => e && e.id && e.id.toString() == selectedEmployee.toString()
-      );
-      if (employee) {
-        setSelectedEmployeeName(getFullName(employee));
-      }
-    } else {
-      setSelectedEmployeeName("");
-    }
-  }, [selectedEmployee, employees]);
-
-
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      setApiError("");
-      const payload = {
-        user: Number(data.employee),
-        joining_date: data.joiningDate,
-        base_salary: data.baseSalary,
-      };
-      await createSalary(access, payload);
-      modalRef.current.show();
-    } catch (err) {
-      if (err.response.data) {
-        setApiError(err.response.data.error);
-      } else {
-        setApiError("Something Went Wrong. Try again");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  }
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">
-          Create Salary
+          Pay Salary
           <i className="fa-solid fa-percentage ml-2"></i>
         </h1>
 
