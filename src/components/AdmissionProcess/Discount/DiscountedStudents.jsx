@@ -177,10 +177,10 @@ const DiscountedStudents = () => {
         <dialog className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg ">Confirm Delete</h3>
-            <p className="py-4">Are you sure you want to delete this student’s discount record?</p>
+            <p className="py-4">Are you sure ?</p>
             <div className="modal-action">
-              <button className="btn btn-primary text-white" onClick={confirmDelete}>
-                Yes, Delete
+              <button className="btn bgTheme text-white" onClick={confirmDelete}>
+                Continue
               </button>
               <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>
                 Cancel
