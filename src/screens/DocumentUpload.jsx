@@ -305,6 +305,7 @@ export const DocumentUpload = () => {
   }, [yearLevelID]);
 
   return (
+    <div className="min-h-screen p-5 bg-gray-50">
    
     <form
       onSubmit={handleSubmit}
@@ -616,5 +617,6 @@ export const DocumentUpload = () => {
         )}
       </div>
     </form>
+    </div>
   );
 };

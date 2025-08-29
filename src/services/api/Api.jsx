@@ -325,6 +325,24 @@ export const fetchSubAssignments = async () => {
   return response.data;
 };
 
+// fetch Allocated Classes
+export const fetchAllocatedClasses = async (token) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch allocated classes:", error);
+    throw error;
+  }
+};
+
 // DASHBOARD
 
 // Director Dashboard
@@ -476,7 +494,7 @@ export const fetchAdmissionDetailsById = async (id) => {
 // fetch View upload documents api
 export const fetchViewDocuments = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/Document/`);
+    const response = await axios.get(`${BASE_URL}/d/Document/`)
     return response.data;
   } catch (err) {
     console.error("Failed to load upload data details:", err);
@@ -879,6 +897,7 @@ export const handleAdmissionForm = async (formData) => {
     if (response.status === 200 || response.status === 201) {
       // alert("successfully submitted the form");
     }
+
 
     return response.data;
   } catch (err) {
