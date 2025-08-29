@@ -122,66 +122,66 @@ const FeeSummaryTable = () => {
               Fee Dashboard
             </Link>
           </div>
-
-
-
         </div>
-
         {/* Filter Section */}
-        <div className="w-full max-w-5xl mx-auto">
-          <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-            {/* Month Filter */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Filter by Month:
-              </label>
-              <select
-                className="border rounded px-3 py-2 text-sm"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-              >
-                <option value="">All Months</option>
-                {[
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                  "July",
-                  "August",
-                  "September",
-                  "October",
-                  "November",
-                  "December",
-                ].map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+        <div className="w-full px-5"> {/* px-5 thoda padding left/right ke liye */}
+          <div className="flex justify-between items-end mb-6 w-full">
+
+            {/* Left Side: Filters + Reset */}
+            <div className="flex flex-wrap items-end gap-4">
+              {/* Month Filter */}
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Filter by Month:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                >
+                  <option value="">All Months</option>
+                  {[
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December",
+                  ].map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Class Filter */}
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Filter by Class:
+                </label>
+                <select
+                  className="border rounded px-3 py-2 text-sm"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Reset Button */}
+              <div className="mt-1">
+                <button
+                  onClick={resetFilters}
+                  className="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded"
+                >
+                  Reset Filters
+                </button>
+              </div>
             </div>
 
-            {/* Class Filter */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Filter by Class:
-              </label>
-              <select
-                className="border rounded px-3 py-2 text-sm"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-              >
-                <option value="">All Classes</option>
-                {yearLevels.map((level) => (
-                  <option key={level.id} value={level.id}>
-                    {level.level_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Search Filter */}
+            {/* Right Side: Search */}
             <div className="flex flex-col">
               <label className="text-sm font-medium text-gray-700 mb-1">
                 Search Student by Name:
@@ -194,20 +194,8 @@ const FeeSummaryTable = () => {
                 className="border rounded px-3 py-2 text-sm w-64 focus:outline-none"
               />
             </div>
-
-            {/* Reset Button */}
-            <div className="mt-1">
-              <button
-                onClick={resetFilters}
-                className="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded"
-              >
-                Reset Filters
-              </button>
-            </div>
           </div>
-
         </div>
-
         {/* Table Section */}
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
