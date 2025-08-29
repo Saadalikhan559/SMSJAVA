@@ -34,7 +34,7 @@ export const DocumentUpload = () => {
     { files: null, document_types: "", identities: "" },
   ]);
 
-  const [identityErrors, setIdentityErrors] = useState([]); // ✅ NEW STATE
+  const [identityErrors, setIdentityErrors] = useState([]); 
 
   const [formData, setFormData] = useState({
     student: "",
@@ -585,7 +585,7 @@ export const DocumentUpload = () => {
           onClick={prev}
           disabled={step === 0}
           // className="btn btn-primry w-40"
-          className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
+          className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:+blue-700 w-40"
     
         >
           Back

@@ -58,56 +58,63 @@ const AllStaff = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      {error && (
-        <div className="text-red-600 text-center mb-4 font-medium">{error}</div>
-      )}
-
-      {/* tab */}
-
       <div className="flex justify-center border-b mb-6">
         <button
           onClick={() => setActiveTab("teachers")}
-          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
-            ? "border-[#5E35B1] textTheme"
-            : "border-transparent text-gray-600 hover:text-[#5E35B1]"
-            }`}
+          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
+            activeTab === "teachers"
+              ? "border-[#5E35B1] textTheme"
+              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+          }`}
         >
           <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
         </button>
         <button
           onClick={() => setActiveTab("staff")}
-          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
-            ? "border-[#5E35B1] textTheme"
-            : "border-transparent text-gray-600 hover:text-[#5E35B1]"
-            }`}
+          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
+            activeTab === "staff"
+              ? "border-[#5E35B1] textTheme"
+              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+          }`}
         >
           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
         </button>
       </div>
 
-      {/* Content */}
       <div className="bg-white p-6 rounded-lg shadow-lg">
         {activeTab === "teachers" && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                Teachers
-              </h2><br />
+              <h2 className="text-2xl font-semibold text-gray-800">Teachers</h2>
+              <br />
               <input
                 type="text"
                 placeholder="Search Teacher Name"
                 value={teacherSearch}
                 onChange={(e) => setTeacherSearch(e.target.value)}
                 className="input input-bordered w-full sm:max-w-xs focus:outline-none"
-
               />
             </div>
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
@@ -153,16 +160,14 @@ const AllStaff = () => {
         {activeTab === "staff" && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                Office Staff
-              </h2><br />
+              <h2 className="text-2xl font-semibold text-gray-800">Office Staff</h2>
+              <br />
               <input
                 type="text"
                 placeholder="Search Staff Member Name"
                 value={staffSearch}
                 onChange={(e) => setStaffSearch(e.target.value)}
                 className="input input-bordered w-full sm:max-w-xs focus:outline-none"
-
               />
             </div>
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">

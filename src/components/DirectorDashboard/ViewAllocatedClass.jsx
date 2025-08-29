@@ -3,7 +3,7 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import { AuthContext } from "../../context/AuthContext";
 
-import { fetchAllocatedClasses } from "../../services/api/Api";
+// import { fetchAllocatedClasses } from "../../services/api/Api";
 
 const ViewAllocatedClass = () => {
   const { authTokens } = useContext(AuthContext);
@@ -12,24 +12,24 @@ const ViewAllocatedClass = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const loadClasses = async () => {
-      try {
-        const data = await fetchAllocatedClasses(authTokens.access);
-        setAllocatedClasses(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //   const loadClasses = async () => {
+  //     try {
+  //       const data = await fetchAllocatedClasses(authTokens.access);
+  //       setAllocatedClasses(data);
+  //     }  catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
 
-    if (authTokens?.access) {
-      loadClasses();
-    }
-  }, [authTokens]);
+  //   if (authTokens?.access) {
+  //     loadClasses();
+  //   }
+  // }, [authTokens]);
 
   const filteredClasses = allocatedClasses.filter(
     (classItem) =>

@@ -37,13 +37,25 @@ export const SubjectAssignments = () => {
   const subjectRef = useRef(null);
   const periodRef = useRef(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+    const [error, setErrorState] = useState(false); 
+
 
   useEffect(() => {
-    fetchTeachers().then(setTeachers);
-    fetchYearLevels().then(setYearLevel);
-    fetchSubjects().then(setSubjects);
-    fetchPeriods().then(setPeriods);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        await fetchTeachers().then(setTeachers);
+        await fetchYearLevels().then(setYearLevel);
+        await fetchSubjects().then(setSubjects);
+        await fetchPeriods().then(setPeriods);
+      } catch (err) {
+        setErrorState(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -136,7 +148,27 @@ export const SubjectAssignments = () => {
   const handleNavigate = () => {
     navigate(allRouterLink.allTeacherAssignment);
   };
+if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen p-5 bg-gray-50">
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">

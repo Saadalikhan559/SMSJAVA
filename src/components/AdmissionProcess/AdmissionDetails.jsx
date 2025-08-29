@@ -7,42 +7,59 @@ export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
+  const [error, setError] = useState(false);
 
   const getAdmissionDetails = async () => {
     try {
       const data = await fetchAdmissionDetails();
       setDetails(data);
-      setStudentFirstName(data.student_input.first_name);
       setLoading(false);
     } catch (error) {
-      console.log("failed to fetch teacher dashboard data", error);
+      console.log("failed to fetch admission details", error);
+      setError(true);
       setLoading(false);
     }
   };
 
-
   useEffect(() => {
     getAdmissionDetails();
   }, []);
+
   
   if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
-
-  if (!details) {
-    return <div className="p-4 text-center">Failed to load data</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
   }
 
-    const filterData =  details.filter((detail) =>
+ 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
+
+  if (!details) {
+    return <div className="p-4 text-center">No admission records found</div>;
+  }
+
+  const filterData = details.filter((detail) =>
     detail.student_input.first_name
       .toLowerCase()
       .includes(searchInput.toLowerCase())
   );
-
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -56,8 +73,8 @@ export const AdmissionDetails = () => {
             type="text"
             placeholder="Search Student Name..."
             className="input input-bordered w-full sm:max-w-xs focus:outline-none"
-            value = {searchInput}
-            onChange={(e)=>setSearchInput(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
 
@@ -70,46 +87,25 @@ export const AdmissionDetails = () => {
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bgTheme text-white">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Student Name
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Parent/Guardian
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Date of Birth
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Gender
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Class
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Admission Date
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Actions
                       </th>
                     </tr>

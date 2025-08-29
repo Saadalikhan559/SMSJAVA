@@ -133,10 +133,6 @@ export const CreateSalaryExpense = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen p-5 bg-gray-50">
-=======
->>>>>>> 4071bfc78523fa82faa677e98791b4033e866dde
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">
         Create Salary
@@ -311,6 +307,6 @@ export const CreateSalaryExpense = () => {
         </div>
       </form>
     </div>
-    </div>
+    
   );
 };

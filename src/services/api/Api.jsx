@@ -1097,3 +1097,24 @@ export const assignSubstitute = async (payload) => {
     throw error;
   }
 };
+
+
+ export const fetchTeacherYearLevel = async () => {
+  try {
+    const token = localStorage.getItem("access_token"); // get token from storage
+    if (!token) throw new Error("No token found");
+
+    const response = await axios.get(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching teacher year level:", error);
+    return []; // 
+  }
+};

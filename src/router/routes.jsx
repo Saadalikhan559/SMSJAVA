@@ -202,7 +202,7 @@ export const routes = [
   },
   {
     path: allRouterLink.viewDocuments,
-    element: <ViewDocuments />,
+    element: <ViewDocuments/>,
     protected: true,
     allowedRoles: [
       constants.roles.director,
