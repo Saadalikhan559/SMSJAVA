@@ -602,6 +602,23 @@ export const fetchSalaryExpense = async (accessToken) => {
   }
 };
 
+export const fetchSalaryExpenseById = async (accessToken, id) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
+
 export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
   const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
 
@@ -1051,6 +1068,23 @@ export const fetchCalendar = async (month, year) => {
   }
 };
 
+export const fetchAllocatedClasses = async (token) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch allocated classes:", error);
+    throw error;
+  }
+};
+
 export const importHolidays = async (year) => {
   try {
     const response = await axios.post(
@@ -1139,5 +1173,52 @@ export const assignSubstitute = async (payload) => {
       error.response?.data || error
     );
     throw error;
+  }
+
+
+};
+
+export const fetchTeacherYearLevel = async (teacherId) => {
+  try {
+    const accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(`${BASE_URL}/t/teacheryearlevel/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        teacher: teacherId, // optional filter if backend supports
+      },
+    });
+    return response.data; // ye array of assigned classes return karega
+  } catch (err) {
+    console.error("Failed to fetch teacher year levels:", err);
+    throw err;
+  }
+};
+
+
+// EDIT API
+
+
+export const editSalary = async (accessToken, payload, id) => {
+  try {
+    const response = await axios.put(
+      `${constants.baseUrl}/d/Employee/${id}/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (response.status == 200 || response.status == 201) {
+      alert("Successfully edit a salary");
+      return response.data;
+    }
+  } catch (err) {
+    console.error("Failed to create Employee:", err);
+    throw err;
   }
 };
