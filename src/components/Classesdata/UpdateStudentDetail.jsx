@@ -105,56 +105,65 @@ const UpdateStudentDetail = () => {
     "mother_name",
   ];
 
-  return (<>
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
-        <h1 className="text-3xl font-bold mb-8 text-center">
-          <i className="fa-solid fa-pen-to-square mr-2"></i> Update Student Details
-        </h1>
+  return (
+  <>
+  <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow">
+      <h1 className="text-3xl font-bold mb-8 text-center">
+        <i className="fa-solid fa-pen-to-square mr-2"></i> Update Student Details
+      </h1>
 
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          encType="multipart/form-data"
-        >
-          {fields.map((field) => (
-            <input
-              key={field}
-              type={field === "email" ? "email" : field === "date_of_birth" ? "date" : "text"}
-              name={field}
-              value={formData[field] || ""}
-              onChange={handleChange}
-              placeholder={field.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-              className="input input-bordered focus:outline-none"
-            />
-          ))}
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        encType="multipart/form-data"
+      >
+        {fields.map((field) => (
+          <input
+            key={field}
+            type={
+              field === "email"
+                ? "email"
+                : field === "date_of_birth"
+                ? "date"
+                : "text"
+            }
+            name={field}
+            value={formData[field] || ""}
+            onChange={handleChange}
+            placeholder={field
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase())}
+            className="input input-bordered w-full focus:outline-none"
+          />
+        ))}
 
-          <div className="md:col-span-2">
-            <label className="block mb-2 font-medium">Upload Profile Picture</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="file-input file-input-bordered w-full focus:outline-none"
-            />
-          </div>
+        <div className="md:col-span-2 lg:col-span-3">
+          <label className="block mb-2 font-medium">Upload Profile Picture</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="file-input file-input-bordered w-full focus:outline-none"
+          />
+        </div>
 
-          <div className="col-span-2 text-center mt-6">
-            <button type="submit" className="btn bgTheme text-white">
-              <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center mt-6">
+          <button type="submit" className="btn bgTheme text-white">
+            <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
+          </button>
+        </div>
+      </form>
     </div>
-    {UpdateModal && (
-      <UpdateSuccessful
-        handleCloseOnly={() => setUpdateModal(false)}
-        handleCloseAndNavigate={() => navigate(`/studentDetails/${id}`)}
-      />
-    )}
+  </div>
 
-  </>
+  {UpdateModal && (
+    <UpdateSuccessful
+      handleCloseOnly={() => setUpdateModal(false)}
+      handleCloseAndNavigate={() => navigate(`/studentDetails/${id}`)}
+    />
+  )}
+</>
   );
 };
 

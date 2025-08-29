@@ -182,16 +182,16 @@ export const ViewDocuments = () => {
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
                     {userRole !== "student" && selectedRole === "Student" && <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>}
                     {allDocTypes.map(type => (
-                      <th key={type} className="px-4 py-3 text-left text-sm font-semibold text-nowrap">{type}</th>
+                      <th key={type} className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize">{type}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
+                <tbody className=" divide-gray-200 bg-white">
                   {filteredData.map((person, idx) => (
                     <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-700">{person.name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{person.role}</td>
-                      {userRole !== "student" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700">{person.yearLevel || "-"}</td>}
+                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.role}</td>
+                      {userRole !== "student" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.yearLevel || "-"}</td>}
                       {allDocTypes.map(type => (
                         <td key={type} className="px-4 py-3 text-sm text-blue-700">
                           {person.docs[type] ? person.docs[type].map((url, i) => (

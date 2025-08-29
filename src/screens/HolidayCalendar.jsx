@@ -20,6 +20,12 @@ function HolidayCalendar() {
     description: ""
   });
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+const [userRole, setUserRole] = useState(null);
+
+ useEffect(() => {
+    const role = localStorage.getItem("userRole"); // ya API call
+    setUserRole(role);
+  }, []);
 
   const getCalendar = async () => {
     try {
@@ -340,13 +346,13 @@ function HolidayCalendar() {
                     <button
                       onClick={handleImportHolidays}
                       disabled={isImporting}
-                      className={`px-4 py-2 rounded-md text-sm font-medium text-white ${
+                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${
                         isImporting
                           ? "bgTheme cursor-not-allowed"
                           : "bgTheme hover:bg-[#4e1bb3]"
                       }`}
                     >
-                      {isImporting ? "Importing..." : "Import"}
+                      {isImporting ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Import"}
                     </button>
                   </div>
                 </div>
@@ -486,13 +492,13 @@ function HolidayCalendar() {
                     <button
                       onClick={handleCreateEvent}
                       disabled={isCreatingEvent}
-                      className={`px-4 py-2 rounded-md text-sm font-medium text-white ${
+                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${
                         isCreatingEvent
                           ? "bgTheme cursor-not-allowed"
                           : "bgTheme hover:bg-[#4410ad]"
                       }`}
                     >
-                      {isCreatingEvent ? "Creating..." : "Create Event"}
+                      {isCreatingEvent ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Create Event"}
                     </button>
                   </div>
                 </div>
@@ -703,6 +709,7 @@ function HolidayCalendar() {
               </div>
             </div>
           </div>
+{(userRole === "office staff" || userRole === "director") && (
           <div className="flex justify-end m-4 space-x-4">
             <button
               onClick={() => setIsEventDialogOpen(true)}
@@ -743,6 +750,7 @@ function HolidayCalendar() {
               <span>Import Holidays</span>
             </button>
           </div>
+)}
         </div>
       </div>
     </div>

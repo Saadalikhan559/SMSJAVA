@@ -43,7 +43,7 @@ const ViewAllocatedClass = () => {
 
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
-            Allocated Classes <i className="fa-solid fa-landmark"></i>
+           <i className="fa-solid fa-landmark"></i> Allocated Classes 
           </h2>
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
