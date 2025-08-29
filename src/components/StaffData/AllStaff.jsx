@@ -127,7 +127,7 @@ const AllStaff = () => {
               <tbody>
                 {filteredTeachers.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>
@@ -137,7 +137,7 @@ const AllStaff = () => {
                       key={record.id || index}
                       className="hover:bg-gray-50 text-center"
                     >
-                      <td className="px-4 py-3 textTheme">{index + 1}.</td>
+                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/teacher/${record.id}`}
@@ -180,7 +180,7 @@ const AllStaff = () => {
               <tbody>
                 {filteredOfficeStaff.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>
@@ -190,7 +190,7 @@ const AllStaff = () => {
                       key={record.id || index}
                       className="hover:bg-gray-50 text-center"
                     >
-                      <td className="px-4 py-3 textTheme">{index + 1}.</td>
+                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/office/${record.id}`}

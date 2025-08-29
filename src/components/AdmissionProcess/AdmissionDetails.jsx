@@ -65,9 +65,9 @@ export const AdmissionDetails = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
         {/* Search Input */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-2 gap-4">
-          <h2 className="text-3xl font-semibold text-gray-800">
-            Admission Details
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-3">
+           <i className="fa-solid fa-clipboard-list w-5"></i>  Admission Details
           </h2>
           <input
             type="text"
@@ -110,7 +110,7 @@ export const AdmissionDetails = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 bg-white">
+                  <tbody className=" divide-gray-200 bg-white">
                     {filterData.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50">
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">

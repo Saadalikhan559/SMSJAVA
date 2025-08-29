@@ -75,7 +75,7 @@ const PeriodAssignment = () => {
         </div>
 
         {assignedPeriods.length === 0 ? (
-          <div className="text-center text-gray-600 py-10">
+          <div className="text-center text-red-600 py-10">
             No periods assigned for this year level.
           </div>
         ) : (
@@ -92,7 +92,7 @@ const PeriodAssignment = () => {
               </thead>
               <tbody>
                 {assignedPeriods.map((period, index) => (
-                  <tr key={index} className="hover:bg-blue-50 border-t text-left">
+                  <tr key={index} className="hover:bg-gray-50  text-left">
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3">{period.subject}</td>
                     <td className="px-4 py-3">{period.teacher}</td>

@@ -305,6 +305,7 @@ export const DocumentUpload = () => {
   }, [yearLevelID]);
 
   return (
+    <div className="min-h-screen p-5 bg-gray-50">
    
     <form
       onSubmit={handleSubmit}
@@ -449,7 +450,7 @@ export const DocumentUpload = () => {
   {index === 0 ? (
     <button
       type="button"
-      className="btn btn-primary w-full"
+      className="btn bgTheme text-white w-full"
       onClick={handleAddField}
     >
       <i className="fa-solid fa-plus mr-1"></i> Add
@@ -604,7 +605,7 @@ export const DocumentUpload = () => {
             Next
           </button>
         ) : (
-          <button type="submit" className="btn btn-primary w-40">
+          <button type="submit" className="btn bgTheme text-white w-40">
             {loading ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
             ) : (
@@ -615,5 +616,6 @@ export const DocumentUpload = () => {
         )}
       </div>
     </form>
+    </div>
   );
 };

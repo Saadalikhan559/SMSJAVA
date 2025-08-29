@@ -325,6 +325,24 @@ export const fetchSubAssignments = async () => {
   return response.data;
 };
 
+// fetch Allocated Classes
+export const fetchAllocatedClasses = async (token) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch allocated classes:", error);
+    throw error;
+  }
+};
+
 // DASHBOARD
 
 // Director Dashboard
@@ -476,7 +494,7 @@ export const fetchAdmissionDetailsById = async (id) => {
 // fetch View upload documents api
 export const fetchViewDocuments = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/Document/`);
+    const response = await axios.get(`${BASE_URL}/d/Document/`)
     return response.data;
   } catch (err) {
     console.error("Failed to load upload data details:", err);
@@ -571,6 +589,23 @@ export const fetchSalaryExpense = async (accessToken) => {
   try {
     const response = await axios.get(
       `${constants.baseUrl}/d/Employee/get_emp/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
+
+export const fetchSalaryExpenseById = async (accessToken, id) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -783,6 +818,31 @@ export const fetchUnpaidFees = async ({
   }
 };
 
+export const fetchTeacherYearLevel = async () => {
+  try {
+    const tokens = localStorage.getItem("authTokens");
+    const accessToken = tokens ? JSON.parse(tokens).access : null;
+
+    if (!accessToken) {
+      throw new Error("No access token found for teacher. Please login again.");
+    }
+
+    const response = await axios.get(                                                              
+      `${BASE_URL}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching teacher year level:", error);
+    throw error;
+  }
+};
+
 // Fetch all discounts
 export const fetchDiscounts = async (accessToken) => {
   try {
@@ -879,6 +939,7 @@ export const handleAdmissionForm = async (formData) => {
     if (response.status === 200 || response.status === 201) {
       // alert("successfully submitted the form");
     }
+
 
     return response.data;
   } catch (err) {
@@ -1007,6 +1068,23 @@ export const fetchCalendar = async (month, year) => {
   }
 };
 
+export const fetchAllocatedClasses = async (token) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch allocated classes:", error);
+    throw error;
+  }
+};
+
 export const importHolidays = async (year) => {
   try {
     const response = await axios.post(
@@ -1095,6 +1173,53 @@ export const assignSubstitute = async (payload) => {
       error.response?.data || error
     );
     throw error;
+  }
+
+
+};
+
+export const fetchTeacherYearLevel = async (teacherId) => {
+  try {
+    const accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(`${BASE_URL}/t/teacheryearlevel/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        teacher: teacherId, // optional filter if backend supports
+      },
+    });
+    return response.data; // ye array of assigned classes return karega
+  } catch (err) {
+    console.error("Failed to fetch teacher year levels:", err);
+    throw err;
+  }
+};
+
+
+// EDIT API
+
+
+export const editSalary = async (accessToken, payload, id) => {
+  try {
+    const response = await axios.put(
+      `${constants.baseUrl}/d/Employee/${id}/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (response.status == 200 || response.status == 201) {
+      alert("Successfully edit a salary");
+      return response.data;
+    }
+  } catch (err) {
+    console.error("Failed to create Employee:", err);
+    throw err;
   }
 };
 

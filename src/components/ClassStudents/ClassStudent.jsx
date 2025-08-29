@@ -196,7 +196,7 @@ export const ClassStudent = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl font-medium">
+              <thead className="bgTheme text-white">
                 <tr>
                   <th className="px-4 py-3 text-left">Select</th>
                   <th className="px-4 py-3 text-left">Student Name</th>
