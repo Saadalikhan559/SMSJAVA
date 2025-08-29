@@ -1,18 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { fetchSalaryExpense } from "../../../services/api/Api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
+import { constants } from "../../../global/constants";
+import axios from "axios";
 
 export const ViewSalaryExpense = () => {
+  const navigation = useNavigate();
   const [schoolExpense, setSchoolExpense] = useState([]);
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
+  const [apiError, setApiError] = useState("");
 
   const getSchoolExpense = async () => {
     try {
       const response = await fetchSalaryExpense(access);
       setSchoolExpense(response);
     } catch (error) {
-      console.log("Cannot get the school salary expense", error.meesage);
+      console.log("Cannot get the school salary expense", error.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        `${constants.baseUrl}/d/Employee/get_emp/${id}`
+      );
+      if (response.status === 200) {
+        alert("successfully deleted");
+      }
+    } catch (err) {
+      if (err.response.data) {
+        setApiError(err.response.data.error);
+      } else {
+        setApiError("Something Went Wrong. Try again");
+      }
     }
   };
 
@@ -27,6 +48,15 @@ export const ViewSalaryExpense = () => {
           <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
         </h2>
 
+        {/* Display API error message */}
+        {apiError && (
+          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
+            <div className="flex items-center text-error">
+              <i className="fa-solid fa-circle-exclamation mr-2"></i>
+              <span className="font-medium">{apiError}</span>
+            </div>
+          </div>
+        )}
         {/* Table */}
         <div className="w-full overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -79,7 +109,7 @@ export const ViewSalaryExpense = () => {
                               Edit
                             </Link>
                             <Link
-                              to="#"
+                              onClick={() => handleDelete(expense.id)}
                               className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
                               Delete
