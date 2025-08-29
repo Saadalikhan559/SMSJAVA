@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { constants } from "../../global/constants";
 import { AuthContext } from "../../context/AuthContext";
+
 import { fetchAllocatedClasses } from "../../services/api/Api";
 
 const ViewAllocatedClass = () => {
@@ -10,6 +13,7 @@ const ViewAllocatedClass = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     const loadClasses = async () => {
       try {
         const data = await fetchAllocatedClasses(authTokens.access);
@@ -20,6 +24,7 @@ const ViewAllocatedClass = () => {
         setLoading(false);
       }
     };
+
 
     if (authTokens?.access) {
       loadClasses();
@@ -35,9 +40,10 @@ const ViewAllocatedClass = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
-            Allocated Classes <i className="fa-solid fa-landmark"></i>
+           <i className="fa-solid fa-landmark"></i> Allocated Classes 
           </h2>
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -64,7 +70,6 @@ const ViewAllocatedClass = () => {
         </div>
 
         {/* Table */}
-
 
         <div className="w-full overflow-x-auto">
           <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
@@ -94,6 +99,7 @@ const ViewAllocatedClass = () => {
                       {classItem.year_level_name}
                     </td>
                   </tr>
+
                 ))
               ) : (
                 <tr>

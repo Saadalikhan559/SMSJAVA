@@ -65,7 +65,7 @@ const AllStaff = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 bg-gray-50 ">
       {error && (
         <div className="text-red-600 text-center mb-4 font-medium">{error}</div>
       )}
@@ -76,8 +76,8 @@ const AllStaff = () => {
         <button
           onClick={() => setActiveTab("teachers")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
-              ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+            ? "border-[#5E35B1] textTheme"
+            : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
         >
           <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
@@ -85,8 +85,8 @@ const AllStaff = () => {
         <button
           onClick={() => setActiveTab("staff")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
-                ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+            ? "border-[#5E35B1] textTheme"
+            : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
         >
           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
@@ -97,16 +97,19 @@ const AllStaff = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg">
         {activeTab === "teachers" && (
           <>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                Teachers
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+
+                <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
               </h2><br />
               <input
                 type="text"
                 placeholder="Search Teacher Name"
                 value={teacherSearch}
                 onChange={(e) => setTeacherSearch(e.target.value)}
-                className="input input-bordered w-full sm:max-w-xs focus:outline-none"
+                className="border px-3 py-2 rounded w-full sm:w-64"
+
 
               />
             </div>
@@ -120,7 +123,7 @@ const AllStaff = () => {
               <tbody>
                 {filteredTeachers.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>
@@ -130,7 +133,7 @@ const AllStaff = () => {
                       key={record.id || index}
                       className="hover:bg-gray-50 text-center"
                     >
-                      <td className="px-4 py-3 textTheme">{index + 1}.</td>
+                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/teacher/${record.id}`}
@@ -152,16 +155,19 @@ const AllStaff = () => {
 
         {activeTab === "staff" && (
           <>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                Office Staff
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+
+                <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
               </h2><br />
               <input
                 type="text"
                 placeholder="Search Staff Member Name"
                 value={staffSearch}
                 onChange={(e) => setStaffSearch(e.target.value)}
-                className="input input-bordered w-full sm:max-w-xs focus:outline-none"
+                className="border px-3 py-2 rounded w-full sm:w-64"
+
 
               />
             </div>
@@ -175,7 +181,7 @@ const AllStaff = () => {
               <tbody>
                 {filteredOfficeStaff.length === 0 ? (
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                    <td colSpan="2" className="text-center py-6 text-red-600">
                       No data found.
                     </td>
                   </tr>
@@ -185,7 +191,7 @@ const AllStaff = () => {
                       key={record.id || index}
                       className="hover:bg-gray-50 text-center"
                     >
-                      <td className="px-4 py-3 textTheme">{index + 1}.</td>
+                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
                       <td className="px-4 py-3">
                         <Link
                           to={`/staffDetail/office/${record.id}`}

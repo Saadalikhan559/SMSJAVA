@@ -768,7 +768,7 @@ export const fetchUnpaidFees = async ({
       if (month) params.month = month;
     } else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
-      if (student_id) params.student_id = student_id; // sirf student role ke liye
+      if (student_id) params.student_id = student_id; 
     } else {
       throw new Error("Invalid role provided");
     }
@@ -797,6 +797,31 @@ export const fetchUnpaidFees = async ({
     return data;
   } catch (error) {
     console.error("Error fetching unpaid fees:", error);
+    throw error;
+  }
+};
+
+export const fetchTeacherYearLevel = async () => {
+  try {
+    const tokens = localStorage.getItem("authTokens");
+    const accessToken = tokens ? JSON.parse(tokens).access : null;
+
+    if (!accessToken) {
+      throw new Error("No access token found for teacher. Please login again.");
+    }
+
+    const response = await axios.get(                                                              
+      `${BASE_URL}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching teacher year level:", error);
     throw error;
   }
 };

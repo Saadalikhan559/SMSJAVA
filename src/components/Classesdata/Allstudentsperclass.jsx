@@ -46,24 +46,27 @@ const AllStudentsPerClass = () => {
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          <i className="fa-solid fa-graduation-cap mr-2"></i> Students in {levelName}
-        </h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
 
-        {error && (
-          <div className="text-red-600 text-center mb-4 font-medium">
-            {error}
-          </div>
-        )}
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+            <i className="fa-solid fa-graduation-cap mr-2"></i> Students in {levelName}
+          </h2>
 
-        <div className="mb-4">
+          {error && (
+            <div className="text-red-600 text-center mb-4 font-medium">
+              {error}
+            </div>
+          )}
+
+
           <input
             type="text"
             placeholder="Search Student Name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+            className="border px-3 py-2 rounded w-full sm:w-64"
           />
+
         </div>
 
         <div className="overflow-x-auto">
@@ -84,7 +87,7 @@ const AllStudentsPerClass = () => {
               ) : (
                 filteredStudents.map((record, index) => (
                   <tr key={record.id || index} className="hover:bg-gray-50 textTheme text-center">
-                    <td className="px-4 py-3">{index + 1}.</td>
+                    <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
                     <td className="px-4 py-3">
                       <Link
                         to={`/Studentdetails/${record.student_id}`}

@@ -10,7 +10,7 @@ import {
   handleAdmissionForm,
 } from "../../services/api/Api";
 import { constants } from "../../global/constants";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import AdmissionSuccessful from "../Modals/AdmissionSuccessful";
 
 export const AdmissionForm = () => {
@@ -91,7 +91,7 @@ export const AdmissionForm = () => {
         ifsc_code: "",
         holder_name: "",
       },
-      guardian_type_input: null,
+      guardian_type: null,
       year_level: "",
       school_year: "",
       previous_school_name: "",
@@ -109,9 +109,9 @@ export const AdmissionForm = () => {
   const handleShowPassword = () => setShowPassword(!showPassword);
   const handleShowGuardianPassword = () =>
     setShowGuardianPassword(!showGuardianPassword);
-  const handleGuardianTypeChange = (e) => {
+  const handleGuardianTypesChange = (e) => {
     setSelectedGuardianType(e.target.value);
-    setValue("guardian_type_input", e.target.value);
+    setValue("guardian_type", e.target.value);
   };
 
   const handleRTECheckboxChange = (e) => {
@@ -248,13 +248,7 @@ export const AdmissionForm = () => {
     navigate("/addmissionDetails");
   };
 
-  // Autofill/Fake filler sync
-  useEffect(() => {
-    const genderSelect = document.querySelector("select[name='student.gender']");
-    if (genderSelect && genderSelect.value) {
-      setValue("student.gender", genderSelect.value, { shouldValidate: true });
-    }
-  }, [setValue]);
+
 
   return (
     <>
@@ -882,7 +876,7 @@ export const AdmissionForm = () => {
                 className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type ? "select-error" : ""
                   }`}
                 value={selectedGuardianType}
-                onChange={handleGuardianTypeChange}
+                onChange={handleGuardianTypesChange}
               >
                 <option value="">Select Guardian Type</option>
                 {guardianTypes.map((guardianTy) => (

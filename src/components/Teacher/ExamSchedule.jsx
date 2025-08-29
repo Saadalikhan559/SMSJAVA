@@ -179,7 +179,8 @@ const ExamSchedule = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
       <button
         className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
         onClick={handleNavigate}
@@ -458,7 +459,7 @@ const ExamSchedule = () => {
           <div className="mt-4">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn bgTheme text-white"
               onClick={() =>
                 append({
                   subject_id: "",
@@ -477,7 +478,7 @@ const ExamSchedule = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-52"
+            className="btn bgTheme text-white w-52"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
@@ -485,10 +486,11 @@ const ExamSchedule = () => {
             ) : (
               <i className="fa-solid fa-calendar-plus ml-2" />
             )}
-            {isSubmitting ? "Processing..." : "Create Schedule"}
+            {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Create Schedule"}
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };
