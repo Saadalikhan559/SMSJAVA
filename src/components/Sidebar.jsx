@@ -238,7 +238,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-clock w-5"></i> Assign
+                            <i className="fa-solid fa-clock w-5"></i> Assigned
                             Periods
                           </Link>
                         </li>

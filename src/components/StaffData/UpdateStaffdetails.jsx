@@ -163,7 +163,7 @@ const UpdateStaffDetails = () => {
                 />
               </div>
               <div className="col-span-2 text-center mt-6">
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn bgTheme text-white">
                   <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
                 </button>
               </div>

@@ -39,7 +39,7 @@ const PeriodAssignment = () => {
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-gray-800">
             <i className="fa-solid fa-table-list mr-2"></i>
@@ -47,7 +47,7 @@ const PeriodAssignment = () => {
           </h1>
           <button
             onClick={() => navigate(-1)}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow-sm"
+            className="bg-gray-200 hover:bg-gray-300  px-4 py-2 rounded shadow-sm bgTheme text-white"
           >
             ← Back
           </button>

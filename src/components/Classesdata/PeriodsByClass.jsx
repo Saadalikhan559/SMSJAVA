@@ -34,7 +34,7 @@ if (loading) {
     }
     return (
         <div className="min-h-screen p-5 bg-gray-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen-md mx-auto">
+            <div className="bg-white p-6 max-w-7xl rounded-lg shadow-lg  mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
                     <i className="fa-solid fa-graduation-cap mr-2"></i> Periods By Class
                 </h1>
@@ -62,7 +62,7 @@ if (loading) {
                                 </tr>
                             ) : (
                                 yearLevels.map((record, index) => (
-                                    <tr key={record.id || index} className="hover:bg-blue-50 text-center textTheme">
+                                    <tr key={record.id || index} className="hover:bg-gray-50 text-center textTheme">
                                         <td className="px-4 py-3">{index + 1}.</td>
                                         <td className="px-4 py-3">
                                             <Link

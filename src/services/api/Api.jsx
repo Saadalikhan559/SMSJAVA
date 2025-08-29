@@ -767,7 +767,7 @@ export const fetchUnpaidFees = async ({
       if (month) params.month = month;
     } else if (role === constants.roles.student) {
       endpoint = `${BASE_URL}/d/fee-record/student_unpaid_fees/`;
-      if (student_id) params.student_id = student_id; // sirf student role ke liye
+      if (student_id) params.student_id = student_id; 
     } else {
       throw new Error("Invalid role provided");
     }
@@ -859,6 +859,8 @@ export const updateDiscount = async (accessToken, id, payload) => {
     throw err;
   }
 };
+
+
 
 // POST APIS
 
@@ -1019,6 +1021,23 @@ export const fetchCalendar = async (month, year) => {
   } catch (err) {
     console.error("Failed to fetch calendar:", err);
     throw err;
+  }
+};
+
+export const fetchAllocatedClasses = async (token) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch allocated classes:", error);
+    throw error;
   }
 };
 
