@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
+// import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
+import { fetchViewDocuments } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 
@@ -72,7 +73,7 @@ export const ViewDocuments = () => {
     doc.document_types_read.forEach(dt => {
       const type = dt.name.toLowerCase();
       grouped[key].docs[type] = doc.files.map(file =>
-        file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
+        file.file.replace("http://localhost:7000", `${constants.baseUrl}`)
       );
     });
   });
@@ -119,7 +120,7 @@ export const ViewDocuments = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+      <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
           <i className="fa-solid fa-folder-open"></i> Uploaded Documents
         </h2>
@@ -151,7 +152,7 @@ export const ViewDocuments = () => {
                   setSelectedRole(e.target.value);
                   setSelectedClass("All");
                 }}
-                className="border p-2 rounded"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="All">Select Role</option>
                 <option value="Student">Student</option>

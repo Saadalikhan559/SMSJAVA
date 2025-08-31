@@ -308,7 +308,7 @@ export const DocumentUpload = () => {
    
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+      className="w-full max-w-7xl  mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
     >
       <ul className="steps mb-6 w-full">
         <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>

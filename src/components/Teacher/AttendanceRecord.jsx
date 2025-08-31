@@ -67,6 +67,8 @@ const AttendanceRecord = () => {
 
   return (
     <>
+    <div className="min-h-screen p-5 bg-gray-50">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
       <span className='font-bold text-2xl flex pt-5 justify-center gap-1'>
         <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
       </span>
@@ -78,7 +80,7 @@ const AttendanceRecord = () => {
           onChange={(e) => setSelectedDate(e.target.value)}
           className="input input-bordered focus:outline-none"
         />
-        <button onClick={handleReset} className="btn" disabled={!selectedDate}>
+        <button onClick={handleReset} className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto" disabled={!selectedDate}>
           Reset
         </button>
       </div>
@@ -97,6 +99,8 @@ const AttendanceRecord = () => {
           height={500}
           width={1200}
         />
+      </div>
+      </div>
       </div>
     </>
   );

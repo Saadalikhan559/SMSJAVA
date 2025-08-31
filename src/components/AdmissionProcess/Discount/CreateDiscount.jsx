@@ -146,7 +146,8 @@ const CreateDiscount = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">
         Create Discount
         <i className="fa-solid fa-percentage ml-2"></i>
@@ -163,7 +164,7 @@ const CreateDiscount = () => {
                 </span>
               </label>
               <select
-                className="select select-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="select select-bordered w-full focus:outline-none"
                 value={classId}
                 onChange={(e) => setClassId(e.target.value)}
               >
@@ -185,7 +186,7 @@ const CreateDiscount = () => {
                 </span>
               </label>
               <select
-                className="select w-full select-bordered focus:outline-none focus:ring-2 focus:ring-primary"
+                className="select select-bordered w-full focus:outline-none"
                 disabled={!classId}
                 value={formData.student_id}
                 onChange={(e) => handleChange("student_id", e.target.value)}
@@ -218,7 +219,7 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="select select-bordered w-full focus:outline-none"
                 placeholder="e.g. 100.00"
                 min={0}
                 name="admission_fee_discount"
@@ -245,7 +246,7 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="select select-bordered w-full focus:outline-none"
                 placeholder="e.g. 800.00"
                 min={0}
                 name="tuition_fee_discount"
@@ -289,7 +290,7 @@ const CreateDiscount = () => {
         <div className="flex justify-center pt-6">
           <button
             type="submit"
-            className="btn btn-primary w-full md:w-52"
+            className="btn btn-primary w-full md:w-52 bgTheme"
             disabled={btnDisabled}
           >
             {loading ? (
@@ -306,7 +307,7 @@ const CreateDiscount = () => {
         </div>
       </form>
       {/* Modal */}
-    {showAlert && (
+    {/* {showAlert && (
       <dialog open className="modal modal-open">
         <div className="modal-box">
           <h3 className="font-bold text-lg">{alertTitle}</h3>
@@ -321,7 +322,8 @@ const CreateDiscount = () => {
           </div>
         </div>
       </dialog>
-    )}
+    )} */}
+    </div>
     </div>
 
   );

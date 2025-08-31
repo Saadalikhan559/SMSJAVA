@@ -143,18 +143,16 @@ const DiscountedStudents = () => {
 
                           <Link
                             to={`${allRouterLink.editStudentDiscount}/${s.id}`}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-200 shadow-sm"
+                            className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                           >
-                            <i className="fa-solid fa-pen-to-square"></i>
                             Edit
                           </Link>
-
-
                           <button
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-200 shadow-sm"
+                            className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+
                             onClick={() => openDeleteModal(s.id)}
                           >
-                            <i className="fa-solid fa-trash"></i>
+
                             Delete
                           </button>
                         </td>

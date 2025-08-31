@@ -1821,7 +1821,7 @@ export const EditAddmissionDetails = () => {
         <div className="flex justify-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary w-40"
+            className="btn bgTheme text-white w-40"
             disabled={loading}
           >
             {loading ? (
