@@ -39,22 +39,21 @@ const PeriodAssignment = () => {
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen-lg mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">
-            <i className="fa-solid fa-table-list mr-2"></i>
-            Assigned Periods - {levelName}
-          </h1>
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+              <i className="fa-solid fa-table-list mr-2"></i> Assigned Periods - {levelName}
+              </h2>
           <button
             onClick={() => navigate(-1)}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded shadow-sm"
+            className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto"
           >
             ← Back
           </button>
         </div>
 
         {assignedPeriods.length === 0 ? (
-          <div className="text-center text-gray-600 py-10">
+          <div className="text-center text-red-600 py-10">
             No periods assigned for this year level.
           </div>
         ) : (
@@ -71,7 +70,7 @@ const PeriodAssignment = () => {
               </thead>
               <tbody>
                 {assignedPeriods.map((period, index) => (
-                  <tr key={index} className="hover:bg-blue-50 border-t text-left">
+                  <tr key={index} className="hover:bg-blue-50 text-left">
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3">{period.subject}</td>
                     <td className="px-4 py-3">{period.teacher}</td>

@@ -1,51 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { constants } from "../../global/constants";
+import { AuthContext } from "../../context/AuthContext";
+
+import { fetchAllocatedClasses } from "../../services/api/Api";
 
 const ViewAllocatedClass = () => {
-  // Static payload data
-  const allocatedClasses = [
-    {
-      id: 18,
-      teacher_name: "ibrahim khan",
-      year_level_name: "Class 1",
-    },
-    {
-      id: 22,
-      teacher_name: "ibrahim khan",
-      year_level_name: "Class 12",
-    },
-    {
-      id: 23,
-      teacher_name: "noor khan",
-      year_level_name: "Class 11",
-    },
-    {
-      id: 19,
-      teacher_name: "abuqata khan",
-      year_level_name: "UKG",
-    },
-    {
-      id: 20,
-      teacher_name: "arsalan khan",
-      year_level_name: "Class 2",
-    },
-    {
-      id: 21,
-      teacher_name: "arsalan khan",
-      year_level_name: "Class 3",
-    },
-    {
-      id: 25,
-      teacher_name: "saba khan",
-      year_level_name: "Nursery",
-    },
-    {
-      id: 24,
-      teacher_name: "kulsoom ali",
-      year_level_name: "Class 1",
-    },
-  ];
+  const { authTokens } = useContext(AuthContext);
 
+  const [allocatedClasses, setAllocatedClasses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    const loadClasses = async () => {
+      try {
+        const data = await fetchAllocatedClasses(authTokens.access);
+        setAllocatedClasses(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
+    if (authTokens?.access) {
+      loadClasses();
+    }
+  }, [authTokens]);
 
   const filteredClasses = allocatedClasses.filter(
     (classItem) =>
@@ -56,13 +40,11 @@ const ViewAllocatedClass = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        {/* Heading + Search Bar in same line */}
+
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
-            Allocated Classes <i className="fa-solid fa-landmark"></i>
+           <i className="fa-solid fa-landmark"></i> Allocated Classes 
           </h2>
-
-          {/* Search Bar */}
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
@@ -79,7 +61,7 @@ const ViewAllocatedClass = () => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500  sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 sm:text-sm"
               placeholder="Search by teacher or class..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -87,47 +69,52 @@ const ViewAllocatedClass = () => {
           </div>
         </div>
 
+        {/* Table */}
+
         <div className="w-full overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Teacher
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Class
-                    </th>
+          <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+            <thead className="bgTheme text-white text-center">
+              <tr>
+                <th scope="col" className="px-4 py-3">Teacher</th>
+                <th scope="col" className="px-4 py-3">Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="2"
+                    className="text-center py-6 text-gray-500"
+                  >
+                    Loading allocated classes...
+                  </td>
+                </tr>
+              ) : filteredClasses.length > 0 ? (
+                filteredClasses.map((classItem, index) => (
+                  <tr key={classItem.id || index} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-center text-sm text-gray-700 capitalize">
+                      {classItem.teacher_name}
+                    </td>
+                    <td className="px-4 py-3 text-center text-sm text-gray-700 capitalize">
+                      {classItem.year_level_name}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {filteredClasses.length > 0 ? (
-                    filteredClasses.map((classItem) => (
-                      <tr key={classItem.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
-                          {classItem.teacher_name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
-                          {classItem.year_level_name}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="3"
-                        className="px-4 py-6 text-center text-sm text-gray-500"
-                      >
-                        No matching classes found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="2"
+                    className="text-center py-6 text-gray-500"
+                  >
+                    No matching classes found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
+
       </div>
     </div>
   );

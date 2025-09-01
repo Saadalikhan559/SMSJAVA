@@ -51,7 +51,7 @@ export const StudentDashboard = () => {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         Student Dashboard
       </h2>

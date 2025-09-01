@@ -14,6 +14,7 @@ import { DirectorDashboard } from "../components/DirectorDashboard/DirectorDashb
 import { OfficeStaffDashboard } from "../components/OfficestaffDashboard/OfficeStaffDashboard";
 import { GuardianDashboard } from "../components/GuardianDashboard/GuardianDashboard";
 import { TeacherDashboard } from "../components/TeacherDashboard/TeacherDashboard";
+import ErrorFallBack from "../components/ErrorFallBack";
 
 function getDashboardForRole(role) {
   switch (role) {
@@ -37,7 +38,7 @@ export default function AppRouter() {
   const location = useLocation();
 
   return (
-    <ErrorBoundary fallback={<div>something went wrong</div>} resetKeys={[location.pathname]}>
+    <ErrorBoundary fallback={<ErrorFallBack/>} resetKeys={[location.pathname]}>
       <Routes>
         
         {/* Login page outside MainLayout */}

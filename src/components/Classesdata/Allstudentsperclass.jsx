@@ -35,45 +35,46 @@ const AllStudentsPerClass = () => {
 
   );
 
-if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen-md mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          <i className="fa-solid fa-graduation-cap mr-2"></i> Students in {levelName}
-        </h1>
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
 
-        {error && (
-          <div className="text-red-600 text-center mb-4 font-medium">
-            {error}
-          </div>
-        )}
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+            <i className="fa-solid fa-graduation-cap mr-2"></i> Students in {levelName}
+          </h2>
+
+          {error && (
+            <div className="text-red-600 text-center mb-4 font-medium">
+              {error}
+            </div>
+          )}
 
 
-        <div className="mb-4">
           <input
             type="text"
-            placeholder="Search Student Name "
+            placeholder="Search Student Name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none"
-
+            className="border px-3 py-2 rounded w-full sm:w-64"
           />
+
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-            <thead className="bgTheme text-white">
+            <thead className="bgTheme text-white text-center">
               <tr>
-                <th scope="col" className="px-4 py-3 text-left">S.NO</th>
-                <th scope="col" className="px-4 py-3 text-left">Student Name</th>
+                <th scope="col" className="px-4 py-3">S.NO</th>
+                <th scope="col" className="px-4 py-3">Student Name</th>
               </tr>
             </thead>
             <tbody>
@@ -85,8 +86,8 @@ if (loading) {
                 </tr>
               ) : (
                 filteredStudents.map((record, index) => (
-                  <tr key={record.id || index} className="hover:bg-blue-50 textTheme">
-                    <td className="px-4 py-3">{index + 1}.</td>
+                  <tr key={record.id || index} className="hover:bg-gray-50 textTheme text-center">
+                    <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
                     <td className="px-4 py-3">
                       <Link
                         to={`/Studentdetails/${record.student_id}`}
@@ -103,6 +104,7 @@ if (loading) {
         </div>
       </div>
     </div>
+
   );
 };
 

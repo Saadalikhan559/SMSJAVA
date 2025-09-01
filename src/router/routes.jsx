@@ -70,6 +70,8 @@ import DiscountedStudents from "../components/AdmissionProcess/Discount/Discount
 import EditDiscount from "../components/AdmissionProcess/Discount/EditDiscount";
 import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/CreateSalaryExpense";
 import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
+import { ViewAllExpenses } from "../components/ManageExpenses/AllExpenses/ViewAllExpenses";
+import { EditSalaryExpense } from "../components/ManageExpenses/SalaryExpense/EditSalaryExpense";
 
 
 export const routes = [
@@ -509,6 +511,18 @@ export const routes = [
   {
     path: allRouterLink.viewSalaryExpense,
     element: <ViewSalaryExpense />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.editSalaryExpense,
+    element: <EditSalaryExpense />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.viewAllExpenses,
+    element: <ViewAllExpenses />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
