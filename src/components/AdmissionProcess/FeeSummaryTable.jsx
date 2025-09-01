@@ -23,7 +23,6 @@ const FeeSummaryTable = () => {
 
   const filteredStudents = students.filter((student) =>
     student.student_name?.toLowerCase().includes(searchTerm.toLowerCase())
-
   );
 
   const getFeeData = async () => {
@@ -92,7 +91,9 @@ const FeeSummaryTable = () => {
       <div className="flex items-center justify-center h-screen bg-gray-100">
         <div className="text-center max-w-md p-6 bg-white shadow-lg rounded-lg border border-red-300">
           <i className="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Something went wrong
+          </h2>
           <p className="text-sm text-gray-600">{error}</p>
           <button
             onClick={() => {
@@ -111,101 +112,92 @@ const FeeSummaryTable = () => {
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
         <div className="mb-6">
-          <div className="relative mb-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
-              <i className="fa-solid fa-graduation-cap mr-2"></i> Students Fee Record
-            </h1>
-            <Link
-              to={allRouterLink.feeDashboard}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
-            >
-              Fee Dashboard
-            </Link>
-          </div>
-
-
-
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
+            <i className="fa-solid fa-graduation-cap mr-2"></i> Students Fee Record
+          </h1>
         </div>
 
-        {/* Filter Section */}
-        <div className="w-full max-w-5xl mx-auto">
-          <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-            {/* Month Filter */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Filter by Month:
-              </label>
-              <select
-                className="border rounded px-3 py-2 text-sm"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-              >
-                <option value="">All Months</option>
-                {[
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                  "July",
-                  "August",
-                  "September",
-                  "October",
-                  "November",
-                  "December",
-                ].map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+        {/* Filter + Fee Dashboard Section */}
+        <div className="w-full px-5">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
+
+            {/* Left Side: Filters + Reset */}
+            <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
+              {/* Month Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Select Month:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                >
+                  <option value="">All Months</option>
+                  {[
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December",
+                  ].map((month) => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Class Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Select Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Reset Button */}
+              <div className="mt-1 w-full sm:w-auto">
+                <button
+                  onClick={resetFilters}
+                  className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto"
+                >
+                  Reset Filters
+                </button>
+              </div>
             </div>
 
-            {/* Class Filter */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Filter by Class:
-              </label>
-              <select
-                className="border rounded px-3 py-2 text-sm"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
+            {/* Right Side: Fee Dashboard + Search */}
+            <div className="flex flex-col w-full sm:flex-row sm:items-end gap-4 sm:w-auto">
+              {/* Search Bar */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter student name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="border px-3 py-2 rounded w-full sm:w-64"
+                />
+              </div>
+              {/* Fee Dashboard Button */}
+              <Link
+                to={allRouterLink.feeDashboard}
+                className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto text-center"
               >
-                <option value="">All Classes</option>
-                {yearLevels.map((level) => (
-                  <option key={level.id} value={level.id}>
-                    {level.level_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                Fee Dashboard
+              </Link>
 
-            {/* Search Filter */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-                Search Student by Name:
-              </label>
-              <input
-                type="text"
-                placeholder="Enter student name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded px-3 py-2 text-sm w-64 focus:outline-none"
-              />
-            </div>
 
-            {/* Reset Button */}
-            <div className="mt-1">
-              <button
-                onClick={resetFilters}
-                className="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded"
-              >
-                Reset Filters
-              </button>
             </div>
           </div>
-
         </div>
 
         {/* Table Section */}

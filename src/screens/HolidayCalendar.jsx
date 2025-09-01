@@ -219,7 +219,7 @@ const [userRole, setUserRole] = useState(null);
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#5E35B1] to-[#400ea3] px-8 py-6 text-white">
+          <div className="bgTheme px-8 py-6 text-white">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex items-center space-x-4">
                 <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
@@ -241,7 +241,7 @@ const [userRole, setUserRole] = useState(null);
                   <h1 className="text-2xl font-bold tracking-tight">
                     Academic Calendar
                   </h1>
-                  <p className="text-blue-100 font-medium">
+                  <p className="text-white   font-medium">
                     {new Date().toLocaleDateString("en-US", {
                       year: "numeric",
                     })}
@@ -252,13 +252,13 @@ const [userRole, setUserRole] = useState(null);
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center">
                     <span className="w-3 h-3 bg-amber-400 rounded-full mr-2 shadow-inner"></span>
-                    <span className="text-sm font-medium text-blue-100">
+                    <span className="text-sm font-medium text-white">
                       Holiday
                     </span>
                   </div>
                   <div className="flex items-center">
                     <span className="w-3 h-3 bg-blue-400 rounded-full mr-2 shadow-inner"></span>
-                    <span className="text-sm font-medium text-blue-100">
+                    <span className="text-sm font-medium text-white">
                       Event
                     </span>
                   </div>
@@ -713,7 +713,7 @@ const [userRole, setUserRole] = useState(null);
           <div className="flex justify-end m-4 space-x-4">
             <button
               onClick={() => setIsEventDialogOpen(true)}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
+              className="bgTheme text-white px-4 py-3 rounded-sm text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
             >
               <svg
                 className="w-5 h-5"
@@ -732,7 +732,7 @@ const [userRole, setUserRole] = useState(null);
             </button>
             <button
               onClick={() => setIsHolidayDialogOpen(true)}
-              className="bgTheme hover:bg-[#4911b8] text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
+              className="bgTheme text-white px-4 py-3 rounded-sm text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
             >
               <svg
                 className="w-5 h-5"

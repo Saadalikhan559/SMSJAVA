@@ -46,7 +46,7 @@ const PeriodAssignment = () => {
               </h2>
           <button
             onClick={() => navigate(-1)}
-            className="bg-gray-200 hover:bg-gray-300  px-4 py-2 rounded shadow-sm bgTheme text-white w-25"
+            className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto"
           >
             ← Back
           </button>
@@ -70,7 +70,7 @@ const PeriodAssignment = () => {
               </thead>
               <tbody>
                 {assignedPeriods.map((period, index) => (
-                  <tr key={index} className="hover:bg-gray-50  text-left">
+                  <tr key={index} className="hover:bg-blue-50 text-left">
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3">{period.subject}</td>
                     <td className="px-4 py-3">{period.teacher}</td>
