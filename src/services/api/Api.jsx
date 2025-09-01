@@ -639,7 +639,7 @@ export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
 
     return response.data;
   } catch (error) {
-    // 👉 agar 404 ya "No records found." aaye to empty array return kar do
+
     if (
       error.response &&
       (error.response.status === 404 ||
@@ -648,7 +648,6 @@ export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
       return [];
     }
 
-    // baaki errors throw karo (modal dikhane ke liye)
     throw error;
   }
 };
@@ -1068,22 +1067,7 @@ export const fetchCalendar = async (month, year) => {
   }
 };
 
-export const fetchAllocatedClasses = async (token) => {
-  try {
-    const response = await axios.get(
-      `${constants.baseUrl}/t/teacheryearlevel/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch allocated classes:", error);
-    throw error;
-  }
-};
+
 
 export const importHolidays = async (year) => {
   try {
@@ -1178,26 +1162,6 @@ export const assignSubstitute = async (payload) => {
 
 };
 
-export const fetchTeacherYearLevel = async (teacherId) => {
-  try {
-    const accessToken = JSON.parse(localStorage.getItem("authTokens"))?.access;
-    if (!accessToken) throw new Error("No access token found");
-
-    const response = await axios.get(`${BASE_URL}/t/teacheryearlevel/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      params: {
-        teacher: teacherId, // optional filter if backend supports
-      },
-    });
-    return response.data; // ye array of assigned classes return karega
-  } catch (err) {
-    console.error("Failed to fetch teacher year levels:", err);
-    throw err;
-  }
-};
-
 
 // EDIT API
 
@@ -1222,3 +1186,4 @@ export const editSalary = async (accessToken, payload, id) => {
     throw err;
   }
 };
+

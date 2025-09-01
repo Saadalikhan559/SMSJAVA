@@ -208,7 +208,7 @@ const StudentMarksFill = () => {
               </span>
             </label>
             <select
-              className={`select select-bordered w-full ${
+              className={`select select-bordered w-full focus:outline-none ${
                 errors.school_year ? "select-error" : ""
               }`}
               {...register("school_year", {

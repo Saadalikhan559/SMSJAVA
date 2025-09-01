@@ -112,69 +112,75 @@ const UnpaidFeesList = () => {
             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
           </h1>
         </div>
-
         {/* Filter Section */}
-        <div className="w-full max-w-5xl mx-auto">
-          <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-            {/* Month Filter (static) */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
-              <select
-                className="border rounded px-3 py-2 text-sm"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-              >
-                <option value="">All Months</option>
-                {[
-                  "January", "February", "March", "April", "May", "June",
-                  "July", "August", "September", "October", "November", "December"
-                ].map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="w-full px-5">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
 
-            {/* Class Filter (Director/Office Staff only) */}
-            {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">Filter by Class:</label>
+            {/* Left Side: Filters + Reset */}
+            <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
+              {/* Month Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Search by Month:
+                </label>
                 <select
-                  className="border rounded px-3 py-2 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
                 >
-                  <option value="">All Classes</option>
-                  {yearLevels.map((level) => (
-                    <option key={level.id} value={level.id}>
-                      {level.level_name}
-                    </option>
+                  <option value="">All Months</option>
+                  {[
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                  ].map((month) => (
+                    <option key={month} value={month}>{month}</option>
                   ))}
                 </select>
               </div>
-            )}
 
-            {/* Search Filter */}
-            <div className="flex flex-col">
-              <label className="text-sm font-medium text-gray-700 mb-1">Search Student by Name:</label>
+              {/* Class Filter (Director/Office Staff only) */}
+              {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
+                <div className="flex flex-col w-full sm:w-auto">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
+                    Search by Class:
+                  </label>
+                  <select
+                    className="select select-bordered w-full focus:outline-none"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option value="">All Classes</option>
+                    {yearLevels.map((level) => (
+                      <option key={level.id} value={level.id}>
+                        {level.level_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Reset Button */}
+              <div className="mt-1 w-full sm:w-auto">
+                <button
+                  onClick={resetFilters}
+                  className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            </div>
+
+            {/* Right Side: Search Bar */}
+            <div className="flex flex-col w-full sm:w-auto">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+              </label>
               <input
                 type="text"
                 placeholder="Enter student name"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border rounded px-3 py-2 text-sm w-64"
+                className="border px-3 py-2 rounded w-full sm:w-64"
               />
-            </div>
-
-            {/* Reset Button */}
-            <div className="mt-1">
-              <button
-                onClick={resetFilters}
-                className="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded"
-              >
-                Reset Filters
-              </button>
             </div>
           </div>
         </div>

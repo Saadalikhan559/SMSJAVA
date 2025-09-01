@@ -80,7 +80,7 @@ const AttendanceRecord = () => {
           onChange={(e) => setSelectedDate(e.target.value)}
           className="input input-bordered focus:outline-none"
         />
-        <button onClick={handleReset} className="btn" disabled={!selectedDate}>
+        <button onClick={handleReset} className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto" disabled={!selectedDate}>
           Reset
         </button>
       </div>
