@@ -223,7 +223,7 @@ const FeeSummaryTable = () => {
                 </tr>
               ) : (
                 filteredStudents.map((record, index) => (
-                  <tr key={record.student_id || index} className="hover:bg-blue-50">
+                  <tr key={record.student_id || index} className="hover:bg-gray-50">
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3">{record.student_name}</td>
                     <td className="px-4 py-3">{record.year_level}</td>

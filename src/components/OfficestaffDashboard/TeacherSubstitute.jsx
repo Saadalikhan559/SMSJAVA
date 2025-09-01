@@ -129,7 +129,7 @@ const TeacherSubstitute = () => {
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-            Teacher Substitute <i className="fa-solid fa-chalkboard-user"></i>
+           <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute 
           </h2>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">

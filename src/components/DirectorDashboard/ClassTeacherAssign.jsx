@@ -184,7 +184,7 @@ const ClassTeacherAssign = () => {
             }`}
           >
             {isSubmitting ? (
-              <span className="flex items-center justify-center">
+              <span className="flex items-center justify-center w-30">
                 <svg
                   className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
                   xmlns="http://www.w3.org/2000/svg"

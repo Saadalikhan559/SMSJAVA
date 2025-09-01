@@ -1,24 +1,84 @@
 import React, { useEffect, useState } from "react";
 import { fetchSalaryExpense } from "../../../services/api/Api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
+import { constants } from "../../../global/constants";
+import axios from "axios";
 
 export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
   const access = JSON.parse(localStorage.getItem("authTokens")).access;
+  const [apiError, setApiError] = useState("");
+    const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(""); 
+    
+  
+  
 
   const getSchoolExpense = async () => {
+    setLoading(true);
     try {
       const response = await fetchSalaryExpense(access);
       setSchoolExpense(response);
     } catch (error) {
-      console.log("Cannot get the school salary expense", error.meesage);
+      console.log("Failed to get the school salary expense", error.message);
+      setError("Failed to get the school salary expense");
+    }
+    finally{
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        `${constants.baseUrl}/d/Employee/${id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Successfully deleted");
+      }
+    } catch (err) {
+      if (err.response?.data) {
+        setApiError(err.response.data.error);
+      } else {
+        setApiError("Something went wrong. Try again");
+      }
     }
   };
 
   useEffect(() => {
     getSchoolExpense();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -27,6 +87,15 @@ export const ViewSalaryExpense = () => {
           <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
         </h2>
 
+        {/* Display API error message */}
+        {apiError && (
+          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
+            <div className="flex items-center text-error">
+              <i className="fa-solid fa-circle-exclamation mr-2"></i>
+              <span className="font-medium">{apiError}</span>
+            </div>
+          </div>
+        )}
         {/* Table */}
         <div className="w-full overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -67,7 +136,7 @@ export const ViewSalaryExpense = () => {
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                           {expense.base_salary}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm" width={10}>
                           <div className="flex space-x-2">
                             <Link
                               to={allRouterLink.editSalaryExpense.replace(
@@ -79,7 +148,7 @@ export const ViewSalaryExpense = () => {
                               Edit
                             </Link>
                             <Link
-                              to="#"
+                              onClick={() => handleDelete(expense.id)}
                               className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
                               Delete
