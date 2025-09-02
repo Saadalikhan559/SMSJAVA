@@ -356,13 +356,13 @@ export const ViewAllExpenses = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+                    className="btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bgTheme text-white rounded-md"
+                    className="btn px-4 py-2 bgTheme text-white rounded-md"
                   >
                     Add Category
                   </button>
@@ -445,13 +445,13 @@ export const ViewAllExpenses = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+                    className="btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-yellow-700 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
+                    className=" btn px-4 py-2 text-yellow-700  hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
                   >
                     Update
                   </button>
@@ -461,6 +461,7 @@ export const ViewAllExpenses = () => {
 
             {/* DELETE TAB */}
             {activeTab === "Delete" && (
+              
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
@@ -511,13 +512,13 @@ export const ViewAllExpenses = () => {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+                    className=" btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-red-600 text-white rounded-md"
+                    className=" btn px-4 py-2 text-red-700 bg-red-50 hover:bg-red-100 border rounded-md"
                   >
                     Delete
                   </button>
