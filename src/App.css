@@ -27,6 +27,13 @@
   background-color: #5E35B1;
 }
 
+.bgTheme.btn:hover {
+  cursor: pointer;
+  background: lavender !important;
+  border-color: #5E35B1;
+  color: #5E35B1;
+}
+
 .textTheme {
   color: #5E35B1;
 }

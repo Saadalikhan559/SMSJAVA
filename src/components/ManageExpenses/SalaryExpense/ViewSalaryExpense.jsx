@@ -11,7 +11,7 @@ import { AuthContext } from "../../../context/AuthContext";
 export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
   
-console.log('schoolExpense', schoolExpense);
+
 
   // const {authTokens} = useContext(AuthContext);
   // const access = authTokens.access;
