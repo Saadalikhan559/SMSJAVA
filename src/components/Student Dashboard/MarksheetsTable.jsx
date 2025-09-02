@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchMarksheets } from "../../services/api/Api";
+import { fetchMarksheets, fetchYearLevels } from "../../services/api/Api";
 
 const MarksheetsTable = () => {
   const [loading, setLoading] = useState(true);
@@ -49,7 +49,18 @@ const MarksheetsTable = () => {
       setLoading(false);
     }
   };
+   const getYearLevels = async () => {
+      try {
+        const data = await fetchYearLevels();
+        setYearLevels(data);
+      } catch (err) {
+        console.error("Error fetching year levels:", err);
+      }
+    };
 
+ useEffect(() => {
+    getYearLevels();
+  }, []);
   useEffect(() => {
     if (accessToken) {
       getMarksheet();
@@ -85,17 +96,42 @@ const MarksheetsTable = () => {
   }
 
   const filterData = staticPayload.filter((detail) =>
+    detail.standard
+.toLowerCase().includes(selectedClass.toLowerCase())
+  );
+  const filterBysearch = filterData.filter((detail) =>
     detail.student_name.toLowerCase().includes(searchInput.toLowerCase())
   );
+  console.log(filterData);
+  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+          <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+           Marksheets <i className="fa-solid fa-address-card ml-2"></i>
+          </h1>
+        </div>
         {/* Search Input */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-2 gap-4">
-          <h2 className="text-3xl font-semibold text-gray-800">
-            Marksheets <i className="fa-solid fa-address-card ml-2"></i>
-          </h2>
+          <div className=" w-full  sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Select Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.level_name}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
           <input
             type="text"
             placeholder="Search Student Name..."
@@ -138,7 +174,7 @@ const MarksheetsTable = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {filterData.map((detail) => (
+                    {filterBysearch.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50">
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
                           {detail.student_name}

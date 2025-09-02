@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { fetchAdmissionDetails } from "../../services/api/Api";
+import { fetchAdmissionDetails, fetchYearLevels } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
 
 export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedClass, setSelectedClass] = useState("");
+  const [yearLevels, setYearLevels] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [error, setError] = useState(false);
 
@@ -56,6 +58,11 @@ export const AdmissionDetails = () => {
   }
 
   const filterData = details.filter((detail) =>
+    detail.year_level
+      .toLowerCase()
+      .includes(selectedClass.toLowerCase())
+  );
+  const filterBysearch = filterData.filter((detail) =>
     detail.student_input.first_name
       .toLowerCase()
       .includes(searchInput.toLowerCase())
@@ -64,11 +71,31 @@ export const AdmissionDetails = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
-        {/* Search Input */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-3">
+           <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
            <i className="fa-solid fa-clipboard-list w-5"></i>  Admission Details
-          </h2>
+          </h1>
+        </div>
+        <div className="w-full px-5">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
+   <div className="flex flex-col w-full sm:w-auto">
+                 <label className="text-sm font-medium text-gray-700 mb-1">
+                  Select Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.level_name}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+                </div>
+         <div className="flex flex-col w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search Student Name..."
@@ -76,7 +103,10 @@ export const AdmissionDetails = () => {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
+         </div> </div>
         </div>
+     
+         
 
         {filterData.length === 0 ? (
           <p className="text-gray-600">No admission records found.</p>
@@ -111,7 +141,7 @@ export const AdmissionDetails = () => {
                     </tr>
                   </thead>
                   <tbody className=" divide-gray-200 bg-white">
-                    {filterData.map((detail) => (
+                    {filterBysearch.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50">
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
                           {detail.student_input.first_name}{" "}

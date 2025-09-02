@@ -21,6 +21,9 @@ export const AdmissionFees = () => {
   const [availableMonths, setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
 
+
+  console.log(availableFees);
+
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const accessToken = authTokens?.access;
   const BASE_URL = constants.baseUrl;
@@ -72,6 +75,7 @@ export const AdmissionFees = () => {
       setApiError("");
       const response = await axios.get(`${BASE_URL}/d/year-levels/`);
       setClasses(response.data);
+
     } catch (err) {
       setApiError("Failed to load classes");
     } finally {
@@ -253,7 +257,7 @@ export const AdmissionFees = () => {
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature_id: response.razorpay_signature,
+                razorpay_signature: response.razorpay_signature,
                 student_id: parseInt(student_id),
                 month,
                 year_level_fees,
@@ -335,256 +339,62 @@ export const AdmissionFees = () => {
   const totalAmount = calculateTotalAmount();
 
   const handleRetry = () => {
-    if (selectedStudentId && selectedMonth) fetchAvailableFees(selectedStudentId, selectedMonth);
-    else if (selectedClassId) getStudents(selectedClassId);
-    else getClasses();
+    if (selectedStudentId && selectedMonth) {
+      fetchAvailableFees(selectedStudentId, selectedMonth);
+    }
   };
 
-  if (isLoading) return <Loader />;
-  if (apiError) return <ErrorUI message={apiError} />;
+
+  if (isLoading && !apiError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  };
+  if (isLoadingFees && !apiError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  };
+    if (apiError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <button className="bg-red-400 btn text-white" onClick={handleRetry}>retry</button>
+      </div>
+    );
+  }
 
   return (
     <>
-    <div className="min-h-screen p-5 bg-gray-50">
-    
-      <form
-        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Fee Payment
-          <i className="fa-solid fa-money-bill-wave ml-2"></i>
-        </h1>
-       
+      <div className="min-h-screen p-5 bg-gray-50">
+        <form
+          className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Fee Payment
+            <i className="fa-solid fa-money-bill-wave ml-2"></i>
+          </h1>
 
-        {/* Error Display */}
-        {apiError && (
-          <div className="alert alert-error mb-6">
-            <div className="flex-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="w-6 h-6 mx-2 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                ></path>
-              </svg>
-              <label>{apiError}</label>
-            </div>
-            <button
-              type="button"
-              onClick={handleRetry}
-              className="btn btn-sm btn-ghost"
-            >
-              Retry
-            </button>
-          </div>
-        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Class Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-school text-sm"></i>
-                Class <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className="select select-bordered w-full focus:outline-none"
-              onChange={handleClassChange}
-              value={selectedClassId || ""}
-            >
-              <option value="">Select Class</option>
-              {classes?.map((classItem) => (
-                <option key={classItem.id} value={classItem.id}>
-                  {classItem.level_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Student Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-user-graduate text-sm"></i>
-                Student <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select w-full focus:outline-none ${
-                errors.student_id ? "select-error" : "select-bordered"
-              }`}
-              {...register("student_id", {
-                required: "Student selection is required",
-              })}
-              value={selectedStudentId || ""}
-              disabled={!selectedClassId}
-            >
-              <option value="">Select Student</option>
-              {isLoading ? (
-                <option value="" disabled>
-                  Loading students...
-                </option>
-              ) : (
-                students?.map((student) => (
-                  <option key={student.student_id} value={student.student_id}>
-                    {student.student_name} - {student.student_email}
-                  </option>
-                ))
-              )}
-            </select>
-            {errors.student_id && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.student_id.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Month Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-1">
-                <i className="fa-solid fa-calendar text-sm"></i>
-                Month <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select w-full focus:outline-none ${
-                errors.month ? "select-error" : "select-bordered"
-              }`}
-              {...register("month", {
-                required: "Month selection is required",
-              })}
-              disabled={!selectedStudentId}
-            >
-              <option value="">Select Month</option>
-              {allMonths.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            {errors.month && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.month.message}
-                </span>
-              </label>
-            )}
-          </div>
-        </div>
-
-        {/* Loading State */}
-        {isLoadingFees && (
-          <div className="flex justify-center my-6">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
-            <span className="ml-3 text-lg">Loading fees data...</span>
-          </div>
-        )}
-
-        {/* Available Fees Display */}
-        {availableFees.length > 0 && selectedStudent && (
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">
-              Available Fees for {selectedStudent.student_name}
-            </h2>
-
-            {availableFees.map((yearLevel) => (
-              <div key={yearLevel.id} className="mb-6">
-                <h3 className="text-lg font-medium mb-3">
-                  {yearLevel.year_level} Fees
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {yearLevel.fees.map((fee) => (
-                    <div key={fee.id} className="card bg-base-200 shadow-sm">
-                      <div className="card-body p-4">
-                        <div className="form-control">
-                          <label className="label cursor-pointer justify-start gap-4">
-                            {fee.final_amount > 0 ? (
-                              <input
-                                type="checkbox"
-                                checked={selectedFeeIds.includes(fee.id)}
-                                onChange={(e) =>
-                                  handleFeeSelection(fee.id, e.target.checked)
-                                }
-                                className="checkbox checkbox-primary"
-                              />
-                            ) : (
-                              <div className="flex items-center gap-2 text-success">
-                                <i className="fa-solid fa-check-circle"></i>
-                              </div>
-                            )}
-                            <div>
-                              <h3 className="card-title text-lg font-bold">
-                                {fee.fee_type}
-                              </h3>
-                              {
-                                <div className="flex items-center gap-2 text-success">
-                                  <span>{fee.status}</span>
-                                </div>
-                              }
-                              {fee.late_fee && (
-                                <p className="text-sm text-warning mt-1">
-                                  Late Fee: ₹{fee.late_fee}
-                                </p>
-                              )}
-                            </div>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {/* Total Amount Summary */}
-            {selectedFeeIds.length > 0 && (
-              <div className="bg-base-300 p-4 rounded-lg mt-6">
-                <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>Base Amount:</div>
-                  <div className="text-right">
-                    ₹{totalAmount.baseAmount.toFixed(2)}
-                  </div>
-
-                  {totalAmount.lateFee > 0 && (
-                    <>
-                      <div>Late Fee:</div>
-                      <div className="text-right text-warning">
-                        ₹{totalAmount.lateFee.toFixed(2)}
-                      </div>
-                    </>
-                  )}
-
-                  <div className="font-bold mt-2 border-t pt-2">
-                    Total Amount:
-                  </div>
-                  <div className="text-right font-bold mt-2 border-t pt-2">
-                    ₹{totalAmount.totalAmount.toFixed(2)}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* No Fees Message */}
-        {!isLoadingFees &&
-          availableFees.length === 0 &&
-          selectedStudentId &&
-          selectedMonth && (
-            <div className="alert alert-info mt-6">
+          {/* Error Display */}
+          {/* {apiError && (
+            <div className="alert alert-error mb-6">
               <div className="flex-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -596,176 +406,397 @@ export const AdmissionFees = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                   ></path>
                 </svg>
-                <label>No fees found for the selected student and month</label>
+                <label>{apiError}</label>
               </div>
+              <button
+                type="button"
+                onClick={handleRetry}
+                className="btn btn-sm btn-ghost"
+              >
+                Retry
+              </button>
+            </div>
+          )} */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Class Selection */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-school text-sm"></i>
+                  Class <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className="select select-bordered w-full focus:outline-none"
+                onChange={handleClassChange}
+                value={selectedClassId || ""}
+              >
+                <option value="">Select Class</option>
+                {classes?.map((classItem) => (
+                  <option key={classItem.id} value={classItem.id}>
+                    {classItem.level_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Student Selection */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-user-graduate text-sm"></i>
+                  Student <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className={`select w-full focus:outline-none ${errors.student_id ? "select-error" : "select-bordered"
+                  }`}
+                {...register("student_id", {
+                  required: "Student selection is required",
+                })}
+                value={selectedStudentId || ""}
+                disabled={!selectedClassId}
+              >
+                <option value="">Select Student</option>
+                {isLoading ? (
+                  <option value="" disabled>
+                    Loading students...
+                  </option>
+                ) : (
+                  students?.map((student) => (
+                    <option key={student.student_id} value={student.student_id}>
+                      {student.student_name} - {student.student_email}
+                    </option>
+                  ))
+                )}
+              </select>
+              {errors.student_id && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.student_id.message}
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {/* Month Selection */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-calendar text-sm"></i>
+                  Month <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className={`select w-full focus:outline-none ${errors.month ? "select-error" : "select-bordered"
+                  }`}
+                {...register("month", {
+                  required: "Month selection is required",
+                })}
+                disabled={!selectedStudentId}
+              >
+                <option value="">Select Month</option>
+                {allMonths.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              {errors.month && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.month.message}
+                  </span>
+                </label>
+              )}
+            </div>
+          </div>
+
+          {/* Loading State */}
+          {/* {isLoadingFees && (
+            <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+          )} */}
+
+          {/* Available Fees Display */}
+          {availableFees.length > 0 && selectedStudent && (
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">
+                Available Fees for {selectedStudent.student_name}
+              </h2>
+
+              {availableFees.map((yearLevel) => (
+                <div key={yearLevel.id} className="mb-6">
+                  <h3 className="text-lg font-medium mb-3">
+                    {yearLevel.year_level} Fees
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {yearLevel.fees.map((fee) => (
+                      <div key={fee.id} className="card bg-base-200 shadow-sm">
+                        <div className="card-body p-4">
+                          <div className="form-control">
+                            <label className="label cursor-pointer justify-start gap-4">
+                              {fee.final_amount > 0 ? (
+                                <input
+                                  type="checkbox"
+                                  checked={selectedFeeIds.includes(fee.id)}
+                                  onChange={(e) =>
+                                    handleFeeSelection(fee.id, e.target.checked)
+                                  }
+                                  className="checkbox checkbox-primary"
+                                />
+                              ) : (
+                                <div className="flex items-center gap-2 text-success">
+                                  <i className="fa-solid fa-check-circle"></i>
+                                </div>
+                              )}
+                              <div>
+                                <h3 className="card-title text-lg font-bold">
+                                  {fee.fee_type}
+                                </h3>
+                                {
+                                  <div className="flex items-center gap-2 text-success">
+                                    <span>{fee.status}</span>
+                                  </div>
+                                }
+                                {fee.late_fee && (
+                                  <p className="text-sm text-warning mt-1">
+                                    Late Fee: ₹{fee.late_fee}
+                                  </p>
+                                )}
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* Total Amount Summary */}
+              {selectedFeeIds.length > 0 && (
+                <div className="bg-base-300 p-4 rounded-lg mt-6">
+                  <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>Base Amount:</div>
+                    <div className="text-right">
+                      ₹{totalAmount.baseAmount.toFixed(2)}
+                    </div>
+
+                    {totalAmount.lateFee > 0 && (
+                      <>
+                        <div>Late Fee:</div>
+                        <div className="text-right text-warning">
+                          ₹{totalAmount.lateFee.toFixed(2)}
+                        </div>
+                      </>
+                    )}
+
+                    <div className="font-bold mt-2 border-t pt-2">
+                      Total Amount:
+                    </div>
+                    <div className="text-right font-bold mt-2 border-t pt-2">
+                      ₹{totalAmount.totalAmount.toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Payment Mode Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-credit-card text-sm"></i>
-                Payment Mode <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select w-full focus:outline-none ${
-                errors.payment_mode ? "select-error" : "select-bordered"
-              }`}
-              {...register("payment_mode", {
-                required: "Payment mode is required",
-              })}
-              disabled={selectedFeeIds.length === 0}
+          {/* No Fees Message */}
+          {!isLoadingFees &&
+            availableFees.length === 0 &&
+            selectedStudentId &&
+            selectedMonth && (
+                    <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+
+            )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Payment Mode Selection */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-credit-card text-sm"></i>
+                  Payment Mode <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className={`select w-full focus:outline-none ${errors.payment_mode ? "select-error" : "select-bordered"
+                  }`}
+                {...register("payment_mode", {
+                  required: "Payment mode is required",
+                })}
+                disabled={selectedFeeIds.length === 0}
+              >
+                <option value="">Select Payment Mode</option>
+                {paymentModes.map((mode) => (
+                  <option key={mode} value={mode}>
+                    {mode}
+                  </option>
+                ))}
+              </select>
+              {errors.payment_mode && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.payment_mode.message}
+                  </span>
+                </label>
+              )}
+            </div>
+            {/* Paid Amount */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-calculator text-sm"></i>
+                  Paid Amount <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="number"
+                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
+                  }`}
+                {...register("paid_amount", {
+                  required: "Amount is required",
+                  min: { value: 0, message: "Amount must be positive" },
+                  max: {
+                    value: totalAmount.totalAmount, // max = total fees
+                    message: `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
+                  },
+                  validate: (value) =>
+                    parseFloat(value) <= totalAmount.totalAmount ||
+                    `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
+                })}
+                placeholder="Enter amount"
+                step="1"
+                disabled={selectedFeeIds.length === 0}
+              />
+              {errors.paid_amount && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.paid_amount.message}
+                  </span>
+                </label>
+              )}
+            </div>
+
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Remarks */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-comment text-sm"></i>
+                  Remarks <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                className={`input w-full focus:outline-none ${errors.remarks ? "input-error" : "input-bordered"
+                  }`}
+                {...register("remarks", {
+                  required: "Remarks are required",
+                })}
+                placeholder="Enter any remarks"
+                disabled={selectedFeeIds.length === 0}
+              />
+              {errors.remarks && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.remarks.message}
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {/* Signature */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-signature text-sm"></i>
+                  Received By <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                className={`input w-full focus:outline-none ${errors.received_by ? "input-error" : "input-bordered"
+                  }`}
+                {...register("received_by", {
+                  required: "Signature is required",
+                })}
+                placeholder="Enter your name as signature"
+                disabled={selectedFeeIds.length === 0}
+              />
+              {errors.received_by && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.received_by.message}
+                  </span>
+                </label>
+              )}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
+            <button
+              type="submit"
+              className="btn bgTheme text-white w-52"
+              disabled={isSubmitting || selectedFeeIds.length === 0}
             >
-              <option value="">Select Payment Mode</option>
-              {paymentModes.map((mode) => (
-                <option key={mode} value={mode}>
-                  {mode}
-                </option>
-              ))}
-            </select>
-            {errors.payment_mode && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.payment_mode.message}
-                </span>
-              </label>
-            )}
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+              ) : (
+                <i className="fa-solid fa-money-bill-wave ml-2"></i>
+              )}
+              {isSubmitting ? "Processing..." : "Submit Payment"}
+            </button>
           </div>
+        </form>
 
-          {/* Paid Amount */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-calculator text-sm"></i>
-                Paid Amount <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="number"
-              className={`input w-full focus:outline-none ${
-                errors.paid_amount ? "input-error" : "input-bordered"
-              }`}
-              {...register("paid_amount", {
-                required: "Amount is required",
-                min: { value: 0, message: "Amount must be positive" },
-              })}
-              placeholder="Amount will auto-calculate"
-              step="0.01"
-              readOnly
-            />
-            {errors.paid_amount && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.paid_amount.message}
-                </span>
-              </label>
-            )}
-          </div>
-        </div>
+        {/* Payment Status Dialogs */}
+        {showPaymentDialog && paymentStatus && (
+          <PaymentStatusDialog
+            paymentStatus={paymentStatus}
+            onClose={() => {
+              setShowPaymentDialog(false);
+              setPaymentStatus(null);
+              window.location.reload();
+            }}
+          />
+        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Remarks */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-comment text-sm"></i>
-                Remarks <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              className={`input w-full focus:outline-none ${
-                errors.remarks ? "input-error" : "input-bordered"
-              }`}
-              {...register("remarks", {
-                required: "Remarks are required",
-              })}
-              placeholder="Enter any remarks"
-              disabled={selectedFeeIds.length === 0}
-            />
-            {errors.remarks && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.remarks.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Signature */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text flex items-center gap-2">
-                <i className="fa-solid fa-signature text-sm"></i>
-                Received By <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              className={`input w-full focus:outline-none ${
-                errors.received_by ? "input-error" : "input-bordered"
-              }`}
-              {...register("received_by", {
-                required: "Signature is required",
-              })}
-              placeholder="Enter your name as signature"
-              disabled={selectedFeeIds.length === 0}
-            />
-            {errors.received_by && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.received_by.message}
-                </span>
-              </label>
-            )}
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-center mt-10">
-          <button
-            type="submit"
-            className="btn bgTheme text-white w-52"
-            disabled={isSubmitting || selectedFeeIds.length === 0}
-          >
-            {isSubmitting ? (
-              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-            ) : (
-              <i className="fa-solid fa-money-bill-wave ml-2"></i>
-            )}
-            {isSubmitting ? "Processing..." : "Submit Payment"}
-          </button>
-        </div>
-      </form>
-
-      {/* Payment Status Dialogs */}
-      {showPaymentDialog && paymentStatus && (
-        <PaymentStatusDialog
-          paymentStatus={paymentStatus}
-          onClose={() => {
-            setShowPaymentDialog(false);
-            setPaymentStatus(null);
-            window.location.reload();
-          }}
-        />
-      )}
-
-      {showPaymentDialog1 && paymentStatus && (
-        <PaymentStatusDialogOffline
-          paymentStatus={paymentStatus}
-          onClose={() => {
-            setShowPaymentDialog1(false);
-            setPaymentStatus(null);
-            window.location.reload();
-          }}
-        />
-      )}
+        {showPaymentDialog1 && paymentStatus && (
+          <PaymentStatusDialogOffline
+            paymentStatus={paymentStatus}
+            onClose={() => {
+              setShowPaymentDialog1(false);
+              setPaymentStatus(null);
+              window.location.reload();
+            }}
+          />
+        )}
       </div>
     </>
   );

@@ -163,7 +163,7 @@ const CreateDiscount = () => {
                 </span>
               </label>
               <select
-                className="select select-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="select select-bordered w-full focus:outline-none"
                 value={classId}
                 onFocus={loadClasses}
                 onChange={(e) => setClassId(e.target.value)}

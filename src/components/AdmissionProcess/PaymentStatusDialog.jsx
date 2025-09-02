@@ -6,7 +6,7 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
   console.log(paymentStatus);
   return (
     <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-2xl w-full">
+      <div className="bg-white p-6 rounded-lg ">
         <h2 className="text-2xl font-bold mb-4 text-green-600">
           Payment Successful!
         </h2>
@@ -45,7 +45,7 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}
-            className="btn btn-primary"
+            className="btn text-white bg-bgTheme"
           >
             Close
           </button>

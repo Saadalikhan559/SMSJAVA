@@ -26,7 +26,7 @@ export const fetchSchoolYear = async () => {
 export const fetchExpenseCategory = async (accessToken) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/d/Expense-Category/get_category/`,
+      `${BASE_URL}/d/Expense-Category/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -602,6 +602,8 @@ export const fetchSalaryExpense = async (accessToken) => {
   }
 };
 
+
+
 export const fetchSalaryExpenseById = async (accessToken, id) => {
   try {
     const response = await axios.get(
@@ -639,7 +641,7 @@ export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
 
     return response.data;
   } catch (error) {
-    // 👉 agar 404 ya "No records found." aaye to empty array return kar do
+
     if (
       error.response &&
       (error.response.status === 404 ||
@@ -648,7 +650,6 @@ export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
       return [];
     }
 
-    // baaki errors throw karo (modal dikhane ke liye)
     throw error;
   }
 };
@@ -918,10 +919,7 @@ export const createSalary = async (accessToken, payload) => {
         },
       }
     );
-    if (response.status == 200 || response.status == 201) {
-      alert("Successfully created a salary");
       return response.data;
-    }
   } catch (err) {
     console.error("Failed to create Employee:", err);
     throw err;
@@ -1070,6 +1068,7 @@ export const fetchCalendar = async (month, year) => {
 
 
 
+
 export const importHolidays = async (year) => {
   try {
     const response = await axios.post(
@@ -1181,7 +1180,6 @@ export const editSalary = async (accessToken, payload, id) => {
       }
     );
     if (response.status == 200 || response.status == 201) {
-      alert("Successfully edit a salary");
       return response.data;
     }
   } catch (err) {

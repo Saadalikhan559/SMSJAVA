@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
+// import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
+import { fetchViewDocuments } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 
@@ -168,7 +169,7 @@ export const ViewDocuments = () => {
                   setSelectedRole(e.target.value);
                   setSelectedClass("All");
                 }}
-                className="border p-2 rounded"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="All">Select Role</option>
                 <option value="Student">Student</option>
