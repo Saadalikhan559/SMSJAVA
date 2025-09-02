@@ -74,6 +74,7 @@ import { ViewAllExpenses } from "../components/ManageExpenses/AllExpenses/ViewAl
 import { EditSalaryExpense } from "../components/ManageExpenses/SalaryExpense/EditSalaryExpense";
 import { SchoolIncome } from "../components/Incomes/SchoolIncomes";
 import CreateIncome from "../components/Incomes/CreateIncome";
+import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/PaySalaryExpense";
 
 
 export const routes = [
@@ -521,6 +522,12 @@ export const routes = [
     element: <EditSalaryExpense />,
     protected: true,
     allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.paySalaryExpense,
+    element: <PaySalaryExpense />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.viewAllExpenses,

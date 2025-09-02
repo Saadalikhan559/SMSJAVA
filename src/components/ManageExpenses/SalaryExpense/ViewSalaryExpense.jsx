@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { fetchSalaryExpense } from "../../../services/api/Api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
 import { constants } from "../../../global/constants";
 import axios from "axios";
+import { ConfirmationModal } from "../../Modals/ConfirmationModal";
+import { Loader } from "../../../global/Loader";
+import { AuthContext } from "../../../context/AuthContext";
 
 export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
-  const access = JSON.parse(localStorage.getItem("authTokens")).access;
-  const [apiError, setApiError] = useState("");
-    const [loading, setLoading] = useState(false);
-      const [error, setError] = useState(""); 
-    
   
-  
+console.log('schoolExpense', schoolExpense);
+
+  // const {authTokens} = useContext(AuthContext);
+  // const access = authTokens.access;
+  const authTokens = JSON.parse(localStorage.getItem('authTokens'));
+  const access = authTokens.access;
+    const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedId, setSelectedId] = useState(null); // 🔹 store ID for deletion
+  const modalRef = useRef();
 
   const getSchoolExpense = async () => {
     setLoading(true);
@@ -23,25 +31,28 @@ export const ViewSalaryExpense = () => {
     } catch (error) {
       console.log("Failed to get the school salary expense", error.message);
       setError("Failed to get the school salary expense");
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  const confirmDelete = async () => {
+    if (!selectedId) return;
+    setLoading(true);
     try {
       const response = await axios.delete(
-        `${constants.baseUrl}/d/Employee/${id}/`,
+        `${constants.baseUrl}/d/Employee/${selectedId}/`,
         {
           headers: {
             Authorization: `Bearer ${access}`,
           },
         }
       );
-
       if (response.status === 200) {
-        alert("Successfully deleted");
+        setSchoolExpense((prev) =>
+          prev.filter((expense) => expense.id !== selectedId)
+        );
+        setSelectedId(null);
       }
     } catch (err) {
       if (err.response?.data) {
@@ -49,7 +60,14 @@ export const ViewSalaryExpense = () => {
       } else {
         setApiError("Something went wrong. Try again");
       }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDeleteClick = (id) => {
+    setSelectedId(id);
+    modalRef.current.show();
   };
 
   useEffect(() => {
@@ -57,27 +75,11 @@ export const ViewSalaryExpense = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">
-          Failed to load data, Try Again
-        </p>
-      </div>
-    );
+    return <Error />;
   }
 
   return (
@@ -96,86 +98,102 @@ export const ViewSalaryExpense = () => {
             </div>
           </div>
         )}
+
         {/* Table */}
         <div className="w-full overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow-sm rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Role
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Joining Date
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Base Salary
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Actions
-                    </th>
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead className="bgTheme text-white">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Name
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Role
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Joining Date
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Base Salary
+                </th>
+                <th
+                  className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
+                  width={10}
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {schoolExpense.length > 0 ? (
+                schoolExpense.map((expense) => (
+                  <tr key={expense.id}>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                      {expense.name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                      {expense.role.map((r) => r)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                      {expense.joining_date}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                      {expense.base_salary}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
+                      <div className="flex space-x-2">
+                        <Link
+                          to={allRouterLink.editSalaryExpense.replace(
+                            ":id",
+                            expense.id
+                          )}
+                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteClick(expense.id)}
+                          className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                        <Link
+                          to={allRouterLink.paySalaryExpense.replace(
+                            ":id",
+                            expense.id
+                          )}
+                          className="inline-flex items-center px-3 py-1 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100"
+                        >
+                          Pay
+                        </Link>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {schoolExpense.length > 0 ? (
-                    schoolExpense.map((expense) => (
-                      <tr key={expense.id}>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                          {expense.name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                          {expense.role.map((r) => r)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs text-nowrap">
-                          {expense.joining_date}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                          {expense.base_salary}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm" width={10}>
-                          <div className="flex space-x-2">
-                            <Link
-                              to={allRouterLink.editSalaryExpense.replace(
-                                ":id",
-                                expense.id
-                              )}
-                              className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                            >
-                              Edit
-                            </Link>
-                            <Link
-                              onClick={() => handleDelete(expense.id)}
-                              className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            >
-                              Delete
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="10"
-                        className="px-4 py-12 text-center text-gray-500"
-                      >
-                        <div className="flex flex-col items-center justify-center">
-                          <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
-                          <p>No Salary Found</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="10"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
+                      <p>No Salary Found</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
+
+      {/* 🔹 Modal for confirmation */}
+      <ConfirmationModal
+        ref={modalRef}
+        onConfirm={confirmDelete}
+        onCancel={() => setSelectedId(null)}
+      />
     </div>
   );
 };

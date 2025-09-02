@@ -1,6 +1,6 @@
 "use client";
 import { ErrorBoundary } from "react-error-boundary";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { routes } from "./routes";
 import { ProtectedRoute } from "../protectedRoutes/Protected";

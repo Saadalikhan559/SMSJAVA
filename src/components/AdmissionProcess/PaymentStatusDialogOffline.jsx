@@ -1,29 +1,25 @@
 export const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
   if (!paymentStatus) return null;
 
-  // Function to format date without date-fns
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
-        return dateString; // Return original if invalid date
+        return dateString;
       }
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return date.toLocaleDateString('en-US', options);
     } catch (e) {
-      return dateString; // Return original if parsing fails
+      return dateString;
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 px-80">
-      <div className="bg-white p-6 rounded-lg max-w-2xl w-full">
+    <div className="fixed inset-0 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 px-4 sm:px-6 md:px-8">
+      <div className="bg-white w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-4 sm:p-6 rounded-lg overflow-y-auto max-h-[90vh]">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-2xl font-bold text-green-600">Payment Receipt</h2>
-          <button
-            onClick={onClose}
-            className="btn btn-circle btn-sm"
-          >
+          <h2 className="text-xl sm:text-2xl font-bold text-green-600">Payment Receipt</h2>
+          <button onClick={onClose} className="btn btn-circle btn-sm">
             ✕
           </button>
         </div>
@@ -81,15 +77,11 @@ export const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
               <p>Late Fee: ₹{paymentStatus.late_fee}</p>
             )}
           </div>
-
         </div>
 
-        {/* Print/Close Buttons */}
+        {/* Buttons */}
         <div className="mt-6 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="btn btn-primary"
-          >
+          <button onClick={onClose} className="btn text-white bgTheme">
             Close
           </button>
         </div>

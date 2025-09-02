@@ -4,6 +4,10 @@ import {
   fetchSchoolExpense,
   fetchSchoolYear,
 } from "../../../services/api/Api";
+import { Loader } from "../../../global/Loader";
+import axios from "axios";
+import { constants } from "../../../global/constants";
+import { Error } from "../../../global/Error";
 
 export const ViewAllExpenses = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
@@ -12,7 +16,10 @@ export const ViewAllExpenses = () => {
   const [category, setCategory] = useState([]);
   const [selectedSchoolYear, setSelectedSchoolYear] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [addCategory, setAddCategory] = useState("");
+  const [apiError, setApiError] = useState("");
 
   const access = JSON.parse(localStorage.getItem("authTokens"))?.access;
 
@@ -67,28 +74,56 @@ export const ViewAllExpenses = () => {
     }
   }, [selectedSchoolYear, selectedCategory, access]);
 
+  const handleAddCategoryClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowAddCategoryModal(true);
+  };
+
+  const closeModal = () => {
+    setShowAddCategoryModal(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!addCategory.trim()) {
+      setApiError("Category name is required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${constants.baseUrl}/d/Expense-Category/`,
+        { name: addCategory },
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        setAddCategory(""); 
+        setApiError("");
+        closeModal();
+        getExpenseCategory(); 
+      }
+    } catch (error) {
+      console.error(error);
+      setApiError(error.response?.data?.detail || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-      </div>
-    );
+    return <Loader />;
   }
 
-
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>
-    );
+    return <Error />;
   }
 
   return (
@@ -99,9 +134,9 @@ export const ViewAllExpenses = () => {
         </h2>
 
         {/* Filters */}
-        <div className="mb-4 flex gap-4">
+        <div className="mb-4 flex flex-col gap-4 md:flex-row">
           {/* School Year Filter */}
-          <div className="form-control">
+          <div className="form-control w-full md:w-1/3">
             <label className="label">
               <span className="label-text">Select School Year</span>
             </label>
@@ -120,7 +155,7 @@ export const ViewAllExpenses = () => {
           </div>
 
           {/* Category Filter */}
-          <div className="form-control">
+          <div className="form-control w-full md:w-1/3">
             <label className="label">
               <span className="label-text">Select Category</span>
             </label>
@@ -137,6 +172,19 @@ export const ViewAllExpenses = () => {
               ))}
             </select>
           </div>
+
+          {/* Add Category */}
+          <div className="form-control w-full md:w-1/3">
+            <label className="label">
+              <span className="label-text">Actions</span>
+            </label>
+            <button
+              onClick={handleAddCategoryClick}
+              className="btn bgTheme text-white flex items-center justify-center md:justify-start text-nowrap"
+            >
+              <i className="fa-solid fa-plus mr-1"></i> Add Category
+            </button>
+          </div>
         </div>
 
         {/* Table */}
@@ -144,39 +192,80 @@ export const ViewAllExpenses = () => {
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bgTheme text-white">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Category</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Amount</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Description</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Expense Date</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Payment Method</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Attachment</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Created At</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Created By</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Approved By</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Category
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Amount
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Description
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Expense Date
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Payment Method
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Attachment
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Created At
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Created By
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Approved By
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {schoolExpense.length > 0 ? (
                 schoolExpense.map((expense) => (
                   <tr key={expense.id}>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.category_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.amount}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.category_name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.amount}
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs">
                       {expense.description}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.expense_date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.payment_method}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs">{expense.attachment}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.status}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.created_at}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.created_by_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{expense.approved_by_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.expense_date}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.payment_method}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs">
+                      {expense.attachment}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.status}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.created_at}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.created_by_name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {expense.approved_by_name}
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="px-4 py-12 text-center text-gray-500">
+                  <td
+                    colSpan="10"
+                    className="px-4 py-12 text-center text-gray-500"
+                  >
                     <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
                     <p>No expenses found for the selected criteria</p>
                   </td>
@@ -186,6 +275,55 @@ export const ViewAllExpenses = () => {
           </table>
         </div>
       </div>
+
+      {/* Add Category Modal */}
+      {showAddCategoryModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 z-50 bg-black/30 backdrop-blur-sm">
+          <form
+            className="bg-white rounded-lg p-6 w-full max-w-md"
+            onSubmit={handleSubmit}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">Add New Category</h3>
+              <button
+                onClick={closeModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <i className="fa-solid fa-times"></i>
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Category Name
+              </label>
+              <input
+                value={addCategory}
+                onChange={(e) => setAddCategory(e.target.value)}
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                placeholder="Enter category name"
+              />
+              {apiError && <p className="text-sm text-red-500 mt-1">{apiError}</p>}
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bgTheme text-white rounded-md text-nowrap"
+                type="submit"
+              >
+                Add Category
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

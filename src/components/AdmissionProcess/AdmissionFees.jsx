@@ -462,6 +462,41 @@ export const AdmissionFees = () => {
     }
   };
 
+
+  if (isLoading && !apiError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  };
+  if (isLoadingFees && !apiError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  };
+    if (apiError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <button className="bg-red-400 btn text-white" onClick={handleRetry}>retry</button>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="min-h-screen p-5 bg-gray-50">
@@ -476,7 +511,7 @@ export const AdmissionFees = () => {
 
 
           {/* Error Display */}
-          {apiError && (
+          {/* {apiError && (
             <div className="alert alert-error mb-6">
               <div className="flex-1">
                 <svg
@@ -502,7 +537,7 @@ export const AdmissionFees = () => {
                 Retry
               </button>
             </div>
-          )}
+          )} */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Class Selection */}
@@ -600,12 +635,16 @@ export const AdmissionFees = () => {
           </div>
 
           {/* Loading State */}
-          {isLoadingFees && (
-            <div className="flex justify-center my-6">
-              <span className="loading loading-spinner loading-lg text-primary"></span>
-              <span className="ml-3 text-lg">Loading fees data...</span>
-            </div>
-          )}
+          {/* {isLoadingFees && (
+            <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+          )} */}
 
           {/* Available Fees Display */}
           {availableFees.length > 0 && selectedStudent && (
@@ -700,24 +739,15 @@ export const AdmissionFees = () => {
             availableFees.length === 0 &&
             selectedStudentId &&
             selectedMonth && (
-              <div className="alert alert-info mt-6">
-                <div className="flex-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    className="w-6 h-6 mx-2 stroke-current"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  <label>No fees found for the selected student and month</label>
-                </div>
-              </div>
+                    <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+
             )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
