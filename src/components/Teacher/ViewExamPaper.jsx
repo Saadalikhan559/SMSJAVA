@@ -87,7 +87,7 @@ const ViewExamPaper = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="mb-6">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
             Examination Papers
           </h1>
