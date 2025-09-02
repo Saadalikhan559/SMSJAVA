@@ -41,7 +41,10 @@ export const ViewDocuments = () => {
   }, [teacherId, userRole]);
 
   if (loading) return <div className="p-4 text-center">Loading documents...</div>;
-  if (!details || details.length === 0) return <div className="p-4 text-center">No documents available.</div>;
+  if (!details || details.length === 0) return    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>;
   if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
