@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchDiscounts } from "../../../services/api/Api";
+import { fetchDiscounts, fetchYearLevels } from "../../../services/api/Api";
 import { deleteDiscount } from "../../../services/api/Api";
 import { updateDiscount } from "../../../services/api/Api";
 import { Link } from "react-router-dom";
@@ -11,6 +11,8 @@ const DiscountedStudents = () => {
   const [editingStudent, setEditingStudent] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+    const [selectedClass, setSelectedClass] = useState("");
+    const [yearLevels, setYearLevels] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState({
     student_name: "",
@@ -78,9 +80,25 @@ const DiscountedStudents = () => {
       setDeleteId(null);
     }
   };
+ const getYearLevels = async () => {
+      try {
+        const data = await fetchYearLevels();
+        setYearLevels(data);
+      } catch (err) {
+        console.error("Error fetching year levels:", err);
+      }
+    };
 
+ useEffect(() => {
+    getYearLevels();
+  }, []);
   //  Filter 
+  console.log(students);
+  
   const filteredStudents = students.filter((s) =>
+    s.year_level.toLowerCase().includes(selectedClass.toLowerCase())
+  );
+  const filteredBysearch = filteredStudents.filter((s) =>
     s.student_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -95,11 +113,31 @@ const DiscountedStudents = () => {
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
         <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
-          <div className="p-4">
+           <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+           <i className="fa-solid fa-percentage ml-2"></i> Discounted Students
+          </h1>
+        </div>
+          <div className="p-2">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-                <i className="fa-solid fa-percentage ml-2"></i> Discounted Students
-              </h2>
+            
+               <div className=" w-full  sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Select Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.level_name}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <input
                 type="text"
@@ -128,7 +166,7 @@ const DiscountedStudents = () => {
 
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredStudents.length > 0 ? (
-                    filteredStudents.map((s) => (
+                    filteredBysearch.map((s) => (
                       <tr key={s.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm text-gray-700 font-bold capitalize text-nowrap">
                           {s.student_name}
