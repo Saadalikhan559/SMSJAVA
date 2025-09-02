@@ -5,6 +5,8 @@ import axios from "axios";
 const ViewExamPaper = () => {
   const [accessToken, setAccessToken] = useState("");
   const [examPaper, setExamPaper] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const BASE_URL = constants.baseUrl;
 
@@ -29,6 +31,9 @@ const ViewExamPaper = () => {
       return;
     }
 
+    setLoading(true);
+    setError(false);
+
     try {
       const response = await axios.get(
         `${BASE_URL}/d/Exam-Paper/get_exampaper/`,
@@ -42,6 +47,9 @@ const ViewExamPaper = () => {
       setExamPaper(response.data); 
     } catch (err) {
       console.error("Failed to fetch timetable:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,7 +59,28 @@ const ViewExamPaper = () => {
     }
   }, [accessToken]);
 
-  // Static payload data
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
+
   const ExamPapers = examPaper;
 
   return (

@@ -20,19 +20,28 @@ function HolidayCalendar() {
     description: ""
   });
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-const [userRole, setUserRole] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
- useEffect(() => {
-    const role = localStorage.getItem("userRole"); // ya API call
+  // new states for loading & error
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const role = localStorage.getItem("userRole");
     setUserRole(role);
   }, []);
 
   const getCalendar = async () => {
     try {
+      setLoading(true);
+      setError(false);
       const data = await fetchCalendar(month, year);
       setCalendar(data);
+      setLoading(false);
     } catch (error) {
       console.log("Failed to get calendar data", error);
+      setError(true);
+      setLoading(false);
     }
   };
 
@@ -41,6 +50,32 @@ const [userRole, setUserRole] = useState(null);
       getCalendar();
     }
   }, [year, month]);
+
+  // Loader UI
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  // Error UI
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   const calendarData = calendar;
 
@@ -73,7 +108,6 @@ const [userRole, setUserRole] = useState(null);
         text: "Event created successfully!",
       });
       getCalendar();
-      // Reset form
       setNewEvent({
         title: "",
         start_date: "",
@@ -81,7 +115,6 @@ const [userRole, setUserRole] = useState(null);
         description: "",
         category: ""
       });
-      // Close dialog after a short delay
       setTimeout(() => setIsEventDialogOpen(false), 1000);
     } catch (error) {
       setImportMessage({
@@ -121,7 +154,6 @@ const [userRole, setUserRole] = useState(null);
       const compareDate = new Date(
         Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
       );
-
       return compareDate >= startDate && compareDate <= endDate;
     });
   };
@@ -134,7 +166,6 @@ const [userRole, setUserRole] = useState(null);
         const compareDate = new Date(
           Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
         );
-
         return compareDate >= startDate && compareDate <= endDate;
       }) || []
     );
@@ -147,7 +178,6 @@ const [userRole, setUserRole] = useState(null);
         const compareDate = new Date(
           Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
         );
-
         return holidayDate.getTime() === compareDate.getTime();
       }) || []
     );
@@ -215,7 +245,7 @@ const [userRole, setUserRole] = useState(null);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
@@ -753,7 +783,7 @@ const [userRole, setUserRole] = useState(null);
 )}
         </div>
       </div>
-    </div>
+    </div>    
   );
 }
 

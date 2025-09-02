@@ -9,6 +9,7 @@ export const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [assignedPeriods, setAssignedPeriods] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const { userID } = useContext(AuthContext);
 
   useEffect(() => {
@@ -22,8 +23,9 @@ export const StudentDashboard = () => {
           const periodData = await fetchPeriodsByYearLevel(yearLevelId);
           setAssignedPeriods(periodData.assigned_periods || []);
         }
-      } catch (error) {
-        console.error("Failed to load dashboard:", error);
+      } catch (err) {
+        console.error("Failed to load dashboard:", err);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -32,10 +34,28 @@ export const StudentDashboard = () => {
     getStudentDashboardData();
   }, [userID]);
 
+  // Loader
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  // Error UI
+  if (error || !dashboardData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }
@@ -59,9 +79,7 @@ export const StudentDashboard = () => {
       <div className="rounded-lg shadow-md border borderTheme bg-white">
         <div className="rounded-t-lg overflow-hidden">
           <div className="p-5 bgTheme text-white flex items-center justify-between">
-            <h3 className="text-2xl font-semibold uppercase">
-              {student.student_name}
-            </h3>
+            <h3 className="text-2xl font-semibold uppercase">{student.student_name}</h3>
             <p className="text-2xl font-semibold">{student.class}</p>
           </div>
 
@@ -88,8 +106,10 @@ export const StudentDashboard = () => {
               </thead>
               <tbody>
                 {assignedPeriods.map((period, index) => (
-                  <tr key={index} className="hover:bg-blue-50 border-b text-gray-800 last:border-b-0">
-
+                  <tr
+                    key={index}
+                    className="hover:bg-blue-50 border-b text-gray-800 last:border-b-0"
+                  >
                     <td className="px-5 py-3">{index + 1}</td>
                     <td className="px-5 py-3">{period.subject}</td>
                     <td className="px-5 py-3">{period.teacher}</td>
@@ -109,4 +129,3 @@ export const StudentDashboard = () => {
     </div>
   );
 };
-

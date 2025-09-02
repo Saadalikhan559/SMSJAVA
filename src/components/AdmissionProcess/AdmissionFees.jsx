@@ -21,12 +21,8 @@ export const AdmissionFees = () => {
   const [availableMonths, setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
 
-
-  console.log(availableFees);
-  
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const accessToken = authTokens?.access;
-
   const BASE_URL = constants.baseUrl;
 
   const {
@@ -50,29 +46,47 @@ export const AdmissionFees = () => {
   const selectedStudentId = watch("student_id");
   const selectedMonth = watch("month");
 
+  // Custom Loader JSX
+  const Loader = () => (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex space-x-2">
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+      </div>
+      <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+    </div>
+  );
+
+  const ErrorUI = ({ message }) => (
+    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+      <p className="text-lg text-red-400 font-medium">{message || "Failed to load data, Try Again"}</p>
+    </div>
+  );
 
   // Fetch all classes
   const getClasses = async () => {
     try {
+      setIsLoading(true);
+      setApiError("");
       const response = await axios.get(`${BASE_URL}/d/year-levels/`);
       setClasses(response.data);
-      
     } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
       setApiError("Failed to load classes");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Fetch available fees for a student with proper error handling
   const fetchAvailableFees = async (studentId, month) => {
     if (!studentId || !month) {
-      console.log("Student ID or Month missing");
       setAvailableFees([]);
       return [];
     }
 
     if (!accessToken) {
-      console.error("Access token not available");
       setApiError("Authentication required. Please login again.");
       setAvailableFees([]);
       return [];
@@ -81,9 +95,6 @@ export const AdmissionFees = () => {
     try {
       setIsLoadingFees(true);
       setApiError("");
-
-      console.log("Fetching fees for:", { studentId, month });
-
       const response = await axios.get(
         `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}&month=${month}`,
         {
@@ -93,38 +104,20 @@ export const AdmissionFees = () => {
           },
         }
       );
-
       setAvailableFees(response.data);
       return response.data;
     } catch (error) {
-      console.error("Fee fetch error:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        url: error.config?.url,
-      });
-
       let errorMessage = "Failed to load fees";
-
       if (error.response) {
-        // Server responded with error status
-        if (error.response.status === 401) {
-          errorMessage = "Authentication failed. Please login again.";
-        } else if (error.response.status === 404) {
-          errorMessage = "No fees found for selected student and month";
-        } else if (error.response.status === 500) {
-          errorMessage = "Server error. Please try again later.";
-        } else if (error.response.data?.detail) {
-          errorMessage = error.response.data.detail;
-        }
+        if (error.response.status === 401) errorMessage = "Authentication failed. Please login again.";
+        else if (error.response.status === 404) errorMessage = "No fees found for selected student and month";
+        else if (error.response.status === 500) errorMessage = "Server error. Please try again later.";
+        else if (error.response.data?.detail) errorMessage = error.response.data.detail;
       } else if (error.request) {
-        // Request was made but no response received
         errorMessage = "Network error. Please check your connection.";
       } else {
-        // Something else happened
         errorMessage = error.message;
       }
-
       setApiError(errorMessage);
       setAvailableFees([]);
       return [];
@@ -141,7 +134,6 @@ export const AdmissionFees = () => {
       const Students = await fetchStudents1(classId);
       setStudents(Students);
     } catch (err) {
-      console.log("Failed to load students. Please try again." + err);
       setApiError("Failed to load students");
     } finally {
       setIsLoading(false);
@@ -152,7 +144,6 @@ export const AdmissionFees = () => {
     getClasses();
   }, []);
 
-  // Handle class selection
   const handleClassChange = (e) => {
     const classId = e.target.value;
     setSelectedClassId(classId);
@@ -171,7 +162,6 @@ export const AdmissionFees = () => {
     setApiError("");
   };
 
-  // When class is selected, fetch students
   useEffect(() => {
     if (selectedClassId) {
       getStudents(selectedClassId);
@@ -180,20 +170,11 @@ export const AdmissionFees = () => {
     }
   }, [selectedClassId]);
 
-  // When student or month changes, fetch available fees
   useEffect(() => {
     if (selectedStudentId && selectedMonth) {
-      const student = students.find(
-        (s) => s.student_id === parseInt(selectedStudentId)
-      );
+      const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
       setSelectedStudent(student);
-
-      // Fetch student's available fees
-      const fetchStudentData = async () => {
-        await fetchAvailableFees(selectedStudentId, selectedMonth);
-      };
-
-      fetchStudentData();
+      fetchAvailableFees(selectedStudentId, selectedMonth);
     } else {
       setSelectedStudent(null);
       setAvailableFees([]);
@@ -202,7 +183,6 @@ export const AdmissionFees = () => {
     }
   }, [selectedStudentId, selectedMonth, students]);
 
-  // When fee selection changes, update the total amount
   useEffect(() => {
     if (selectedFeeIds.length > 0 && availableFees.length > 0) {
       let totalAmount = 0;
@@ -212,17 +192,12 @@ export const AdmissionFees = () => {
         yearLevel.fees.forEach((fee) => {
           if (selectedFeeIds.includes(fee.id)) {
             totalAmount += parseFloat(fee.final_amount);
-            // Add late fee if it exists for this fee
-            if (fee.late_fee) {
-              lateFeeAmount += parseFloat(fee.late_fee);
-            }
+            if (fee.late_fee) lateFeeAmount += parseFloat(fee.late_fee);
           }
         });
       });
 
-      // Add late fee to total amount
       totalAmount += lateFeeAmount;
-
       setValue("paid_amount", totalAmount.toFixed(2));
     } else {
       setValue("paid_amount", "0.00");
@@ -230,73 +205,39 @@ export const AdmissionFees = () => {
   }, [selectedFeeIds, availableFees, setValue]);
 
   const role = localStorage.getItem("userRole");
-
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   };
 
   const allMonths = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
   ];
 
-  const paymentModes =
+  const paymentModes = 
     role === constants.roles.officeStaff || constants.roles.director
-      ? ["Cash", "Cheque", "Online"]
+      ? ["Cash","Cheque","Online"]
       : ["Online"];
 
   const displayRazorpay = async (payload) => {
     try {
       const isScriptLoaded = await loadRazorpayScript();
-      if (!isScriptLoaded) {
-        throw new Error("Razorpay SDK failed to load");
-      }
+      if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
 
       const orderResponse = await axios.post(
         `${BASE_URL}/d/fee-record/initiate-payment/`,
         payload,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      const {
-        razorpay_order_id: orderId,
-        currency,
-        receipt_number,
-        paid_amount: orderAmount,
-      } = orderResponse.data;
-
-      const {
-        student_id,
-        month,
-        year_level_fees,
-        received_by,
-        payment_mode,
-        paid_amount,
-      } = payload;
+      const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
+      const { student_id, month, year_level_fees, received_by, payment_mode, paid_amount } = payload;
 
       const options = {
         key: "rzp_test_4h2aRSAPbYw3f8",
@@ -320,52 +261,25 @@ export const AdmissionFees = () => {
                 payment_mode,
                 paid_amount,
               },
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
+              { headers: { Authorization: `Bearer ${accessToken}` } }
             );
 
             if (verificationResponse.data) {
               setPaymentStatus(verificationResponse.data);
               setShowPaymentDialog(true);
-            } else {
-              setPaymentStatus("Payment verification failed");
-            }
+            } else setPaymentStatus("Payment verification failed");
           } catch (error) {
-            console.error("Payment verification error:", error);
             setPaymentStatus("Payment verification failed");
           }
         },
-        prefill: {
-          name: selectedStudent ? `${selectedStudent.student_name}` : "",
-          email: selectedStudent?.email || "",
-        },
-        notes: {
-          address: "Course Purchase",
-        },
-        theme: {
-          color: "#3399cc",
-        },
+        prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
+        notes: { address: "Course Purchase" },
+        theme: { color: "#3399cc" },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      console.error("Payment error:", error);
-      if (error.response) {
-        const message =
-          error.response.data.message ||
-          (error.response.data.non_field_errors &&
-            error.response.data.non_field_errors[0]) ||
-          "Unknown error";
-        alert(`Error: ${message}`);
-      } else if (error.request) {
-        alert("Error: No response from server");
-      } else {
-        alert(`Error: ${error.message}`);
-      }
       setPaymentStatus("Payment failed. Please try again.");
     }
   };
@@ -386,81 +300,48 @@ export const AdmissionFees = () => {
     };
 
     try {
-      if (payload.payment_mode === "Online") {
-        await displayRazorpay(payload);
-      } else if (
-        payload.payment_mode === "Cash" ||
-        payload.payment_mode === "Cheque"
-      ) {
-        const response = await axios.post(
-          `${BASE_URL}/d/fee-record/`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+      if (payload.payment_mode === "Online") await displayRazorpay(payload);
+      else {
+        const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
         setPaymentStatus(response.data);
         setShowPaymentDialog1(true);
       }
     } catch (error) {
-      console.error("Error submitting fees:", error);
-      if (error.response) {
-        const message =
-          error.response.data.message ||
-          (error.response.data.non_field_errors &&
-            error.response.data.non_field_errors[0]) ||
-          "Unknown error";
-        alert(`Error: ${message}`);
-      } else if (error.request) {
-        alert("Error: No response from server");
-      } else {
-        alert(`Error: ${error.message}`);
-      }
+      setPaymentStatus("Payment failed. Please try again.");
     }
   };
 
-  // Handle fee selection
   const handleFeeSelection = (feeId, isSelected) => {
-    if (isSelected) {
-      setSelectedFeeIds((prev) => [...prev, feeId]);
-    } else {
-      setSelectedFeeIds((prev) => prev.filter((id) => id !== feeId));
-    }
+    if (isSelected) setSelectedFeeIds((prev) => [...prev, feeId]);
+    else setSelectedFeeIds((prev) => prev.filter((id) => id !== feeId));
   };
 
-  // Calculate total amount including late fees
   const calculateTotalAmount = () => {
     let total = 0;
     let lateFeeTotal = 0;
-
     availableFees.forEach((yearLevel) => {
       yearLevel.fees.forEach((fee) => {
         if (selectedFeeIds.includes(fee.id)) {
           total += parseFloat(fee.final_amount);
-          if (fee.late_fee) {
-            lateFeeTotal += parseFloat(fee.late_fee);
-          }
+          if (fee.late_fee) lateFeeTotal += parseFloat(fee.late_fee);
         }
       });
     });
-
-    return {
-      baseAmount: total,
-      lateFee: lateFeeTotal,
-      totalAmount: total + lateFeeTotal,
-    };
+    return { baseAmount: total, lateFee: lateFeeTotal, totalAmount: total + lateFeeTotal };
   };
 
   const totalAmount = calculateTotalAmount();
 
-  // Retry fetching fees
   const handleRetry = () => {
-    if (selectedStudentId && selectedMonth) {
-      fetchAvailableFees(selectedStudentId, selectedMonth);
-    }
+    if (selectedStudentId && selectedMonth) fetchAvailableFees(selectedStudentId, selectedMonth);
+    else if (selectedClassId) getStudents(selectedClassId);
+    else getClasses();
   };
+
+  if (isLoading) return <Loader />;
+  if (apiError) return <ErrorUI message={apiError} />;
 
   return (
     <>

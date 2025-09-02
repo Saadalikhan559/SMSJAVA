@@ -3,7 +3,7 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import { AuthContext } from "../../context/AuthContext";
 
-// import { fetchAllocatedClasses } from "../../services/api/Api";
+import { fetchAllocatedClasses } from "../../services/api/Api";
 
 const ViewAllocatedClass = () => {
   const { authTokens } = useContext(AuthContext);
@@ -11,25 +11,27 @@ const ViewAllocatedClass = () => {
   const [allocatedClasses, setAllocatedClasses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  // useEffect(() => {
+  useEffect(() => {
+    const loadClasses = async () => {
+      setLoading(true);
+      setError(false);
+      try {
+        const data = await fetchAllocatedClasses(authTokens.access);
+        setAllocatedClasses(data);
+      } catch (err) {
+        console.error(err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   const loadClasses = async () => {
-  //     try {
-  //       const data = await fetchAllocatedClasses(authTokens.access);
-  //       setAllocatedClasses(data);
-  //     }  catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-
-  //   if (authTokens?.access) {
-  //     loadClasses();
-  //   }
-  // }, [authTokens]);
+    if (authTokens?.access) {
+      loadClasses();
+    }
+  }, [authTokens]);
 
   const filteredClasses = allocatedClasses.filter(
     (classItem) =>
@@ -37,13 +39,34 @@ const ViewAllocatedClass = () => {
       classItem.year_level_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
-           <i className="fa-solid fa-landmark"></i> Allocated Classes 
+            <i className="fa-solid fa-landmark"></i> Allocated Classes 
           </h2>
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -70,7 +93,6 @@ const ViewAllocatedClass = () => {
         </div>
 
         {/* Table */}
-
         <div className="w-full overflow-x-auto">
           <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
             <thead className="bgTheme text-white text-center">
@@ -80,16 +102,7 @@ const ViewAllocatedClass = () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan="2"
-                    className="text-center py-6 text-gray-500"
-                  >
-                    Loading allocated classes...
-                  </td>
-                </tr>
-              ) : filteredClasses.length > 0 ? (
+              {filteredClasses.length > 0 ? (
                 filteredClasses.map((classItem, index) => (
                   <tr key={classItem.id || index} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-center text-sm text-gray-700 capitalize">
@@ -99,14 +112,10 @@ const ViewAllocatedClass = () => {
                       {classItem.year_level_name}
                     </td>
                   </tr>
-
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="2"
-                    className="text-center py-6 text-gray-500"
-                  >
+                  <td colSpan="2" className="text-center py-6 text-gray-500">
                     No matching classes found
                   </td>
                 </tr>

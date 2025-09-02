@@ -82,31 +82,26 @@ const FeeSummaryTable = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-        <div className="text-center max-w-md p-6 bg-white shadow-lg rounded-lg border border-red-300">
-          <i className="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h2>
-          <p className="text-sm text-gray-600">{error}</p>
-          <button
-            onClick={() => {
-              setError(null);
-              getFeeData();
-            }}
-            className="mt-5 px-4 py-2 bgTheme text-white rounded hover:bg-blue-700 transition"
-          >
-            Retry
-          </button>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
         </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
-  }
+}
+
+if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+}
+
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">

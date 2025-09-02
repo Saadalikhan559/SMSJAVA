@@ -4,6 +4,7 @@ import { fetchMarksheets } from "../../services/api/Api";
 
 const MarksheetsTable = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [marksheet, setMarksheet] = useState([]);
@@ -16,16 +17,20 @@ const MarksheetsTable = () => {
         if (tokens?.access && tokens.access !== accessToken) {
           setAccessToken(tokens.access);
         }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
-        setLoading(false); // Set loading to false if there's an error
+      } catch (err) {
+        console.error("Error parsing auth tokens:", err);
+        setLoading(false);
+        setError(true);
       }
     } else {
-      setLoading(false); // Set loading to false if no token data
+      setLoading(false);
+      setError(true);
     }
   }, []);
 
   const getMarksheet = async () => {
+    setLoading(true);
+    setError(false);
     try {
       if (!accessToken) {
         throw new Error("No access token available");
@@ -39,8 +44,9 @@ const MarksheetsTable = () => {
       }
     } catch (err) {
       console.error("Failed to load marksheet:", err);
+      setError(true);
     } finally {
-      setLoading(false); // Always set loading to false when the operation is complete
+      setLoading(false);
     }
   };
 
@@ -52,13 +58,27 @@ const MarksheetsTable = () => {
 
   const staticPayload = marksheet;
 
-   if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
 
   if (!staticPayload || staticPayload.length === 0) {
     return <div className="p-4 text-center">No marksheet data available</div>;
@@ -94,46 +114,25 @@ const MarksheetsTable = () => {
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bgTheme text-white">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Student Name
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Father's Name
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Date of Birth
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Contact Number
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Class
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Academic Year
                       </th>
-                      <th
-                        scope="col"
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                      >
+                      <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Actions
                       </th>
                     </tr>

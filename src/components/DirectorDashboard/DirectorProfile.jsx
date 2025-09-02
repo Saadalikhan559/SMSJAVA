@@ -130,21 +130,27 @@ const DirectorProfile = () => {
   };
 
 if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
-  if (error) {
     return (
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
-        <div className="text-center text-red-500">
-          <p>Error loading director profile: {error}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
         </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
-  }
+}
+
+if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+}
+
 
   if (!profileData) {
     return (

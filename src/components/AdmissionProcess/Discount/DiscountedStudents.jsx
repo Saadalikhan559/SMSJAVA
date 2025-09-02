@@ -5,7 +5,6 @@ import { updateDiscount } from "../../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
 
-
 const DiscountedStudents = () => {
   const [students, setStudents] = useState([]);
   const [editingStudent, setEditingStudent] = useState(null);
@@ -20,24 +19,29 @@ const DiscountedStudents = () => {
     tuition_fee: "",
     discount_reason: "",
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
 
-  // Fetch students
   useEffect(() => {
     loadDiscounts();
   }, []);
 
   const loadDiscounts = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const data = await fetchDiscounts(token);
       setStudents(data);
     } catch (err) {
       console.error("Error fetching students:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Delete student
   const handleDelete = async (id) => {
     try {
       await deleteDiscount(token, id);
@@ -47,13 +51,11 @@ const DiscountedStudents = () => {
     }
   };
 
-  // Edit student
   const handleEdit = (student) => {
     setEditingStudent(student.id);
     setFormData({ ...student });
   };
 
-  // Save edited student
   const handleSave = async () => {
     try {
       await updateDiscount(token, editingStudent, formData);
@@ -64,8 +66,6 @@ const DiscountedStudents = () => {
     }
   };
 
-
-  // Confirm delete
   const confirmDelete = async () => {
     if (!deleteId) return;
     try {
@@ -79,17 +79,36 @@ const DiscountedStudents = () => {
     }
   };
 
-  //  Filter 
   const filteredStudents = students.filter((s) =>
     s.student_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
 
   const openDeleteModal = (id) => {
     setDeleteId(id);
     setConfirmOpen(true);
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -110,7 +129,6 @@ const DiscountedStudents = () => {
               />
             </div>
 
-            {/* Table */}
             <div className="w-full overflow-x-auto rounded-lg">
               <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
                 <thead className="bgTheme text-white">

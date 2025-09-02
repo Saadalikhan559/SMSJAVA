@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { fetchPeriodsByYearLevel } from "../../services/api/Api";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
@@ -21,11 +20,16 @@ const PeriodAssignment = () => {
       setError("");
       try {
         const data = await fetchPeriodsByYearLevel(year_level_id);
-        setAssignedPeriods(data.assigned_periods || []);
+        if (!data.assigned_periods || data.assigned_periods.length === 0) {
+          setError("No periods assigned for this year level.");
+          setAssignedPeriods([]);
+        } else {
+          setAssignedPeriods(data.assigned_periods);
+        }
       } catch (err) {
         console.error("Failed to fetch periods:", err);
         setAssignedPeriods([]);
-        setError("Failed to fetch assigned periods. Please try again.");
+        setError("Failed to load data, Try Again");
       } finally {
         setLoading(false);
       }
@@ -34,7 +38,6 @@ const PeriodAssignment = () => {
     getPeriods();
   }, [year_level_id]);
 
-  
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -43,12 +46,11 @@ const PeriodAssignment = () => {
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
         </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading assigned periods...</p>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
   }
 
-  
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
@@ -74,36 +76,30 @@ const PeriodAssignment = () => {
           </button>
         </div>
 
-        {assignedPeriods.length === 0 ? (
-          <div className="text-center text-red-600 py-10">
-            No periods assigned for this year level.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bgTheme text-white text-left">
-                <tr>
-                  <th className="px-4 py-3">S.No</th>
-                  <th className="px-4 py-3">Subject</th>
-                  <th className="px-4 py-3">Teacher</th>
-                  <th className="px-4 py-3">Start Time</th>
-                  <th className="px-4 py-3">End Time</th>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+            <thead className="bgTheme text-white text-left">
+              <tr>
+                <th className="px-4 py-3">S.No</th>
+                <th className="px-4 py-3">Subject</th>
+                <th className="px-4 py-3">Teacher</th>
+                <th className="px-4 py-3">Start Time</th>
+                <th className="px-4 py-3">End Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assignedPeriods.map((period, index) => (
+                <tr key={index} className="hover:bg-gray-50 text-left">
+                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3">{period.subject}</td>
+                  <td className="px-4 py-3">{period.teacher}</td>
+                  <td className="px-4 py-3">{period.start_time}</td>
+                  <td className="px-4 py-3">{period.end_time}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {assignedPeriods.map((period, index) => (
-                  <tr key={index} className="hover:bg-gray-50  text-left">
-                    <td className="px-4 py-3">{index + 1}</td>
-                    <td className="px-4 py-3">{period.subject}</td>
-                    <td className="px-4 py-3">{period.teacher}</td>
-                    <td className="px-4 py-3">{period.start_time}</td>
-                    <td className="px-4 py-3">{period.end_time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
