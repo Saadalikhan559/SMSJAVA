@@ -92,7 +92,7 @@ const StudentMarksFill = () => {
     }
   };
 
-  // Fetch terms
+  // Fetch teachers
   const getTeachers = async () => {
     try {
       const obj = await fetchAllTeachers();
@@ -119,30 +119,19 @@ const StudentMarksFill = () => {
     getSchool_year();
     getStudents();
     if (accessToken) {
-      // Only call getExamType if we have a token
       getExamType();
     }
-  }, [accessToken]); // Add accessToken as dependency
+  }, [accessToken]);
 
-  // Static data for dropdowns - replace with your actual data sources
+  // Static data for dropdowns
   const examType = examType1;
-
   const className1 = className;
-
   const schoolYears = schoolYear;
-
   const subjects = subjects1;
-
   const teachers = teachers1;
-
   const students = Students;
 
-  //   const handleNavigate = () => {
-  //     navigate(-1);
-  //   };
-
   const onSubmit = async (data) => {
-    // Format the data according to the static payload structure
     const payload = {
       school_year_id: parseInt(data.school_year),
       exam_type_id: parseInt(data.exam_type),
@@ -164,7 +153,6 @@ const StudentMarksFill = () => {
     console.log("Form submitted with payload:", payload);
     try {
       if (!accessToken) return;
-      // Replace with your actual API call
       const response = await axios.post(
         `${BASE_URL}/d/Student-Marks/create_marks/`,
         payload,
@@ -187,245 +175,204 @@ const StudentMarksFill = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert(`Error: ${error.response.data.paper_code}`);
+      alert(`Error: ${error.response?.data?.paper_code || "Submission failed"}`);
     }
   };
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Fill Student Marks <i className="fa-solid fa-file-pen ml-2"></i>
-        </h1>
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Fill Student Marks <i className="fa-solid fa-file-pen ml-2"></i>
+          </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* School Year */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                School Year <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full focus:outline-none ${
-                errors.school_year ? "select-error" : ""
-              }`}
-              {...register("school_year", {
-                required: "School year is required",
-              })}
-            >
-              <option value="">Select School Year</option>
-              {schoolYears?.map((year) => (
-                <option key={year.id} value={year.id}>
-                  {year.year_name}
-                </option>
-              ))}
-            </select>
-            {errors.school_year && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* School Year */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                School Year *
+              </label>
+              <select
+                {...register("school_year", {
+                  required: "School year is required",
+                })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select School Year</option>
+                {schoolYears?.map((year) => (
+                  <option key={year.id} value={year.id}>
+                    {year.year_name}
+                  </option>
+                ))}
+              </select>
+              {errors.school_year && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.school_year.message}
-                </span>
-              </label>
-            )}
-          </div>
+                </p>
+              )}
+            </div>
 
-          {/* Year Level */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Year Level <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.year_level ? "select-error" : ""
-              }`}
-              {...register("year_level", {
-                required: "Year level is required",
-              })}
-            >
-              <option value="">Select Year Level</option>
-              {className1?.map((level) => (
-                <option key={level.id} value={level.id}>
-                  {level.level_name}
-                </option>
-              ))}
-            </select>
-            {errors.year_level && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+            {/* Year Level */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Year Level *
+              </label>
+              <select
+                {...register("year_level", {
+                  required: "Year level is required",
+                })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Year Level</option>
+                {className1?.map((level) => (
+                  <option key={level.id} value={level.id}>
+                    {level.level_name}
+                  </option>
+                ))}
+              </select>
+              {errors.year_level && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.year_level.message}
-                </span>
-              </label>
-            )}
-          </div>
+                </p>
+              )}
+            </div>
 
-          {/* Exam Type */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Exam Type <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.exam_type ? "select-error" : ""
-              }`}
-              {...register("exam_type", { required: "Exam type is required" })}
-            >
-              <option value="">Select Exam Type</option>
-              {examType?.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-            {errors.exam_type && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+            {/* Exam Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Exam Type *
+              </label>
+              <select
+                {...register("exam_type", { required: "Exam type is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Exam Type</option>
+                {examType?.map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
+              {errors.exam_type && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.exam_type.message}
-                </span>
-              </label>
-            )}
-          </div>
+                </p>
+              )}
+            </div>
 
-          {/* Subject */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Subject <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.subject ? "select-error" : ""
-              }`}
-              {...register("subject", { required: "Subject is required" })}
-            >
-              <option value="">Select Subject</option>
-              {subjects?.map((subject) => (
-                <option key={subject.id} value={subject.id}>
-                  {subject.subject_name}
-                </option>
-              ))}
-            </select>
-            {errors.subject && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+            {/* Subject */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Subject *
+              </label>
+              <select
+                {...register("subject", { required: "Subject is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Subject</option>
+                {subjects?.map((subject) => (
+                  <option key={subject.id} value={subject.id}>
+                    {subject.subject_name}
+                  </option>
+                ))}
+              </select>
+              {errors.subject && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.subject.message}
-                </span>
-              </label>
-            )}
-          </div>
+                </p>
+              )}
+            </div>
 
-          {/* Teacher */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Teacher <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.teacher ? "select-error" : ""
-              }`}
-              {...register("teacher", { required: "Teacher is required" })}
-            >
-              <option value="">Select Teacher</option>
-              {teachers?.map((teacher) => (
-                <option key={teacher.id} value={teacher.id}>
-                  {teacher.first_name} {teacher.last_name}
-                </option>
-              ))}
-            </select>
-            {errors.teacher && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+            {/* Teacher */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Teacher *
+              </label>
+              <select
+                {...register("teacher", { required: "Teacher is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Teacher</option>
+                {teachers?.map((teacher) => (
+                  <option key={teacher.id} value={teacher.id}>
+                    {teacher.first_name} {teacher.last_name}
+                  </option>
+                ))}
+              </select>
+              {errors.teacher && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.teacher.message}
-                </span>
-              </label>
-            )}
-          </div>
+                </p>
+              )}
+            </div>
 
-          {/* Student */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Student <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.student ? "select-error" : ""
-              }`}
-              {...register("student", { required: "Student is required" })}
-            >
-              <option value="">Select Student</option>
-              {students?.map((student) => (
-                <option key={student.student_id} value={student.student_id}>
-                  {student.student_name}
-                </option>
-              ))}
-            </select>
-            {errors.student && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+            {/* Student */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Student *
+              </label>
+              <select
+                {...register("student", { required: "Student is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Student</option>
+                {students?.map((student) => (
+                  <option key={student.student_id} value={student.student_id}>
+                    {student.student_name}
+                  </option>
+                ))}
+              </select>
+              {errors.student && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.student.message}
-                </span>
-              </label>
-            )}
-          </div>
+                </p>
+              )}
+            </div>
 
-          {/* Marks */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Marks <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="number"
-              className={`input input-bordered w-full ${
-                errors.marks ? "input-error" : ""
-              }`}
-              placeholder="Enter marks"
-              {...register("marks", {
-                required: "Marks is required",
-                min: { value: 0, message: "Marks cannot be negative" },
-                max: { value: 100, message: "Marks cannot exceed 100" },
-              })}
-            />
-            {errors.marks && (
-              <label className="label">
-                <span className="label-text-alt text-error">
+            {/* Marks */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Marks *
+              </label>
+              <input
+                type="number"
+                placeholder="Enter marks"
+                {...register("marks", {
+                  required: "Marks is required",
+                  min: { value: 0, message: "Marks cannot be negative" },
+                  max: { value: 100, message: "Marks cannot exceed 100" },
+                })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              />
+              {errors.marks && (
+                <p className="text-red-500 text-sm mt-1">
                   {errors.marks.message}
-                </span>
-              </label>
-            )}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-center mt-10">
-          <button
-            type="submit"
-            className="btn text-white bgTheme w-52"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <i className="fa-solid fa-spinner fa-spin mr-2" />
-            ) : (
-              <i className="fa-solid fa-save mr-2" />
-            )}
-            {isSubmitting ? "Saving..." : "Save Marks"}
-          </button>
-        </div>
-      </form>
-    </div>
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
+            <button
+              type="submit"
+              className="btn text-white bgTheme w-52"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2" />
+              ) : (
+                <i className="fa-solid fa-save mr-2" />
+              )}
+              {isSubmitting ? "Saving..." : "Save Marks"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default StudentMarksFill;
+

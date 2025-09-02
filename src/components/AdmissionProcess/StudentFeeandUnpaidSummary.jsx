@@ -195,7 +195,7 @@ const StudentFeeAndUnpaidSummary = () => {
                 <button
                     onClick={() => setActiveTab("unpaid")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
-                        ? "border-b-2 border-blue-600 text-blue-600"
+                        ? "border-b-2 border-textTheme textTheme"
                         : "text-gray-600 hover:text-[#5E35B1]"
                         }`}
                 >
@@ -211,60 +211,59 @@ const StudentFeeAndUnpaidSummary = () => {
                         {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
                     </h1>
 
-                    {/* Filter Section - same as unpaid */}
-                    <div className="w-full max-w-5xl mx-auto">
-                        <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-                            {/* Month Filter */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
-                                <select
-                                    value={selectedMonthFee}
-                                    onChange={(e) => setSelectedMonthFee(e.target.value)}
-                                    className="border rounded px-3 py-2 text-sm"
-                                >
-                                    <option value="">All Months</option>
-                                    {details?.monthly_summary &&
-                                        [...new Set(details.monthly_summary.map((item) => item.month))].map((month, idx) => (
-                                            <option key={idx} value={month}>
-                                                {month}
-                                            </option>
-                                        ))}
-                                </select>
-                            </div>
+                   {/* Filter Section - left aligned */}
+<div className="w-full px-4">
+  <div className="flex flex-wrap justify-start items-start gap-4 mb-6">
+    {/* Month Filter */}
+    <div className="flex flex-col">
+      <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
+      <select
+        value={selectedMonthFee}
+        onChange={(e) => setSelectedMonthFee(e.target.value)}
+        className="border rounded px-3 py-2 text-sm"
+      >
+        <option value="">All Months</option>
+        {details?.monthly_summary &&
+          [...new Set(details.monthly_summary.map((item) => item.month))].map((month, idx) => (
+            <option key={idx} value={month}>
+              {month}
+            </option>
+          ))}
+      </select>
+    </div>
 
-                            {/* Year Filter */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Filter By Academic Year:</label>
-                                <select
-                                    value={selectedYearFee}
-                                    onChange={(e) => setSelectedYearFee(e.target.value)}
-                                    className="border rounded px-3 py-2 text-sm"
-                                >
-                                    <option value="">All Years</option>
-                                    {details?.monthly_summary &&
-                                        [...new Set(details.monthly_summary.map((item) => item.year).filter(Boolean))].map(
-                                            (year, idx) => (
-                                                <option key={idx} value={year}>
-                                                    {year}
-                                                </option>
-                                            )
-                                        )}
-                                </select>
-                            </div>
+    {/* Year Filter */}
+    <div className="flex flex-col">
+      <label className="text-sm font-medium text-gray-700 mb-1">Filter By Academic Year:</label>
+      <select
+        value={selectedYearFee}
+        onChange={(e) => setSelectedYearFee(e.target.value)}
+        className="border rounded px-3 py-2 text-sm"
+      >
+        <option value="">All Years</option>
+        {details?.monthly_summary &&
+          [...new Set(details.monthly_summary.map((item) => item.year).filter(Boolean))].map((year, idx) => (
+            <option key={idx} value={year}>
+              {year}
+            </option>
+          ))}
+      </select>
+    </div>
 
-                            {/* Download Button */}
-                            {filteredSummary.length > 0 && (
-                                <div className="mt-1">
-                                    <button
-                                        onClick={exportPDF}
-                                        className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium px-4 py-2 rounded border border-blue-300"
-                                    >
-                                        <i className="fa-solid fa-download mr-2" /> Download Report
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+    {/* Download Button */}
+    {filteredSummary.length > 0 && (
+      <div className="mt-1">
+        <button
+          onClick={exportPDF}
+          className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium px-4 py-2 rounded border border-blue-300"
+        >
+          <i className="fa-solid fa-download mr-2" /> Download Report
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
 
                     {/* Table Section */}
                     {!details?.monthly_summary || filteredSummary.length === 0 ? (
@@ -324,70 +323,75 @@ const StudentFeeAndUnpaidSummary = () => {
                     </div>
 
                     {/* Filter Section */}
-                    <div className="w-full max-w-5xl mx-auto">
-                        <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-                            {/* Month Filter */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
-                                <select
-                                    className="border rounded px-3 py-2 text-sm"
-                                    value={selectedMonthUnpaid}
-                                    onChange={(e) => setSelectedMonthUnpaid(e.target.value)}
-                                >
-                                    <option value="">All Months</option>
-                                    {[
-                                        "January", "February", "March", "April", "May", "June",
-                                        "July", "August", "September", "October", "November", "December"
-                                    ].map((month) => (
-                                        <option key={month} value={month}>
-                                            {month}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+<div className="w-full px-4">  {/* px-4 optional hai thoda breathing space ke liye */}
+  <div className="flex justify-between items-end gap-4 mb-6">
+    
+    {/* Left Side - Filters + Reset */}
+    <div className="flex flex-wrap items-end gap-4">
+      {/* Month Filter */}
+      <div className="flex flex-col">
+        <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
+        <select
+          className="border rounded px-3 py-2 text-sm"
+          value={selectedMonthUnpaid}
+          onChange={(e) => setSelectedMonthUnpaid(e.target.value)}
+        >
+          <option value="">All Months</option>
+          {[
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ].map((month) => (
+            <option key={month} value={month}>
+              {month}
+            </option>
+          ))}
+        </select>
+      </div>
 
-                            {/* Class Filter (Director/Office Staff only) */}
-                            {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
-                                <div className="flex flex-col">
-                                    <label className="text-sm font-medium text-gray-700 mb-1">Filter by Class:</label>
-                                    <select
-                                        className="border rounded px-3 py-2 text-sm"
-                                        value={selectedClass}
-                                        onChange={(e) => setSelectedClass(e.target.value)}
-                                    >
-                                        <option value="">All Classes</option>
-                                        {yearLevels.map((level) => (
-                                            <option key={level.id} value={level.id}>
-                                                {level.level_name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
+      {/* Class Filter */}
+      {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Filter by Class:</label>
+          <select
+            className="border rounded px-3 py-2 text-sm"
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+          >
+            <option value="">All Classes</option>
+            {yearLevels.map((level) => (
+              <option key={level.id} value={level.id}>
+                {level.level_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
-                            {/* Search Filter */}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Search Student by Name:</label>
-                                <input
-                                    type="text"
-                                    placeholder="Enter student name"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="border rounded px-3 py-2 text-sm w-64"
-                                />
-                            </div>
+      {/* Reset Button */}
+      <div>
+        <button
+          onClick={resetFilters}
+          className="bgTheme text-white text-sm px-4 py-2 rounded"
+        >
+          Reset Filters
+        </button>
+      </div>
+    </div>
 
-                            {/* Reset Button */}
-                            <div className="mt-1">
-                                <button
-                                    onClick={resetFilters}
-                                    className="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded"
-                                >
-                                    Reset Filters
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    {/* Right Side - Search */}
+    <div className="flex flex-col">
+      <label className="text-sm font-medium text-gray-700 mb-1">Search Student by Name:</label>
+      <input
+        type="text"
+        placeholder="Enter student name"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="border rounded px-3 py-2 text-sm w-64"
+      />
+    </div>
+  </div>
+</div>
+
 
                     {/* Table Section */}
                     {filteredFees.length === 0 ? (

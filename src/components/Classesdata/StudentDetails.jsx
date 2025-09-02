@@ -123,3 +123,6 @@ if (loading) {
 };
 
 export default StudentDetails;
+
+
+
