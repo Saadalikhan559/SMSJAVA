@@ -602,6 +602,8 @@ export const fetchSalaryExpense = async (accessToken) => {
   }
 };
 
+
+
 export const fetchSalaryExpenseById = async (accessToken, id) => {
   try {
     const response = await axios.get(
