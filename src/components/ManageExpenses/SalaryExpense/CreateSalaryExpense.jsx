@@ -10,11 +10,12 @@ import { SuccessModal } from "../../Modals/SuccessModal";
 import { AuthContext } from "../../../context/AuthContext";
 
 export const CreateSalaryExpense = () => {
-  const [pageLoading, setPageLoading] = useState(false); // page-level loader
+  const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
   const [apiError, setApiError] = useState("");
   const modalRef = useRef();
 
@@ -24,7 +25,14 @@ export const CreateSalaryExpense = () => {
   const access = authTokens.access;
   
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm();
+
   const selectedRole = watch("role");
   const selectedEmployee = watch("employee");
   const getFullName = (employee) => {
@@ -43,7 +51,8 @@ export const CreateSalaryExpense = () => {
   };
 
   const getRoleNameById = (roleId) => {
-    const role = roles.find(r => r && r.id == roleId);
+    if (!roleId) return null;
+    const role = roles.find((r) => r.id == roleId);
     return role ? role.name : "";
   };
 
@@ -73,47 +82,28 @@ export const CreateSalaryExpense = () => {
       } else {
         setEmployees([]);
       }
-      setApiError("");
-    } catch (err) {
-      console.log(err);
-      setApiError("Failed to fetch employees");
-      setEmployees([]);
-    } finally {
-      setPageLoading(false);
+    } catch (error) {
+      console.log("Could not get employees", error.message);
+      setEmployees([]); // Set empty array on error
     }
   };
 
-  const getRoles = async () => {
-    try {
-      setPageLoading(true);
-      const fetchedRoles = await fetchRoles();
-      setRoles(fetchedRoles || []);
-      setApiError("");
-    } catch (err) {
-      console.log(err);
-      setRoles([]);
-      setApiError("Failed to fetch roles");
-    } finally {
-      setPageLoading(false);
-    }
-  };
-
-  // Initial fetch
   useEffect(() => {
-    getRoles();
+    getRole();
   }, []);
 
-  // Fetch employees when role changes
   useEffect(() => {
-    setValue("employee", "");
-    setSelectedEmployeeName("");
-    getEmployees(selectedRole);
+    getEmployee();
   }, [selectedRole]);
 
   useEffect(() => {
     if (selectedEmployee && employees.length > 0) {
-      const emp = employees.find(e => e && e.id && e.id.toString() === selectedEmployee.toString());
-      setSelectedEmployeeName(emp ? getFullName(emp) : "");
+      const employee = employees.find(
+        (e) => e && e.id && e.id.toString() == selectedEmployee.toString()
+      );
+      if (employee) {
+        setSelectedEmployeeName(getFullName(employee));
+      }
     } else {
       setSelectedEmployeeName("");
     }
@@ -121,8 +111,9 @@ export const CreateSalaryExpense = () => {
 
 
   const onSubmit = async (data) => {
-    setPageLoading(true);
     try {
+      setLoading(true);
+      setApiError("");
       const payload = {
         user: Number(data.employee),
         joining_date: data.joiningDate,
@@ -137,32 +128,9 @@ export const CreateSalaryExpense = () => {
         setApiError("Something Went Wrong. Try again");
       }
     } finally {
-      setPageLoading(false);
+      setLoading(false);
     }
   };
-
-  // PAGE LEVEL LOADER
-  if (pageLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-      </div>
-    );
-  }
-
-  if (apiError) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">{apiError}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
