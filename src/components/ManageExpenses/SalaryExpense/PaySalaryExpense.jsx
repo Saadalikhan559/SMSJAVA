@@ -6,6 +6,7 @@ import axios from "axios";
 import { constants } from "../../../global/constants";
 import { useParams } from "react-router-dom";
 import { fetchSchoolYear } from "../../../services/api/Api";
+import { Error } from "../../../global/Error";
 
 export const PaySalaryExpense = () => {
   const { id } = useParams();
@@ -20,7 +21,6 @@ export const PaySalaryExpense = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedSchoolYear, setSelectedSchooYear] = useState("");
   const [schoolYear, setSchoolYear] = useState([]);
-  const [status, setStatus] = useState([]);
 
   const allMonths = [
     "January",
@@ -44,8 +44,10 @@ export const PaySalaryExpense = () => {
   const getSchoolYearLevel = async () => {
     try {
       const response = await fetchSchoolYear();
-      setSchoolYear(register);
-    } catch (error) {}
+      setSchoolYear(response);
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const {
@@ -60,59 +62,84 @@ export const PaySalaryExpense = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${constants.baseUrl}/d/Employee-salary/?school_year_name=${selectedSchoolYear}&month=${month}&status=${paid}&user=${id}`,
+        `${constants.baseUrl}/d/Employee-salary/?school_year_name=${selectedSchoolYear}&month=${selectedMonth}&user=${id}`,
         {
           headers: {
             Authorization: `Bearer ${access}`,
           },
         }
       );
+
       setSalaryData(response.data);
 
       if (response.data && response.data.length > 0) {
-        const salary = response.data[0]; // Access the first element of the array
+        const salary = response.data[0];
+
         setValue("user", salary.user);
         setValue("employee_name", salary.employee_name);
         setValue("gross_amount", salary.gross_amount);
         setValue("deductions", salary.deductions);
         setValue("net_amount", salary.net_amount);
         setValue("month", salary.month);
-        setValue("school_year", salary.school_year);
-        setValue(
-          "payment_date",
-          salary.payment_date || new Date().toISOString().split("T")[0]
-        );
+
+        // ✅ Only set school_year if not already chosen by user
+        if (!selectedSchoolYear) {
+          setSelectedSchooYear(salary.school_year);
+          setValue("school_year", salary.school_year);
+        }
+
+        setValue("payment_date", salary.payment_date);
         setValue("payment_method", salary.payment_method);
         setValue("paid_by", salary.paid_by);
         setValue("remarks", salary.remarks);
-        setValue("status", salary.status);
+        setValue("status", salary.status || "Not available");
       }
     } catch (error) {
-      setError(error.message);
+      setError(error?.response?.message || "Failed to fetch salary data");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchPaymentStatus = async () => {
+  useEffect(() => {
+    if (selectedSchoolYear && selectedMonth) {
+      fetchSingleSalaryData();
+    } else {
+      setSalaryData([]);
+      setValue("status", "");
+      // setValue("employee_name", "");
+      setValue("gross_amount", "");
+      setValue("deductions", "");
+      setValue("net_amount", "");
+      setValue("payment_date", "");
+      setValue("payment_method", "");
+      setValue("paid_by", "");
+      setValue("remarks", "");
+    }
+  }, [id, selectedMonth, selectedSchoolYear]);
+
+  const fetchEmployeeDetails = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
-        `${constants.baseUrl}/d/Employee-salary/status=${paid}`,
+        `${constants.baseUrl}/d/Employee-salary/?user=${id}`,
         {
           headers: {
             Authorization: `Bearer ${access}`,
           },
         }
       );
-      setStatus(response.data);
-    } catch (error) {}
+      const name = response.data[0].employee_name;
+      setValue("employee_name", name);
+    } catch (error) {
+      setError(error?.response?.message || "Failed to fetch employee details");
+    } finally {
+      setLoading(false);
+    }
   };
-  useEffect(() => {
-    fetchSingleSalaryData();
-  }, [id, selectedMonth, selectedSchoolYear, status]);
 
   useEffect(() => {
-    fetchPaymentStatus();
+    fetchEmployeeDetails();
     getSchoolYearLevel();
   }, []);
 
@@ -162,6 +189,22 @@ export const PaySalaryExpense = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Employee Name  */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-user-tag text-sm"></i>
+                  Employee Name
+                </span>
+              </label>
+              <input
+                disabled={true}
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("employee_name")}
+              />
+            </div>
+
             {/* School Year */}
             <div className="form-control">
               <label className="label">
@@ -177,10 +220,10 @@ export const PaySalaryExpense = () => {
                   onChange: (e) => setSelectedSchooYear(e.target.value),
                 })}
               >
-                <option value="">Select Month</option>
+                <option value="">Select School year</option>
                 {schoolYear.map((year) => (
                   <option key={year.id} value={year.id}>
-                    {year.name}
+                    {year.year_name}
                   </option>
                 ))}
               </select>
@@ -223,44 +266,15 @@ export const PaySalaryExpense = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-status text-sm"></i>
-                  Status <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("status", {
-                  required: "Status is required",
-                  onChange: (e) => setStatus(e.target.value),
-                })}
-              >
-                <option value="">Select Status</option>
-                {status.map((stat) => (
-                  <option key={stat.id} value={stat.id}>
-                    {stat.status}
-                  </option>
-                ))}
-              </select>
-              {errors.status && (
-                <p className="text-error text-sm mt-1">
-                  {errors.status.message}
-                </p>
-              )}
-            </div>
-
-            {/* Employee Name  */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user-tag text-sm"></i>
-                  Employee Name
+                  <i className="fa-solid fa-circle-check text-sm"></i>
+                  Status
                 </span>
               </label>
               <input
-                disabled={true}
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("employee_name")}
+                className="input input-bordered w-full focus:outline-none bg-gray-100"
+                disabled
+                {...register("status")}
               />
             </div>
 
@@ -277,10 +291,7 @@ export const PaySalaryExpense = () => {
                 min={0}
                 disabled
                 className="input input-bordered w-full focus:outline-none"
-                {...register("gross_amount", {
-                  required: "Gross Amount is required",
-                  min: { value: 0, message: "Gross Amount must be positive" },
-                })}
+                {...register("gross_amount")}
               />
             </div>
 
@@ -293,19 +304,12 @@ export const PaySalaryExpense = () => {
                 </span>
               </label>
               <input
+                disabled
                 type="number"
-                step="0.01"
                 min={0}
                 className="input input-bordered w-full focus:outline-none"
-                {...register("deductions", {
-                  min: { value: 0, message: "Deductions must be positive" },
-                })}
+                {...register("deductions")}
               />
-              {errors.deductions && (
-                <p className="text-error text-sm mt-1">
-                  {errors.deductions.message}
-                </p>
-              )}
             </div>
 
             {/* Net Amount */}
@@ -317,21 +321,11 @@ export const PaySalaryExpense = () => {
                 </span>
               </label>
               <input
+                disabled
                 type="number"
-                step="0.01"
-                min={0}
-                readOnly
-                className="input input-bordered w-full focus:outline-none bg-gray-100"
-                {...register("net_amount", {
-                  required: "Net Amount is required",
-                  min: { value: 0, message: "Net Amount must be positive" },
-                })}
+                className="input input-bordered w-full focus:outline-none"
+                {...register("net_amount")}
               />
-              {errors.net_amount && (
-                <p className="text-error text-sm mt-1">
-                  {errors.net_amount.message}
-                </p>
-              )}
             </div>
 
             <div className="form-control">

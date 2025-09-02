@@ -26,7 +26,7 @@ export const fetchSchoolYear = async () => {
 export const fetchExpenseCategory = async (accessToken) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/d/Expense-Category/get_category/`,
+      `${BASE_URL}/d/Expense-Category/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
