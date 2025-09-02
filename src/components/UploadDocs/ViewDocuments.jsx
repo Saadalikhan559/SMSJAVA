@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-// import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
-import { fetchViewDocuments } from "../../services/api/Api";
+import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 
