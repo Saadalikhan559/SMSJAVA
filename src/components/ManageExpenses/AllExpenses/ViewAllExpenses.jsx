@@ -20,6 +20,11 @@ export const ViewAllExpenses = () => {
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [addCategory, setAddCategory] = useState("");
   const [apiError, setApiError] = useState("");
+  // Tabs + Edit/Delete form state
+  const [activeTab, setActiveTab] = useState("Add");
+  const [editCategoryId, setEditCategoryId] = useState("");
+  const [editCategoryName, setEditCategoryName] = useState("");
+  const [deleteCategoryId, setDeleteCategoryId] = useState("");
 
   const access = JSON.parse(localStorage.getItem("authTokens"))?.access;
 
@@ -77,6 +82,7 @@ export const ViewAllExpenses = () => {
   const handleAddCategoryClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    setActiveTab("Add"); // default to Add tab
     setShowAddCategoryModal(true);
   };
 
@@ -105,10 +111,10 @@ export const ViewAllExpenses = () => {
       );
 
       if (response.status === 201 || response.status === 200) {
-        setAddCategory(""); 
+        setAddCategory("");
         setApiError("");
         closeModal();
-        getExpenseCategory(); 
+        getExpenseCategory();
       }
     } catch (error) {
       console.error(error);
@@ -134,9 +140,9 @@ export const ViewAllExpenses = () => {
         </h2>
 
         {/* Filters */}
-        <div className="mb-4 flex flex-col gap-4 md:flex-row">
+        <div className="mb-4 flex flex-col gap-2 md:flex-row">
           {/* School Year Filter */}
-          <div className="form-control w-full md:w-1/3">
+          <div className="form-control md:w-1/3">
             <label className="label">
               <span className="label-text">Select School Year</span>
             </label>
@@ -155,7 +161,7 @@ export const ViewAllExpenses = () => {
           </div>
 
           {/* Category Filter */}
-          <div className="form-control w-full md:w-1/3">
+          <div className="form-control md:w-1/3">
             <label className="label">
               <span className="label-text">Select Category</span>
             </label>
@@ -182,7 +188,7 @@ export const ViewAllExpenses = () => {
               onClick={handleAddCategoryClick}
               className="btn bgTheme text-white flex items-center justify-center md:justify-start text-nowrap"
             >
-              <i className="fa-solid fa-plus mr-1"></i> Add Category
+              Category
             </button>
           </div>
         </div>
@@ -228,13 +234,16 @@ export const ViewAllExpenses = () => {
               {schoolExpense.length > 0 ? (
                 schoolExpense.map((expense) => (
                   <tr key={expense.id}>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {expense.category_name}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.amount}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs">
+                    <td
+                      className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs"
+                      title={expense.description}
+                    >
                       {expense.description}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
@@ -243,11 +252,23 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.payment_method}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs">
+                    <td
+                      className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs"
+                      title={expense.attachment}
+                    >
                       {expense.attachment}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {expense.status}
+                    <td className="px-4 py-3 text-sm">
+                      <span
+                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border
+              ${
+                expense.status === "pending"
+                  ? "text-yellow-700 bg-yellow-50 border-yellow-300"
+                  : "text-green-700 bg-green-50 border-green-300"
+              }`}
+                      >
+                        {expense.status}
+                      </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.created_at}
@@ -276,15 +297,14 @@ export const ViewAllExpenses = () => {
         </div>
       </div>
 
-      {/* Add Category Modal */}
+      {/* Category Modal with Tabs */}
+
       {showAddCategoryModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 z-50 bg-black/30 backdrop-blur-sm">
-          <form
-            className="bg-white rounded-lg p-6 w-full max-w-md"
-            onSubmit={handleSubmit}
-          >
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+            {/* Modal Header */}
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Add New Category</h3>
+              <h3 className="text-xl font-semibold">Manage Category</h3>
               <button
                 onClick={closeModal}
                 className="text-gray-500 hover:text-gray-700"
@@ -293,35 +313,219 @@ export const ViewAllExpenses = () => {
               </button>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category Name
-              </label>
-              <input
-                value={addCategory}
-                onChange={(e) => setAddCategory(e.target.value)}
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                placeholder="Enter category name"
-              />
-              {apiError && <p className="text-sm text-red-500 mt-1">{apiError}</p>}
+            {/* Tabs */}
+            <div className="flex border-b mb-4">
+              {["Add", "Edit", "Delete"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => {
+                    setActiveTab(tab);
+                    setApiError("");
+                  }}
+                  className={`px-4 py-2 -mb-px font-medium ${
+                    activeTab === tab
+                      ? "border-b-2 border-blue-600 text-blue-700"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
             </div>
 
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+            {/* ADD TAB */}
+            {activeTab === "Add" && (
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Category Name
+                  </label>
+                  <input
+                    value={addCategory}
+                    onChange={(e) => setAddCategory(e.target.value)}
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                    placeholder="Enter category name"
+                  />
+                  {apiError && (
+                    <p className="text-sm text-red-500 mt-1">{apiError}</p>
+                  )}
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn px-4 py-2 bgTheme text-white rounded-md"
+                  >
+                    Add Category
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* EDIT TAB */}
+            {activeTab === "Edit" && (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!editCategoryId)
+                    return setApiError("Please select a category");
+                  if (!editCategoryName.trim())
+                    return setApiError("New category name is required");
+                  try {
+                    setLoading(true);
+                    const res = await axios.patch(
+                      `${constants.baseUrl}/d/Expense-Category/${editCategoryId}/`,
+                      { name: editCategoryName },
+                      {
+                        headers: {
+                          Authorization: `Bearer ${access}`,
+                          "Content-Type": "application/json",
+                        },
+                      }
+                    );
+                    if (res.status === 200) {
+                      setApiError("");
+                      setEditCategoryId("");
+                      setEditCategoryName("");
+                      closeModal();
+                      getExpenseCategory();
+                      if (selectedCategory === String(editCategoryId))
+                        setSelectedCategory("");
+                    }
+                  } catch (err) {
+                    setApiError(
+                      err.response?.data?.detail || "Something went wrong"
+                    );
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
               >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bgTheme text-white rounded-md text-nowrap"
-                type="submit"
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Select Category
+                  </label>
+                  <select
+                    value={editCategoryId}
+                    onChange={(e) => setEditCategoryId(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                  >
+                    <option value="">Choose category</option>
+                    {category.map((cate) => (
+                      <option key={cate.id} value={cate.id}>
+                        {cate.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Category Name
+                  </label>
+                  <input
+                    value={editCategoryName}
+                    onChange={(e) => setEditCategoryName(e.target.value)}
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                    placeholder="Enter new name"
+                  />
+                </div>
+                {apiError && (
+                  <p className="text-sm text-red-500 -mt-2 mb-2">{apiError}</p>
+                )}
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className=" btn px-4 py-2 text-yellow-700  hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
+                  >
+                    Update
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* DELETE TAB */}
+            {activeTab === "Delete" && (
+              
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!deleteCategoryId)
+                    return setApiError("Please select a category to delete");
+                  try {
+                    setLoading(true);
+                    await axios.delete(
+                      `${constants.baseUrl}/d/Expense-Category/${deleteCategoryId}/`,
+                      { headers: { Authorization: `Bearer ${access}` } }
+                    );
+                    setApiError("");
+                    setDeleteCategoryId("");
+                    closeModal();
+                    getExpenseCategory();
+                    if (selectedCategory === String(deleteCategoryId))
+                      setSelectedCategory("");
+                  } catch (err) {
+                    setApiError(
+                      err.response?.data?.detail || "Something went wrong"
+                    );
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
               >
-                Add Category
-              </button>
-            </div>
-          </form>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Select Category to Delete
+                  </label>
+                  <select
+                    value={deleteCategoryId}
+                    onChange={(e) => setDeleteCategoryId(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                  >
+                    <option value="">Choose category</option>
+                    {category.map((cate) => (
+                      <option key={cate.id} value={cate.id}>
+                        {cate.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {apiError && (
+                  <p className="text-sm text-red-500 -mt-2 mb-2">{apiError}</p>
+                )}
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className=" btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className=" btn px-4 py-2 text-red-700 bg-red-50 hover:bg-red-100 border rounded-md"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       )}
     </div>

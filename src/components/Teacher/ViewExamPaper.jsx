@@ -1,12 +1,31 @@
 import { useState, useEffect } from "react";
 import { constants } from '../../global/constants';
 import axios from "axios";
+import { fetchYearLevels } from "../../services/api/Api";
 
 const ViewExamPaper = () => {
   const [accessToken, setAccessToken] = useState("");
   const [examPaper, setExamPaper] = useState([]);
+   const [selectedClass, setSelectedClass] = useState("");
+  const [yearLevels, setYearLevels] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  
 
   const BASE_URL = constants.baseUrl;
+
+
+   const getYearLevels = async () => {
+      try {
+        const data = await fetchYearLevels();
+        setYearLevels(data);
+      } catch (err) {
+        console.error("Error fetching year levels:", err);
+      }
+    };
+
+ useEffect(() => {
+    getYearLevels();
+  }, []);
 
   useEffect(() => {
     const tokenData = localStorage.getItem("authTokens");
@@ -45,6 +64,16 @@ const ViewExamPaper = () => {
     }
   };
 
+ const filterData = examPaper.filter((detail) =>
+    detail.year_level_name.toLowerCase()
+      .includes(selectedClass.toLowerCase()) 
+  );
+ const filterBySearch = filterData.filter((detail) =>
+    detail.subject_name.toLowerCase()
+      .includes(searchInput.toLowerCase()) 
+  );
+
+
   useEffect(() => {
     if (accessToken) {
       fetchExamPaper();
@@ -56,10 +85,41 @@ const ViewExamPaper = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          Examination Papers
-        </h2>
+        <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+            Examination Papers
+          </h1>
+        </div>
+       
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+           <div className=" w-full  sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  Select Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.level_name}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+          <input
+            type="text"
+            placeholder="Search Subject Name..."
+            className="border px-3 py-2 rounded w-full sm:w-64"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+       
 
         <div className="w-full overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -92,9 +152,11 @@ const ViewExamPaper = () => {
                       Actions
                     </th>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {ExamPapers.map((paper) => (
+                </thead> {filterData.length === 0 ? (
+          <p className="text-gray-600">No Examination Papers found.</p>
+        ) : ( <tbody className="divide-y divide-gray-200 bg-white">
+                  
+                  {filterBySearch.map((paper) => (
                     <tr key={paper.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm font-medium text-gray-900 text-nowrap capitalize">
                         {paper.subject_name}
@@ -129,7 +191,8 @@ const ViewExamPaper = () => {
                       </td>
                     </tr>
                   ))}
-                </tbody>
+                </tbody>)}
+               
               </table>
             </div>
           </div>
