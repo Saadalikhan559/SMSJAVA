@@ -24,6 +24,8 @@ export const AdmissionForm = () => {
   const [state, setState] = useState([]);
   const [city, setCity] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const formRef = useRef(null);
   const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] = useState(false);
@@ -179,14 +181,34 @@ export const AdmissionForm = () => {
     }
   };
 
-  useEffect(() => {
-    getYearLevels();
-    getSchoolYears();
-    getGuardianType();
-    getCountry();
-    getState();
-    getCity();
-  }, []);
+ 
+
+
+useEffect(() => {
+  const fetchAllData = async () => {
+    try {
+      setLoading(true); // loader start
+      setError(null);
+
+      await Promise.all([
+        getYearLevels(),
+        getSchoolYears(),
+        getGuardianType(),
+        getCountry(),
+        getState(),
+        getCity(),
+      ]);
+
+    } catch (err) {
+      setError("Failed to fetch data");
+    } finally {
+      setLoading(false); // loader stop
+    }
+  };
+
+  fetchAllData();
+}, []);
+
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -248,7 +270,28 @@ export const AdmissionForm = () => {
     navigate("/addmissionDetails");
   };
 
+if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
 
   return (
     <>

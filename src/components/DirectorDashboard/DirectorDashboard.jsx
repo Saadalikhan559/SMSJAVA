@@ -1,4 +1,4 @@
-  import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import {
   fetchDirectorDashboard,
@@ -9,13 +9,13 @@ import LoginSuccessHandler from "../Modals/LoginSucces";
 import { constants } from "../../global/constants";
 import { Loader } from "../../global/Loader";
 
-
 export const DirectorDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [studentCategoryDashboardData, setStudentCategoryDashboardData] =
     useState(null);
   const [incomeDistributionData, setIncomeDistributionData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const height = 400;
 
   const loadAllDashboardData = async () => {
@@ -29,8 +29,9 @@ export const DirectorDashboard = () => {
       setDashboardData(directorRes);
       setStudentCategoryDashboardData(studentCatRes);
       setIncomeDistributionData(incomeDistRes);
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -39,11 +40,28 @@ export const DirectorDashboard = () => {
   useEffect(() => {
     loadAllDashboardData();
   }, []);
-if (loading) {
-        return (
-         <Loader/>
-        );
-    }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
 
   if (
     !dashboardData ||
@@ -66,8 +84,6 @@ if (loading) {
   const incomeDistributionSeries = incomeDistributionData.map(
     (item) => item.count
   );
-
-
 
   return (
     <div className="p-4 space-y-6">
@@ -118,7 +134,7 @@ if (loading) {
                   width="100%"
                   options={{
                     labels: ["Male", "Female"],
-                    colors: [constants.usColor, constants.canadaPink], 
+                    colors: [constants.usColor, constants.canadaPink],
                     legend: { position: "bottom" },
                   }}
                   series={[data.count.male, data.count.female]}
@@ -142,7 +158,12 @@ if (loading) {
               width="100%"
               options={{
                 labels: studentCategoryLabel,
-                colors: [constants.italianGreen, constants.canadaPink, constants.saffronOrange, constants.usColor],
+                colors: [
+                  constants.italianGreen,
+                  constants.canadaPink,
+                  constants.saffronOrange,
+                  constants.usColor,
+                ],
                 legend: { position: "bottom" },
               }}
               series={studentCategorySeries}
@@ -188,7 +209,7 @@ if (loading) {
                     columnWidth: "50%",
                   },
                 },
-                legend: { show: false }, // no legend for single series
+                legend: { show: false },
               }}
               series={[
                 {

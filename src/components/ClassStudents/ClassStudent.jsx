@@ -15,15 +15,17 @@ export const ClassStudent = () => {
   const [individualStatuses, setIndividualStatuses] = useState({});
   const [teacherID, setTeacherID] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
   const year_level_id = Year_level_id;
   const BASE_URL = constants.baseUrl;
 
-  // Function to get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -33,10 +35,11 @@ export const ClassStudent = () => {
   }, []);
 
   const getClassStudents = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const data = await fetchStudentYearLevelByClass(year_level_id);
       setClassStudent(data);
-      // Initialize individual dates and statuses
       const initialDates = {};
       const initialStatuses = {};
       data.forEach((student) => {
@@ -45,8 +48,11 @@ export const ClassStudent = () => {
       });
       setIndividualDates(initialDates);
       setIndividualStatuses(initialStatuses);
-    } catch (error) {
-      console.log("Failed to fetch students", error);
+    } catch (err) {
+      console.error("Failed to fetch students", err);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,7 +64,9 @@ export const ClassStudent = () => {
     if (isChecked) {
       setSelectedStudents([...selectedStudents, studentId]);
     } else {
-      setSelectedStudents(selectedStudents.filter((student_id) => student_id !== studentId));
+      setSelectedStudents(
+        selectedStudents.filter((student_id) => student_id !== studentId)
+      );
     }
   };
 
@@ -88,104 +96,94 @@ export const ClassStudent = () => {
         alert("Please select a date");
         return;
       }
+      if (!teacherID || !year_level_id) return;
 
-      if (!teacherID) return;
-      if (!year_level_id) return;
+      const payload = { teacher_id: teacherID, marked_at: attendanceDate, year_level_id };
 
-      const payload = {
-        teacher_id: teacherID,
-        marked_at: attendanceDate,
-        year_level_id
-      };
+      if (attendanceStatus === "present") payload.P = selectedStudents;
+      else if (attendanceStatus === "absent") payload.A = selectedStudents;
+      else if (attendanceStatus === "leave") payload.L = selectedStudents;
 
-      if (attendanceStatus === "present") {
-        payload.P = selectedStudents;
-      } else if (attendanceStatus === "absent") {
-        payload.A = selectedStudents;
-      } else if (attendanceStatus === "leave") {
-        payload.L = selectedStudents;
-      }
-       
-      const response = await axios.post(
-        `${BASE_URL}/a/multiple-attendance/`,
-        payload 
-      );
-
-      console.log("Bulk attendance submitted successfully:", response.data);
+      await axios.post(`${BASE_URL}/a/multiple-attendance/`, payload);
 
       setSelectedStudents([]);
       setShowModal(false);
       setAttendanceDate("");
       setAttendanceStatus("present");
 
-      document
-        .querySelectorAll('input[type="checkbox"]')
-        .forEach((checkbox) => {
-          checkbox.checked = false;
-        });
+      document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+        checkbox.checked = false;
+      });
 
       alert("Attendance marked successfully!");
       window.location.reload();
-    } catch (error) {
-      console.error("Error submitting bulk attendance:", error);
-      alert(error.response?.data?.error || "An error occurred");
+    } catch (err) {
+      console.error("Error submitting bulk attendance:", err);
+      alert(err.response?.data?.error || "An error occurred");
     }
   };
 
-  console.log(classStudent)
   const submitIndividualAttendance = async (studentId) => {
     try {
       if (!individualDates[studentId]) {
         alert("Please select a date");
         return;
       }
-
       if (!teacherID) return;
 
-      const payload = {
-        teacher_id: teacherID,
-        marked_at: individualDates[studentId],
-        year_level_id
-      };
-
+      const payload = { teacher_id: teacherID, marked_at: individualDates[studentId], year_level_id };
       const status = individualStatuses[studentId];
-      if (status === "present") {
-        payload.P = [studentId];
-      } else if (status === "absent") {
-        payload.A = [studentId];
-      } else if (status === "leave") {
-        payload.L = [studentId];
-      }
+      if (status === "present") payload.P = [studentId];
+      else if (status === "absent") payload.A = [studentId];
+      else if (status === "leave") payload.L = [studentId];
 
-      const response = await axios.post(
-        `${BASE_URL}/a/multiple-attendance/`,
-        payload
-      );
+      await axios.post(`${BASE_URL}/a/multiple-attendance/`, payload);
 
-      console.log(
-        "Individual attendance submitted successfully:",
-        response.data
-      );
       alert("Attendance marked successfully!");
       window.location.reload();
-    } catch (error) {
-      console.error("Error submitting individual attendance:", error);
-      alert(error.response?.data?.error || "An error occurred");
+    } catch (err) {
+      console.error("Error submitting individual attendance:", err);
+      alert(err.response?.data?.error || "An error occurred");
     }
   };
+
+  // Loader UI
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  // Error UI
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          Students in {classLevel}{" "}
-          <i className="fa-solid fa-clipboard-user ml-2"></i>
+         <i className="fa-solid fa-clipboard-user ml-2"></i> Students in {classLevel}{" "}
         </h2>
-        
+
         {selectedStudents.length >= 2 && (
           <button
             onClick={handleBulkAttendance}
-            className="mb-4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-300"
+            className="mb-4 bgTheme text-white font-medium py-2 px-4 rounded-md transition duration-300"
           >
             Mark Attendance for Selected ({selectedStudents.length})
           </button>
@@ -237,10 +235,7 @@ export const ClassStudent = () => {
                       <select
                         value={individualStatuses[student.student_id] || "present"}
                         onChange={(e) =>
-                          handleIndividualStatusChange(
-                            student.student_id,
-                            e.target.value
-                          )
+                          handleIndividualStatusChange(student.student_id, e.target.value)
                         }
                         className="border border-gray-300 rounded-md px-2 py-1 w-full"
                       >
@@ -252,7 +247,7 @@ export const ClassStudent = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => submitIndividualAttendance(student.student_id)}
-                        className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm"
+                        className="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
                         disabled={!individualDates[student.student_id]}
                       >
                         Save

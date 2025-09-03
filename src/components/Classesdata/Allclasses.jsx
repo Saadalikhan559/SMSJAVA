@@ -25,9 +25,28 @@ const Allclasses = () => {
     useEffect(() => {
         getYearLevels();
     }, []);
-if (loading) {
+
+    
+    if (loading) {
         return (
-            <Loader/>
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <div className="flex space-x-2">
+                    <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+                    <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                    <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                </div>
+                <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+            </div>
+        );
+    }
+
+ 
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+                <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+                <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+            </div>
         );
     }
 
@@ -37,12 +56,6 @@ if (loading) {
                 <h1 className="text-3xl font-bold text-center mb-4 text-gray-800 border-b pb-4">
                     <i className="fa-solid fa-graduation-cap mr-2"></i> All Year Levels
                 </h1>
-
-                {error && (
-                    <div className="text-red-600 text-center mb-4 font-medium">
-                        {error}
-                    </div>
-                )}
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
@@ -68,11 +81,9 @@ if (loading) {
                                                 to={`/allStudentsPerClass/${record.id}`}
                                                 state={{ level_name: record.level_name }}
                                                 className="textTheme hover:underline"
-
                                             >
                                                 {record.level_name}
                                             </Link>
-
                                         </td>
                                     </tr>
                                 ))
