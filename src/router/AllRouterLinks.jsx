@@ -65,6 +65,8 @@ export const allRouterLink = {
     createSalaryExpense: "/createSalaryExpense",
     viewSalaryExpense: "/viewSalaryExpense",
     viewAllExpenses: "/viewAllExpenses",
+    createExpenses: "/createExpenses",
+    editExpenses: "/editExpenses/:id",
     editSalaryExpense: "/editSalaryExpense/:id",
     paySalaryExpense: "/paySalaryExpense/:id",
     discountedStudents: "/discountedStudents",

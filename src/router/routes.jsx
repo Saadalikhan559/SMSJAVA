@@ -73,7 +73,8 @@ import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/Vi
 import { ViewAllExpenses } from "../components/ManageExpenses/AllExpenses/ViewAllExpenses";
 import { EditSalaryExpense } from "../components/ManageExpenses/SalaryExpense/EditSalaryExpense";
 import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/PaySalaryExpense";
-
+import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateExpenses";
+import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
 
 export const routes = [
   {
@@ -492,12 +493,14 @@ export const routes = [
       constants.roles.teacher,
       constants.roles.officeStaff,
     ],
-  },{
+  },
+  {
     path: allRouterLink.discountedStudents,
     element: <DiscountedStudents />,
     protected: true,
     allowedRoles: [constants.roles.director],
-  },{
+  },
+  {
     path: `${allRouterLink.editStudentDiscount}/:id`,
     element: <EditDiscount />,
     protected: true,
@@ -530,6 +533,18 @@ export const routes = [
   {
     path: allRouterLink.viewAllExpenses,
     element: <ViewAllExpenses />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.createExpenses,
+    element: <CreateExpenses />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.editExpenses,
+    element: <EditExpenses />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
