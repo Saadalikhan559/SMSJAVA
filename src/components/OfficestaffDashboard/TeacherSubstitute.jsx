@@ -360,20 +360,24 @@ const TeacherSubstitute = () => {
                   Close
                 </button>
 
-                <button
-                  className="btn btn-primary w-30 flex items-center justify-center"
-                  onClick={async () => {
-                    const assignments = [];
-                    selectedTeacher.year_levels.forEach((level) => {
-                      level.periods.forEach((period) => {
-                        const source = period.showSameClass
-                          ? period.same_class_free_teachers
-                          : period.other_class_free_teachers;
-                        source.forEach((ft) => {
-                          if (ft.selected) assignments.push({ period, ft });
-                        });
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={async () => {
+                  const assignments = [];
+
+                  selectedTeacher.year_levels.forEach((level) => {
+                    level.periods.forEach((period) => {
+                      const source = period.showSameClass
+                        ? period.same_class_free_teachers
+                        : period.other_class_free_teachers;
+
+                      source.forEach((ft) => {
+                        if (ft.selected) {
+                          assignments.push({ period, ft });
+                        }
                       });
                     });
+                  });
 
                     if (assignments.length === 0) {
                       setAlertMessage("No substitute teacher selected.");
@@ -413,32 +417,34 @@ const TeacherSubstitute = () => {
                 </button>
               </div>
             </div>
-
           </dialog>
         )}
 
-        {/* Alert Modal */}
-        {showAlert && (
-          <dialog className="modal modal-open">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">Assign Substitute</h3>
-              <p className="py-4 capitalize">
-                {alertMessage.split("\n").map((line, idx) => (
-                  <span key={idx}>
-                    {line}
-                    <br />
-                  </span>
-                ))}
-              </p>
-              <div className="modal-action">
-                <button className="btn btn-primary" onClick={() => setShowAlert(false)}>
-                  OK
-                </button>
-              </div>
+      {/*  modal */}
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Assign Substitute</h3>
+            <p className="py-4 capitalize">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
             </div>
-          </dialog>
-        )}
-      </div>
+          </div>
+        </dialog>
+      )}
+    </div>
     </div>
   );
 };

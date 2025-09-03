@@ -121,7 +121,6 @@ const AllStaff = () => {
               </div>
               <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
                 <thead className="bgTheme text-white text-center">
-
                   <tr>
                     <th className="px-4 py-3">S.NO</th>
                     <th className="px-4 py-3">Name</th>

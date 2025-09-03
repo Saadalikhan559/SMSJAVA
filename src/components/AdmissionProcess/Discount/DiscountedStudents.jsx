@@ -220,7 +220,7 @@ const DiscountedStudents = () => {
         <dialog className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg ">Confirm Delete</h3>
-            <p className="py-4">Are you sure ?</p>
+            <p className="py-4">Are you sure you want to continue?</p>
             <div className="modal-action">
               <button className="btn bgTheme text-white" onClick={confirmDelete}>
                 Continue
