@@ -5,22 +5,20 @@ import {
   fetchYearLevels,
 } from "../../../services/api/Api";
 import { useNavigate } from "react-router-dom";
-import { constants } from "../../../global/constants";
 
 const CreateDiscount = () => {
   const navigation = useNavigate();
+  const access = JSON.parse(localStorage.getItem("authTokens")).access;
 
-  const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
   const [classId, setClassId] = useState("");
-  const access = JSON.parse(localStorage.getItem("authTokens")).access;
-  const [fieldDisbaled, setFieldDisabled] = useState(true);
-  const [btnDisabled, setBtnDisabled] = useState(true);
-  const [errors, setErrors] = useState({});
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertTitle, setAlertTitle] = useState("");
+
+  const [loadingClasses, setLoadingClasses] = useState(false);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(false);
 
   const [formData, setFormData] = useState({
     student_id: "",
@@ -30,64 +28,55 @@ const CreateDiscount = () => {
     is_allowed: true,
   });
 
-  const handleChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const [btnDisabled, setBtnDisabled] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
-    // Clear the error for this specific field when user changes it
-    setErrors((prev) => ({
-      ...prev,
-      [name]: undefined,
-    }));
-  };
-
-  // Fetch all classes
-  const getClasses = async () => {
-    try {
-      const response = await fetchYearLevels();
-      setClasses(response);
-    } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
-    }
-  };
-
-  const getStudents = async (id) => {
-    if (!id) return;
-    try {
-      const Students = await fetchStudents1(id);
-      setStudents(Students);
-      setFieldDisabled(Students.length === 0);
-      if (Students.length === 0) {
-        setFormData({
-          student_id: "",
-          admission_fee_discount: "",
-          tuition_fee_discount: "",
-          discount_reason: "",
-          is_allowed: true,
-        });
-      }
-    } catch (err) {
-      console.log("Failed to load school years. Please try again." + err);
-    }
-  };
-
+  // Initial page loader
   useEffect(() => {
-    getClasses();
+    setTimeout(() => setPageLoading(false), 800);
   }, []);
 
-  useEffect(() => {
-    getStudents(classId);
-  }, [classId]);
+  // Fetch all classes
+  const loadClasses = async () => {
+    if (classes.length > 0) return;
+    setLoadingClasses(true);
+    try {
+      const data = await fetchYearLevels();
+      setClasses(data);
+      setError(false);
+    } catch (err) {
+      console.error("Failed to load classes:", err);
+      setError(true);
+    } finally {
+      setLoadingClasses(false);
+    }
+  };
+
+  // Fetch students for selected class
+  const loadStudents = async () => {
+    if (!classId) return;
+    setLoadingStudents(true);
+    try {
+      const data = await fetchStudents1(classId);
+      setStudents(data || []);
+      setError(false);
+    } catch (err) {
+      console.error("Failed to load students:", err);
+      setError(true);
+      setStudents([]);
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
 
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      student_id: "",
-    }));
+    if (classId) loadStudents();
+    setFormData((prev) => ({ ...prev, student_id: "" }));
   }, [classId]);
 
+  // Enable/disable submit button
   useEffect(() => {
     const hasFeeValue =
       formData.admission_fee_discount.trim() !== "" ||
@@ -96,27 +85,23 @@ const CreateDiscount = () => {
     setBtnDisabled(!allRequiredFields);
   }, [formData]);
 
+  const handleChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setErrors({}); // clear previous errors
+    setIsSubmitting(true);
 
     try {
-      const payload = {
-        ...formData,
-        student_id: formData.student_id,
-        admission_fee_discount: formData.admission_fee_discount,
-        tuition_fee_discount: formData.tuition_fee_discount,
-        is_allowed: true,
-      };
-
-      const response = await createDiscount(access, payload);
+      const payload = { ...formData, is_allowed: true };
+      await createDiscount(access, payload);
 
       setAlertTitle("Success");
       setAlertMessage("Discount created successfully!");
-      setShowAlert(true)
+      setShowAlert(true);
 
-      // If success, reset form
+      // Reset form
       setFormData({
         student_id: "",
         admission_fee_discount: "",
@@ -124,34 +109,48 @@ const CreateDiscount = () => {
         discount_reason: "",
         is_allowed: true,
       });
+      setStudents([]);
+      setClassId("");
     } catch (err) {
-      setErrors(err);
-
       setAlertTitle("Error");
-      setAlertMessage("Failed to create discount. Please try again.");
+      setAlertMessage("Failed to create discount. Try again!");
       setShowAlert(true);
-
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  // Placeholder functions for the new buttons
-  const handleEdit = () => {
-    navigation.navigate(`/createDiscount/${id}`)
-  };
+  if (pageLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
-  const handleRemove = () => {
-    alert("Remove functionality would be implemented here");
-  };
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Create Discount
-        <i className="fa-solid fa-percentage ml-2"></i>
-      </h1>
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Create Discount
+          <i className="fa-solid fa-percentage ml-2"></i>
+        </h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -166,12 +165,15 @@ const CreateDiscount = () => {
               <select
                 className="select select-bordered w-full focus:outline-none"
                 value={classId}
+                onFocus={loadClasses}
                 onChange={(e) => setClassId(e.target.value)}
               >
-                <option value="">Select Class</option>
-                {classes?.map((classItem) => (
-                  <option key={classItem.id} value={classItem.id}>
-                    {classItem.level_name}
+                <option value="">
+                  {loadingClasses ? "Loading classes..." : "Select Class"}
+                </option>
+                {classes.map((cls) => (
+                  <option key={cls.id} value={cls.id}>
+                    {cls.level_name}
                   </option>
                 ))}
               </select>
@@ -186,25 +188,24 @@ const CreateDiscount = () => {
                 </span>
               </label>
               <select
-                className="select select-bordered w-full focus:outline-none"
-                disabled={!classId}
+                className="select select-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
                 value={formData.student_id}
                 onChange={(e) => handleChange("student_id", e.target.value)}
+                disabled={!classId}
               >
-                <option value="">Select Student</option>
-                {students.length > 0
-                  ? students.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.student_name} - {student.student_email}
-                    </option>
-                  ))
-                  : classId && (
-                    <option disabled>No students found for this class</option>
-                  )}
+                <option value="">
+                  {loadingStudents
+                    ? "Loading students..."
+                    : !classId
+                    ? "Select a class first"
+                    : "Select Student"}
+                </option>
+                {students.map((std) => (
+                  <option key={std.student_id} value={std.student_id}>
+                    {std.student_name} - {std.student_email}
+                  </option>
+                ))}
               </select>
-              {errors.student_id && (
-                <p className="text-error text-sm">{errors.student_id}</p>
-              )}
             </div>
           </div>
 
@@ -219,21 +220,13 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                className="select select-bordered w-full focus:outline-none"
-                placeholder="e.g. 100.00"
-                min={0}
-                name="admission_fee_discount"
+                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="e.g. 100"
                 value={formData.admission_fee_discount}
                 onChange={(e) =>
                   handleChange("admission_fee_discount", e.target.value)
                 }
-                disabled={fieldDisbaled}
               />
-              {errors.admission_fee_discount && (
-                <p className="text-error text-sm">
-                  {errors.admission_fee_discount[0]}
-                </p>
-              )}
             </div>
 
             {/* Tuition Fee Discount */}
@@ -246,29 +239,18 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                className="select select-bordered w-full focus:outline-none"
-                placeholder="e.g. 800.00"
-                min={0}
-                name="tuition_fee_discount"
+                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="e.g. 500"
                 value={formData.tuition_fee_discount}
                 onChange={(e) =>
                   handleChange("tuition_fee_discount", e.target.value)
                 }
-                disabled={fieldDisbaled}
               />
-              {errors.tuition_fee_discount && (
-                <p className="text-error text-sm">
-                  {errors.tuition_fee_discount[0]}
-                </p>
-              )}
             </div>
           </div>
-          {errors.fee_discount && (
-            <p className="text-error text-sm">{errors.fee_discount}</p>
-          )}
 
           {/* Discount Reason */}
-          <div className="form-control">
+          <div className="form-control mt-6">
             <label className="label">
               <span className="label-text flex items-center gap-1">
                 <i className="fa-solid fa-comment-dots text-sm"></i>
@@ -279,53 +261,49 @@ const CreateDiscount = () => {
               className="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="e.g. Sibling concession"
               rows={3}
-              name="discount_reason"
-              disabled={fieldDisbaled}
               value={formData.discount_reason}
               onChange={(e) => handleChange("discount_reason", e.target.value)}
             ></textarea>
           </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-center pt-6">
-          <button
-            type="submit"
-            className="btn btn-primary w-full md:w-52 bgTheme"
-            disabled={btnDisabled}
-          >
-            {loading ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-                Create
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-      {/* Modal */}
-    {/* {showAlert && (
-      <dialog open className="modal modal-open">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">{alertTitle}</h3>
-          <p className="py-4">{alertMessage}</p>
-          <div className="modal-action">
-            <button 
-              className="btn btn-primary"
-              onClick={() => setShowAlert(false)}
+          {/* Submit Button */}
+          <div className="flex justify-center pt-6">
+            <button
+              type="submit"
+              className="btn btn-primary w-full md:w-52 bgTheme text-white"
+              disabled={btnDisabled}
             >
-              OK
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+              ) : (
+                <>
+                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                  Create
+                </>
+              )}
             </button>
           </div>
-        </div>
-      </dialog>
-    )} */}
-    </div>
-    </div>
+        </form>
 
+        {/* Modal */}
+        {showAlert && (
+          <dialog open className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">{alertTitle}</h3>
+              <p className="py-4">{alertMessage}</p>
+              <div className="modal-action">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowAlert(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </dialog>
+        )}
+      </div>
+    </div>
   );
 };
 
