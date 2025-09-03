@@ -69,146 +69,156 @@ const AllStaff = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="flex justify-center border-b mb-6">
-        <button
-          onClick={() => setActiveTab("teachers")}
-          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
-            activeTab === "teachers"
-              ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
-          }`}
-        >
-          <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
-        </button>
-        <button
-          onClick={() => setActiveTab("staff")}
-          className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
-            activeTab === "staff"
-              ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
-          }`}
-        >
-          <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
-        </button>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        {activeTab === "teachers" && (
-          <>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-semibold text-gray-800">Teachers</h2>
-              <br />
-              <input
-                type="text"
-                placeholder="Search Teacher Name"
-                value={teacherSearch}
-                onChange={(e) => setTeacherSearch(e.target.value)}
-                className="input input-bordered w-full sm:max-w-xs focus:outline-none"
-              />
-            </div>
-            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bgTheme text-white text-center">
-                <tr>
-                  <th className="px-4 py-3">S.NO</th>
-                  <th className="px-4 py-3">Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTeachers.length === 0 ? (
-                  <tr>
-                    <td colSpan="2" className="text-center py-6 text-red-600">
-                      No data found.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredTeachers.map((record, index) => (
-                    <tr
-                      key={record.id || index}
-                      className="hover:bg-gray-50 text-center"
-                    >
-                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to={`/staffDetail/teacher/${record.id}`}
-                          state={{ level_name: record.level_name }}
-                          className="textTheme hover:underline"
-                        >
-                          {[record.first_name, record.middle_name, record.last_name]
-                            .filter(Boolean)
-                            .join(" ")}
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </>
+    <div className="min-h-screen p-5 bg-gray-50 ">
+      <div className="max-w-7xl mx-auto">
+        {error && (
+          <div className="text-red-600 text-center mb-4 font-medium">{error}</div>
         )}
 
-        {activeTab === "staff" && (
-          <>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <h2 className="text-2xl font-semibold text-gray-800">Office Staff</h2>
-              <br />
-              <input
-                type="text"
-                placeholder="Search Staff Member Name"
-                value={staffSearch}
-                onChange={(e) => setStaffSearch(e.target.value)}
-                className="input input-bordered w-full sm:max-w-xs focus:outline-none"
-              />
-            </div>
-            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bgTheme text-white text-center">
-                <tr>
-                  <th className="px-4 py-3">S.NO</th>
-                  <th className="px-4 py-3">Name</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOfficeStaff.length === 0 ? (
+        {/* tab */}
+
+        <div className="flex justify-center border-b mb-6">
+          <button
+            onClick={() => setActiveTab("teachers")}
+            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
+              ? "border-[#5E35B1] textTheme"
+              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+              }`}
+          >
+            <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
+          </button>
+          <button
+            onClick={() => setActiveTab("staff")}
+            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
+              ? "border-[#5E35B1] textTheme"
+              : "border-transparent text-gray-600 hover:text-[#5E35B1]"
+              }`}
+          >
+            <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          {activeTab === "teachers" && (
+            <>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+
+                <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+
+                  <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
+                </h2><br />
+                <input
+                  type="text"
+                  placeholder="Search Teacher Name"
+                  value={teacherSearch}
+                  onChange={(e) => setTeacherSearch(e.target.value)}
+                  className="border px-3 py-2 rounded w-full sm:w-64"
+
+
+                />
+              </div>
+              <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+                <thead className="bgTheme text-white text-center">
+
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-red-600">
-                      No data found.
-                    </td>
+                    <th className="px-4 py-3">S.NO</th>
+                    <th className="px-4 py-3">Name</th>
                   </tr>
-                ) : (
-                  filteredOfficeStaff.map((record, index) => (
-                    <tr
-                      key={record.id || index}
-                      className="hover:bg-gray-50 text-center"
-                    >
-                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to={`/staffDetail/office/${record.id}`}
-                          state={{ level_name: record.level_name }}
-                          className="textTheme hover:underline"
-                        >
-                          {[record.first_name, record.middle_name, record.last_name]
-                            .filter(Boolean)
-                            .join(" ")}
-                        </Link>
+                </thead>
+                <tbody>
+                  {filteredTeachers.length === 0 ? (
+                    <tr>
+                      <td colSpan="2" className="text-center py-6 text-red-600">
+                        No data found.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </>
-        )}
+                  ) : (
+                    filteredTeachers.map((record, index) => (
+                      <tr
+                        key={record.id || index}
+                        className="hover:bg-gray-50 text-center"
+                      >
+                        <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
+                        <td className="px-4 py-3">
+                          <Link
+                            to={`/staffDetail/teacher/${record.id}`}
+                            state={{ level_name: record.level_name }}
+                            className="textTheme hover:underline"
+                          >
+                            {[record.first_name, record.middle_name, record.last_name]
+                              .filter(Boolean)
+                              .join(" ")}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {activeTab === "staff" && (
+            <>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+
+                <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+
+                  <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+                </h2><br />
+                <input
+                  type="text"
+                  placeholder="Search Staff Member Name"
+                  value={staffSearch}
+                  onChange={(e) => setStaffSearch(e.target.value)}
+                  className="border px-3 py-2 rounded w-full sm:w-64"
+
+
+                />
+              </div>
+              <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+                <thead className="bgTheme text-white text-center">
+
+                  <tr>
+                    <th className="px-4 py-3">S.NO</th>
+                    <th className="px-4 py-3">Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOfficeStaff.length === 0 ? (
+                    <tr>
+                      <td colSpan="2" className="text-center py-6 text-red-600">
+                        No data found.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredOfficeStaff.map((record, index) => (
+                      <tr
+                        key={record.id || index}
+                        className="hover:bg-gray-50 text-center"
+                      >
+                        <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
+                        <td className="px-4 py-3">
+                          <Link
+                            to={`/staffDetail/office/${record.id}`}
+                            state={{ level_name: record.level_name }}
+                            className="textTheme hover:underline"
+                          >
+                            {[record.first_name, record.middle_name, record.last_name]
+                              .filter(Boolean)
+                              .join(" ")}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

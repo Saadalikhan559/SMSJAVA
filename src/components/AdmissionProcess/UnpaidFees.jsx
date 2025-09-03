@@ -208,10 +208,10 @@ if (error) {
                     group.fees?.map((fee) => (
                       <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-gray-50">
                         <td className="px-4 py-3">{index + 1}</td>
-                        <td className="px-4 py-3">{item.student?.name}</td>
-                        <td className="px-4 py-3">{group.year_level}</td>
+                        <td className="px-4 py-3 text-nowrap">{item.student?.name}</td>
+                        <td className="px-4 py-3 text-nowrap">{group.year_level}</td>
                         <td className="px-4 py-3">{item.month}</td>
-                        <td className="px-4 py-3">{fee.fee_type}</td>
+                        <td className="px-4 py-3 ">{fee.fee_type}</td>
                         <td className="px-4 py-3">₹{fee.amount}</td>
                         <td className="px-4 py-3">₹{item.paid_amount}</td>
                         <td className="px-4 py-3">₹{item.due_amount}</td>

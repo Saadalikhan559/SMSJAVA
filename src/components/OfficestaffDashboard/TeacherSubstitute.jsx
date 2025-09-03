@@ -334,6 +334,7 @@ const TeacherSubstitute = () => {
                                           : p
                                       ),
                                     }));
+
                                     setSelectedTeacher({
                                       ...selectedTeacher,
                                       year_levels: updatedLevels,
@@ -412,6 +413,7 @@ const TeacherSubstitute = () => {
                 </button>
               </div>
             </div>
+
           </dialog>
         )}
 
