@@ -334,6 +334,7 @@ const TeacherSubstitute = () => {
                                           : p
                                       ),
                                     }));
+
                                     setSelectedTeacher({
                                       ...selectedTeacher,
                                       year_levels: updatedLevels,

@@ -69,15 +69,6 @@ const AllStaff = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen p-5 bg-gray-50 ">
       <div className="max-w-7xl mx-auto">
@@ -188,6 +179,7 @@ const AllStaff = () => {
               </div>
               <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
                 <thead className="bgTheme text-white text-center">
+
                   <tr>
                     <th className="px-4 py-3">S.NO</th>
                     <th className="px-4 py-3">Name</th>
