@@ -542,14 +542,16 @@ export const Sidebar = () => {
               )}
             {/* Income */}
             {isAuthenticated &&
-              (role === constants.roles.director) && (
+              (role === constants.roles.director ||
+                 role === constants.roles.officeStaff) && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
                     Incomes
                   </h3>
                   <ul className="space-y-1">
                     {/* View Total Incomes */}
-                    {(role === constants.roles.director) && (
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
                       <li>
                         <Link
                           onClick={(e) =>
@@ -562,7 +564,8 @@ export const Sidebar = () => {
                         </Link>
                       </li>
                     )}
-                    {(role === constants.roles.director) && (
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
                       <li>
                         <Link
                           onClick={(e) =>

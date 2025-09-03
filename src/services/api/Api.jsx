@@ -926,6 +926,26 @@ export const fetchSchoolIncome = async (filters = {}) => {
   }
 };
 
+export const fetchIncomeCategories = async () => {
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = JSON.parse(authTokens)?.access;
+
+    const response = await axios.get(`${BASE_URL}/d/income-category/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching income categories:", error);
+    throw error;
+  }
+};
+
+
+
 // POST APIS
 
 export const createSalary = async (accessToken, payload) => {
@@ -964,26 +984,6 @@ export const handleAdmissionForm = async (formData) => {
     throw err;
   }
 };
-
-// export const createSchoolIncome = async (payload) => {
-//   try {
-//     const authTokens = localStorage.getItem("authTokens");
-//     const accessToken = JSON.parse(authTokens).access;
-//     if (!accessToken) throw new Error("No access token found");
-
-//     const response = await axios.post(`${BASE_URL}/d/school-income/`, payload, {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//       },
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error creating school income:", error);
-//     throw error;
-//   }
-// };
 
 
 export const createSchoolIncome = async (payload) => {
