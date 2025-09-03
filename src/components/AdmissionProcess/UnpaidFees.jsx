@@ -114,7 +114,7 @@ const UnpaidFeesList = () => {
         </div>
         {/* Filter Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b pb-4">
 
             {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">

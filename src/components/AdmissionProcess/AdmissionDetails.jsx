@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchAdmissionDetails, fetchYearLevels } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
+import { Loader } from "../../global/Loader";
 
 export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
@@ -41,9 +42,7 @@ export const AdmissionDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-      </div>
+     <Loader/>
     );
   }
 
@@ -71,9 +70,9 @@ export const AdmissionDetails = () => {
            <i className="fa-solid fa-clipboard-list w-5"></i>  Admission Details
           </h1>
         </div>
-        <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
-   <div className="flex flex-col w-full sm:w-auto">
+        <div className="w-full px-5 ">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
+         <div className="flex flex-col w-full sm:w-xs">
                  <label className="text-sm font-medium text-gray-700 mb-1">
                   Select Class:
                 </label>

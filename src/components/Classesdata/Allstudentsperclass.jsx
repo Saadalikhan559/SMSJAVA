@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { fetchStudentYearLevelByClass } from "../../services/api/Api";
 import { Link } from "react-router-dom";
+import { Loader } from "../../global/Loader";
 
 const AllStudentsPerClass = () => {
   const { id } = useParams();
@@ -37,20 +38,21 @@ const AllStudentsPerClass = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-      </div>
+     <Loader/>
     );
   }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center ">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Students in {levelName}
-          </h2>
+          </h1>
+        </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b pb-2">
+      
+         
 
           {error && (
             <div className="text-red-600 text-center mb-4 font-medium">

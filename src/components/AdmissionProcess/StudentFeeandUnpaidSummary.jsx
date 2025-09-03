@@ -181,8 +181,8 @@ const StudentFeeAndUnpaidSummary = () => {
 
     return (
         <div className="min-h-screen p-5 bg-gray-50">
-            {/* Tabs */}
-            <div className="flex justify-center border-b mb-6">
+            <div className="bg-white shadow-lg rounded-lg p-6 w-full">
+                 <div >
                 <button
                     onClick={() => setActiveTab("fee")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
@@ -195,17 +195,15 @@ const StudentFeeAndUnpaidSummary = () => {
                 <button
                     onClick={() => setActiveTab("unpaid")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
-                        ? "border-b-2 border-blue-600 text-blue-600"
+                        ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
                         : "text-gray-600 hover:text-[#5E35B1]"
                         }`}
                 >
                     Unpaid Accounts Summary
                 </button>
             </div>
-
-            {/*Tab Content */}
-            {activeTab === "fee" && (
-                <div className="bg-white shadow-lg rounded-lg p-6 w-full">
+            {activeTab === "fee" && ( <div className="pt-4">
+            
                     <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
                         <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
                         {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
@@ -311,8 +309,8 @@ const StudentFeeAndUnpaidSummary = () => {
                             </table>
                         </div>
                     )}
+             </div>   )}
                 </div>
-            )}
 
 
             {activeTab === "unpaid" && (

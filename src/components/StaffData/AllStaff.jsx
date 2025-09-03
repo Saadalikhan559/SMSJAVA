@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchOfficeStaff, fetchTeachers } from "../../services/api/Api";
+import { Loader } from "../../global/Loader";
 
 const AllStaff = () => {
   const [officestaff, setofficestaff] = useState([]);
@@ -58,9 +59,7 @@ const AllStaff = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-      </div>
+     <Loader/>
     );
   }
 
@@ -72,7 +71,11 @@ const AllStaff = () => {
 
       {/* tab */}
 
-      <div className="flex justify-center border-b mb-6">
+      
+
+      {/* Content */}
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="">
         <button
           onClick={() => setActiveTab("teachers")}
           className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
@@ -92,17 +95,14 @@ const AllStaff = () => {
           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
         </button>
       </div>
-
-      {/* Content */}
-      <div className="bg-white p-6 rounded-lg shadow-lg">
         {activeTab === "teachers" && (
           <>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-
-                <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
-              </h2><br />
+            <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+            <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
+          </h1>
+        </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b pb-2">
               <input
                 type="text"
                 placeholder="Search Teacher Name"
@@ -155,12 +155,14 @@ const AllStaff = () => {
 
         {activeTab === "staff" && (
           <>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+          <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+          </h1>
+        </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b pb-2">
 
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-
-                <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
-              </h2><br />
+              
               <input
                 type="text"
                 placeholder="Search Staff Member Name"

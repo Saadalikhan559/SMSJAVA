@@ -7,6 +7,7 @@ import {
 } from "../../services/api/Api";
 import LoginSuccessHandler from "../Modals/LoginSucces";
 import { constants } from "../../global/constants";
+import { Loader } from "../../global/Loader";
 
 
 export const DirectorDashboard = () => {
@@ -40,9 +41,7 @@ export const DirectorDashboard = () => {
   }, []);
 if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
+         <Loader/>
         );
     }
 

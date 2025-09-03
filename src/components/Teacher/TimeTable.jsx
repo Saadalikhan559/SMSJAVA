@@ -68,9 +68,12 @@ const TimeTable = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          Examination Time Table
-        </h2>
+        <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4 border-b pb-4">
+              Examination Time Table
+          </h1>
+        </div>
+       
 
         {timetableData.map((classData) => (
           <div key={classData.id} className="mb-10">

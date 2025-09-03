@@ -73,7 +73,7 @@ const AttendanceRecord = () => {
         <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
       </span>
 
-      <div className="flex flex-wrap justify-center gap-4 p-4">
+      <div className="flex flex-wrap justify-center gap-4 p-4 border-b pb-4 ">
         <input
           type="date"
           value={selectedDate}
@@ -85,7 +85,7 @@ const AttendanceRecord = () => {
         </button>
       </div>
 
-      <div className="flex justify-center gap-10 font-semibold text-lg mb-4">
+      <div className="flex justify-center gap-10 font-semibold text-lg mb-4 mt-2">
         <div>Total Present Students: {overallAttendance.present}</div>
         <div>Total Students: {overallAttendance.total}</div>
         <div>Overall Attendance: {overallAttendance.percentage}</div>
