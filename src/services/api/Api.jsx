@@ -26,7 +26,7 @@ export const fetchSchoolYear = async () => {
 export const fetchExpenseCategory = async (accessToken) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/d/Expense-Category/get_category/`,
+      `${BASE_URL}/d/Expense-Category/`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -602,6 +602,8 @@ export const fetchSalaryExpense = async (accessToken) => {
   }
 };
 
+
+
 export const fetchSalaryExpenseById = async (accessToken, id) => {
   try {
     const response = await axios.get(
@@ -933,6 +935,26 @@ export const fetchTeacherAttendanceRecords = async () => {
 };
 
 
+export const fetchSchoolIncome = async (filters = {}) => {
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = JSON.parse(authTokens).access;
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(`${BASE_URL}/d/school-income/`, {
+      params: filters,   // { month, school_year, category }
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching school income:", error);
+    throw error;
+  }
+};
+
 // POST APIS
 
 export const createSalary = async (accessToken, payload) => {
@@ -946,10 +968,7 @@ export const createSalary = async (accessToken, payload) => {
         },
       }
     );
-    if (response.status == 200 || response.status == 201) {
-      alert("Successfully created a salary");
       return response.data;
-    }
   } catch (err) {
     console.error("Failed to create Employee:", err);
     throw err;
@@ -974,6 +993,52 @@ export const handleAdmissionForm = async (formData) => {
     throw err;
   }
 };
+
+// export const createSchoolIncome = async (payload) => {
+//   try {
+//     const authTokens = localStorage.getItem("authTokens");
+//     const accessToken = JSON.parse(authTokens).access;
+//     if (!accessToken) throw new Error("No access token found");
+
+//     const response = await axios.post(`${BASE_URL}/d/school-income/`, payload, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//         "Content-Type": "application/json",
+//       },
+//     });
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error creating school income:", error);
+//     throw error;
+//   }
+// };
+
+
+export const createSchoolIncome = async (payload) => {
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = JSON.parse(authTokens).access;
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.post(
+      `${BASE_URL}/d/school-income/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error creating school income:", error);
+    throw error;
+  }
+};
+
 
 // EDIT APIS
 
@@ -1207,7 +1272,6 @@ export const editSalary = async (accessToken, payload, id) => {
       }
     );
     if (response.status == 200 || response.status == 201) {
-      alert("Successfully edit a salary");
       return response.data;
     }
   } catch (err) {

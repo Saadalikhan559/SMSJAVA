@@ -426,7 +426,6 @@ export const Sidebar = () => {
 
                     {/* Student Fee Card: student only */}
                     {(role === constants.roles.student ||
-                      role === constants.roles.director ||
                       role === constants.roles.officeStaff) && (
                       <li>
                         <Link
@@ -558,7 +557,44 @@ export const Sidebar = () => {
                   </ul>
                 </div>
               )}
-              
+            {/* Income */}
+            {isAuthenticated &&
+              (role === constants.roles.director) && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                    Incomes
+                  </h3>
+                  <ul className="space-y-1">
+                    {/* View Total Incomes */}
+                    {(role === constants.roles.director) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.schoolIncome)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                          School Income
+                        </Link>
+                      </li>
+                    )}
+                    {(role === constants.roles.director) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.createIncome)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                          Create Income
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
             {/* Salary */}
             {isAuthenticated &&
               (role === constants.roles.director ||
