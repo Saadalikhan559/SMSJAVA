@@ -168,9 +168,12 @@ export const ViewAllExpenses = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
+         <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
           <i className="fa-solid fa-money-bill-wave mr-2"></i> Total Expenses
-        </h2>
+          </h1>
+        </div>
+
 
         {/* Display API error message */}
         {apiError && (
@@ -183,7 +186,7 @@ export const ViewAllExpenses = () => {
         )}
 
         {/* Filters */}
-        <div className="mb-4 flex flex-col gap-2 md:flex-row">
+        <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2">
           {/* School Year Filter */}
           <div className="form-control md:w-1/3">
             <label className="label">
@@ -517,7 +520,7 @@ export const ViewAllExpenses = () => {
                   </button>
                   <button
                     type="submit"
-                    className=" btn px-4 py-2 text-yellow-700  hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
+                    className=" btn px-4 py-2   hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
                   >
                     Update
                   </button>
