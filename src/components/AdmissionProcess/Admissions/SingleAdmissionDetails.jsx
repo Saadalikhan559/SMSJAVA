@@ -6,14 +6,18 @@ export const SingleAdmissionDetails = () => {
   const { id } = useParams();
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const getAdmissionDetailsById = async () => {
+    setLoading(true);
+    setError(false);
     try {
       const data = await fetchAdmissionDetailsById(id);
       setDetails(data);
-      setLoading(false);
-    } catch (error) {
-      console.log("failed to fetch admission details", error);
+    } catch (err) {
+      console.error("Failed to fetch admission details", err);
+      setError(true);
+    } finally {
       setLoading(false);
     }
   };
@@ -22,13 +26,49 @@ export const SingleAdmissionDetails = () => {
     getAdmissionDetailsById();
   }, [id]);
 
+  // Loader UI
   if (loading) {
-    return <div className="p-4 text-center">Loading details...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading admission details...</p>
+      </div>
+    );
+  }
+
+  // Error UI with retry
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium mb-4">
+          Failed to load admission details.
+        </p>
+        <button
+          onClick={getAdmissionDetailsById}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+        >
+          Retry
+        </button>
+      </div>
+    );
   }
 
   if (!details) {
-    return <div className="p-4 text-center">Failed to load data</div>;
+    return (
+      <div className="p-4 text-center">
+        No admission details available.
+      </div>
+    );
   }
+
+  // Function to safely display nested data
+  const getValue = (obj, key, fallback = "Not Provided") =>
+    obj && obj[key] !== undefined && obj[key] !== null ? obj[key] : fallback;
 
   return (
     <div className="p-3 bg-gray-100 min-h-screen">
@@ -36,13 +76,13 @@ export const SingleAdmissionDetails = () => {
         {/* Header Section */}
         <div className="bgTheme text-white px-6 py-4">
           <h1 className="text-2xl font-bold">
-            {details.student_input.first_name || "Unknown"}{" "}
-            {details.student_input.last_name || ""}'s Admission Details
+            {getValue(details.student_input, "first_name", "Unknown")}{" "}
+            {getValue(details.student_input, "last_name", "")}'s Admission Details
           </h1>
         </div>
 
         <div className="p-6">
-          {/* Student Information Section */}
+          {/* Student Information */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold border-b pb-2 mb-4">
               Student Information
@@ -51,52 +91,52 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">Full Name:</p>
                 <p>
-                  {details.student_input.first_name || "Unknown"}{" "}
-                  {details.student_input.middle_name || ""}{" "}
-                  {details.student_input.last_name || ""}
+                  {getValue(details.student_input, "first_name", "Unknown")}{" "}
+                  {getValue(details.student_input, "middle_name", "")}{" "}
+                  {getValue(details.student_input, "last_name", "")}
                 </p>
               </div>
               <div>
                 <p className="font-medium">Father's Name:</p>
-                <p>{details.student_input.father_name || "Not Provided"}</p>
+                <p>{getValue(details.student_input, "father_name")}</p>
               </div>
               <div>
                 <p className="font-medium">Mother's Name:</p>
-                <p>{details.student_input.mother_name || "Not Provided"}</p>
+                <p>{getValue(details.student_input, "mother_name")}</p>
               </div>
               <div>
                 <p className="font-medium">Roll No:</p>
-                <p>{details.student_input.roll_number || "Not Assigned"}</p>
+                <p>{getValue(details.student_input, "roll_number", "Not Assigned")}</p>
               </div>
               <div>
                 <p className="font-medium">Date of Birth:</p>
-                <p>{details.student_input.date_of_birth || "Not Provided"}</p>
+                <p>{getValue(details.student_input, "date_of_birth")}</p>
               </div>
               <div>
                 <p className="font-medium">Gender:</p>
-                <p>{details.student_input.gender || "Not Specified"}</p>
+                <p>{getValue(details.student_input, "gender", "Not Specified")}</p>
               </div>
               <div>
                 <p className="font-medium">Email:</p>
-                <p>{details.student_input.email || "Not Provided"}</p>
+                <p>{getValue(details.student_input, "email")}</p>
               </div>
               <div>
                 <p className="font-medium">Blood Group:</p>
-                <p>{details.student_input.blood_group || "Not Provided"}</p>
+                <p>{getValue(details.student_input, "blood_group")}</p>
               </div>
               <div>
                 <p className="font-medium">Religion:</p>
-                <p>{details.student_input.religion || "Not Specified"}</p>
+                <p>{getValue(details.student_input, "religion", "Not Specified")}</p>
               </div>
               <div>
                 <p className="font-medium">Category:</p>
-                <p>{details.student_input.category || "Not Specified"}</p>
+                <p>{getValue(details.student_input, "category", "Not Specified")}</p>
               </div>
               <div>
                 <p className="font-medium">Height/Weight:</p>
                 <p>
-                  {details.student_input.height || "Not Measured"} cm /{" "}
-                  {details.student_input.weight || "Not Measured"} kg
+                  {getValue(details.student_input, "height", "Not Measured")} cm /{" "}
+                  {getValue(details.student_input, "weight", "Not Measured")} kg
                 </p>
               </div>
               <div>
@@ -105,15 +145,11 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Contact number:</p>
-                <p>{details.student_input.contact_number || "Not Provided"}</p>
-              </div>
-              <div>
-                <p className="font-medium">Roll Number:</p>
-                <p>{details.student_input.roll_number || "Not Assigned"}</p>
+                <p>{getValue(details.student_input, "contact_number")}</p>
               </div>
               <div>
                 <p className="font-medium">Scholar Number:</p>
-                <p>{details.student_input.scholar_number || "Not Assigned"}</p>
+                <p>{getValue(details.student_input, "scholar_number", "Not Assigned")}</p>
               </div>
               <div>
                 <p className="font-medium">Has RTE?</p>
@@ -123,7 +159,6 @@ export const SingleAdmissionDetails = () => {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
@@ -138,7 +173,6 @@ export const SingleAdmissionDetails = () => {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
@@ -150,12 +184,8 @@ export const SingleAdmissionDetails = () => {
                 )}
               </div>
               <div>
-                <p className="font-medium"> RTE Number: </p>
-                <p>
-                  {details.is_rte === true
-                    ? details.rte_number
-                    : "Not Applicable"}
-                </p>
+                <p className="font-medium">RTE Number:</p>
+                <p>{details.is_rte ? details.rte_number : "Not Applicable"}</p>
               </div>
             </div>
           </div>
@@ -173,21 +203,21 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">Name:</p>
                 <p>
-                  {details.guardian_input.first_name || "Unknown"}{" "}
-                  {details.guardian_input.last_name || ""}
+                  {getValue(details.guardian_input, "first_name", "Unknown")}{" "}
+                  {getValue(details.guardian_input, "last_name", "")}
                 </p>
               </div>
               <div>
                 <p className="font-medium">Phone:</p>
-                <p>{details.guardian_input.phone_no || "Not Provided"}</p>
+                <p>{getValue(details.guardian_input, "phone_no")}</p>
               </div>
               <div>
                 <p className="font-medium">Email:</p>
-                <p>{details.guardian_input.email || "Not Provided"}</p>
+                <p>{getValue(details.guardian_input, "email")}</p>
               </div>
               <div>
                 <p className="font-medium">Occupation:</p>
-                <p>{details.guardian_input.occupation || "Not Specified"}</p>
+                <p>{getValue(details.guardian_input, "occupation")}</p>
               </div>
               <div>
                 <p className="font-medium">Annual Income:</p>
@@ -199,11 +229,11 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Qualification:</p>
-                <p>{details.guardian_input.qualification || "Not Specified"}</p>
+                <p>{getValue(details.guardian_input, "qualification")}</p>
               </div>
               <div>
                 <p className="font-medium">Designation:</p>
-                <p>{details.guardian_input.designation || "Not Specified"}</p>
+                <p>{getValue(details.guardian_input, "designation")}</p>
               </div>
             </div>
           </div>
@@ -217,36 +247,36 @@ export const SingleAdmissionDetails = () => {
               <div>
                 <p className="font-medium">Address:</p>
                 <p>
-                  {details.address.house_no || "Not Provided"},{" "}
-                  {details.address.address_line || "Not Provided"}
+                  {getValue(details.address, "house_no")},{" "}
+                  {getValue(details.address, "address_line")}
                 </p>
               </div>
               <div>
                 <p className="font-medium">Habitation:</p>
-                <p>{details.address.habitation || "Not Specified"}</p>
+                <p>{getValue(details.address, "habitation")}</p>
               </div>
               <div>
                 <p className="font-medium">City/State:</p>
                 <p>
-                  {details.address.city_name || "Not Provided"},{" "}
-                  {details.address.state_name || "Not Provided"}
+                  {getValue(details.address, "city_name")},{" "}
+                  {getValue(details.address, "state_name")}
                 </p>
               </div>
               <div>
                 <p className="font-medium">Country:</p>
-                <p>{details.address.country_name || "Not Provided"}</p>
+                <p>{getValue(details.address, "country_name")}</p>
               </div>
               <div>
                 <p className="font-medium">District:</p>
-                <p>{details.address.district || "Not Specified"}</p>
+                <p>{getValue(details.address, "district")}</p>
               </div>
               <div>
                 <p className="font-medium">Division:</p>
-                <p>{details.address.division || "Not Specified"}</p>
+                <p>{getValue(details.address, "division")}</p>
               </div>
               <div>
                 <p className="font-medium">Area Code:</p>
-                <p>{details.address.area_code || "Not Provided"}</p>
+                <p>{getValue(details.address, "area_code")}</p>
               </div>
             </div>
           </div>
@@ -315,15 +345,15 @@ export const SingleAdmissionDetails = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p className="font-medium">Account Holder:</p>
-                <p>{details.banking_detail.holder_name || "Not Provided"}</p>
+                <p>{getValue(details.banking_detail, "holder_name")}</p>
               </div>
               <div>
                 <p className="font-medium">Account Number:</p>
-                <p>{details.banking_detail.account_no || "Not Provided"}</p>
+                <p>{getValue(details.banking_detail, "account_no")}</p>
               </div>
               <div>
                 <p className="font-medium">IFSC Code:</p>
-                <p>{details.banking_detail.ifsc_code || "Not Provided"}</p>
+                <p>{getValue(details.banking_detail, "ifsc_code")}</p>
               </div>
             </div>
           </div>

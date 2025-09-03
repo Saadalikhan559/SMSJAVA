@@ -21,6 +21,7 @@ export const EditAddmissionDetails = () => {
   const [schoolYears, setSchoolYear] = useState([]);
   const [guardianTypes, setGuardianType] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const [country, setCountry] = useState([]);
   const [state, setState] = useState([]);
@@ -423,9 +424,27 @@ export const EditAddmissionDetails = () => {
 
   if (!formData) {
     return (
-      <div className="text-center py-10">Loading admission details...</div>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading admission details...</p>
+      </div>
     );
   }
+
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
+
 
 
 

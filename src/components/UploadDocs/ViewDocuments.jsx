@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-// import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
-import { fetchViewDocuments } from "../../services/api/Api";
+import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 
 export const ViewDocuments = () => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedClass, setSelectedClass] = useState("All");
   const [teacherClasses, setTeacherClasses] = useState([]);
@@ -33,6 +33,7 @@ export const ViewDocuments = () => {
         setLoading(false);
       } catch (err) {
         console.error("Failed to fetch data:", err);
+        setError(true);
         setLoading(false);
       }
     };
@@ -40,19 +41,34 @@ export const ViewDocuments = () => {
     fetchData();
   }, [teacherId, userRole]);
 
-  if (loading) return <div className="p-4 text-center">Loading documents...</div>;
-  if (!details || details.length === 0) return    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>;
   if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
-  if (!details.length) return <div className="p-4 text-center">No documents available.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading documents...</p>
+      </div>
+    );
+  }
+
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
+
+  if (!details || details.length === 0) {
+    return <div className="p-4 text-center">No documents available.</div>;
+  }
 
   const allDocTypes = [...new Set(details.flatMap(d => d.document_types_read.map(dt => dt.name.toLowerCase())))];
 
@@ -99,12 +115,10 @@ export const ViewDocuments = () => {
 
     if (userRole === "teacher") {
       if (viewOption === "my") {
-        // teacher's own documents
         return person.role === "Teacher" && details.some(d =>
           d.teacher_id && d.teacher_id.toString() === teacherId && (d.teacher_name === person.name)
         );
       } else if (viewOption === "assigned") {
-        // assigned classes documents
         return person.role === "Student" && teacherClasses.includes(person.yearLevel);
       }
     }
@@ -129,21 +143,20 @@ export const ViewDocuments = () => {
         </h2>
 
         {/* Teacher options */}
-    {userRole === "teacher" && (
-  <div className="mb-4 flex gap-4 items-center">
-    <div>
-      <select
-        value={viewOption}
-        onChange={(e) => setViewOption(e.target.value)}
-        className="border p-2 rounded"
-      >
-        <option value="my">My Documents</option>
-        <option value="assigned">Assigned Class Documents</option>
-      </select>
-    </div>
-  </div>
-)}
-
+        {userRole === "teacher" && (
+          <div className="mb-4 flex gap-4 items-center">
+            <div>
+              <select
+                value={viewOption}
+                onChange={(e) => setViewOption(e.target.value)}
+                className="border p-2 rounded"
+              >
+                <option value="my">My Documents</option>
+                <option value="assigned">Assigned Class Documents</option>
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* Admin filters */}
         {userRole !== "student" && userRole !== "guardian" && userRole !== "teacher" && userRole !== "officestaff" && (
