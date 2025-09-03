@@ -72,6 +72,8 @@ import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
 import { ViewAllExpenses } from "../components/ManageExpenses/AllExpenses/ViewAllExpenses";
 import { EditSalaryExpense } from "../components/ManageExpenses/SalaryExpense/EditSalaryExpense";
+import TeacherAttendance from "../components/OfficestaffDashboard/TeacherAttendance";
+import TeacherAttendanceRecord from "../components/OfficestaffDashboard/TeacherAttendanceRecord";
 import { SchoolIncome } from "../components/Incomes/SchoolIncomes";
 import CreateIncome from "../components/Incomes/CreateIncome";
 import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/PaySalaryExpense";
@@ -532,6 +534,18 @@ export const routes = [
   {
     path: allRouterLink.viewAllExpenses,
     element: <ViewAllExpenses />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.teacherAttendance,
+    element: <TeacherAttendance />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.teacherAttendanceRecord,
+    element: <TeacherAttendanceRecord/>,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
