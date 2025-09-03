@@ -93,6 +93,23 @@ export const Sidebar = () => {
                             Staff Members
                           </Link>
                         </li>
+                        {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
+                          <li>
+                            <Link
+                              onClick={(e) =>
+                                handleNavigation(
+                                  e,
+                                  allRouterLink.teacherAttendance
+                                )
+                              }
+                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            >
+                              <i className="fa-solid fa-clipboard-user w-5"></i>
+                              Teacher Attendance
+                            </Link>
+                          </li>
+                        )}
                         {role === constants.roles.officeStaff && (
                           <li>
                             <Link
@@ -537,6 +554,20 @@ export const Sidebar = () => {
                         </Link>
                       </li>
                     )}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.createExpenses)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        >
+                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                          Create Expenses
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -560,7 +591,7 @@ export const Sidebar = () => {
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
                           <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
-                          School Income
+                          View Total Income
                         </Link>
                       </li>
                     )}

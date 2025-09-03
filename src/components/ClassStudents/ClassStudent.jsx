@@ -177,14 +177,13 @@ export const ClassStudent = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          Students in {classLevel}{" "}
-          <i className="fa-solid fa-clipboard-user ml-2"></i>
+         <i className="fa-solid fa-clipboard-user ml-2"></i> Students in {classLevel}{" "}
         </h2>
 
         {selectedStudents.length >= 2 && (
           <button
             onClick={handleBulkAttendance}
-            className="mb-4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-300"
+            className="mb-4 bgTheme text-white font-medium py-2 px-4 rounded-md transition duration-300"
           >
             Mark Attendance for Selected ({selectedStudents.length})
           </button>
@@ -248,7 +247,7 @@ export const ClassStudent = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => submitIndividualAttendance(student.student_id)}
-                        className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm"
+                        className="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
                         disabled={!individualDates[student.student_id]}
                       >
                         Save
