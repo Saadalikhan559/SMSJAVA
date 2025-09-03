@@ -69,6 +69,8 @@ export const allRouterLink = {
     paySalaryExpense: "/paySalaryExpense/:id",
     discountedStudents: "/discountedStudents",
     editStudentDiscount: "/editStudentDiscount/:id",
+    schoolIncome: "/schoolIncome",
+    createIncome: "/createIncome",
 
     // all routes before this
     unAuthorized: '/unauthorized',

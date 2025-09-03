@@ -15,56 +15,6 @@ const GuardianAttendanceRecord = () => {
     setGuardianID(token);
   }, []);
 
-  // // Static payload data
-  // const attendanceData = {
-  //   guardian_id: 1,
-  //   filter_month: 6,
-  //   filter_year: 2025,
-  //   total_children: 2,
-  //   children: [
-  //     {
-  //       student_name: "Noore Nabi",
-  //       class_name: "Nursery",
-  //       monthly_summary: {
-  //         month: 6,
-  //         present: 13,
-  //         absent: 1,
-  //         leave: 1,
-  //         total_days: 18,
-  //         percentage: "72.2%",
-  //       },
-  //       yearly_summary: {
-  //         year: 2025,
-  //         present: 20,
-  //         absent: 3,
-  //         leave: 1,
-  //         total_days: 27,
-  //         percentage: "74.1%",
-  //       },
-  //     },
-  //     {
-  //       student_name: "Shad Khan",
-  //       class_name: "Nursery",
-  //       monthly_summary: {
-  //         month: 6,
-  //         present: 3,
-  //         absent: 8,
-  //         leave: 1,
-  //         total_days: 15,
-  //         percentage: "20.0%",
-  //       },
-  //       yearly_summary: {
-  //         year: 2025,
-  //         present: 6,
-  //         absent: 10,
-  //         leave: 1,
-  //         total_days: 20,
-  //         percentage: "30.0%",
-  //       },
-  //     },
-  //   ],
-  // };
-
 
   const getGuardianAttendance = async () => {
     if (!guardianID) return;
@@ -295,7 +245,7 @@ const GuardianAttendanceRecord = () => {
       </span>
 
       {/* Enhanced Filter Controls */}
-      <div className="flex flex-wrap justify-center gap-6 my-8">
+      {/* <div className="flex flex-wrap justify-center gap-6 my-8">
         <div className="flex flex-col gap-1">
           <label htmlFor="month" className="text-sm font-medium text-gray-600">
             Select Month
@@ -373,7 +323,90 @@ const GuardianAttendanceRecord = () => {
             <i className="fas fa-spinner fa-spin mr-2"></i> Loading...
           </button>
         )}
+      </div> */}
+      {/* Enhanced Filter Controls */}
+<div className="flex flex-wrap justify-start gap-6 my-8">
+  <div className="flex flex-col gap-1">
+    <label htmlFor="month" className="text-sm font-medium text-gray-600">
+      Select Month
+    </label>
+    <div className="relative">
+      <select
+        id="month"
+        name="month"
+        value={filterMonth}
+        onChange={handleFilterChange}
+        className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm cursor-pointer transition-all duration-200 hover:border-purple-400"
+        disabled={isLoading}
+      >
+        {monthOptions.map((month) => (
+          <option key={month.value} value={month.value}>
+            {month.label}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+        </svg>
       </div>
+    </div>
+  </div>
+
+  <div className="flex flex-col gap-1">
+    <label htmlFor="year" className="text-sm font-medium text-gray-600">
+      Select Year
+    </label>
+    <div className="relative">
+      <select
+        id="year"
+        name="year"
+        value={filterYear}
+        onChange={handleFilterChange}
+        className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm cursor-pointer transition-all duration-200 hover:border-purple-400"
+        disabled={isLoading}
+      >
+        {yearOptions.map((year) => (
+          <option key={year.value} value={year.value}>
+            {year.label}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div className="flex items-end">
+    {!isLoading ? (
+      <button
+        onClick={getGuardianAttendance}
+        className="px-4 py-2 bgTheme text-white border-[#5E35B1] rounded-lg hover:bg-[#6e00ff] focus:outline-none focus:ring-2 focus:ring-[#6e00ff] focus:ring-offset-2 shadow-md transition-colors duration-200"
+      >
+        <i className="fas fa-sync-alt mr-2"></i> Refresh
+      </button>
+    ) : (
+      <button
+        disabled
+        className="px-4 py-2 bg-[#5E35B1] text-white rounded-lg cursor-not-allowed shadow-md"
+      >
+        <i className="fas fa-spinner fa-spin mr-2"></i> Loading...
+      </button>
+    )}
+  </div>
+</div>
+
 
       {isLoading ? (
         // <div className="flex flex-col items-center justify-center py-12">
