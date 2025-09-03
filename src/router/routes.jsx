@@ -548,24 +548,7 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-  {
-    path: allRouterLink.teacherAttendanceRecord,
-    element: <TeacherAttendanceRecord/>,
-    protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  },
-  {
-    path: allRouterLink.schoolIncome,
-    element: <SchoolIncome />,
-    protected: true,
-    allowedRoles: [constants.roles.director],
-  },
-    {
-    path: allRouterLink.createIncome,
-    element: <CreateIncome />,
-    protected: true,
-    allowedRoles: [constants.roles.director],
-  },
+  
 
   // include all routes before this please
 

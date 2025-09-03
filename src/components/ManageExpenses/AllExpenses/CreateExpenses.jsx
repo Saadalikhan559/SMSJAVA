@@ -8,13 +8,12 @@ import {
 } from "../../../services/api/Api";
 import { constants } from "../../../global/constants";
 import axios from "axios";
+import { Loader } from "../../../global/Loader";
+import { Error } from "../../../global/Error";
 
 export const CreateExpenses = () => {
   const [loading, setLoading] = useState(false);
-  const [employees, setEmployees] = useState([]);
   const [category, setCategory] = useState([]);
-
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [apiError, setApiError] = useState("");
   const [error, setError] = useState("");
   const modalRef = useRef();
@@ -27,8 +26,6 @@ export const CreateExpenses = () => {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm();
 
@@ -60,7 +57,7 @@ export const CreateExpenses = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-setApiError("");
+      setApiError("");
       const payload = {
         ...data,
         payment_method: data.payment_method
@@ -80,7 +77,7 @@ setApiError("");
         modalRef.current?.show();
       }
     } catch (error) {
-        setApiError(error.response.data.non_field_errors[0]);
+      setApiError(error.response.data.non_field_errors[0]);
     } finally {
       setLoading(false);
     }
@@ -176,7 +173,7 @@ setApiError("");
               <input
                 type="number"
                 min={0}
-                placeholder="Enter Base Salary e.g: 15000"
+                placeholder="Enter Amount e.g: 15000"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("amount", {
                   required: "Amount salary is required",
