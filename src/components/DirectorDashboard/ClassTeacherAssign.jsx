@@ -171,7 +171,7 @@ const ClassTeacherAssign = () => {
           )}
 
           <div className="flex space-x-4">
-            {/* Teacher Dropdown */}
+
             <div className="w-1/2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Teacher *
@@ -184,6 +184,7 @@ const ClassTeacherAssign = () => {
               >
                 <option value="">
                   {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
+
                 </option>
                 {teachers.map((teacher) => (
                   <option key={teacher.id} value={teacher.id}>
@@ -198,7 +199,6 @@ const ClassTeacherAssign = () => {
               )}
             </div>
 
-            {/* Year Level Dropdown */}
             <div className="w-1/2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Year Level *
@@ -215,6 +215,7 @@ const ClassTeacherAssign = () => {
                   {loadingYearLevels
                     ? "Loading year levels..."
                     : "Select Year Level"}
+
                 </option>
                 {yearLevels.map((level) => (
                   <option key={level.id} value={level.id}>
@@ -237,6 +238,7 @@ const ClassTeacherAssign = () => {
               className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
                 isSubmitting ? "opacity-75 cursor-not-allowed" : ""
               }`}
+
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center w-30">
@@ -260,6 +262,7 @@ const ClassTeacherAssign = () => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
+
                 </span>
               ) : (
                 "Assign Class Teacher"

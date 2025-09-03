@@ -77,8 +77,8 @@ const FullAttendance = () => {
 
       const matchesDate = dateFilter
         ? item[formattedDate] !== null &&
-          item[formattedDate] !== undefined &&
-          item[formattedDate] !== ''
+        item[formattedDate] !== undefined &&
+        item[formattedDate] !== ''
         : true;
 
       return matchesName && matchesDate;
@@ -110,15 +110,15 @@ const FullAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen flex justify-center items-start">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-screen overflow-x-auto">
+    <div className="p-6 bg-gray-50 min-h-screen flex justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-7xl overflow-x-auto">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
           <i className="fa-solid fa-chalkboard-user mr-2" />
           Attendance Table
         </h1>
 
         {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-6 mb-6">
+        <div className="flex flex-wrap justify-start gap-6 mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Name:</label>
             <input
@@ -126,7 +126,7 @@ const FullAttendance = () => {
               placeholder="Enter student name"
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none"
             />
           </div>
 
@@ -136,7 +136,7 @@ const FullAttendance = () => {
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none"
             />
           </div>
         </div>
@@ -189,25 +189,49 @@ const FullAttendance = () => {
         {/* Pagination */}
         {!dateFilter && (
           <div className="flex justify-center mt-6 gap-4">
-            <button
+            {/* <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
               disabled={page === 0}
-              className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
+              className="bgTheme text-white text-sm px-4 py-2 rounded disa"
             >
               <i className="fa-solid fa-arrow-left mr-1" />
               Previous
-            </button>
+            </button> */}
+            <button
+  onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+  disabled={page === 0}
+  className={`text-white text-sm px-4 py-2 rounded ${
+    page === 0
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bgTheme hover:opacity-90"
+  }`}
+>
+  Previous
+</button>
+
             <span className="text-sm text-gray-700 py-2">
               Page {page + 1} of {totalPages}
             </span>
-            <button
+            {/* <button
               onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
               disabled={page >= totalPages - 1}
-              className="bg-blue-600 text-white text-sm px-4 py-2 rounded disabled:bg-gray-300"
+              className="bgTheme text-white text-sm px-4 py-2 rounded "
             >
               Next
               <i className="fa-solid fa-arrow-right ml-1" />
-            </button>
+            </button> */}
+            <button
+  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
+  disabled={page >= totalPages - 1}
+  className={`text-white text-sm px-4 py-2 rounded ${
+    page >= totalPages - 1
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bgTheme hover:opacity-90"
+  }`}
+>
+  Next
+</button>
+
           </div>
         )}
       </div>

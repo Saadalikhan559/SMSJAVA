@@ -309,6 +309,7 @@ export const DocumentUpload = () => {
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+
       >
         <ul className="steps mb-6 w-full">
           <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>
@@ -337,6 +338,7 @@ export const DocumentUpload = () => {
                   <option value="">
                     {loadingRoles ? "Loading roles..." : "Select Role"}
                   </option>
+
                   {filteredRoles.map((roleItem) => (
                     <option key={roleItem.id} value={roleItem.name}>
                       {roleItem.name}
@@ -362,6 +364,7 @@ export const DocumentUpload = () => {
                     <option value="">
                       {yearLevel.length === 0 ? "Loading classes..." : "Select Class"}
                     </option>
+
                     {yearLevel.map((yearlev) => (
                       <option value={yearlev.id} key={yearlev.id}>
                         {yearlev.level_name}
@@ -554,6 +557,7 @@ export const DocumentUpload = () => {
                           {guardian.first_name} {guardian.last_name}
                         </option>
                       ))}
+
                   </select>
                 </div>
               )}
@@ -563,6 +567,7 @@ export const DocumentUpload = () => {
                   <label className="label">
                     <span className="label-text flex items-center gap-1">
                       <i className="fa-solid fa-briefcase text-sm"></i> Office Staff
+
                     </span>
                   </label>
                   <select
@@ -580,6 +585,7 @@ export const DocumentUpload = () => {
                           {staff.first_name} {staff.last_name}
                         </option>
                       ))}
+
                   </select>
                 </div>
               )}
@@ -588,12 +594,14 @@ export const DocumentUpload = () => {
         )}
 
         {/* NAVIGATION BUTTONS */}
+
         <div className="flex flex-col md:flex-row items-center md:items-stretch justify-between gap-4 p-6">
           <button
             type="button"
             onClick={prev}
             disabled={step === 0}
             className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
+
           >
             Back
           </button>
@@ -603,6 +611,7 @@ export const DocumentUpload = () => {
               onClick={next}
               className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
               disabled={role.length === 0 || (role === constants.roles.student && !formData.year_level)}
+
             >
               Next
             </button>
@@ -614,6 +623,7 @@ export const DocumentUpload = () => {
                 <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
               )}
               {loading ? "Uploading..." : "Upload"}
+
             </button>
           )}
         </div>
