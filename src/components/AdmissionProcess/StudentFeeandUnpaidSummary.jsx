@@ -188,7 +188,7 @@ const StudentFeeAndUnpaidSummary = () => {
                 <button
                     onClick={() => setActiveTab("unpaid")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
-                        ? "border-b-2 border-blue-600 text-blue-600"
+                        ? "border-b-2 border-textTheme textTheme"
                         : "text-gray-600 hover:text-[#5E35B1]"
                         }`}
                 >
@@ -250,6 +250,7 @@ const StudentFeeAndUnpaidSummary = () => {
                             )}
                         </div>
                     </div>
+
                     {!details?.monthly_summary || filteredSummary.length === 0 ? (
                         <div className="text-center py-6 text-red-600 font-semibold">
                             Fees Not Found
@@ -360,6 +361,7 @@ const StudentFeeAndUnpaidSummary = () => {
                             </div>
                         </div>
                     </div>
+
                     {filteredFees.length === 0 ? (
                         <div className="text-center py-6 text-red-600 font-semibold">
                             Unpaid Summary Not Found
