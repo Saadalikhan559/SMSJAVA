@@ -165,7 +165,7 @@ const FullAttendance = () => {
                 </tr>
               ) : (
                 filteredData.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-blue-50 transition">
+                  <tr key={idx} className="hover:bg-gray-50 transition">
                     {headers.map((header, i) => (
                       <td
                         key={i}

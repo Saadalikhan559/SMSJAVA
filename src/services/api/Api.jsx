@@ -902,6 +902,35 @@ export const updateDiscount = async (accessToken, id, payload) => {
   }
 };
 
+// teacher attendances
+export const saveAllTeacherAttendance = async (teachers, attendance) => {
+  try {
+    for (const teacher of teachers) {
+      const data = {
+        date: attendance[teacher.id].date,
+        status: attendance[teacher.id].status,
+        teacher_id: teacher.id,
+        teacher_name: `${teacher.first_name} ${teacher.last_name}`,
+      };
+
+      await axios.post(`${BASE_URL}/t/teacher-attendance/post/`, data);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error saving all attendance:", error.response?.data || error);
+    throw error;
+  }
+};
+//  Techer attendance records
+export const fetchTeacherAttendanceRecords = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching attendance records:", error);
+    throw error;
+  }
+};
 
 
 // POST APIS
@@ -1183,6 +1212,16 @@ export const editSalary = async (accessToken, payload, id) => {
     }
   } catch (err) {
     console.error("Failed to create Employee:", err);
+    throw err;
+  }
+};
+
+// Update  teacher attendance 
+export const updateTeacherAttendance = async (id, payload) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/t/teacher-attendance/get/${id}/`, payload);
+    return response.data;
+  } catch (err) {
     throw err;
   }
 };

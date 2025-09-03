@@ -375,7 +375,7 @@ const TeacherSubstitute = () => {
               </button>
 
               <button
-                className="btn btn-primary w-30"
+                className="btn bgTheme text-white w-30"
                 onClick={async () => {
                   const assignments = [];
 
@@ -451,7 +451,7 @@ const TeacherSubstitute = () => {
             </p>
             <div className="modal-action">
               <button
-                className="btn btn-primary"
+                className="btn bgTheme text-white w-30"
                 onClick={() => setShowAlert(false)}
               >
                 OK
