@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import React, { useContext, useEffect, useState } from "react";
 import { fetchTeacherDashboard } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
+import LoginSuccessHandler from '../Modals/LoginSucces';
 
 export const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -59,6 +60,7 @@ export const TeacherDashboard = () => {
 
   return (
     <div className="p-4 space-y-6">
+      <LoginSuccessHandler/>
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         {dashboardData.teacher_name}'s Dashboard
       </h3>
