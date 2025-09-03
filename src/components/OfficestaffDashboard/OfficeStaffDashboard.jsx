@@ -1,37 +1,22 @@
 import Chart from "react-apexcharts";
 import React, { useEffect, useState } from "react";
-
 import { fetchOfficeStaffDashboard } from "../../services/api/Api";
 import { constants } from "../../global/constants";
-
-const payload = {
-  staff: "Tanveer khan",
-  current_academic_year: "2025-2026",
-  new_admissions_this_year: 1,
-  admissions_per_year: {
-    2018: 100,
-    2019: 20,
-    2020: 40,
-    2021: 60,
-    2022: 109,
-    2023: 102,
-    2024: 111,
-    2025: 144,
-  },
-};
 
 export const OfficeStaffDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const getOfficeStaffDashboardData = async () => {
     try {
       const data = await fetchOfficeStaffDashboard();
       setDashboardData(data);
       setLoading(false);
-    } catch (error) {
-      console.log("failed to fetch office staff dashboard data", error);
+    } catch (err) {
+      console.log("Failed to fetch office staff dashboard data", err);
       setLoading(false);
+      setError(true);
     }
   };
 
@@ -39,58 +24,71 @@ export const OfficeStaffDashboard = () => {
     getOfficeStaffDashboardData();
   }, []);
 
- if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
+  // New loader
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
-  if (!dashboardData) {
-    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  // Error UI
+  if (error || !dashboardData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
   }
 
   const admissionYears = Object.keys(dashboardData.admissions_per_year);
   const admissionCounts = Object.values(dashboardData.admissions_per_year);
 
-const options = {
-  chart: {
-    id: "admissions-line",
-  },
-  toolbar: { show: false },
-  xaxis: {
-    categories: admissionYears,
-    title: {
-      text: "Year",
-      style: {
-        fontSize: "14px",
-        fontWeight: 600,
-        color: `${constants.textColor}`,
+  const options = {
+    chart: {
+      id: "admissions-line",
+    },
+    toolbar: { show: false },
+    xaxis: {
+      categories: admissionYears,
+      title: {
+        text: "Year",
+        style: {
+          fontSize: "14px",
+          fontWeight: 600,
+          color: `${constants.textColor}`,
+        },
       },
     },
-  },
-  yaxis: {
-    title: {
-      text: "Number of Admissions",
-      style: {
-        fontSize: "14px",
-        fontWeight: 600,
-        color: `${constants.textColor}`,
+    yaxis: {
+      title: {
+        text: "Number of Admissions",
+        style: {
+          fontSize: "14px",
+          fontWeight: 600,
+          color: `${constants.textColor}`,
+        },
       },
     },
-  },
-  stroke: {
-    curve: "straight",
-    width: 5,
-  },
-  title: {
-    text: "Yearly Admissions",
-    align: "left",
-  },
-  colors: [constants.canadaPink],
-};
-
+    stroke: {
+      curve: "straight",
+      width: 5,
+    },
+    title: {
+      text: "Yearly Admissions",
+      align: "left",
+    },
+    colors: [constants.canadaPink],
+  };
 
   const series = [
     {
@@ -101,13 +99,12 @@ const options = {
 
   return (
     <div className="p-4 space-y-9">
-      {/* Header */}
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         Office Staff Dashboard
       </h3>
 
       <div className="grid grid-cols-12 gap-4">
-        {/* Left Column: Full height stretch using flex */}
+        {/* Left Column */}
         <div className="col-span-12 md:col-span-3 flex flex-col gap-4 h-full">
           <div className="flex-1 border rounded-lg shadow-md borderTheme bg-white">
             <div className="p-4 bgTheme text-white rounded-t-lg">
@@ -138,19 +135,14 @@ const options = {
           </div>
         </div>
 
-        {/* Right Column: Admissions chart */}
+        {/* Right Column: Chart */}
         <div className="col-span-12 md:col-span-9">
           <div className="h-full border rounded-lg shadow-md borderTheme bg-white flex flex-col">
             <div className="p-4 bgTheme text-white rounded-t-lg">
               <h2 className="text-lg font-bold">Admissions Overview</h2>
             </div>
             <div className="p-4 flex-1">
-              <Chart
-                options={options}
-                series={series}
-                type="line"
-                height={350}
-              />
+              <Chart options={options} series={series} type="line" height={350} />
             </div>
           </div>
         </div>

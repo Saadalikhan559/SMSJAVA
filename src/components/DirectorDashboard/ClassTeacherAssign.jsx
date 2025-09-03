@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { fetchTeachers, fetchYearLevels } from "../../services/api/Api";
 import axios from "axios";
 import { constants } from "../../global/constants";
@@ -21,28 +21,52 @@ const ClassTeacherAssign = () => {
 
   const [teachers, setTeachers] = useState([]);
   const [yearLevels, setYearLevels] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingTeachers, setLoadingTeachers] = useState(false);
+  const [loadingYearLevels, setLoadingYearLevels] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [pageLoading, setPageLoading] = useState(true);
+  const [pageError, setPageError] = useState(false);
+
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
+    const preloadData = async () => {
       try {
-        const [teachersData, yearLevelsData] = await Promise.all([
-          fetchTeachers(),
-          fetchYearLevels(),
-        ]);
-        setTeachers(teachersData);
-        setYearLevels(yearLevelsData);
-      } catch (error) {
-        console.error("Failed to load data:", error);
+        // check API is working (lightweight fetch)
+        await Promise.all([fetchTeachers(), fetchYearLevels()]);
+      } catch (err) {
+        setPageError(true);
       } finally {
-        setLoading(false);
+        setPageLoading(false);
       }
     };
-
-    loadData();
+    preloadData();
   }, []);
+
+  const loadTeachers = async () => {
+    if (teachers.length > 0) return;
+    setLoadingTeachers(true);
+    try {
+      const data = await fetchTeachers();
+      setTeachers(data);
+    } catch (error) {
+      console.error("Failed to load teachers:", error);
+    } finally {
+      setLoadingTeachers(false);
+    }
+  };
+
+  const loadYearLevels = async () => {
+    if (yearLevels.length > 0) return;
+    setLoadingYearLevels(true);
+    try {
+      const data = await fetchYearLevels();
+      setYearLevels(data);
+    } catch (error) {
+      console.error("Failed to load year levels:", error);
+    } finally {
+      setLoadingYearLevels(false);
+    }
+  };
 
   const handleSubmitForm = async (data) => {
     const payload = {
@@ -80,6 +104,32 @@ const ClassTeacherAssign = () => {
       setIsSubmitting(false);
     }
   };
+
+  // --- PAGE LOADER ---
+  if (pageLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
+
+  // --- PAGE ERROR ---
+  if (pageError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
@@ -121,18 +171,20 @@ const ClassTeacherAssign = () => {
           )}
 
           <div className="flex space-x-4">
+
             <div className="w-1/2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Teacher *
               </label>
               <select
                 {...register("teacher_id", { required: "Teacher is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
-                disabled={loading}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                onFocus={loadTeachers}
                 onChange={() => clearErrors(["teacher_id", "api"])}
               >
                 <option value="">
-                  {loading ? "Loading teachers..." : "Select Teacher"}
+                  {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
+
                 </option>
                 {teachers.map((teacher) => (
                   <option key={teacher.id} value={teacher.id}>
@@ -146,6 +198,7 @@ const ClassTeacherAssign = () => {
                 </p>
               )}
             </div>
+
             <div className="w-1/2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Year Level *
@@ -154,12 +207,15 @@ const ClassTeacherAssign = () => {
                 {...register("yearlevel_id", {
                   required: "Year level is required",
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
-                disabled={loading}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                onFocus={loadYearLevels}
                 onChange={() => clearErrors(["yearlevel_id", "api"])}
               >
                 <option value="">
-                  {loading ? "Loading year levels..." : "Select Year Level"}
+                  {loadingYearLevels
+                    ? "Loading year levels..."
+                    : "Select Year Level"}
+
                 </option>
                 {yearLevels.map((level) => (
                   <option key={level.id} value={level.id}>
@@ -178,9 +234,11 @@ const ClassTeacherAssign = () => {
           <div className="flex justify-center mt-10">
             <button
               type="submit"
-              disabled={isSubmitting || loading}
-              className={`btn text-white bgTheme py-3 px-4 rounded-md  font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${isSubmitting || loading ? "opacity-75 cursor-not-allowed" : ""
-                }`}
+              disabled={isSubmitting}
+              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+              }`}
+
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center w-30">

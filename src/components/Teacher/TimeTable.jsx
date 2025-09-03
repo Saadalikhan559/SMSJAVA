@@ -5,6 +5,8 @@ import { constants } from "../../global/constants";
 const TimeTable = () => {
   const [accessToken, setAccessToken] = useState("");
   const [timetable, settimetable] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const BASE_URL = constants.baseUrl;
 
@@ -17,31 +19,42 @@ const TimeTable = () => {
         if (tokens?.access) {
           setAccessToken(tokens.access);
         }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
+      } catch (err) {
+        console.error("Error parsing auth tokens:", err);
+        setError(true);
+        setLoading(false);
       }
+    } else {
+      setLoading(false);
     }
-  }, []); // Removed accessToken from dependencies to prevent infinite loop
+  }, []);
 
   const fetchtimetable = async () => {
     if (!accessToken) {
       console.log("Access token not available yet");
+      setLoading(false);
       return;
     }
 
     try {
+      setLoading(true);
+      setError(false);
+
       const response = await axios.get(
         `${BASE_URL}/d/Exam-Schedule/get_timetable/`,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken.trim()}`, // Added trim() to remove any whitespace
+            Authorization: `Bearer ${accessToken.trim()}`,
           },
         }
       );
-      settimetable(response.data); // Make sure to use response.data
+      settimetable(response.data);
+      setLoading(false);
     } catch (err) {
       console.error("Failed to fetch timetable:", err);
+      setError(true);
+      setLoading(false);
     }
   };
 
@@ -51,10 +64,29 @@ const TimeTable = () => {
     }
   }, [accessToken]);
 
-  // Static payload data
-  const timetableData = timetable;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
-  console.log(timetableData);
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   // Format time to 12-hour format
   const formatTime = (timeString) => {
@@ -72,7 +104,7 @@ const TimeTable = () => {
           Examination Time Table
         </h2>
 
-        {timetableData.map((classData) => (
+        {timetable.map((classData) => (
           <div key={classData.id} className="mb-10">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-gray-700">
@@ -114,14 +146,10 @@ const TimeTable = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
                       {classData.papers.map((paper, index) => {
-                        const start = new Date(
-                          `2000-01-01T${paper.start_time}`
-                        );
+                        const start = new Date(`2000-01-01T${paper.start_time}`);
                         const end = new Date(`2000-01-01T${paper.end_time}`);
                         const durationMs = end - start;
-                        const durationHours = Math.floor(
-                          durationMs / (1000 * 60 * 60)
-                        );
+                        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
                         const durationMinutes = Math.floor(
                           (durationMs % (1000 * 60 * 60)) / (1000 * 60)
                         );
@@ -137,14 +165,11 @@ const TimeTable = () => {
                               {paper.subject_name}
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                              {new Date(paper.exam_date).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                }
-                              )}
+                              {new Date(paper.exam_date).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                               {paper.day}
