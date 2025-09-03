@@ -88,19 +88,23 @@ const FullAttendance = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin text-4xl text-blue-600" />
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
   }
 
+
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-red-600 text-center space-y-3">
-          <h2 className="text-2xl font-bold">Attendance Table</h2>
-          <p className="text-lg">{error}</p>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
       </div>
     );
   }

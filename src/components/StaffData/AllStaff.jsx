@@ -58,8 +58,13 @@ const AllStaff = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
   }
@@ -116,6 +121,7 @@ const AllStaff = () => {
               </div>
               <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
                 <thead className="bgTheme text-white text-center">
+
                   <tr>
                     <th className="px-4 py-3">S.NO</th>
                     <th className="px-4 py-3">Name</th>
@@ -174,6 +180,7 @@ const AllStaff = () => {
               </div>
               <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
                 <thead className="bgTheme text-white text-center">
+
                   <tr>
                     <th className="px-4 py-3">S.NO</th>
                     <th className="px-4 py-3">Name</th>
