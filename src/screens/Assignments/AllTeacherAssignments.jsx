@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { fetchAllTeacherAssignments } from "../../services/api/Api";
-import { fetchSubAssignments } from "../../services/api/Api";
+import { fetchAllTeacherAssignments, fetchSubAssignments } from "../../services/api/Api";
 
 const yearLevelMap = {
   1: "Nursery",
@@ -21,46 +20,42 @@ const yearLevelMap = {
   15: "Class 12",
 };
 
-
 export const AllTeacherAssignments = () => {
-  const [teacherAssignments, setTeacherAssignment] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { authTokens } = useContext(AuthContext);
   const accessToken = authTokens.access;
+
+  const [teacherAssignments, setTeacherAssignment] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
-  // Substitute assignments
   const [subAssignments, setSubAssignments] = useState([]);
   const [subLoading, setSubLoading] = useState(true);
+  const [subError, setSubError] = useState(false);
 
-  // Tabs
   const [activeTab, setActiveTab] = useState("teachers");
-
-
-  //  Fetch Teacher Assignments
 
   const getAllTeacherAssignment = async () => {
     try {
       setLoading(true);
+      setError(false);
       const allAssignments = await fetchAllTeacherAssignments(accessToken);
       setTeacherAssignment(allAssignments);
-    } catch (error) {
-      console.log("Failed to load teacher. Please try again.");
+    } catch {
+      setError(true);
     } finally {
       setLoading(false);
     }
   };
 
-
-  //  Fetch Substitute Assignments
-
   const getSubAssignments = async () => {
     try {
       setSubLoading(true);
+      setSubError(false);
       const res = await fetchSubAssignments();
       setSubAssignments(res);
-    } catch (err) {
-      console.error("Error fetching substitute assignments:", err);
+    } catch {
+      setSubError(true);
     } finally {
       setSubLoading(false);
     }
@@ -75,9 +70,27 @@ export const AllTeacherAssignments = () => {
     assignment.teacher_name.toLowerCase().includes(searchInput.toLowerCase())
   );
 
+  const Loader = ({ text = "Loading data..." }) => (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex space-x-2">
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+      </div>
+      <p className="mt-2 text-gray-500 text-sm">{text}</p>
+    </div>
+  );
+
+  const ErrorMessage = ({ text = "Failed to load data, Try Again" }) => (
+    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+      <p className="text-lg text-red-400 font-medium">{text}</p>
+    </div>
+  );
+
   return (
     <div className="p-4">
-      {/* Tabs  */}
+      {/* Tabs */}
       <div className="flex justify-center border-b mb-6">
         <button
           className={`px-6 py-2 font-semibold ${activeTab === "teachers"
@@ -99,162 +112,129 @@ export const AllTeacherAssignments = () => {
         </button>
       </div>
 
-      {/* Teacher Assignments  */}
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-
-        {activeTab === "teachers" && (
-          <>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-
-                Teacher Assignments
-              </h2>
-              <input
-                type="text"
-                placeholder="Search Teacher..."
-                className="border px-3 py-2 rounded w-full sm:w-64"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
-            </div>
-
-            {loading ? (
-              <div className="flex items-center justify-center h-40">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-2xl" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredData.length > 0 ? (
-                  filteredData.map((data) => (
-                    <div
-                      key={data.teacher_id}
-                      className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl bg-white"
-                    >
-                      <div className="p-4 bgTheme text-white">
-                        <h2 className="text-xl font-bold truncate capitalize">
-                          {data.teacher_name}
-                        </h2>
-                      </div>
-                      <div className="p-4 border-b">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-medium">Periods Assigned:</span>
-                          <span className="font-bold">
-                            {data.total_assigned_periods} /{" "}
-                            {data.max_periods_allowed}
-                          </span>
-                        </div>
-                        <progress
-                          className="progress progress-primary w-full"
-                          value={data.total_assigned_periods}
-                          max={data.max_periods_allowed}
-                        />
-                      </div>
-
-                      {data.assignments.length > 0 ? (
-                        data.assignments.map((assignment, idx) => (
-                          <div className="p-4" key={idx}>
-                            <h3 className="font-bold text-gray-700 mb-2 flex items-center">
-                              <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
-                                {assignment.year_level_name}
-                              </span>
-                            </h3>
-                            <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                              {assignment.periods.map((period, idx) => (
-                                <li
-                                  className="bg-gray-100 p-3 rounded-md border border-gray-200 flex justify-between"
-                                  key={idx}
-                                >
-                                  <div>
-                                    <div className="font-medium text-gray-800">
-                                      {period.subject_name}
-                                    </div>
-                                    <div className="text-sm text-gray-600">
-                                      {period.period_name}
-                                    </div>
-                                  </div>
-                                  <div className="text-right text-sm font-semibold text-purple-600">
-                                    {period.start_time} - {period.end_time}
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-gray-600">
-                          No current assignments
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-10">
-                    No assignments found
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Substitute Assignments  */}
-
-        {activeTab === "substitutes" && (
-          <div className="p-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-                Substitute Assignments
-              </h2><br />
-            </div>
-            {subLoading ? (
-              <div className="flex items-center justify-center h-40">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-2xl" />
-              </div>
-            ) : subAssignments.length === 0 ? (
-              <div className="col-span-full text-center py-10">
-                No substitute assignments found.
-              </div>
-            ) : (
-              <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
-                <table className="min-w-full table-fixed text-sm text-left text-gray-700">
-                  <thead className="bgTheme text-white text-sm uppercase tracking-wide">
-                    <tr>
-                      <th className="px-6 py-3 w-[20%]">Date</th>
-                      <th className="px-6 py-3 w-[20%]">Absent Teacher</th>
-                      <th className="px-6 py-3 w-[20%]">Class</th>
-                      <th className="px-6 py-3 w-[20%]">Period</th>
-                      <th className="px-6 py-3 w-[20%]">Substitute Teacher</th>
-                    </tr>
-                  </thead>
-                  <tbody className=" divide-gray-200 bg-white">
-                    {subAssignments.map((a) => (
-                      <tr
-                        key={a.id}
-                        className="hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <td className="px-6 py-3 text-nowrap">{a.date}</td>
-
-                        <td className="px-6 py-3 capitalize text-nowrap">{a.absent_teacher_name}</td>
-
-                        <td className="px-6 py-3 text-nowrap">
-                          {yearLevelMap[a.year_level] || `Class ${a.year_level}`}
-                        </td>
-
-                        <td className="px-6 py-3 text-nowrap capitalize">{a.period}</td>
-
-                        <td className="px-6 py-3 capitalize text-nowrap">{a.substitute_teacher_name}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-
-                </table>
-              </div>
-            )}
+      {/* Teacher Assignments */}
+      {activeTab === "teachers" && (
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+              Teacher Assignments
+            </h2>
+            <input
+              type="text"
+              placeholder="Search Teacher..."
+              className="border px-3 py-2 rounded w-full sm:w-64"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
           </div>
-        )}
-      </div>
+
+          {loading ? (
+            <Loader text="Loading teacher assignments..." />
+          ) : error ? (
+            <ErrorMessage text="Failed to load teacher assignments, Try Again" />
+          ) : filteredData.length === 0 ? (
+            <ErrorMessage text="No assignments found" />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredData.map((data) => (
+                <div
+                  key={data.teacher_id}
+                  className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl bg-white"
+                >
+                  <div className="p-4 bgTheme text-white">
+                    <h2 className="text-xl font-bold truncate capitalize">{data.teacher_name}</h2>
+                  </div>
+                  <div className="p-4 border-b">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">Periods Assigned:</span>
+                      <span className="font-bold">{data.total_assigned_periods} / {data.max_periods_allowed}</span>
+                    </div>
+                    <progress
+                      className="progress progress-primary w-full"
+                      value={data.total_assigned_periods}
+                      max={data.max_periods_allowed}
+                    />
+                  </div>
+
+                  {data.assignments.length > 0 ? (
+                    data.assignments.map((assignment, idx) => (
+                      <div className="p-4" key={idx}>
+                        <h3 className="font-bold text-gray-700 mb-2 flex items-center">
+                          <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
+                            {assignment.year_level_name}
+                          </span>
+                        </h3>
+                        <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                          {assignment.periods.map((period, idx2) => (
+                            <li
+                              className="bg-gray-100 p-3 rounded-md border border-gray-200 flex justify-between"
+                              key={idx2}
+                            >
+                              <div>
+                                <div className="font-medium text-gray-800">{period.subject_name}</div>
+                                <div className="text-sm text-gray-600">{period.period_name}</div>
+                              </div>
+                              <div className="text-right text-sm font-semibold text-purple-600">
+                                {period.start_time} - {period.end_time}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))
+                  ) : (
+                    <ErrorMessage text="No current assignments" />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Substitute Assignments */}
+      {activeTab === "substitutes" && (
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+              Substitute Assignments
+            </h2>
+          </div>
+
+          {subLoading ? (
+            <Loader text="Loading substitute assignments..." />
+          ) : subError ? (
+            <ErrorMessage text="Failed to load substitute assignments, Try Again" />
+          ) : subAssignments.length === 0 ? (
+            <ErrorMessage text="No substitute assignments found" />
+          ) : (
+            <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
+              <table className="min-w-full table-fixed text-sm text-left text-gray-700">
+                <thead className="bgTheme text-white text-sm uppercase tracking-wide">
+                  <tr>
+                    <th className="px-6 py-3 w-[20%]">Date</th>
+                    <th className="px-6 py-3 w-[20%]">Absent Teacher</th>
+                    <th className="px-6 py-3 w-[20%]">Class</th>
+                    <th className="px-6 py-3 w-[20%]">Period</th>
+                    <th className="px-6 py-3 w-[20%]">Substitute Teacher</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-gray-200 bg-white">
+                  {subAssignments.map((a) => (
+                    <tr key={a.id} className="hover:bg-gray-50 transition-colors duration-200">
+                      <td className="px-6 py-3 text-nowrap">{a.date}</td>
+                      <td className="px-6 py-3 capitalize text-nowrap">{a.absent_teacher_name}</td>
+                      <td className="px-6 py-3 text-nowrap">{yearLevelMap[a.year_level] || `Class ${a.year_level}`}</td>
+                      <td className="px-6 py-3 text-nowrap capitalize">{a.period}</td>
+                      <td className="px-6 py-3 capitalize text-nowrap">{a.substitute_teacher_name}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

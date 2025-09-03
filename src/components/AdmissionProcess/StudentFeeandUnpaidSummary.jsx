@@ -7,18 +7,13 @@ import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 
 const StudentFeeAndUnpaidSummary = () => {
-    // Tab state
     const [activeTab, setActiveTab] = useState("fee");
-
-    // Student Fee Card States
     const [details, setDetails] = useState(null);
     const [filteredSummary, setFilteredSummary] = useState([]);
     const [loadingStudent, setLoadingStudent] = useState(true);
     const [allFeeTypes, setAllFeeTypes] = useState([]);
     const [selectedMonthFee, setSelectedMonthFee] = useState("");
     const [selectedYearFee, setSelectedYearFee] = useState("");
-
-    // Unpaid Fees States
     const { userRole, yearLevelID, userID, studentID } = useContext(AuthContext);
     const [unpaidFees, setUnpaidFees] = useState([]);
     const [loadingUnpaid, setLoadingUnpaid] = useState(false);
@@ -27,17 +22,14 @@ const StudentFeeAndUnpaidSummary = () => {
     const [selectedClass, setSelectedClass] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [yearLevels, setYearLevels] = useState([]);
-
     const { student_id } = useParams();
 
-    // --- Fee Card---
     const getStudentFeeDetails = async () => {
         if (!student_id) return;
         setLoadingStudent(true);
         try {
             const data = await fetchStudentFee(student_id);
             setDetails(data);
-
             if (!data?.monthly_summary?.length) {
                 setFilteredSummary([]);
                 setAllFeeTypes([]);
@@ -87,7 +79,6 @@ const StudentFeeAndUnpaidSummary = () => {
         doc.setTextColor(60, 60, 60);
         doc.text(`Class: ${details.year_level}`, margin, 70);
         doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, 85);
-
         const headers = [["Month", ...allFeeTypes, "Total Amount", "Dues"]];
         const data = filteredSummary.map((item) => {
             const row = [item.month];
@@ -110,12 +101,10 @@ const StudentFeeAndUnpaidSummary = () => {
         totalRow.push(`₹ ${filteredSummary.reduce((sum, i) => sum + i.total_amount, 0).toFixed(2)}`);
         totalRow.push(`₹ ${filteredSummary.reduce((sum, i) => sum + i.due_amount, 0).toFixed(2)}`);
         data.push(totalRow);
-
         autoTable(doc, { startY: 100, head: headers, body: data });
         doc.save(`${details.student_name}_fee_report.pdf`);
     };
 
-    // --- Unpaid ---
     const getYearLevels = async () => {
         try {
             const data = await fetchYearLevels();
@@ -173,8 +162,13 @@ const StudentFeeAndUnpaidSummary = () => {
 
     if (loadingStudent || loadingUnpaid) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <div className="flex space-x-2">
+                    <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+                    <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                    <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                </div>
+                <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
             </div>
         );
     }
@@ -183,6 +177,7 @@ const StudentFeeAndUnpaidSummary = () => {
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white shadow-lg rounded-lg p-6 w-full">
                  <div >
+
                 <button
                     onClick={() => setActiveTab("fee")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
@@ -196,6 +191,7 @@ const StudentFeeAndUnpaidSummary = () => {
                     onClick={() => setActiveTab("unpaid")}
                     className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
                         ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
+
                         : "text-gray-600 hover:text-[#5E35B1]"
                         }`}
                 >
@@ -204,15 +200,13 @@ const StudentFeeAndUnpaidSummary = () => {
             </div>
             {activeTab === "fee" && ( <div className="pt-4">
             
+
                     <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
                         <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
                         {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
                     </h1>
-
-                    {/* Filter Section - same as unpaid */}
                     <div className="w-full max-w-5xl mx-auto">
                         <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-                            {/* Month Filter */}
                             <div className="flex flex-col">
                                 <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
                                 <select
@@ -229,8 +223,6 @@ const StudentFeeAndUnpaidSummary = () => {
                                         ))}
                                 </select>
                             </div>
-
-                            {/* Year Filter */}
                             <div className="flex flex-col">
                                 <label className="text-sm font-medium text-gray-700 mb-1">Filter By Academic Year:</label>
                                 <select
@@ -249,8 +241,6 @@ const StudentFeeAndUnpaidSummary = () => {
                                         )}
                                 </select>
                             </div>
-
-                            {/* Download Button */}
                             {filteredSummary.length > 0 && (
                                 <div className="mt-1">
                                     <button
@@ -264,7 +254,6 @@ const StudentFeeAndUnpaidSummary = () => {
                         </div>
                     </div>
 
-                    {/* Table Section */}
                     {!details?.monthly_summary || filteredSummary.length === 0 ? (
                         <div className="text-center py-6 text-red-600 font-semibold">
                             Fees Not Found
@@ -284,7 +273,6 @@ const StudentFeeAndUnpaidSummary = () => {
                                         <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Dues</th>
                                     </tr>
                                 </thead>
-
                                 <tbody className="divide-y divide-gray-200">
                                     {filteredSummary.map((item, index) => (
                                         <tr key={index} className="hover:bg-blue-50">
@@ -312,7 +300,6 @@ const StudentFeeAndUnpaidSummary = () => {
              </div>   )}
                 </div>
 
-
             {activeTab === "unpaid" && (
                 <div className="bg-white shadow-lg rounded-lg p-6 w-full">
                     <div className="mb-6">
@@ -320,11 +307,8 @@ const StudentFeeAndUnpaidSummary = () => {
                             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
                         </h1>
                     </div>
-
-                    {/* Filter Section */}
                     <div className="w-full max-w-5xl mx-auto">
                         <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
-                            {/* Month Filter */}
                             <div className="flex flex-col">
                                 <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
                                 <select
@@ -343,8 +327,6 @@ const StudentFeeAndUnpaidSummary = () => {
                                     ))}
                                 </select>
                             </div>
-
-                            {/* Class Filter (Director/Office Staff only) */}
                             {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
                                 <div className="flex flex-col">
                                     <label className="text-sm font-medium text-gray-700 mb-1">Filter by Class:</label>
@@ -362,8 +344,6 @@ const StudentFeeAndUnpaidSummary = () => {
                                     </select>
                                 </div>
                             )}
-
-                            {/* Search Filter */}
                             <div className="flex flex-col">
                                 <label className="text-sm font-medium text-gray-700 mb-1">Search Student by Name:</label>
                                 <input
@@ -374,8 +354,6 @@ const StudentFeeAndUnpaidSummary = () => {
                                     className="border rounded px-3 py-2 text-sm w-64"
                                 />
                             </div>
-
-                            {/* Reset Button */}
                             <div className="mt-1">
                                 <button
                                     onClick={resetFilters}
@@ -387,7 +365,6 @@ const StudentFeeAndUnpaidSummary = () => {
                         </div>
                     </div>
 
-                    {/* Table Section */}
                     {filteredFees.length === 0 ? (
                         <div className="text-center py-6 text-red-600 font-semibold">
                             Unpaid Summary Not Found
@@ -437,7 +414,3 @@ const StudentFeeAndUnpaidSummary = () => {
 };
 
 export default StudentFeeAndUnpaidSummary;
-
-
-
-

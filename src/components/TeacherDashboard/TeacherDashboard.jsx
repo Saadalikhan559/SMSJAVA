@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 export const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const { userID } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -15,9 +16,10 @@ export const TeacherDashboard = () => {
       const data = await fetchTeacherDashboard(userID);
       setDashboardData(data);
       setLoading(false);
-    } catch (error) {
-      console.log("failed to fetch teacher dashboard data", error);
+    } catch (err) {
+      console.log("Failed to fetch teacher dashboard data", err);
       setLoading(false);
+      setError(true);
     }
   };
 
@@ -25,16 +27,30 @@ export const TeacherDashboard = () => {
     getTeacherDashboardData();
   }, []);
 
- if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
+  // Loader
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
-  if (!dashboardData) {
-    return <div className="p-4 text-center">Failed to load dashboard data</div>;
+  // Error UI
+  if (error || !dashboardData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
   }
 
   const handleShowAttendance = (className) => {
@@ -69,23 +85,15 @@ export const TeacherDashboard = () => {
               <div className="p-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Class:</span>
-                  <span className="text-gray-800 font-semibold">
-                    {detail.level_name}
-                  </span>
+                  <span className="text-gray-800 font-semibold">{detail.level_name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Classroom:</span>
-                  <span className="text-gray-800 font-semibold">
-                    {detail.room_name}
-                  </span>
+                  <span className="text-gray-800 font-semibold">{detail.room_name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">
-                    Student Count:
-                  </span>
-                  <span className="text-gray-800 font-semibold">
-                    {detail.total_students}
-                  </span>
+                  <span className="font-medium text-gray-600">Student Count:</span>
+                  <span className="text-gray-800 font-semibold">{detail.total_students}</span>
                 </div>
                 <span className='flex justify-center'>
                   <button

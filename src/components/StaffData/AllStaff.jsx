@@ -59,7 +59,15 @@ const AllStaff = () => {
 
   if (loading) {
     return (
-     <Loader/>
+
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
     );
   }
 
@@ -122,36 +130,65 @@ const AllStaff = () => {
               </thead>
               <tbody>
                 {filteredTeachers.length === 0 ? (
+
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-red-600">
-                      No data found.
-                    </td>
+                    <th className="px-4 py-3">S.NO</th>
+                    <th className="px-4 py-3">Name</th>
                   </tr>
-                ) : (
-                  filteredTeachers.map((record, index) => (
-                    <tr
-                      key={record.id || index}
-                      className="hover:bg-gray-50 text-center"
-                    >
-                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to={`/staffDetail/teacher/${record.id}`}
-                          state={{ level_name: record.level_name }}
-                          className="textTheme hover:underline"
-                        >
-                          {[record.first_name, record.middle_name, record.last_name]
-                            .filter(Boolean)
-                            .join(" ")}
-                        </Link>
+                </thead>
+                <tbody>
+                  {filteredTeachers.length === 0 ? (
+                    <tr>
+                      <td colSpan="2" className="text-center py-6 text-red-600">
+                        No data found.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </>
-        )}
+                  ) : (
+                    filteredTeachers.map((record, index) => (
+                      <tr
+                        key={record.id || index}
+                        className="hover:bg-gray-50 text-center"
+                      >
+                        <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
+                        <td className="px-4 py-3">
+                          <Link
+                            to={`/staffDetail/teacher/${record.id}`}
+                            state={{ level_name: record.level_name }}
+                            className="textTheme hover:underline"
+                          >
+                            {[record.first_name, record.middle_name, record.last_name]
+                              .filter(Boolean)
+                              .join(" ")}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {activeTab === "staff" && (
+            <>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+
+                <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
+
+                  <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+                </h2><br />
+                <input
+                  type="text"
+                  placeholder="Search Staff Member Name"
+                  value={staffSearch}
+                  onChange={(e) => setStaffSearch(e.target.value)}
+                  className="border px-3 py-2 rounded w-full sm:w-64"
+
+
+                />
+              </div>
+              <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+                <thead className="bgTheme text-white text-center">
 
         {activeTab === "staff" && (
           <>
@@ -182,36 +219,45 @@ const AllStaff = () => {
               </thead>
               <tbody>
                 {filteredOfficeStaff.length === 0 ? (
+
                   <tr>
-                    <td colSpan="2" className="text-center py-6 text-red-600">
-                      No data found.
-                    </td>
+                    <th className="px-4 py-3">S.NO</th>
+                    <th className="px-4 py-3">Name</th>
                   </tr>
-                ) : (
-                  filteredOfficeStaff.map((record, index) => (
-                    <tr
-                      key={record.id || index}
-                      className="hover:bg-gray-50 text-center"
-                    >
-                      <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                      <td className="px-4 py-3">
-                        <Link
-                          to={`/staffDetail/office/${record.id}`}
-                          state={{ level_name: record.level_name }}
-                          className="textTheme hover:underline"
-                        >
-                          {[record.first_name, record.middle_name, record.last_name]
-                            .filter(Boolean)
-                            .join(" ")}
-                        </Link>
+                </thead>
+                <tbody>
+                  {filteredOfficeStaff.length === 0 ? (
+                    <tr>
+                      <td colSpan="2" className="text-center py-6 text-red-600">
+                        No data found.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </>
-        )}
+                  ) : (
+                    filteredOfficeStaff.map((record, index) => (
+                      <tr
+                        key={record.id || index}
+                        className="hover:bg-gray-50 text-center"
+                      >
+                        <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
+                        <td className="px-4 py-3">
+                          <Link
+                            to={`/staffDetail/office/${record.id}`}
+                            state={{ level_name: record.level_name }}
+                            className="textTheme hover:underline"
+                          >
+                            {[record.first_name, record.middle_name, record.last_name]
+                              .filter(Boolean)
+                              .join(" ")}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

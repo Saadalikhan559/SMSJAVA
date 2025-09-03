@@ -26,12 +26,25 @@ const PeriodsByClass = () => {
     }, []);
 
 if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen">
+            <div className="flex space-x-2">
+                <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+                <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
             </div>
-        );
-    }
+            <p className="mt-2 text-gray-500 text-sm">Loading year levels...</p>
+        </div>
+    );
+}
+if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
     return (
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white p-6 max-w-7xl rounded-lg shadow-lg  mx-auto">

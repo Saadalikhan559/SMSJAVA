@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   fetchExpenseCategory,
   fetchSchoolExpense,
@@ -8,6 +8,10 @@ import { Loader } from "../../../global/Loader";
 import axios from "axios";
 import { constants } from "../../../global/constants";
 import { Error } from "../../../global/Error";
+import { Link } from "react-router-dom";
+import { allRouterLink } from "../../../router/AllRouterLinks";
+import { SuccessModal } from "../../Modals/SuccessModal";
+import { ConfirmationModal } from "../../Modals/ConfirmationModal";
 
 export const ViewAllExpenses = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
@@ -25,6 +29,9 @@ export const ViewAllExpenses = () => {
   const [editCategoryId, setEditCategoryId] = useState("");
   const [editCategoryName, setEditCategoryName] = useState("");
   const [deleteCategoryId, setDeleteCategoryId] = useState("");
+  const modalRef = useRef();
+  const confirmModalRef = useRef();
+  const [deleteId, setDeleteId] = useState(null);
 
   const access = JSON.parse(localStorage.getItem("authTokens"))?.access;
 
@@ -45,7 +52,6 @@ export const ViewAllExpenses = () => {
       const response = await fetchExpenseCategory(access);
       setCategory(response);
     } catch (err) {
-      console.error("Cannot get the category:", err);
       setError("Failed to load categories. Please try again later.");
     }
   };
@@ -82,7 +88,7 @@ export const ViewAllExpenses = () => {
   const handleAddCategoryClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setActiveTab("Add"); // default to Add tab
+    setActiveTab("Add");
     setShowAddCategoryModal(true);
   };
 
@@ -124,6 +130,33 @@ export const ViewAllExpenses = () => {
     }
   };
 
+  const handleDeleteExpense = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.delete(
+        `${constants.baseUrl}/d/School-Expense/${id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        }
+      );
+      if (response.status === 201 || response.status === 200) {
+        modalRef.current?.show();
+        getSchoolExpense();
+        setDeleteId(null);
+      }
+    } catch (error) {
+      setApiError(
+        error?.response?.data?.detail ||
+        error?.message ||
+        "Error deleting expense"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -141,6 +174,16 @@ export const ViewAllExpenses = () => {
           </h1>
         </div>
 
+
+        {/* Display API error message */}
+        {apiError && (
+          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
+            <div className="flex items-center text-error">
+              <i className="fa-solid fa-circle-exclamation mr-2"></i>
+              <span className="font-medium">{apiError}</span>
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2">
@@ -197,7 +240,7 @@ export const ViewAllExpenses = () => {
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto rounded-lg">
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bgTheme text-white">
               <tr>
@@ -230,6 +273,9 @@ export const ViewAllExpenses = () => {
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                   Approved By
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -264,11 +310,10 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm">
                       <span
                         className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border
-              ${
-                expense.status === "pending"
-                  ? "text-yellow-700 bg-yellow-50 border-yellow-300"
-                  : "text-green-700 bg-green-50 border-green-300"
-              }`}
+              ${expense.status === "pending"
+                            ? "text-yellow-700 bg-yellow-50 border-yellow-300"
+                            : "text-green-700 bg-green-50 border-green-300"
+                          }`}
                       >
                         {expense.status}
                       </span>
@@ -281,6 +326,28 @@ export const ViewAllExpenses = () => {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.approved_by_name}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
+                      <div className="flex space-x-2">
+                        <Link
+                          to={allRouterLink.editExpenses.replace(
+                            ":id",
+                            expense.id
+                          )}
+                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setDeleteId(expense.id);
+                            confirmModalRef.current.show();
+                          }}
+                          className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -325,11 +392,10 @@ export const ViewAllExpenses = () => {
                     setActiveTab(tab);
                     setApiError("");
                   }}
-                  className={`px-4 py-2 -mb-px font-medium ${
-                    activeTab === tab
-                      ? "border-b-2 border-blue-600 text-blue-700"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-4 py-2 -mb-px font-medium ${activeTab === tab
+                    ? "border-b-2 border-blue-600 text-blue-700"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   {tab}
                 </button>
@@ -464,7 +530,6 @@ export const ViewAllExpenses = () => {
 
             {/* DELETE TAB */}
             {activeTab === "Delete" && (
-              
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
@@ -531,6 +596,14 @@ export const ViewAllExpenses = () => {
           </div>
         </div>
       )}
+      {/* confirmation Modal */}
+      <ConfirmationModal
+        ref={confirmModalRef}
+        onConfirm={() => handleDeleteExpense(deleteId)}
+        onCancel={() => setDeleteId(null)}
+      />
+
+      <SuccessModal ref={modalRef} />
     </div>
   );
 };

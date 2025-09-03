@@ -1,0 +1,290 @@
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { createSchoolIncome, fetchSchoolYear } from "../../services/api/Api";
+
+const CreateIncome = () => {
+  const [schoolYears, setSchoolYears] = useState([]);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  // 🔹 Months list
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  // 🔹 Category map
+  const categoryMap = {
+    1: "Monthly Fees",
+    2: "Govt Fund",
+    3: "Hostel Rent",
+    4: "Canteen Rent",
+  };
+
+  // 🔹 Fetch school years
+  const getSchoolYears = async () => {
+    try {
+      const res = await fetchSchoolYear();
+      setSchoolYears(res);
+    } catch (err) {
+      console.error("Failed to load school years:", err);
+      alert("Failed to load school years");
+    }
+  };
+
+  useEffect(() => {
+    getSchoolYears();
+  }, []);
+
+  // 🔹 On Submit
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("month", data.month);
+    formData.append("amount", data.amount);
+    formData.append("income_date", data.income_date);
+    formData.append("category", parseInt(data.category));
+    formData.append("description", data.description || "");
+    formData.append("school_year", parseInt(data.school_year));
+    formData.append("payment_method", data.payment_method);
+    formData.append("status", data.status);
+
+    if (data.attachment && data.attachment[0]) {
+      formData.append("attachment", data.attachment[0]);
+    }
+
+    try {
+      const res = await createSchoolIncome(formData);
+      console.log("Income created:", res);
+      alert("Income created successfully!");
+      reset();
+    } catch (error) {
+      console.error("Error creating income:", error);
+
+      // backend errors
+      if (error.response?.data?.non_field_errors) {
+        alert(`${error.response.data.non_field_errors.join(", ")}`);
+      } else if (error.response?.data) {
+        alert(`${JSON.stringify(error.response.data)}`);
+      } else {
+        alert("Failed to create income. Please try again.");
+      }
+    }
+  };
+
+  return (
+    <div className="min-h-screen p-5 bg-gray-50">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Add School Income <i className="fa-solid fa-sack-dollar ml-2"></i>
+          </h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Month */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Month *
+              </label>
+              <select
+                {...register("month", { required: "Month is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Month</option>
+                {months.map((m, idx) => (
+                  <option key={idx} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              {errors.month && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.month.message}
+                </p>
+              )}
+            </div>
+
+            {/* Amount */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Amount *
+              </label>
+              <input
+                type="number"
+                placeholder="Enter amount"
+                {...register("amount", {
+                  required: "Amount is required",
+                  min: { value: 1, message: "Amount must be greater than 0" },
+                })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              />
+              {errors.amount && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.amount.message}
+                </p>
+              )}
+            </div>
+
+            {/* Income Date */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Income Date *
+              </label>
+              <input
+                type="date"
+                {...register("income_date", { required: "Income date is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              />
+              {errors.income_date && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.income_date.message}
+                </p>
+              )}
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Category *
+              </label>
+              <select
+                {...register("category", { required: "Category is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select Category</option>
+                {Object.entries(categoryMap).map(([id, name]) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.category.message}
+                </p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <input
+                type="text"
+                placeholder="Description"
+                {...register("description")}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              />
+            </div>
+
+            {/* School Year */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                School Year *
+              </label>
+              <select
+                {...register("school_year", { required: "School year is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="">Select School Year</option>
+                {schoolYears?.map((year) => (
+                  <option key={year.id} value={year.id}>
+                    {year.year_name}
+                  </option>
+                ))}
+              </select>
+              {errors.school_year && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.school_year.message}
+                </p>
+              )}
+            </div>
+
+            {/* Payment Method */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Payment Method *
+              </label>
+              <select
+                {...register("payment_method", { required: "Payment method is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="cash">Cash</option>
+                <option value="bank">Bank</option>
+                <option value="online">Online</option>
+              </select>
+              {errors.payment_method && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.payment_method.message}
+                </p>
+              )}
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status *
+              </label>
+              <select
+                {...register("status", { required: "Status is required" })}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              >
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+              </select>
+              {errors.status && (
+                <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+              )}
+            </div>
+
+            {/* Attachment */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Attachment (optional)
+              </label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                {...register("attachment")}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
+            <button
+              type="submit"
+              className="btn text-white bgTheme w-52"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2" />
+              ) : (
+                <i className="fa-solid fa-save mr-2" />
+              )}
+              {isSubmitting ? "Saving..." : "Save Income"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CreateIncome;
