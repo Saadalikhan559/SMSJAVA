@@ -1287,3 +1287,78 @@ export const updateTeacherAttendance = async (id, payload) => {
     throw err;
   }
 };
+
+// Update School Income
+
+export const updateSchoolIncome = async (id, payload) => {
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    if (!authTokens) throw new Error("No access token found. Please login.");
+
+    const accessToken = JSON.parse(authTokens).access;
+    if (!accessToken) throw new Error("Access token missing. Please login.");
+
+    const isFormData = payload instanceof FormData;
+
+    const response = await axios.patch(
+      `${BASE_URL}/d/school-income/${id}/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          ...(isFormData
+            ? { "Content-Type": "multipart/form-data" }
+            : { "Content-Type": "application/json" }),
+        },
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error("API updateSchoolIncome error:", err.response?.data || err.message);
+    throw err;
+  }
+};
+
+
+
+
+// Delete School Income
+export const deleteSchoolIncome = async (accessToken, id) => {
+  try {
+    const token = accessToken?.trim();
+    if (!token) throw new Error("No access token provided");
+
+    await axios.delete(`${BASE_URL}/d/school-income/${id}/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return true;
+  } catch (err) {
+    console.error("Failed to delete school income:", err);
+    throw err;
+  }
+};
+
+
+
+
+export const fetchSchoolIncomeById = async (id) => {
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = authTokens ? JSON.parse(authTokens).access : null;
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(`${BASE_URL}/d/school-income/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching school income by ID:", error);
+    throw error;
+  }
+};
+
