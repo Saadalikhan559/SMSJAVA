@@ -122,7 +122,7 @@ const AllStaff = () => {
                   filteredTeachers.map((record, index) => (
                     <tr key={record.id || index} className="hover:bg-gray-50 text-center">
                       <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 capitalize">
                         <Link
                           to={`/staffDetail/teacher/${record.id}`}
                           state={{ level_name: record.level_name }}
@@ -174,7 +174,7 @@ const AllStaff = () => {
                   filteredOfficeStaff.map((record, index) => (
                     <tr key={record.id || index} className="hover:bg-gray-50 text-center">
                       <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 capitalize">
                         <Link
                           to={`/staffDetail/office/${record.id}`}
                           state={{ level_name: record.level_name }}

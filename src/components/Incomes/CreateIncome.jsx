@@ -5,6 +5,8 @@ import { createSchoolIncome, fetchSchoolYear, fetchIncomeCategories } from "../.
 const CreateIncome = () => {
   const [schoolYears, setSchoolYears] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showModal, setShowModal] = useState(false); 
+  const [modalMessage, setModalMessage] = useState("");
 
   const {
     register,
@@ -44,7 +46,8 @@ const CreateIncome = () => {
       setSchoolYears(res);
     } catch (err) {
       console.error("Failed to load school years:", err);
-      alert("Failed to load school years");
+      setModalMessage("Failed to load school years.");
+      setShowModal(true);
     }
   };
 
@@ -54,7 +57,8 @@ const CreateIncome = () => {
       setCategories(res);
     } catch (err) {
       console.error("Failed to load categories:", err);
-      alert("Failed to load income categories");
+      setModalMessage("Failed to load income categories.");
+      setShowModal(true);
     }
   };
 
@@ -83,7 +87,8 @@ const CreateIncome = () => {
     try {
       const res = await createSchoolIncome(formData);
       console.log("Income created:", res);
-      alert("Income created successfully!");
+      setModalMessage(" Income created successfully!");
+      setShowModal(true);
       reset();
     } catch (error) {
       console.error("Error creating income:", error);
@@ -94,8 +99,9 @@ const CreateIncome = () => {
       } else if (error.response?.data) {
         alert(`${JSON.stringify(error.response.data)}`);
       } else {
-        alert("Failed to create income. Please try again.");
+        setModalMessage(" Failed to create income. Please try again.");
       }
+      setShowModal(true);
     }
   };
 
@@ -292,11 +298,28 @@ const CreateIncome = () => {
               ) : (
                 <i className="fa-solid fa-save mr-2" />
               )}
-              {isSubmitting ? "Saving..." : "Save Income"}
+              {isSubmitting ? "" : "Save Income"}
             </button>
           </div>
         </form>
       </div>
+       {/* Modal */}
+      {showModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Income Submission</h3>
+            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-32"
+                onClick={() => setShowModal(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

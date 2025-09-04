@@ -178,7 +178,7 @@ const ClassTeacherAssign = () => {
               </label>
               <select
                 {...register("teacher_id", { required: "Teacher is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full p-3 border border-gray-300 rounded-md"
                 onFocus={loadTeachers}
                 onChange={() => clearErrors(["teacher_id", "api"])}
               >
@@ -207,7 +207,7 @@ const ClassTeacherAssign = () => {
                 {...register("yearlevel_id", {
                   required: "Year level is required",
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full p-3 border border-gray-300 rounded-md"
                 onFocus={loadYearLevels}
                 onChange={() => clearErrors(["yearlevel_id", "api"])}
               >
