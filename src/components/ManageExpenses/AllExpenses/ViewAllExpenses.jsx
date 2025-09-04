@@ -345,12 +345,26 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.payment_method}
                     </td>
-                    <td
-                      className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs"
-                      title={expense.attachment}
-                    >
-                      {expense.attachment}
+                    <td className="px-4 py-3 text-sm truncate max-w-xs">
+                      {expense.attachment ? (
+                        <a
+                          href={`${
+                            constants.baseUrl
+                          }${expense.attachment.replace(
+                            /^http:\/\/localhost:8000/,
+                            ""
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="textTheme font-bold"
+                        >
+                          Open Image
+                        </a>
+                      ) : (
+                        <span>Upload Attachment</span>
+                      )}
                     </td>
+
                     <td className="px-4 py-3 text-sm">
                       <span
                         className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border
