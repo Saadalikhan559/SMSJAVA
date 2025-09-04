@@ -160,9 +160,9 @@ export const AllTeacherAssignments = () => {
                     data.assignments.map((assignment, idx) => (
                       <div className="p-4" key={idx}>
                         <h3 className="font-bold text-gray-700 mb-2 flex items-center">
-                          <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
+                          {/* <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
                             {assignment.year_level_name}
-                          </span>
+                          </span> */}
                         </h3>
                         <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
                           {assignment.periods.map((period, idx2) => (
@@ -173,6 +173,8 @@ export const AllTeacherAssignments = () => {
                               <div>
                                 <div className="font-medium text-gray-800">{period.subject_name}</div>
                                 <div className="text-sm text-gray-600">{period.period_name}</div>
+                                 <div className="text-sm text-gray-600">{period.year_level_name}</div>
+                                
                               </div>
                               <div className="text-right text-sm font-semibold text-purple-600">
                                 {period.start_time} - {period.end_time}
