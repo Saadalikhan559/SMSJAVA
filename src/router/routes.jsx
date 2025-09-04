@@ -542,12 +542,12 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-  {
-    path: allRouterLink.teacherAttendance,
-    element: <TeacherAttendance />,
-    protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  },
+  // {
+  //   path: allRouterLink.teacherAttendance,
+  //   element: <TeacherAttendance />,
+  //   protected: true,
+  //   allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  // },
   {
     path: allRouterLink.editExpenses,
     element: <EditExpenses />,
