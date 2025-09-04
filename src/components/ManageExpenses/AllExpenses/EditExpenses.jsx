@@ -22,6 +22,7 @@ export const EditExpenses = () => {
   const [error, setError] = useState("");
   const modalRef = useRef();
   const [schoolYear, setSchoolYear] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const { authTokens } = useContext(AuthContext);
   const access = authTokens.access;
@@ -40,7 +41,7 @@ export const EditExpenses = () => {
     try {
       setError("");
       const response = await fetchSchoolExpenseById(access, id);
-        // console.log("response", response);
+      // console.log("response", response);
       setSchoolExpense(response);
       if (response) {
         setValue("category", response.category);
@@ -84,37 +85,50 @@ export const EditExpenses = () => {
   useEffect(() => {
     getSchoolYearLevel();
     getExpenseCategory();
-    getSchoolExpenseById(); // Call this function to load expense data
-  }, [id]); // Added id as dependency
+    getSchoolExpenseById();
+  }, [id]);
 
   const onSubmit = async (data) => {
     try {
-        setLoading(true);
-        setApiError("");
-        const payload = {
-          ...data,
-          payment_method: data.payment_method
-            ? data.payment_method.toLowerCase()
-            : "",
-        };
-        const response = await axios.patch(
-          `${constants.baseUrl}/d/School-Expense/${id}/`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${access}`,
-            },
-          }
-        );
-        if (response.status === 200 || response.status === 201) {
-          modalRef.current?.show();
+      setLoading(true);
+      setApiError("");
+      const payload = {
+        ...data,
+        payment_method: data.payment_method
+          ? data.payment_method.toLowerCase()
+          : "",
+      };
+      const formData = new FormData();
+      Object.keys(payload).forEach((key) => {
+        formData.append(key, payload[key]);
+      });
+
+      if (payload.attachment instanceof File) {
+        formData.append("attachment", payload.attachment);
+      }
+      const response = await axios.put(
+        `${constants.baseUrl}/d/School-Expense/${id}/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${access}`,
+          },
         }
-      console.log(data);
+      );
+      if (response.status === 200 || response.status === 201) {
+        modalRef.current?.show();
+      }
     } catch (error) {
       setApiError("There is an issue at the moment please try again");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
   };
 
   return (
@@ -322,23 +336,41 @@ export const EditExpenses = () => {
                 </p>
               )}
             </div>
+
             {/* Attachments */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
+                  <i className="fa-solid fa-paperclip text-sm"></i>
                   Attachments <span className="text-error"></span>
                 </span>
               </label>
-              <input
-                type="file"
-                placeholder="Enter Base Salary e.g: 15000"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("attachment")}
-              />
-              {errors.expense_date && (
+
+              {!selectedFile ? (
+                <input
+                  type="file"
+                  className="file-input file-input-bordered w-full focus:outline-none"
+                  {...register("attachment")}
+                  onChange={handleFileChange}
+                />
+              ) : (
+                <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg bg-gray-50">
+                  <span className="text-sm text-gray-700 truncate">
+                    {selectedFile.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFile(null)}
+                    className="btn btn-xs btn-error ml-3"
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              )}
+
+              {errors.attachment && (
                 <p className="text-error text-sm mt-1">
-                  {errors.expense_date.message}
+                  {errors.attachment.message}
                 </p>
               )}
             </div>
