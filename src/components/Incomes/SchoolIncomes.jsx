@@ -1,266 +1,276 @@
 import React, { useEffect, useState } from "react";
-import { fetchSchoolIncome, fetchSchoolYear } from "../../services/api/Api";
+import { fetchSchoolIncome, fetchSchoolYear, deleteSchoolIncome } from "../../services/api/Api";
 import { constants } from "../../global/constants";
+import { allRouterLink } from "../../router/AllRouterLinks";
+import { Link } from "react-router-dom";
+
 const BASE_URL = constants.baseUrl;
 
 export const SchoolIncome = () => {
-    const [incomeDetails, setIncomeDetails] = useState([]);
-    const [schoolYears, setSchoolYears] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [incomeDetails, setIncomeDetails] = useState([]);
+  const [schoolYears, setSchoolYears] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    // Filters
-    const [selectedMonth, setSelectedMonth] = useState("All");
-    const [selectedYear, setSelectedYear] = useState("All");
-    const [selectedCategory, setSelectedCategory] = useState("All");
+  // Filters
+  const [selectedMonth, setSelectedMonth] = useState("All");
+  const [selectedYear, setSelectedYear] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-    // Category map (id -> name)
-    const categoryMap = {
-        1: "Monthly Fees",
-        2: "Govt Fund",
-        3: "Hostel Rent",
-        4: "Canteen Rent",
+  // Delete modal states
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+
+  // Category map (id -> name)
+  const categoryMap = {
+    1: "Monthly Fees",
+    2: "Govt Fund",
+    3: "Hostel Rent",
+    4: "Canteen Rent",
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const filters = {};
+        if (selectedYear !== "All") filters.school_year = selectedYear;
+        if (selectedMonth !== "All") filters.month = selectedMonth;
+        if (selectedCategory !== "All") {
+          const categoryId = Object.keys(categoryMap).find(
+            (key) => categoryMap[key] === selectedCategory
+          );
+          if (categoryId) filters.category = categoryId;
+        }
+
+        const [incomeData, schoolYearData] = await Promise.all([
+          fetchSchoolIncome(filters),
+          fetchSchoolYear(),
+        ]);
+
+        setIncomeDetails(Array.isArray(incomeData) ? incomeData : []);
+
+        // sort school years latest first
+        const sortedYears = [...schoolYearData].sort((a, b) => b.id - a.id);
+        setSchoolYears(sortedYears);
+
+        // Default latest year is selected
+        if (selectedYear === "All" && sortedYears.length > 0) {
+          setSelectedYear(sortedYears[0].id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
+    fetchData();
+  }, [selectedMonth, selectedYear, selectedCategory]);
 
-                const filters = {};
-                if (selectedYear !== "All") filters.school_year = selectedYear;
-                if (selectedMonth !== "All") filters.month = selectedMonth;
-                if (selectedCategory !== "All") {
-                    const categoryId = Object.keys(categoryMap).find(
-                        (key) => categoryMap[key] === selectedCategory
-                    );
-                    if (categoryId) filters.category = categoryId;
-                }
+  const months = [
+    "All", "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
 
-                const [incomeData, schoolYearData] = await Promise.all([
-                    fetchSchoolIncome(filters),
-                    fetchSchoolYear(),
-                ]);
+  const filteredData = incomeDetails.filter((d) => {
+    const matchMonth = selectedMonth === "All" || d.month === selectedMonth;
+    const matchYear = selectedYear === "All" || d.school_year.toString() === selectedYear.toString();
+    const matchCategory = selectedCategory === "All" || categoryMap[d.category] === selectedCategory;
+    return matchMonth && matchYear && matchCategory;
+  });
 
-                setIncomeDetails(Array.isArray(incomeData) ? incomeData : []);
+  // Edit Handler
+  const handleEdit = (record) => {
+    console.log("Edit record:", record);
+  };
 
-                // sort school years latest first
-                const sortedYears = [...schoolYearData].sort((a, b) => b.id - a.id);
-                setSchoolYears(sortedYears);
+  // Delete modal handlers
+  const openDeleteModal = (id) => {
+    setDeleteId(id);
+    setConfirmOpen(true);
+  };
 
-                // Default latest year is selected
-                if (selectedYear === "All" && sortedYears.length > 0) {
-                    setSelectedYear(sortedYears[0].id);
-                }
-            } catch (err) {
-                console.error("Failed to fetch data:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteSchoolIncome(token, deleteId);
+      setIncomeDetails((prev) => prev.filter((item) => item.id !== deleteId));
+    } catch (err) {
+      console.error("Failed to delete:", err);
+    } finally {
+      setConfirmOpen(false);
+      setDeleteId(null);
+    }
+  };
 
-        fetchData();
-    }, [selectedMonth, selectedYear, selectedCategory]);
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
+          <i className="fa-solid fa-money-bill-wave"></i> School Income Records
+        </h2>
 
-    const months = [
-        "All",
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-    ];
-
-    const categories = [
-        "All",
-        ...new Set(
-            incomeDetails.map((d) => categoryMap[d.category] || d.category)
-        ),
-    ];
-
-    // Filtered data
-    const filteredData = incomeDetails.filter((d) => {
-        const matchMonth = selectedMonth === "All" || d.month === selectedMonth;
-        const matchYear =
-            selectedYear === "All" ||
-            d.school_year.toString() === selectedYear.toString();
-        const matchCategory =
-            selectedCategory === "All" ||
-            categoryMap[d.category] === selectedCategory;
-
-        return matchMonth && matchYear && matchCategory;
-    });
-
-    return (
-        <div className="p-6 bg-gray-100 min-h-screen">
-            <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-                <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-                    <i className="fa-solid fa-money-bill-wave"></i> School Income Records
-                </h2>
-
-                {/* Loader */}
-                {loading ? (
-                    <div className="flex items-center justify-center h-64">
-                        <div className="flex space-x-2">
-                            <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-                            <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-                            <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-                        </div>
-                    </div>
-                ) : (
-                    <>
-                        {/* Filters */}
-                        <div className="mb-4 flex gap-4 flex-wrap">
-                            {/* Month filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Select Month:
-                                </label>
-                                <select
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(e.target.value)}
-                                    className="select select-bordered w-full focus:outline-none"
-                                >
-                                    {months.map((m, idx) => (
-                                        <option key={idx} value={m}>
-                                            {m}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Year filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Select Year:
-                                </label>
-                                <select
-                                    value={selectedYear || ""}
-                                    onChange={(e) => setSelectedYear(e.target.value)}
-                                    className="select select-bordered w-full focus:outline-none"
-                                >
-                                    {schoolYears.map((y) => (
-                                        <option key={y.id} value={y.id}>
-                                            {y.year_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Category filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-1">
-                                    Select Category:
-                                </label>
-                                <select
-                                    value={selectedCategory}
-                                    onChange={(e) => setSelectedCategory(e.target.value)}
-                                    className="select select-bordered w-full focus:outline-none"
-                                >
-                                    <option value="All">All</option>
-                                    {Object.entries(categoryMap).map(([id, name]) => (
-                                        <option key={id} value={name}>
-                                            {name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            {/* Reset button */}
-                            <div>
-                                <button
-                                    onClick={() => {
-                                        setSelectedMonth("All");
-                                        setSelectedYear("All");
-                                        setSelectedCategory("All");
-                                    }}
-                                    className="btn bgTheme text-white mt-6"
-                                >
-                                    Reset Filters
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Table */}
-                        <div className="w-full overflow-x-auto">
-                            <div className="inline-block min-w-full align-middle">
-                                <div className="overflow-hidden shadow-sm rounded-lg">
-                                    <table className="min-w-full divide-y divide-gray-300">
-                                        <thead className="bgTheme text-white">
-                                            <tr>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white">
-                                            {filteredData.length > 0 ? (
-                                                filteredData.map((record, index) => {
-                                                    const yearName =
-                                                        schoolYears.find((y) => y.id === record.school_year)?.year_name ||
-                                                        record.school_year;
-                                                    return (
-                                                        <tr key={index} className="hover:bg-gray-50">
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.month}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">₹{record.amount}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.income_date}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">
-                                                                {categoryMap[record.category] || record.category}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.description}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{yearName}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700 capitalize">
-                                                                {record.payment_method}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-sm text-blue-600">
-                                                                {record.attachment ? (
-                                                            <a href={`${BASE_URL}${record.attachment}`} target="_blank" rel="noopener noreferrer">View</a>
-                                                                ) : (
-                                                                    "-"
-                                                                )}
-                                                            </td>
-                                                            <td>
-                                                                <span
-                                                                    className={`inline-flex items-center px-3 py-1  rounded-md shadow-sm text-sm font-medium ${record.status === "confirmed"
-                                                                        ? "bg-green-100 text-green-800"
-                                                                        : "bg-red-100 text-red-600"
-                                                                        }`}
-                                                                >
-                                                                    {record.status}
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })
-                                            ) : (
-                                                <tr>
-                                                    <td
-                                                        colSpan="9"
-                                                        className="px-4 py-6 text-center text-gray-500 text-sm"
-                                                    >
-                                                        No records found
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="flex space-x-2">
+              <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+              <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+              <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
             </div>
-        </div>
-    );
+          </div>
+        ) : (
+          <>
+            {/* Filters */}
+            <div className="mb-4 flex gap-4 flex-wrap">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1">Select Month:</label>
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="select select-bordered w-full focus:outline-none"
+                >
+                  {months.map((m, idx) => (
+                    <option key={idx} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1">Select Year:</label>
+                <select
+                  value={selectedYear || ""}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="select select-bordered w-full focus:outline-none"
+                >
+                  {schoolYears.map((y) => (
+                    <option key={y.id} value={y.id}>{y.year_name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1">Select Category:</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="select select-bordered w-full focus:outline-none"
+                >
+                  <option value="All">All</option>
+                  {Object.entries(categoryMap).map(([id, name]) => (
+                    <option key={id} value={name}>{name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <button
+                  onClick={() => {
+                    setSelectedMonth("All");
+                    setSelectedYear("All");
+                    setSelectedCategory("All");
+                  }}
+                  className="btn bgTheme text-white mt-6"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="w-full overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden shadow-sm rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-300">
+                    <thead className="bgTheme text-white">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white">
+                      {filteredData.length > 0 ? (
+                        filteredData.map((record, index) => {
+                          const yearName = schoolYears.find(y => y.id === record.school_year)?.year_name || record.school_year;
+                          return (
+                            <tr key={index} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-sm text-gray-700">{record.month}</td>
+                              <td className="px-4 py-3 text-sm text-gray-700">₹{record.amount}</td>
+                              <td className="px-4 py-3 text-sm text-gray-700">{record.income_date}</td>
+                              <td className="px-4 py-3 text-sm text-gray-700">{categoryMap[record.category] || record.category}</td>
+                              <td className="px-4 py-3 text-sm text-gray-700">{record.description}</td>
+                              <td className="px-4 py-3 text-sm text-gray-700">{yearName}</td>
+                              <td className="px-4 py-3 text-sm text-gray-700 capitalize">{record.payment_method}</td>
+                              <td className="px-4 py-3 text-sm text-blue-600">
+                                {record.attachment ? (
+                                  <a href={`${BASE_URL}${record.attachment}`} target="_blank" rel="noopener noreferrer">View</a>
+                                ) : "-"}
+                              </td>
+                              <td>
+                                <span className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${
+                                  record.status === "confirmed" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-600"
+                                }`}>
+                                  {record.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-700 flex gap-2">
+                                <Link
+                                  to={allRouterLink.editIncom.replace(":id", record.id)}
+                                  className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                                >
+                                  Edit
+                                </Link>
+                                <button
+                                  className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                  onClick={() => openDeleteModal(record.id)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan="10" className="px-4 py-6 text-center text-gray-500 text-sm">No records found</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {confirmOpen && (
+          <dialog className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Confirm Delete</h3>
+              <p className="py-4">Are you sure you want to delete this record?</p>
+              <div className="modal-action">
+                <button className="btn bgTheme text-white" onClick={confirmDelete}>
+                  Continue
+                </button>
+                <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </dialog>
+        )}
+      </div>
+    </div>
+  );
 };

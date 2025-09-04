@@ -79,6 +79,7 @@ import CreateIncome from "../components/Incomes/CreateIncome";
 import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/PaySalaryExpense";
 import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateExpenses";
 import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
+import UpdateIncome from "../components/Incomes/UpdateIncome";
 
 export const routes = [
   {
@@ -569,6 +570,12 @@ export const routes = [
   {
     path: allRouterLink.createIncome,
     element: <CreateIncome />,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+  {
+    path: allRouterLink.editIncom,
+    element: <UpdateIncome/>,
     protected: true,
     allowedRoles: [constants.roles.director],
   },

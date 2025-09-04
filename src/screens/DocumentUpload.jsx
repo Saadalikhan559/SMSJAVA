@@ -432,7 +432,7 @@ export const DocumentUpload = () => {
   </div>
 
   {/* Identity */}
-  <div className="form-control w-full">
+  <div className="form-control w-full pt-6">
     <label className="label">
       <span className="label-text flex items-center gap-1">
         <i className="fa-solid fa-id-card text-sm"></i> Identity
@@ -453,7 +453,7 @@ export const DocumentUpload = () => {
   </div>
 
   {/* Add/Remove Button */}
-  <div className="form-control w-full flex items-end">
+  <div className="form-control w-full flex items-end pt-6">
     {index === 0 ? (
       <button
         type="button"
@@ -595,38 +595,50 @@ export const DocumentUpload = () => {
 
         {/* NAVIGATION BUTTONS */}
 
-        <div className="flex flex-col md:flex-row items-center md:items-stretch justify-between gap-4 p-6">
-          <button
-            type="button"
-            onClick={prev}
-            disabled={step === 0}
-            className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
+        <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 p-6">
+  {/* Back button - Only for step > 0 */}
+  {step > 0 && (
+  <button
+    type="button"
+    onClick={prev}
+    className="btn bgTheme text-white w-40 hover:bg-blue-700 flex items-center justify-center"
+  >
+    <i className="fa-solid fa-arrow-left mr-2"></i> Back
+  </button>
+)}
+  {/* Next button - Only for step 0 */}
+  {step === 0 && (
+    <div className="flex-1 flex justify-end">
+      <button
+        type="button"
+        onClick={next}
+        className={`bgTheme text-white px-4 py-2 rounded-lg shadow w-40 ${
+          role.length === 0 || (role === constants.roles.student && !formData.year_level)
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-blue-700"
+        }`}
+        disabled={role.length === 0 || (role === constants.roles.student && !formData.year_level)}
+      >
+        Next
+      </button>
+    </div>
+  )}
 
-          >
-            Back
-          </button>
-          {step === 0 ? (
-            <button
-              type="button"
-              onClick={next}
-              className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-40"
-              disabled={role.length === 0 || (role === constants.roles.student && !formData.year_level)}
+  {/* Upload button - Only for step 1 */}
+  {step === 1 && (
+    <div className="flex-1 flex justify-end md:justify-end">
+      <button type="submit" className="btn bgTheme text-white w-40">
+        {loading ? (
+          <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+        ) : (
+          <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+        )}
+        {loading ? "Uploading..." : "Upload"}
+      </button>
+    </div>
+  )}
+</div>
 
-            >
-              Next
-            </button>
-          ) : (
-            <button type="submit" className="btn bgTheme text-white w-40">
-              {loading ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              ) : (
-                <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
-              )}
-              {loading ? "Uploading..." : "Upload"}
-
-            </button>
-          )}
-        </div>
       </form>
     </div>
   );
