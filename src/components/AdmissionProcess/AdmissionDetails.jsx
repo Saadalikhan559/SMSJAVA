@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchAdmissionDetails, fetchYearLevels } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
+import { Loader } from "../../global/Loader";
 
 export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
@@ -57,10 +58,9 @@ export const AdmissionDetails = () => {
     return <div className="p-4 text-center">No admission records found</div>;
   }
 
+
   const filterData = details.filter((detail) =>
-    detail.year_level
-      .toLowerCase()
-      .includes(selectedClass.toLowerCase())
+    detail.year_level.toLowerCase().includes(selectedClass.toLowerCase())
   );
   const filterBysearch = filterData.filter((detail) =>
     detail.student_input.first_name
@@ -76,9 +76,9 @@ export const AdmissionDetails = () => {
            <i className="fa-solid fa-clipboard-list w-5"></i>  Admission Details
           </h1>
         </div>
-        <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
-   <div className="flex flex-col w-full sm:w-auto">
+        <div className="w-full px-5 ">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
+         <div className="flex flex-col w-full sm:w-xs">
                  <label className="text-sm font-medium text-gray-700 mb-1">
                   Select Class:
                 </label>
@@ -111,11 +111,11 @@ export const AdmissionDetails = () => {
         {filterData.length === 0 ? (
           <p className="text-gray-600">No admission records found.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[70vh]">
             <div className="inline-block min-w-full align-middle">
-              <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
+              <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">
-                  <thead className="bgTheme text-white">
+                  <thead className="bgTheme text-white z-2 sticky top-0">
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Student Name

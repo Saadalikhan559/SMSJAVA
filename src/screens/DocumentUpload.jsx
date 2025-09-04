@@ -476,7 +476,77 @@ export const DocumentUpload = () => {
   </div>
 </div>
 
-))}
+
+                {/* Document Type */}
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-file text-sm"></i> Document Type
+                      <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <select
+                    name="document_types"
+                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    required
+                    value={field.document_types}
+                    onChange={(e) => handleUploadChange(e, index)}
+                  >
+                    <option value="">Select Document Type</option>
+                    {getAvailableDocumentTypes(index).map((doc) => (
+                      <option key={doc.id} value={doc.id}>
+                        {doc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Identity */}
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-id-card text-sm"></i> Identity
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    name="identities"
+                    className="input input-bordered w-full focus:outline-none"
+                    value={field.identities}
+                    onChange={(e) => handleUploadChange(e, index)}
+                    placeholder="Enter identity ID"
+                    style={{ marginBottom: "0" }} // extra tweak
+                  />
+                  <span className="text-red-500 text-sm mt-1 block min-h-[1.25rem]">
+                    {identityErrors[index]}
+                  </span>
+                </div>
+
+                {/* Add/Remove Button */}
+                <div className="form-control w-full flex items-end">
+                  {index === 0 ? (
+                    <button
+                      type="button"
+                      className="btn bgTheme text-white w-full"
+                      onClick={handleAddField}
+                    >
+                      <i className="fa-solid fa-plus mr-1"></i> Add
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-error w-full"
+                      onClick={() =>
+                        setUploadFields(uploadFields.filter((_, i) => i !== index))
+                      }
+                    >
+                      <i className="fa-solid fa-trash mr-1"></i> Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+
+            ))}
 
 
             {/* Select Student/Teacher/Guardian/Office Staff */}
@@ -644,4 +714,4 @@ export const DocumentUpload = () => {
   );
 };
 
-                     
+

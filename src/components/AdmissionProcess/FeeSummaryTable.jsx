@@ -105,14 +105,14 @@ if (error) {
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center ">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Students Fee Record
           </h1>
         </div>
 
         {/* Filter + Fee Dashboard Section */}
-        <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
+        <div className="w-full px-5 ">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b pb-4">
 
             {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
@@ -194,9 +194,9 @@ if (error) {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-            <thead className="bgTheme text-white">
+        <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
+          <table className="min-w-full divide-y   rounded-lg">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>

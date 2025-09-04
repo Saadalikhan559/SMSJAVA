@@ -10,17 +10,18 @@ import { AuthContext } from "../../../context/AuthContext";
 
 export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
-  
 
+  const userRole = localStorage.getItem("userRole");
 
   // const {authTokens} = useContext(AuthContext);
   // const access = authTokens.access;
-  const authTokens = JSON.parse(localStorage.getItem('authTokens'));
+  const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const access = authTokens.access;
-    const [apiError, setApiError] = useState("");
+  const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null); // 🔹 store ID for deletion
+  const [searchName, setSearchName] = useState("");
   const modalRef = useRef();
 
   const getSchoolExpense = async () => {
@@ -82,12 +83,21 @@ export const ViewSalaryExpense = () => {
     return <Error />;
   }
 
+  //  filter  by name
+  const filteredExpenses = schoolExpense.filter((expense) =>
+    expense.name.toLowerCase().includes(searchName.toLowerCase())
+  );
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
-        </h2>
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4 border-b pb-4">
+           <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
+          </h1>
+        </div>
+        
+
 
         {/* Display API error message */}
         {apiError && (
@@ -100,9 +110,9 @@ export const ViewSalaryExpense = () => {
         )}
 
         {/* Table */}
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto max-h-[70vh]">
           <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bgTheme text-white">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                   Name
@@ -125,14 +135,19 @@ export const ViewSalaryExpense = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {schoolExpense.length > 0 ? (
-                schoolExpense.map((expense) => (
+              {filteredExpenses.length > 0 ? (
+                filteredExpenses.map((expense) => (
                   <tr key={expense.id}>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {expense.name}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                      {expense.role.map((r) => r)}
+                      {(typeof expense.role === "string"
+                        ? [expense.role]
+                        : expense.role
+                      )
+                        .map((r) => r)
+                        .join(", ")}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {expense.joining_date}
@@ -142,21 +157,26 @@ export const ViewSalaryExpense = () => {
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">
-                        <Link
-                          to={allRouterLink.editSalaryExpense.replace(
-                            ":id",
-                            expense.id
-                          )}
-                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDeleteClick(expense.id)}
-                          className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
+                        {constants.roles.director === userRole && (
+                          <>
+                            <Link
+                              to={allRouterLink.editSalaryExpense.replace(
+                                ":id",
+                                expense.id
+                              )}
+                              className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                            >
+                              Edit
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteClick(expense.id)}
+                              className="inline-flex items-center px-3 py-1  shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+
                         <Link
                           to={allRouterLink.paySalaryExpense.replace(
                             ":id",

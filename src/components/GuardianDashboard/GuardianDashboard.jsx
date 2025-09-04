@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { fetchGuardianDashboard } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
-
+import LoginSuccessHandler from "../Modals/LoginSucces";
 
 export const GuardianDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -38,6 +38,7 @@ export const GuardianDashboard = () => {
   }
   return (
     <div className="p-4 space-y-6">
+      <LoginSuccessHandler/>
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         {dashboardData.guardian}'s Dashboard
       </h3>

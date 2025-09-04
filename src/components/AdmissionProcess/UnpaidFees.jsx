@@ -108,7 +108,7 @@ if (error) {
         </div>
         {/* Filter Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b pb-4">
 
             {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
@@ -180,9 +180,9 @@ if (error) {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-            <thead className="bgTheme text-white">
+        <div className="overflow-x-auto max-h-[70vh]">
+          <table className="min-w-full table-auto  rounded-lg">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>

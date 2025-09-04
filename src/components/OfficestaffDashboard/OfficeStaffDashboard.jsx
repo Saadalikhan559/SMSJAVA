@@ -2,6 +2,7 @@ import Chart from "react-apexcharts";
 import React, { useEffect, useState } from "react";
 import { fetchOfficeStaffDashboard } from "../../services/api/Api";
 import { constants } from "../../global/constants";
+import LoginSuccessHandler from "../Modals/LoginSucces";
 
 export const OfficeStaffDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -99,6 +100,7 @@ export const OfficeStaffDashboard = () => {
 
   return (
     <div className="p-4 space-y-9">
+      <LoginSuccessHandler/>
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         Office Staff Dashboard
       </h3>

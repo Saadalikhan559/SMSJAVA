@@ -114,8 +114,8 @@ const MarksheetsTable = () => {
           </h1>
         </div>
         {/* Search Input */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 border-b pb-2 gap-4">
-          <div className=" w-full  sm:w-auto">
+        <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
+          <div className=" w-full  sm:w-xs">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Select Class:
                 </label>
@@ -144,11 +144,11 @@ const MarksheetsTable = () => {
         {filterData.length === 0 ? (
           <p className="text-gray-600">No matching records found.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[70vh]">
             <div className="inline-block min-w-full align-middle">
-              <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
+              <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">
-                  <thead className="bgTheme text-white">
+                  <thead className="bgTheme text-white z-2 sticky top-0">
                     <tr>
                       <th scope="col" className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Student Name

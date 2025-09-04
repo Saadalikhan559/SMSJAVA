@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchSchoolIncome, fetchSchoolYear, deleteSchoolIncome } from "../../services/api/Api";
+import { fetchSchoolIncome, fetchSchoolYear, deleteSchoolIncome ,fetchIncomeCategories } from "../../services/api/Api";
+
 import { constants } from "../../global/constants";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { Link } from "react-router-dom";
@@ -11,29 +12,32 @@ export const SchoolIncome = () => {
   const [schoolYears, setSchoolYears] = useState([]);
   const [loading, setLoading] = useState(true);
 
+    const [incomeDetails, setIncomeDetails] = useState([]);
+    const [schoolYears, setSchoolYears] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+
   // Filters
   const [selectedMonth, setSelectedMonth] = useState("All");
   const [selectedYear, setSelectedYear] = useState("All");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Delete modal states
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
 
-  const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
 
-  // Category map (id -> name)
-  const categoryMap = {
-    1: "Monthly Fees",
-    2: "Govt Fund",
-    3: "Hostel Rent",
-    4: "Canteen Rent",
-  };
+                const filters = {};
+                if (selectedYear !== "All") filters.school_year = selectedYear;
+                if (selectedMonth !== "All") filters.month = selectedMonth;
+                if (selectedCategory !== "All") filters.category = selectedCategory;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+                const [incomeData, schoolYearData, categoryData] = await Promise.all([
+                    fetchSchoolIncome(filters),
+                    fetchSchoolYear(),
+                    fetchIncomeCategories(),
+                ]);
 
         const filters = {};
         if (selectedYear !== "All") filters.school_year = selectedYear;
@@ -45,10 +49,13 @@ export const SchoolIncome = () => {
           if (categoryId) filters.category = categoryId;
         }
 
-        const [incomeData, schoolYearData] = await Promise.all([
-          fetchSchoolIncome(filters),
-          fetchSchoolYear(),
-        ]);
+
+                // categories state me set
+                setCategories(categoryData);
+
+                // sort school years latest first
+                const sortedYears = [...schoolYearData].sort((a, b) => b.id - a.id);
+                setSchoolYears(sortedYears);
 
         setIncomeDetails(Array.isArray(incomeData) ? incomeData : []);
 
@@ -56,24 +63,31 @@ export const SchoolIncome = () => {
         const sortedYears = [...schoolYearData].sort((a, b) => b.id - a.id);
         setSchoolYears(sortedYears);
 
-        // Default latest year is selected
-        if (selectedYear === "All" && sortedYears.length > 0) {
-          setSelectedYear(sortedYears[0].id);
-        }
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchData();
-  }, [selectedMonth, selectedYear, selectedCategory]);
+    const months = ["All",
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ];
 
-  const months = [
-    "All", "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
+    // Filtered data
+    const filteredData = incomeDetails.filter((d) => {
+        const matchMonth = selectedMonth === "All" || d.month === selectedMonth;
+        const matchYear =
+            selectedYear === "All" ||
+            d.school_year.toString() === selectedYear.toString();
+        const matchCategory =
+            selectedCategory === "All" ||
+            d.category.toString() === selectedCategory.toString();
 
   const filteredData = incomeDetails.filter((d) => {
     const matchMonth = selectedMonth === "All" || d.month === selectedMonth;
@@ -82,16 +96,48 @@ export const SchoolIncome = () => {
     return matchMonth && matchYear && matchCategory;
   });
 
-  // Edit Handler
-  const handleEdit = (record) => {
-    console.log("Edit record:", record);
-  };
 
-  // Delete modal handlers
-  const openDeleteModal = (id) => {
-    setDeleteId(id);
-    setConfirmOpen(true);
-  };
+    return (
+        <div className="p-6 bg-gray-100 min-h-screen">
+            <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
+                 <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+             <i className="fa-solid fa-money-bill-wave"></i> School Income Records
+          </h1>
+        </div>
+       
+               
+                {/* Loader */}
+                {loading ? (
+                    <div className="flex items-center justify-center h-64">
+                        <div className="flex space-x-2">
+                            <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+                            <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                            <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                    <div className="border-b pb-4 mb-2">
+                        {/* Filters */}
+                        <div className=" flex gap-4 flex-wrap">
+                            {/* Month filter */}
+                            <div>
+                                <label className="text-sm font-medium text-gray-700 mb-1">
+                                    Select Month:
+                                </label>
+                                <select
+                                    value={selectedMonth}
+                                    onChange={(e) => setSelectedMonth(e.target.value)}
+                                    className="select select-bordered w-full focus:outline-none"
+                                >
+                                    {months.map((m, idx) => (
+                                        <option key={idx} value={m}>
+                                            {m}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
   const confirmDelete = async () => {
     if (!deleteId) return;
@@ -228,45 +274,101 @@ export const SchoolIncome = () => {
                                   to={allRouterLink.editIncom.replace(":id", record.id)}
                                   className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                                 >
-                                  Edit
-                                </Link>
+
+                                    <option value="All">All</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            {/* Reset button */}
+                            <div>
                                 <button
                                   className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                                   onClick={() => openDeleteModal(record.id)}
                                 >
                                   Delete
                                 </button>
-                              </td>
-                            </tr>
-                          );
-                        })
-                      ) : (
-                        <tr>
-                          <td colSpan="10" className="px-4 py-6 text-center text-gray-500 text-sm">No records found</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Delete Confirmation Modal */}
-        {confirmOpen && (
-          <dialog className="modal modal-open">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">Confirm Delete</h3>
-              <p className="py-4">Are you sure you want to delete this record?</p>
-              <div className="modal-action">
-                <button className="btn bgTheme text-white" onClick={confirmDelete}>
-                  Continue
-                </button>
-                <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>
-                  Cancel
-                </button>
-              </div>
+  
+                            </div>
+                        </div> </div>
+  
+                        {/* Table */}
+                        <div className="w-full overflow-x-auto">
+                            <div className="inline-block min-w-full align-middle">
+                                <div className=" shadow-sm rounded-lg max-h-[70vh]">
+                                    <table className="min-w-full divide-y divide-gray-300">
+                                        <thead className="bgTheme text-white z-2 sticky top-0">
+                                            <tr>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
+                                                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white">
+                                            {filteredData.length > 0 ? (
+                                                filteredData.map((record, index) => {
+                                                    const yearName =
+                                                        schoolYears.find((y) => y.id === record.school_year)?.year_name ||
+                                                        record.school_year;
+                                                    return (
+                                                        <tr key={index} className="hover:bg-gray-50">
+                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.month}</td>
+                                                            <td className="px-4 py-3 text-sm text-gray-700">₹{record.amount}</td>
+                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.income_date}</td>
+                                                            <td className="px-4 py-3 text-sm text-gray-700">
+                                                                {categories.find((c) => c.id === record.category)?.name || record.category}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.description}</td>
+                                                            <td className="px-4 py-3 text-sm text-gray-700">{yearName}</td>
+                                                            <td className="px-4 py-3 text-sm text-gray-700 capitalize">
+                                                                {record.payment_method}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-sm text-blue-600">
+                                                                {record.attachment ? (
+                                                                    <a href={`${BASE_URL}${record.attachment}`} target="_blank" rel="noopener noreferrer">View</a>
+                                                                ) : (
+                                                                    "-"
+                                                                )}
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    className={`inline-flex items-center px-3 py-1  rounded-md shadow-sm text-sm font-medium ${record.status === "confirmed"
+                                                                        ? "bg-green-100 text-green-800"
+                                                                        : "bg-red-100 text-red-600"
+                                                                        }`}
+                                                                >
+                                                                    {record.status}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })
+                                            ) : (
+                                                <tr>
+                                                    <td
+                                                        colSpan="9"
+                                                        className="px-4 py-6 text-center text-gray-500 text-sm"
+                                                    >
+                                                        No records found
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
           </dialog>
         )}

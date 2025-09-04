@@ -81,6 +81,7 @@ import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateE
 import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
 import UpdateIncome from "../components/Incomes/UpdateIncome";
 
+
 export const routes = [
   {
     path: allRouterLink.homeScreen,
@@ -544,6 +545,10 @@ export const routes = [
   {
     path: allRouterLink.createExpenses,
     element: <CreateExpenses />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
     path: allRouterLink.teacherAttendance,
     element: <TeacherAttendance />,
     protected: true,
@@ -565,13 +570,13 @@ export const routes = [
     path: allRouterLink.schoolIncome,
     element: <SchoolIncome />,
     protected: true,
-    allowedRoles: [constants.roles.director],
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.createIncome,
     element: <CreateIncome />,
     protected: true,
-    allowedRoles: [constants.roles.director],
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.editIncom,
