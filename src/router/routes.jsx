@@ -80,6 +80,7 @@ import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/Pay
 import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateExpenses";
 import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
 
+
 export const routes = [
   {
     path: allRouterLink.homeScreen,
