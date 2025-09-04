@@ -53,8 +53,7 @@ export const SchoolIncome = () => {
         fetchData();
     }, [selectedMonth, selectedYear, selectedCategory]);
 
-    const months = [
-        "All",
+    const months = ["All",
         "January",
         "February",
         "March",
