@@ -106,7 +106,7 @@ const AllStaff = () => {
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
            <table className="min-w-full table-auto border border-gray-300 rounded-lg ">
-              <thead className="bgTheme text-white text-center z-10 sticky top-0">
+              <thead className="bgTheme text-white text-center z-2 sticky top-0">
                 <tr>
                   <th className="px-4 py-3">S.NO</th>
                   <th className="px-4 py-3">Name</th>

@@ -182,7 +182,7 @@ if (error) {
         {/* Table Section */}
         <div className="overflow-x-auto max-h-[70vh]">
           <table className="min-w-full table-auto  rounded-lg">
-            <thead className="bgTheme text-white z-10 sticky top-0">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>

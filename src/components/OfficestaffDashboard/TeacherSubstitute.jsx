@@ -169,9 +169,9 @@ const TeacherSubstitute = () => {
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto rounded-lg">
+        <div className="w-full max-h-[70vh] overflow-x-auto rounded-lg">
           <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
-            <thead className="bgTheme text-white">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Teacher</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>

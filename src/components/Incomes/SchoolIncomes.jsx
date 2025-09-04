@@ -179,7 +179,7 @@ export const SchoolIncome = () => {
                             <div className="inline-block min-w-full align-middle">
                                 <div className=" shadow-sm rounded-lg max-h-[70vh]">
                                     <table className="min-w-full divide-y divide-gray-300">
-                                        <thead className="bgTheme text-white z-10 sticky top-0">
+                                        <thead className="bgTheme text-white z-2 sticky top-0">
                                             <tr>
                                                 <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
                                                 <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
