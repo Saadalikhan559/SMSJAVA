@@ -45,13 +45,10 @@ export const SchoolIncome = () => {
           if (categoryId) filters.category = categoryId;
         }
 
-
-                // categories state me set
-                setCategories(categoryData);
-
-                // sort school years latest first
-                const sortedYears = [...schoolYearData].sort((a, b) => b.id - a.id);
-                setSchoolYears(sortedYears);
+        const [incomeData, schoolYearData] = await Promise.all([
+          fetchSchoolIncome(filters),
+          fetchSchoolYear(),
+        ]);
 
         setIncomeDetails(Array.isArray(incomeData) ? incomeData : []);
 
@@ -231,101 +228,45 @@ export const SchoolIncome = () => {
                                   to={allRouterLink.editIncom.replace(":id", record.id)}
                                   className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                                 >
-
-                                    <option value="All">All</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            {/* Reset button */}
-                            <div>
+                                  Edit
+                                </Link>
                                 <button
                                   className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                                   onClick={() => openDeleteModal(record.id)}
                                 >
                                   Delete
                                 </button>
-  
-                            </div>
-                        </div> </div>
-  
-                        {/* Table */}
-                        <div className="w-full overflow-x-auto">
-                            <div className="inline-block min-w-full align-middle">
-                                <div className=" shadow-sm rounded-lg max-h-[70vh]">
-                                    <table className="min-w-full divide-y divide-gray-300">
-                                        <thead className="bgTheme text-white z-2 sticky top-0">
-                                            <tr>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
-                                                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="bg-white">
-                                            {filteredData.length > 0 ? (
-                                                filteredData.map((record, index) => {
-                                                    const yearName =
-                                                        schoolYears.find((y) => y.id === record.school_year)?.year_name ||
-                                                        record.school_year;
-                                                    return (
-                                                        <tr key={index} className="hover:bg-gray-50">
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.month}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">₹{record.amount}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.income_date}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">
-                                                                {categories.find((c) => c.id === record.category)?.name || record.category}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{record.description}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700">{yearName}</td>
-                                                            <td className="px-4 py-3 text-sm text-gray-700 capitalize">
-                                                                {record.payment_method}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-sm text-blue-600">
-                                                                {record.attachment ? (
-                                                                    <a href={`${BASE_URL}${record.attachment}`} target="_blank" rel="noopener noreferrer">View</a>
-                                                                ) : (
-                                                                    "-"
-                                                                )}
-                                                            </td>
-                                                            <td>
-                                                                <span
-                                                                    className={`inline-flex items-center px-3 py-1  rounded-md shadow-sm text-sm font-medium ${record.status === "confirmed"
-                                                                        ? "bg-green-100 text-green-800"
-                                                                        : "bg-red-100 text-red-600"
-                                                                        }`}
-                                                                >
-                                                                    {record.status}
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })
-                                            ) : (
-                                                <tr>
-                                                    <td
-                                                        colSpan="9"
-                                                        className="px-4 py-6 text-center text-gray-500 text-sm"
-                                                    >
-                                                        No records found
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan="10" className="px-4 py-6 text-center text-gray-500 text-sm">No records found</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {confirmOpen && (
+          <dialog className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Confirm Delete</h3>
+              <p className="py-4">Are you sure you want to delete this record?</p>
+              <div className="modal-action">
+                <button className="btn bgTheme text-white" onClick={confirmDelete}>
+                  Continue
+                </button>
+                <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>
+                  Cancel
+                </button>
+              </div>
             </div>
           </dialog>
         )}
