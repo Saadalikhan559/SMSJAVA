@@ -1,25 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { fetchSchoolIncome, fetchSchoolYear } from "../../services/api/Api";
+import { fetchSchoolIncome, fetchSchoolYear, fetchIncomeCategories } from "../../services/api/Api"; 
 import { constants } from "../../global/constants";
 const BASE_URL = constants.baseUrl;
 
 export const SchoolIncome = () => {
     const [incomeDetails, setIncomeDetails] = useState([]);
     const [schoolYears, setSchoolYears] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
     // Filters
     const [selectedMonth, setSelectedMonth] = useState("All");
     const [selectedYear, setSelectedYear] = useState("All");
     const [selectedCategory, setSelectedCategory] = useState("All");
-
-    // Category map (id -> name)
-    const categoryMap = {
-        1: "Monthly Fees",
-        2: "Govt Fund",
-        3: "Hostel Rent",
-        4: "Canteen Rent",
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,19 +22,18 @@ export const SchoolIncome = () => {
                 const filters = {};
                 if (selectedYear !== "All") filters.school_year = selectedYear;
                 if (selectedMonth !== "All") filters.month = selectedMonth;
-                if (selectedCategory !== "All") {
-                    const categoryId = Object.keys(categoryMap).find(
-                        (key) => categoryMap[key] === selectedCategory
-                    );
-                    if (categoryId) filters.category = categoryId;
-                }
+                if (selectedCategory !== "All") filters.category = selectedCategory;
 
-                const [incomeData, schoolYearData] = await Promise.all([
+                const [incomeData, schoolYearData, categoryData] = await Promise.all([
                     fetchSchoolIncome(filters),
                     fetchSchoolYear(),
+                    fetchIncomeCategories(),
                 ]);
 
                 setIncomeDetails(Array.isArray(incomeData) ? incomeData : []);
+
+                // categories state me set
+                setCategories(categoryData);
 
                 // sort school years latest first
                 const sortedYears = [...schoolYearData].sort((a, b) => b.id - a.id);
@@ -61,8 +53,7 @@ export const SchoolIncome = () => {
         fetchData();
     }, [selectedMonth, selectedYear, selectedCategory]);
 
-    const months = [
-        "All",
+    const months = ["All",
         "January",
         "February",
         "March",
@@ -77,13 +68,6 @@ export const SchoolIncome = () => {
         "December",
     ];
 
-    const categories = [
-        "All",
-        ...new Set(
-            incomeDetails.map((d) => categoryMap[d.category] || d.category)
-        ),
-    ];
-
     // Filtered data
     const filteredData = incomeDetails.filter((d) => {
         const matchMonth = selectedMonth === "All" || d.month === selectedMonth;
@@ -92,7 +76,7 @@ export const SchoolIncome = () => {
             d.school_year.toString() === selectedYear.toString();
         const matchCategory =
             selectedCategory === "All" ||
-            categoryMap[d.category] === selectedCategory;
+            d.category.toString() === selectedCategory.toString();
 
         return matchMonth && matchYear && matchCategory;
     });
@@ -164,9 +148,9 @@ export const SchoolIncome = () => {
                                     className="select select-bordered w-full focus:outline-none"
                                 >
                                     <option value="All">All</option>
-                                    {Object.entries(categoryMap).map(([id, name]) => (
-                                        <option key={id} value={name}>
-                                            {name}
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
                                         </option>
                                     ))}
                                 </select>
@@ -216,7 +200,7 @@ export const SchoolIncome = () => {
                                                             <td className="px-4 py-3 text-sm text-gray-700">₹{record.amount}</td>
                                                             <td className="px-4 py-3 text-sm text-gray-700">{record.income_date}</td>
                                                             <td className="px-4 py-3 text-sm text-gray-700">
-                                                                {categoryMap[record.category] || record.category}
+                                                                {categories.find((c) => c.id === record.category)?.name || record.category}
                                                             </td>
                                                             <td className="px-4 py-3 text-sm text-gray-700">{record.description}</td>
                                                             <td className="px-4 py-3 text-sm text-gray-700">{yearName}</td>
@@ -225,7 +209,7 @@ export const SchoolIncome = () => {
                                                             </td>
                                                             <td className="px-4 py-3 text-sm text-blue-600">
                                                                 {record.attachment ? (
-                                                            <a href={`${BASE_URL}${record.attachment}`} target="_blank" rel="noopener noreferrer">View</a>
+                                                                    <a href={`${BASE_URL}${record.attachment}`} target="_blank" rel="noopener noreferrer">View</a>
                                                                 ) : (
                                                                     "-"
                                                                 )}

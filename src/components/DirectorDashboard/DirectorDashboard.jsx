@@ -7,6 +7,7 @@ import {
 } from "../../services/api/Api";
 import LoginSuccessHandler from "../Modals/LoginSucces";
 import { constants } from "../../global/constants";
+import { Loader } from "../../global/Loader";
 
 export const DirectorDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -39,6 +40,7 @@ export const DirectorDashboard = () => {
   useEffect(() => {
     loadAllDashboardData();
   }, []);
+
 
   if (loading) {
     return (

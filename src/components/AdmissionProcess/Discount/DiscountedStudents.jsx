@@ -125,9 +125,9 @@ const DiscountedStudents = () => {
           </h1>
         </div>
           <div className="p-2">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+            <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
             
-               <div className=" w-full  sm:w-auto">
+               <div className=" w-full  sm:w-xs">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Select Class:
                 </label>

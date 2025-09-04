@@ -91,20 +91,13 @@ export const ViewSalaryExpense = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="border-b flex justify-between">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-          <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
-        </h2>
-        <div className="mb-4 flex justify-end">
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            className="w-64 px-3 py-2 border rounded-md focus:ring focus:ring-blue-200"
-          />
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4 border-b pb-4">
+           <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
+          </h1>
         </div>
-        </div><br></br>
+        
+
 
         {/* Display API error message */}
         {apiError && (
