@@ -322,6 +322,26 @@ export const EditExpenses = () => {
                 </p>
               )}
             </div>
+            {/* Attachments */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-calendar-days text-sm"></i>
+                  Attachments <span className="text-error"></span>
+                </span>
+              </label>
+              <input
+                type="file"
+                placeholder="Enter Base Salary e.g: 15000"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("attachment")}
+              />
+              {errors.expense_date && (
+                <p className="text-error text-sm mt-1">
+                  {errors.expense_date.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">

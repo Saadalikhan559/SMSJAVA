@@ -48,7 +48,7 @@ if (error) {
     return (
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white p-6 max-w-7xl rounded-lg shadow-lg  mx-auto">
-                <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+                <h1 className="text-3xl font-bold text-center mb-4 text-gray-800 border-b pb-4">
                     <i className="fa-solid fa-graduation-cap mr-2"></i> Periods By Class
                 </h1>
 

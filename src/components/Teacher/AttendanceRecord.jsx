@@ -71,6 +71,7 @@ const AttendanceRecord = () => {
     setSelectedDate('');
   };
 
+
   // Loader UI
   if (loading) {
     return (
@@ -84,6 +85,7 @@ const AttendanceRecord = () => {
       </div>
     );
   }
+
 
   // Error UI
   if (error) {

@@ -543,6 +543,12 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
+    path: allRouterLink.teacherAttendance,
+    element: <TeacherAttendance />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
     path: allRouterLink.editExpenses,
     element: <EditExpenses />,
     protected: true,
