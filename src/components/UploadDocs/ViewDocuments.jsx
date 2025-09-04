@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
+import { Loader } from "../../global/Loader";
 
 export const ViewDocuments = () => {
   const [details, setDetails] = useState(null);
@@ -138,30 +139,35 @@ export const ViewDocuments = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          <i className="fa-solid fa-folder-open"></i> Uploaded Documents
-        </h2>
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+            <i className="fa-solid fa-folder-open"></i> Uploaded Documents
+          </h1>
+        </div>
+       
 
         {/* Teacher options */}
-        {userRole === "teacher" && (
-          <div className="mb-4 flex gap-4 items-center">
-            <div>
-              <select
-                value={viewOption}
-                onChange={(e) => setViewOption(e.target.value)}
-                className="border p-2 rounded"
-              >
-                <option value="my">My Documents</option>
-                <option value="assigned">Assigned Class Documents</option>
-              </select>
-            </div>
-          </div>
-        )}
+    {userRole === "teacher" && (
+  <div className="mb-4 flex gap-4 items-center border-b pb-2">
+    <div>
+      <select
+        value={viewOption}
+        onChange={(e) => setViewOption(e.target.value)}
+        className="border p-2 rounded"
+      >
+        <option value="my">My Documents</option>
+        <option value="assigned">Assigned Class Documents</option>
+      </select>
+    </div>
+  </div>
+)}
+
+
 
         {/* Admin filters */}
         {userRole !== "student" && userRole !== "guardian" && userRole !== "teacher" && userRole !== "officestaff" && (
-          <div className="mb-4 flex gap-4">
-            <div>
+          <div className="mb-4 flex gap-4 border-b pb-2">
+            <div className="flex flex-col w-full sm:w-xs">
               <select
                 value={selectedRole}
                 onChange={e => {

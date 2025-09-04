@@ -10,17 +10,18 @@ import { AuthContext } from "../../../context/AuthContext";
 
 export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
-  
+
 
 
   // const {authTokens} = useContext(AuthContext);
   // const access = authTokens.access;
   const authTokens = JSON.parse(localStorage.getItem('authTokens'));
   const access = authTokens.access;
-    const [apiError, setApiError] = useState("");
+  const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null); // 🔹 store ID for deletion
+  const [searchName, setSearchName] = useState("");
   const modalRef = useRef();
 
   const getSchoolExpense = async () => {
@@ -82,12 +83,21 @@ export const ViewSalaryExpense = () => {
     return <Error />;
   }
 
+  //  filter  by name
+  const filteredExpenses = schoolExpense.filter((expense) =>
+    expense.name.toLowerCase().includes(searchName.toLowerCase())
+  );
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
-        </h2>
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4 border-b pb-4">
+           <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
+          </h1>
+        </div>
+        
+
 
         {/* Display API error message */}
         {apiError && (
@@ -125,8 +135,8 @@ export const ViewSalaryExpense = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {schoolExpense.length > 0 ? (
-                schoolExpense.map((expense) => (
+              {filteredExpenses.length > 0 ? (
+                filteredExpenses.map((expense) => (
                   <tr key={expense.id}>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {expense.name}

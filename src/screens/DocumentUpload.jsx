@@ -385,51 +385,51 @@ export const DocumentUpload = () => {
               <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
             </h1>
 
-          {uploadFields.map((field, index) => (
-  <div
-  key={index}
-  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full"
->
-  {/* Document Upload */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
-        <span className="text-error">*</span>
-      </span>
-    </label>
-    <input
-      type="file"
-      name="file"
-      className="file-input file-input-bordered w-full focus:outline-none"
-      required
-      onChange={(e) => handleFileChange(e, index)}
-    />
-  </div>
+            {uploadFields.map((field, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full"
+              >
+                {/* Document Upload */}
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
+                      <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <input
+                    type="file"
+                    name="file"
+                    className="file-input file-input-bordered w-full focus:outline-none"
+                    required
+                    onChange={(e) => handleFileChange(e, index)}
+                  />
+                </div>
 
-  {/* Document Type */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-file text-sm"></i> Document Type
-        <span className="text-error">*</span>
-      </span>
-    </label>
-    <select
-      name="document_types"
-      className="select select-bordered w-full focus:outline-none cursor-pointer"
-      required
-      value={field.document_types}
-      onChange={(e) => handleUploadChange(e, index)}
-    >
-      <option value="">Select Document Type</option>
-      {getAvailableDocumentTypes(index).map((doc) => (
-        <option key={doc.id} value={doc.id}>
-          {doc.name}
-        </option>
-      ))}
-    </select>
-  </div>
+                {/* Document Type */}
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-file text-sm"></i> Document Type
+                      <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <select
+                    name="document_types"
+                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    required
+                    value={field.document_types}
+                    onChange={(e) => handleUploadChange(e, index)}
+                  >
+                    <option value="">Select Document Type</option>
+                    {getAvailableDocumentTypes(index).map((doc) => (
+                      <option key={doc.id} value={doc.id}>
+                        {doc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
   {/* Identity */}
   <div className="form-control w-full pt-6">
@@ -476,7 +476,7 @@ export const DocumentUpload = () => {
   </div>
 </div>
 
-))}
+            ))}
 
 
             {/* Select Student/Teacher/Guardian/Office Staff */}
@@ -644,4 +644,4 @@ export const DocumentUpload = () => {
   );
 };
 
-                     
+

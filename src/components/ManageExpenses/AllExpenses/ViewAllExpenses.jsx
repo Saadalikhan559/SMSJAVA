@@ -11,6 +11,7 @@ import { Error } from "../../../global/Error";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
 import { SuccessModal } from "../../Modals/SuccessModal";
+import { ConfirmationModal } from "../../Modals/ConfirmationModal";
 
 export const ViewAllExpenses = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
@@ -29,6 +30,8 @@ export const ViewAllExpenses = () => {
   const [editCategoryName, setEditCategoryName] = useState("");
   const [deleteCategoryId, setDeleteCategoryId] = useState("");
   const modalRef = useRef();
+  const confirmModalRef = useRef();
+  const [deleteId, setDeleteId] = useState(null);
 
   const access = JSON.parse(localStorage.getItem("authTokens"))?.access;
 
@@ -140,17 +143,15 @@ export const ViewAllExpenses = () => {
       );
       if (response.status === 201 || response.status === 200) {
         modalRef.current?.show();
-              getSchoolExpense();
+        getSchoolExpense();
+        setDeleteId(null);
       }
     } catch (error) {
-      console.log(error);
-      if (error.message) {
-        setApiError(error.message);
-      } else if (error.response.data.detail) {
-        setApiError(error.response.data.detail);
-      } else {
-        setApiError("There is an issue at the moment, try again.");
-      }
+      setApiError(
+        error?.response?.data?.detail ||
+        error?.message ||
+        "Error deleting expense"
+      );
     } finally {
       setLoading(false);
     }
@@ -167,9 +168,12 @@ export const ViewAllExpenses = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
+         <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
           <i className="fa-solid fa-money-bill-wave mr-2"></i> Total Expenses
-        </h2>
+          </h1>
+        </div>
+
 
         {/* Display API error message */}
         {apiError && (
@@ -182,7 +186,7 @@ export const ViewAllExpenses = () => {
         )}
 
         {/* Filters */}
-        <div className="mb-4 flex flex-col gap-2 md:flex-row">
+        <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2">
           {/* School Year Filter */}
           <div className="form-control md:w-1/3">
             <label className="label">
@@ -236,7 +240,7 @@ export const ViewAllExpenses = () => {
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto rounded-lg">
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bgTheme text-white">
               <tr>
@@ -306,11 +310,10 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm">
                       <span
                         className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border
-              ${
-                expense.status === "pending"
-                  ? "text-yellow-700 bg-yellow-50 border-yellow-300"
-                  : "text-green-700 bg-green-50 border-green-300"
-              }`}
+              ${expense.status === "pending"
+                            ? "text-yellow-700 bg-yellow-50 border-yellow-300"
+                            : "text-green-700 bg-green-50 border-green-300"
+                          }`}
                       >
                         {expense.status}
                       </span>
@@ -336,7 +339,10 @@ export const ViewAllExpenses = () => {
                           Edit
                         </Link>
                         <button
-                          onClick={() => handleDeleteExpense(expense.id)}
+                          onClick={() => {
+                            setDeleteId(expense.id);
+                            confirmModalRef.current.show();
+                          }}
                           className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
                         >
                           Delete
@@ -386,11 +392,10 @@ export const ViewAllExpenses = () => {
                     setActiveTab(tab);
                     setApiError("");
                   }}
-                  className={`px-4 py-2 -mb-px font-medium ${
-                    activeTab === tab
-                      ? "border-b-2 border-blue-600 text-blue-700"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-4 py-2 -mb-px font-medium ${activeTab === tab
+                    ? "border-b-2 border-blue-600 text-blue-700"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   {tab}
                 </button>
@@ -515,7 +520,7 @@ export const ViewAllExpenses = () => {
                   </button>
                   <button
                     type="submit"
-                    className=" btn px-4 py-2 text-yellow-700  hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
+                    className=" btn px-4 py-2   hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
                   >
                     Update
                   </button>
@@ -591,6 +596,12 @@ export const ViewAllExpenses = () => {
           </div>
         </div>
       )}
+      {/* confirmation Modal */}
+      <ConfirmationModal
+        ref={confirmModalRef}
+        onConfirm={() => handleDeleteExpense(deleteId)}
+        onCancel={() => setDeleteId(null)}
+      />
 
       <SuccessModal ref={modalRef} />
     </div>

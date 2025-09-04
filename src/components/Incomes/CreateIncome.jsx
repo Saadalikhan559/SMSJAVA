@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { createSchoolIncome, fetchSchoolYear } from "../../services/api/Api";
+import { createSchoolIncome, fetchSchoolYear, fetchIncomeCategories } from "../../services/api/Api";
 
 const CreateIncome = () => {
   const [schoolYears, setSchoolYears] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const {
     register,
@@ -12,7 +13,7 @@ const CreateIncome = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // 🔹 Months list
+  // Months list
   const months = [
     "January",
     "February",
@@ -28,7 +29,7 @@ const CreateIncome = () => {
     "December",
   ];
 
-  // 🔹 Category map
+  // Category map
   const categoryMap = {
     1: "Monthly Fees",
     2: "Govt Fund",
@@ -36,7 +37,7 @@ const CreateIncome = () => {
     4: "Canteen Rent",
   };
 
-  // 🔹 Fetch school years
+  // Fetch school years
   const getSchoolYears = async () => {
     try {
       const res = await fetchSchoolYear();
@@ -47,11 +48,23 @@ const CreateIncome = () => {
     }
   };
 
+  const getCategories = async () => {
+    try {
+      const res = await fetchIncomeCategories();
+      setCategories(res);
+    } catch (err) {
+      console.error("Failed to load categories:", err);
+      alert("Failed to load income categories");
+    }
+  };
+
+
   useEffect(() => {
     getSchoolYears();
+    getCategories();
   }, []);
 
-  // 🔹 On Submit
+  // On Submit
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("month", data.month);
@@ -88,7 +101,7 @@ const CreateIncome = () => {
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-5xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-center mb-8">
             Add School Income <i className="fa-solid fa-sack-dollar ml-2"></i>
@@ -166,12 +179,13 @@ const CreateIncome = () => {
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
               >
                 <option value="">Select Category</option>
-                {Object.entries(categoryMap).map(([id, name]) => (
-                  <option key={id} value={id}>
-                    {name}
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
+
               {errors.category && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.category.message}
