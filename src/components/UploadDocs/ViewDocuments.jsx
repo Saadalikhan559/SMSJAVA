@@ -147,20 +147,22 @@ export const ViewDocuments = () => {
        
 
         {/* Teacher options */}
-        {userRole === "teacher" && (
-          <div className="mb-4 flex gap-4 items-center">
-            <div>
-              <select
-                value={viewOption}
-                onChange={(e) => setViewOption(e.target.value)}
-                className="border p-2 rounded"
-              >
-                <option value="my">My Documents</option>
-                <option value="assigned">Assigned Class Documents</option>
-              </select>
-            </div>
-          </div>
-        )}
+    {userRole === "teacher" && (
+  <div className="mb-4 flex gap-4 items-center border-b pb-2">
+    <div>
+      <select
+        value={viewOption}
+        onChange={(e) => setViewOption(e.target.value)}
+        className="border p-2 rounded"
+      >
+        <option value="my">My Documents</option>
+        <option value="assigned">Assigned Class Documents</option>
+      </select>
+    </div>
+  </div>
+)}
+
+
 
         {/* Admin filters */}
         {userRole !== "student" && userRole !== "guardian" && userRole !== "teacher" && userRole !== "officestaff" && (

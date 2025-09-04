@@ -38,6 +38,7 @@ const AllStudentsPerClass = () => {
 
  if (loading) {
     return (
+
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>

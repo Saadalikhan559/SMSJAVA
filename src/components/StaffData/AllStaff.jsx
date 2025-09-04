@@ -221,7 +221,7 @@ const AllStaff = () => {
             </>
           )}
 
-          {activeTab === "staff" && (
+          {/* {activeTab === "staff" && (
             <>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
 
@@ -240,14 +240,44 @@ const AllStaff = () => {
                 />
               </div>
               <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-                <thead className="bgTheme text-white text-center">
+                <thead className="bgTheme text-white text-center"> */}
+
+        {activeTab === "staff" && (
+          <>
+          <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+           <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+          </h1>
+        </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b pb-2">
+
+              
+              <input
+                type="text"
+                placeholder="Search Staff Member Name"
+                value={staffSearch}
+                onChange={(e) => setStaffSearch(e.target.value)}
+                className="border px-3 py-2 rounded w-full sm:w-64"
+
+
+              />
+            </div>
+            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+              <thead className="bgTheme text-white text-center">
+                <tr>
+                  <th className="px-4 py-3">S.NO</th>
+                  <th className="px-4 py-3">Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* {filteredOfficeStaff.length === 0 ? (
 
                   <tr>
                     <th className="px-4 py-3">S.NO</th>
                     <th className="px-4 py-3">Name</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody> */}
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
                       <td colSpan="2" className="text-center py-6 text-red-600">
