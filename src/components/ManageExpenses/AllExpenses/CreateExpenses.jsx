@@ -18,6 +18,7 @@ export const CreateExpenses = () => {
   const [error, setError] = useState("");
   const modalRef = useRef();
   const [schoolYear, setSchoolYear] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const { authTokens } = useContext(AuthContext);
   const access = authTokens.access;
@@ -28,6 +29,11 @@ export const CreateExpenses = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+  };
 
   const getExpenseCategory = async () => {
     try {
@@ -54,34 +60,59 @@ export const CreateExpenses = () => {
     getExpenseCategory();
   }, []);
 
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      setApiError("");
-      const payload = {
-        ...data,
-        payment_method: data.payment_method
-          ? data.payment_method.toLowerCase()
-          : "",
-      };
-      const response = await axios.post(
-        `${constants.baseUrl}/d/School-Expense/`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-          },
-        }
-      );
-      if (response.status === 200 || response.status === 201) {
-        modalRef.current?.show();
+const onSubmit = async (data) => {
+  try {
+    setLoading(true);
+    setApiError("");
+
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      if (key !== "attachment") {
+        formData.append(key, data[key]);
       }
-    } catch (error) {
-      setApiError(error.response.data.non_field_errors[0]);
-    } finally {
-      setLoading(false);
+    });
+
+    if (selectedFile) {
+      formData.append("attachment", selectedFile);
     }
-  };
+
+    // normalize payment_method if needed
+    if (data.payment_method) {
+      formData.set("payment_method", data.payment_method.toLowerCase());
+    }
+
+    const response = await axios.post(
+      `${constants.baseUrl}/d/School-Expense/`,
+      formData, // ✅ send FormData instead of payload
+      {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      }
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      modalRef.current?.show();
+    }
+  } catch (error) {
+    if (error.response?.data) {
+      const errors = error.response.data;
+      if (errors.non_field_errors) {
+        setApiError(errors.non_field_errors.join(" "));
+      } else {
+        const fieldErrors = Object.entries(errors)
+          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+          .join(" | ");
+        setApiError(fieldErrors);
+      }
+    } else {
+      setApiError("An unexpected error occurred.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
@@ -133,6 +164,7 @@ export const CreateExpenses = () => {
                 </p>
               )}
             </div>
+
             {/* Category Selection */}
             <div className="form-control">
               <label className="label">
@@ -187,26 +219,43 @@ export const CreateExpenses = () => {
               )}
             </div>
 
-            {/* Description Field */}
+            {/* Attachments */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
-                  Description <span className="text-error"></span>
+                  <i className="fa-solid fa-paperclip text-sm"></i>
+                  Attachments <span className="text-error"></span>
                 </span>
               </label>
-              <textarea
-                type="number"
-                placeholder="Enter your category description"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("description")}
-              ></textarea>
-              {errors.description && (
+
+              {!selectedFile ? (
+                <input
+                  type="file"
+                  className="file-input file-input-bordered w-full focus:outline-none"
+                  onChange={handleFileChange}
+                />
+              ) : (
+                <div className="file-input file-input-bordered w-full flex items-center justify-between">
+                  <span className="text-sm text-gray-700 truncate px-3">
+                    {selectedFile.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFile(null)}
+                    className="btn btn-xs text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+                  >
+                    <span>Remove</span>
+                  </button>
+                </div>
+              )}
+
+              {errors.attachment && (
                 <p className="text-error text-sm mt-1">
-                  {errors.description.message}
+                  {errors.attachment.message}
                 </p>
               )}
             </div>
+
             {/* Expense Field */}
             <div className="form-control">
               <label className="label">
@@ -255,6 +304,28 @@ export const CreateExpenses = () => {
               {errors.expense_date && (
                 <p className="text-error text-sm mt-1">
                   {errors.expense_date.message}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+            {/* Description Field */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-school text-sm"></i>
+                  Description <span className="text-error"></span>
+                </span>
+              </label>
+              <textarea
+                placeholder="Enter your category description"
+                className="textarea textarea-bordered w-full focus:outline-none"
+                rows={5}
+                {...register("description")}
+              />
+              {errors.description && (
+                <p className="text-error text-sm mt-1">
+                  {errors.description.message}
                 </p>
               )}
             </div>

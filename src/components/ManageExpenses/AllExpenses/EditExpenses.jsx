@@ -11,17 +11,19 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { constants } from "../../../global/constants";
 import axios from "axios";
+import { Error } from "../../../global/Error";
 
 export const EditExpenses = () => {
   const userRole = localStorage.getItem("userRole");
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState([]);
-  const [schoolExpense, setSchoolExpense] = useState({});
   const [apiError, setApiError] = useState("");
   const [error, setError] = useState("");
   const modalRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const [amountDisabled, setAmountDisabled] = useState(false);
 
   const { authTokens } = useContext(AuthContext);
   const access = authTokens.access;
@@ -31,8 +33,32 @@ export const EditExpenses = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm();
+
+  // const selectedCategory = watch("category");
+
+  // useEffect(() => {
+  //   if (!selectedCategory) {
+  //     setAmountDisabled(false);
+  //     return;
+  //   }
+  //   const selectedCatObj = category.find(
+  //     (cat) =>
+  //       cat.id == selectedCategory || cat.name?.toLowerCase() == "salary"
+  //   );
+
+  //   if (
+  //     selectedCatObj &&
+  //     (selectedCatObj.id == 1 ||
+  //       selectedCatObj.name?.toLowerCase() == "salary")
+  //   ) {
+  //     setAmountDisabled(true);
+  //   } else {
+  //     setAmountDisabled(false);
+  //   }
+  // }, [selectedCategory, category]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -43,14 +69,12 @@ export const EditExpenses = () => {
     try {
       setError("");
       const response = await fetchSchoolExpenseById(access, id);
-      // console.log("response", response);
-      setSchoolExpense(response);
       if (response) {
         setValue("category", response.category);
         setValue("amount", response.amount);
         setValue("description", response.description);
         setValue("expense_date", response.expense_date);
-        // setValue("attachment", response.attachment);
+        setValue("attachment", response.attachment);
         setValue("status", response.status);
       }
     } catch (err) {
@@ -102,18 +126,35 @@ export const EditExpenses = () => {
         modalRef.current?.show();
       }
     } catch (error) {
-      setApiError("There is an issue at the moment please try again");
+      if (error.response?.data) {
+        const errors = error.response.data;
+
+        if (errors.non_field_errors) {
+          setApiError(errors.non_field_errors.join(" "));
+        } else {
+          const fieldErrors = Object.entries(errors)
+            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+            .join(" | ");
+          setApiError(fieldErrors);
+        }
+      } else {
+        setApiError("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  if (error) {
+    return <Error />;
+  }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">
           Edit Expense
-          <i className="fa-solid fa-percentage ml-2"></i>
+          <i className="fa-solid fa-pen-to-square ml-2"></i>
         </h1>
 
         {/* Display API error message */}
@@ -132,7 +173,7 @@ export const EditExpenses = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-list text-sm"></i>
                   Category <span className="text-error">*</span>
                 </span>
               </label>
@@ -161,13 +202,14 @@ export const EditExpenses = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-money-bill-wave text-sm"></i>
                   Amount <span className="text-error">*</span>
                 </span>
               </label>
               <input
                 type="number"
                 min={0}
+                disabled={amountDisabled}
                 placeholder="Enter Base Salary e.g: 15000"
                 className="input input-bordered w-full focus:outline-none"
                 {...register("amount", {
@@ -186,7 +228,7 @@ export const EditExpenses = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-file-lines text-sm"></i>
                   Description <span className="text-error"></span>
                 </span>
               </label>
@@ -228,7 +270,7 @@ export const EditExpenses = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
+                  <i className="fa-solid fa-circle-check text-sm"></i>
                   Status <span className="text-error"></span>
                 </span>
               </label>
@@ -270,16 +312,16 @@ export const EditExpenses = () => {
                   onChange={handleFileChange}
                 />
               ) : (
-                <div className="flex items-center justify-between p-3 border border-gray-300 rounded-lg bg-gray-50">
-                  <span className="text-sm text-gray-700 truncate">
+                <div className="file-input file-input-bordered w-full flex items-center justify-between">
+                  <span className="text-sm text-gray-700 truncate px-3">
                     {selectedFile.name}
                   </span>
                   <button
                     type="button"
                     onClick={() => setSelectedFile(null)}
-                    className="btn btn-xs btn-error ml-3"
+                    className="btn btn-xs text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
                   >
-                    <i className="fa-solid fa-xmark"></i>
+                    <span>Remove</span>
                   </button>
                 </div>
               )}
@@ -300,7 +342,7 @@ export const EditExpenses = () => {
               {loading ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
               ) : (
-                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                <i className="fa-solid fa-floppy-disk mr-2"></i>
               )}
               {loading ? "" : "Update"}
             </button>

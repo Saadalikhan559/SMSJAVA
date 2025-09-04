@@ -170,7 +170,7 @@ export const ViewSalaryExpense = () => {
                             </Link>
                             <button
                               onClick={() => handleDeleteClick(expense.id)}
-                              className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                              className="inline-flex items-center px-3 py-1  shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
                             >
                               Delete
                             </button>

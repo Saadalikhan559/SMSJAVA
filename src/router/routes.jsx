@@ -72,9 +72,14 @@ import { CreateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { ViewSalaryExpense } from "../components/ManageExpenses/SalaryExpense/ViewSalaryExpense";
 import { ViewAllExpenses } from "../components/ManageExpenses/AllExpenses/ViewAllExpenses";
 import { EditSalaryExpense } from "../components/ManageExpenses/SalaryExpense/EditSalaryExpense";
+import TeacherAttendance from "../components/OfficestaffDashboard/TeacherAttendance";
+import TeacherAttendanceRecord from "../components/OfficestaffDashboard/TeacherAttendanceRecord";
+import { SchoolIncome } from "../components/Incomes/SchoolIncomes";
+import CreateIncome from "../components/Incomes/CreateIncome";
 import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/PaySalaryExpense";
 import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateExpenses";
 import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
+
 
 export const routes = [
   {
@@ -542,36 +547,36 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-  // {
-  //   path: allRouterLink.teacherAttendance,
-  //   element: <TeacherAttendance />,
-  //   protected: true,
-  //   allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  // },
+  {
+    path: allRouterLink.teacherAttendance,
+    element: <TeacherAttendance />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
   {
     path: allRouterLink.editExpenses,
     element: <EditExpenses />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-  // {
-  //   path: allRouterLink.teacherAttendanceRecord,
-  //   element: <TeacherAttendanceRecord />,
-  //   protected: true,
-  //   allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  // },
-  // {
-  //   path: allRouterLink.schoolIncome,
-  //   element: <SchoolIncome />,
-  //   protected: true,
-  //   allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  // },
-  // {
-  //   path: allRouterLink.createIncome,
-  //   element: <CreateIncome />,
-  //   protected: true,
-  //   allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  // },
+  {
+    path: allRouterLink.teacherAttendanceRecord,
+    element: <TeacherAttendanceRecord />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.schoolIncome,
+    element: <SchoolIncome />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.createIncome,
+    element: <CreateIncome />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
 
   // include all routes before this please
 
