@@ -161,7 +161,7 @@ const ClassTeacherAssign = () => {
               Class Allocation to Teachers{" "}
               <i className="fa-solid fa-square-poll-vertical w-5"></i>
             </h1>
-            <p className="text-gray-600">Select teacher and class to assign</p>
+            <p className="text-gray-600">Select Teacher and Class To Assign</p>
           </div>
 
           {errors.api && (
