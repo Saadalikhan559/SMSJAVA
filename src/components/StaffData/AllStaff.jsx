@@ -66,7 +66,7 @@ const AllStaff = () => {
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
         {/* Tabs */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 ">
           <button
             onClick={() => setActiveTab("teachers")}
             className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
