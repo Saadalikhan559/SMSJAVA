@@ -75,6 +75,7 @@ export const allRouterLink = {
     teacherAttendanceRecord:"/teacherAttendanceRecord",
     schoolIncome: "/schoolIncome",
     createIncome: "/createIncome",
+    editIncom:"/editIncom/:id",
 
     // all routes before this
     unAuthorized: '/unauthorized',
