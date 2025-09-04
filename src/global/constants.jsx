@@ -1,22 +1,30 @@
 export const constants = {
   isOnline: true,
   isOffline: true,
+<<<<<<< HEAD
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
   // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
 
+=======
+  baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms", //farha
+  // baseUrl: "https://187gwsw1-7000.inc1.devtunnels.ms", //farha
+>>>>>>> 65e9a379dc48a04558b5991e0acacf88c13318fb
   // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
+  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
   
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   // baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
-
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz 
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   // baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
+<<<<<<< HEAD
   //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz 
  
+=======
+//    baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
+>>>>>>> 65e9a379dc48a04558b5991e0acacf88c13318fb
 
 
 

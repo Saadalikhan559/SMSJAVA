@@ -81,6 +81,7 @@ import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateE
 import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
 import UpdateIncome from "../components/Incomes/UpdateIncome";
 
+
 export const routes = [
   {
     path: allRouterLink.homeScreen,
