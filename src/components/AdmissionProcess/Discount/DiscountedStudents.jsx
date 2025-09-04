@@ -119,13 +119,13 @@ const DiscountedStudents = () => {
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
         <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
-           <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+           <div className="mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
            <i className="fa-solid fa-percentage ml-2"></i> Discounted Students
           </h1>
         </div>
           <div className="p-2">
-            <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
+            <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b pb-4">
             
                <div className=" w-full  sm:w-xs">
                 <label className="text-sm font-medium text-gray-700 mb-1">
@@ -154,9 +154,9 @@ const DiscountedStudents = () => {
               />
             </div>
 
-            <div className="w-full overflow-x-auto rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
-                <thead className="bgTheme text-white">
+            <div className="w-full overflow-x-auto max-h-[70vh]  rounded-lg">
+              <table className="min-w-full divide-y   divide-gray-300  text-xs sm:text-sm  ">
+                <thead className="bgTheme text-white z-2 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Year Level</th>

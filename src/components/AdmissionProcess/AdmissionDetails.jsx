@@ -31,7 +31,6 @@ export const AdmissionDetails = () => {
   
   if (loading) {
     return (
-
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
@@ -59,10 +58,9 @@ export const AdmissionDetails = () => {
     return <div className="p-4 text-center">No admission records found</div>;
   }
 
+
   const filterData = details.filter((detail) =>
-    detail.year_level
-      .toLowerCase()
-      .includes(selectedClass.toLowerCase())
+    detail.year_level.toLowerCase().includes(selectedClass.toLowerCase())
   );
   const filterBysearch = filterData.filter((detail) =>
     detail.student_input.first_name
@@ -113,11 +111,11 @@ export const AdmissionDetails = () => {
         {filterData.length === 0 ? (
           <p className="text-gray-600">No admission records found.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[70vh]">
             <div className="inline-block min-w-full align-middle">
-              <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
+              <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">
-                  <thead className="bgTheme text-white">
+                  <thead className="bgTheme text-white z-2 sticky top-0">
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                         Student Name
