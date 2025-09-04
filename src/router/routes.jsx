@@ -568,13 +568,13 @@ export const routes = [
     path: allRouterLink.schoolIncome,
     element: <SchoolIncome />,
     protected: true,
-    allowedRoles: [constants.roles.director],
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.createIncome,
     element: <CreateIncome />,
     protected: true,
-    allowedRoles: [constants.roles.director],
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
 
   // include all routes before this please
