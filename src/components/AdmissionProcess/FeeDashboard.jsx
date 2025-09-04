@@ -144,7 +144,7 @@ if (loading) {
         Fee Dashboard
       </h3>
       {/* Month Filter */}
-      <div className="flex justify-end mb-4">
+      <div className="flex mb-4">
         <select
           value={selectedMonth}
           onChange={handleMonthChange}
