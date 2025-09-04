@@ -58,10 +58,9 @@ export const AdmissionDetails = () => {
     return <div className="p-4 text-center">No admission records found</div>;
   }
 
+
   const filterData = details.filter((detail) =>
-    detail.year_level
-      .toLowerCase()
-      .includes(selectedClass.toLowerCase())
+    detail.year_level.toLowerCase().includes(selectedClass.toLowerCase())
   );
   const filterBysearch = filterData.filter((detail) =>
     detail.student_input.first_name

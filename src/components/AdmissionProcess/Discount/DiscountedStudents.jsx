@@ -154,9 +154,9 @@ const DiscountedStudents = () => {
               />
             </div>
 
-            <div className="w-full overflow-x-auto rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
-                <thead className="bgTheme text-white">
+            <div className="w-full rounded-lg">
+              <table className="min-w-full divide-y divide-gray-300 h-lh text-xs sm:text-sm  ">
+                <thead className="bgTheme text-white z-10 sticky top-16">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Year Level</th>

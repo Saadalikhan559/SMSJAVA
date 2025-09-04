@@ -198,8 +198,8 @@ export const ViewDocuments = () => {
         <div className="w-full overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow-sm rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white">
+              <table className="min-w-full divide-y divide-gray-300 h-screen">
+                <thead className="bgTheme text-white z-10 sticky top-16">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
