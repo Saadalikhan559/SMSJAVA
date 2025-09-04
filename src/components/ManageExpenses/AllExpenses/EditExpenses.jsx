@@ -21,21 +21,23 @@ export const EditExpenses = () => {
   const [apiError, setApiError] = useState("");
   const [error, setError] = useState("");
   const modalRef = useRef();
-  const [schoolYear, setSchoolYear] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
 
   const { authTokens } = useContext(AuthContext);
   const access = authTokens.access;
 
-  const paymentModes = ["Cash", "Cheque", "Online"];
   const Status = ["approved", "pending", "rejected"];
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm();
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+  };
 
   const getSchoolExpenseById = async () => {
     try {
@@ -48,13 +50,7 @@ export const EditExpenses = () => {
         setValue("amount", response.amount);
         setValue("description", response.description);
         setValue("expense_date", response.expense_date);
-        const paymentMethod = response.payment_method
-          ? response.payment_method.charAt(0).toUpperCase() +
-            response.payment_method.slice(1).toLowerCase()
-          : "";
-        setValue("payment_method", paymentMethod);
         // setValue("attachment", response.attachment);
-        setValue("school_year", response.school_year);
         setValue("status", response.status);
       }
     } catch (err) {
@@ -73,17 +69,7 @@ export const EditExpenses = () => {
     }
   };
 
-  const getSchoolYearLevel = async () => {
-    try {
-      const response = await fetchSchoolYear();
-      setSchoolYear(response);
-    } catch (error) {
-      setError(error);
-    }
-  };
-
   useEffect(() => {
-    getSchoolYearLevel();
     getExpenseCategory();
     getSchoolExpenseById();
   }, [id]);
@@ -92,27 +78,23 @@ export const EditExpenses = () => {
     try {
       setLoading(true);
       setApiError("");
-      const payload = {
-        ...data,
-        payment_method: data.payment_method
-          ? data.payment_method.toLowerCase()
-          : "",
-      };
       const formData = new FormData();
-      Object.keys(payload).forEach((key) => {
-        formData.append(key, payload[key]);
+      Object.keys(data).forEach((key) => {
+        if (key !== "attachment") {
+          formData.append(key, data[key]);
+        }
       });
 
-      if (payload.attachment instanceof File) {
-        formData.append("attachment", payload.attachment);
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
       }
-      const response = await axios.put(
+      const response = await axios.patch(
         `${constants.baseUrl}/d/School-Expense/${id}/`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            "Authorization": `Bearer ${access}`,
+            Authorization: `Bearer ${access}`,
           },
         }
       );
@@ -124,11 +106,6 @@ export const EditExpenses = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
   };
 
   return (
@@ -151,36 +128,6 @@ export const EditExpenses = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Category Selection */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
-                  School Year <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("school_year", {
-                  required: "Category is required",
-                })}
-              >
-                <option value="">Select School Year</option>
-                {schoolYear?.map(
-                  (year) =>
-                    year && (
-                      <option key={year.id} value={year.id}>
-                        {year.year_name}
-                      </option>
-                    )
-                )}
-              </select>
-              {errors.category && (
-                <p className="text-error text-sm mt-1">
-                  {errors.category.message}
-                </p>
-              )}
-            </div>
             {/* Category Selection */}
             <div className="form-control">
               <label className="label">
@@ -255,6 +202,7 @@ export const EditExpenses = () => {
                 </p>
               )}
             </div>
+
             {/* Expense Field */}
             <div className="form-control">
               <label className="label">
@@ -276,37 +224,6 @@ export const EditExpenses = () => {
                 </p>
               )}
             </div>
-            {/* Payment method */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  Payment Modes <span className="text-error"></span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("payment_method", {
-                  required: "payment_method is required",
-                })}
-              >
-                <option value="">Select Payment Mode</option>
-                {paymentModes?.map(
-                  (modes, idx) =>
-                    modes && (
-                      <option key={idx} value={modes}>
-                        {modes}
-                      </option>
-                    )
-                )}
-              </select>
-              {errors.expense_date && (
-                <p className="text-error text-sm mt-1">
-                  {errors.expense_date.message}
-                </p>
-              )}
-            </div>
-
             {/* Status */}
             <div className="form-control">
               <label className="label">
@@ -350,7 +267,6 @@ export const EditExpenses = () => {
                 <input
                   type="file"
                   className="file-input file-input-bordered w-full focus:outline-none"
-                  {...register("attachment")}
                   onChange={handleFileChange}
                 />
               ) : (
