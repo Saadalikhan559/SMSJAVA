@@ -40,7 +40,7 @@ const LoginModal = ({ onClose }) => {
             Our doors are always open to curious minds and passionate learners.
           </p>
           <button 
-            className="mt-6 px-6 py-2 bgTheme text-white rounded-lg  transition-colors"
+            className="mt-6 px-6 py-2 btn bgTheme btn-primary w-full"
             onClick={onClose}
           >
             Let's Begin
