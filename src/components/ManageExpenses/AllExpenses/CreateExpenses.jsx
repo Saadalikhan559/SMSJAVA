@@ -119,7 +119,7 @@ const onSubmit = async (data) => {
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">
           Create Expense
-          <i className="fa-solid fa-percentage ml-2"></i>
+          <i className="fa-solid fa-receipt ml-2"></i>
         </h1>
 
         {/* Display API error message */}
@@ -134,18 +134,18 @@ const onSubmit = async (data) => {
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Category Selection */}
+            {/* School Year Selection */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-calendar-days text-sm"></i>
                   School Year <span className="text-error">*</span>
                 </span>
               </label>
               <select
                 className="select select-bordered w-full focus:outline-none"
                 {...register("school_year", {
-                  required: "Category is required",
+                  required: "School Year is required",
                 })}
               >
                 <option value="">Select School Year</option>
@@ -158,9 +158,9 @@ const onSubmit = async (data) => {
                     )
                 )}
               </select>
-              {errors.category && (
+              {errors.school_year && (
                 <p className="text-error text-sm mt-1">
-                  {errors.category.message}
+                  {errors.school_year.message}
                 </p>
               )}
             </div>
@@ -169,7 +169,7 @@ const onSubmit = async (data) => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-tags text-sm"></i>
                   Category <span className="text-error">*</span>
                 </span>
               </label>
@@ -198,7 +198,7 @@ const onSubmit = async (data) => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-money-bill-wave text-sm"></i>
                   Amount <span className="text-error">*</span>
                 </span>
               </label>
@@ -256,12 +256,12 @@ const onSubmit = async (data) => {
               )}
             </div>
 
-            {/* Expense Field */}
+            {/* Expense Date Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  Expense Date <span className="text-error"></span>
+                  <i className="fa-solid fa-calendar-day text-sm"></i>
+                  Expense Date <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -277,18 +277,19 @@ const onSubmit = async (data) => {
                 </p>
               )}
             </div>
+
             {/* Payment method */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  Payment Modes <span className="text-error"></span>
+                  <i className="fa-solid fa-credit-card text-sm"></i>
+                  Payment Method <span className="text-error">*</span>
                 </span>
               </label>
               <select
                 className="select select-bordered w-full focus:outline-none"
                 {...register("payment_method", {
-                  required: "payment_method is required",
+                  required: "Payment method is required",
                 })}
               >
                 <option value="">Select Payment Mode</option>
@@ -301,19 +302,20 @@ const onSubmit = async (data) => {
                     )
                 )}
               </select>
-              {errors.expense_date && (
+              {errors.payment_method && (
                 <p className="text-error text-sm mt-1">
-                  {errors.expense_date.message}
+                  {errors.payment_method.message}
                 </p>
               )}
             </div>
           </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Description Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-align-left text-sm"></i>
                   Description <span className="text-error"></span>
                 </span>
               </label>

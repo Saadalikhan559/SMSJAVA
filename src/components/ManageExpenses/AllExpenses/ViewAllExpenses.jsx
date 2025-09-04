@@ -358,7 +358,7 @@ export const ViewAllExpenses = () => {
                           rel="noopener noreferrer"
                           className="textTheme font-bold"
                         >
-                          Open Image
+                          Open Attachment
                         </a>
                       ) : (
                         <span>Upload Attachment</span>
