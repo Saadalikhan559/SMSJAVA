@@ -101,10 +101,11 @@ export const SchoolIncome = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">
-          <i className="fa-solid fa-money-bill-wave"></i> School Income Records
-        </h2>
-
+         <div className="mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
+           <i className="fa-solid fa-money-bill-wave"></i> School Income Records
+          </h1>  </div>
+       
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="flex space-x-2">
@@ -116,7 +117,7 @@ export const SchoolIncome = () => {
         ) : (
           <>
             {/* Filters */}
-            <div className="mb-4 flex gap-4 flex-wrap">
+            <div className="mb-4 flex gap-4 flex-wrap border-b pb-2">
               <div>
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Select Month:

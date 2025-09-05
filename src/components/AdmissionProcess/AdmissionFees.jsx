@@ -257,7 +257,7 @@ export const AdmissionFees = () => {
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
+                razorpay_signature_id: response.razorpay_signature,
                 student_id: parseInt(student_id),
                 month,
                 year_level_fees,
