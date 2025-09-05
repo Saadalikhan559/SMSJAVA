@@ -92,7 +92,6 @@ export const PaySalaryExpense = () => {
         setValue("payment_method", salary.payment_method);
         setValue("paid_by", salary.paid_by);
         setValue("remarks", salary.remarks);
-        setValue("status", salary.status || "Not available");
       }
     } catch (error) {
       setError(error?.response?.message || "Failed to fetch salary data");
@@ -147,6 +146,7 @@ export const PaySalaryExpense = () => {
     try {
       setLoading(true);
       setApiError("");
+      const formData = new formData();
       const response = await axios.post(
         `${constants.baseUrl}/d/Employee-salary/`
       );
@@ -260,22 +260,6 @@ export const PaySalaryExpense = () => {
                   {errors.month.message}
                 </p>
               )}
-            </div>
-
-            {/* Status */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-circle-check text-sm"></i>
-                  Status
-                </span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full focus:outline-none bg-gray-100"
-                disabled
-                {...register("status")}
-              />
             </div>
 
             {/* Gross Amount Selection */}

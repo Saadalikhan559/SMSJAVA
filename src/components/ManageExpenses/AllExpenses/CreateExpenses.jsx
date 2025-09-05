@@ -60,59 +60,105 @@ export const CreateExpenses = () => {
     getExpenseCategory();
   }, []);
 
-const onSubmit = async (data) => {
-  try {
-    setLoading(true);
-    setApiError("");
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      setApiError("");
 
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key !== "attachment") {
-        formData.append(key, data[key]);
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        if (key !== "attachment") {
+          formData.append(key, data[key]);
+        }
+      });
+
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
       }
-    });
 
-    if (selectedFile) {
-      formData.append("attachment", selectedFile);
-    }
-
-    // normalize payment_method if needed
-    if (data.payment_method) {
-      formData.set("payment_method", data.payment_method.toLowerCase());
-    }
-
-    const response = await axios.post(
-      `${constants.baseUrl}/d/School-Expense/`,
-      formData, // ✅ send FormData instead of payload
-      {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
+      if (data.payment_method) {
+        formData.set("payment_method", data.payment_method.toLowerCase());
       }
-    );
 
-    if (response.status === 200 || response.status === 201) {
-      modalRef.current?.show();
-    }
-  } catch (error) {
-    if (error.response?.data) {
-      const errors = error.response.data;
-      if (errors.non_field_errors) {
-        setApiError(errors.non_field_errors.join(" "));
+      if (data.payment_method.toLowerCase() === "online") {
+        const orderResponse = await axios.post(
+          `${constants.baseUrl}/d/School-Expense/initiate-expense-payment/`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        const { id: order_id, amount, currency } = orderResponse.data;
+
+        const options = {
+          key: "rzp_test_4h2aRSAPbYw3f8",
+          amount: amount * 100,
+          currency,
+          name: "School Expense",
+          description: data.description,  
+          order_id,
+          handler: async function (response) {
+            await axios.post(
+              `${constants.baseUrl}/confirm-expense-payment/`,
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              {
+                headers: { Authorization: `Bearer ${access}` },
+              }
+            );
+
+            modalRef.current?.show();
+          },
+          prefill: {
+            name: data.name || "Test User",
+            email: data.email || "test@example.com",
+            contact: data.contact || "9876543210",
+          },
+          theme: { color: constants.bgTheme },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
       } else {
-        const fieldErrors = Object.entries(errors)
-          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
-          .join(" | ");
-        setApiError(fieldErrors);
-      }
-    } else {
-      setApiError("An unexpected error occurred.");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+        const response = await axios.post(
+          `${constants.baseUrl}/d/School-Expense/`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
+        if (response.status === 200 || response.status === 201) {
+          modalRef.current?.show();
+        }
+      }
+    } catch (error) {
+      if (error.response?.data) {
+        const errors = error.response.data;
+        if (errors.non_field_errors) {
+          setApiError(errors.non_field_errors.join(" "));
+        } else {
+          const fieldErrors = Object.entries(errors)
+            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+            .join(" | ");
+          setApiError(fieldErrors);
+        }
+      } else {
+        setApiError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
@@ -309,7 +355,7 @@ const onSubmit = async (data) => {
               )}
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Description Field */}
             <div className="form-control">
