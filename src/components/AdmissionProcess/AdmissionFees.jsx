@@ -220,13 +220,13 @@ export const AdmissionFees = () => {
   };
 
   const allMonths = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
   ];
 
-  const paymentModes = 
+  const paymentModes =
     role === constants.roles.officeStaff || constants.roles.director
-      ? ["Cash","Cheque","Online"]
+      ? ["Cash", "Cheque", "Online"]
       : ["Online"];
 
   const displayRazorpay = async (payload) => {
@@ -369,7 +369,7 @@ export const AdmissionFees = () => {
       </div>
     );
   };
-    if (apiError) {
+  if (apiError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
@@ -566,9 +566,16 @@ export const AdmissionFees = () => {
                                   {fee.fee_type}
                                 </h3>
                                 {
-                                  <div className="flex items-center gap-2 text-success">
+                                  // <div className="flex items-center gap-2 text-success">
+                                  //   <span>{fee.status}</span>
+                                  // </div>
+                                  <div
+                                    className={`flex items-center gap-2 ${fee.status === "Paid" ? "text-green-600" : "text-yellow-700"
+                                      }`}
+                                  >
                                     <span>{fee.status}</span>
                                   </div>
+
                                 }
                                 {fee.late_fee && (
                                   <p className="text-sm text-warning mt-1">
@@ -621,14 +628,14 @@ export const AdmissionFees = () => {
             availableFees.length === 0 &&
             selectedStudentId &&
             selectedMonth && (
-                    <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-      </div>
+              <div className="flex flex-col items-center justify-center min-h-screen">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+                  <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+                  <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                </div>
+                <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+              </div>
 
             )}
 
