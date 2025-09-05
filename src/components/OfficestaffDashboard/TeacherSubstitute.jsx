@@ -132,10 +132,12 @@ const TeacherSubstitute = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-            <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
-          </h2>
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
+         <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
+          </h1>
+        </div>
+        <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center  gap-4 mb-3 border-b pb-2">
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
             <input

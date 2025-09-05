@@ -26,6 +26,20 @@ const DiscountedStudents = () => {
 
   const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
 
+
+
+    const getYearLevels = async () => {
+        try {
+          const data = await fetchYearLevels();
+          setYearLevels(data);
+        } catch (err) {
+          console.error("Error fetching year levels:", err);
+        }
+      };
+  
+   useEffect(() => {
+      getYearLevels();
+    }, []);
   useEffect(() => {
     loadDiscounts();
   }, []);

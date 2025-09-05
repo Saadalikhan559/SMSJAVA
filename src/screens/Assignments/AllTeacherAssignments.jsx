@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { fetchAllTeacherAssignments, fetchSubAssignments } from "../../services/api/Api";
 
 const yearLevelMap = {
+
   1:"Pre Nursery",
   2: "Nursery",
   3: "LKG",
@@ -90,36 +91,39 @@ export const AllTeacherAssignments = () => {
   );
 
   return (
-    <div className="p-4">
-      {/* Tabs */}
-      <div className="flex justify-center border-b mb-6">
-        <button
-          className={`px-6 py-2 font-semibold ${activeTab === "teachers"
-            ? "border-b-2 border-[#5E35B1] textTheme"
-            : "text-gray-600"
+    <div className="min-h-screen p-5 bg-gray-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        {/* Tabs styled like AllStaff */}
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => setActiveTab("teachers")}
+            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
+              activeTab === "teachers"
+                ? "border-[#5E35B1] textTheme"
+                : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
-          onClick={() => setActiveTab("teachers")}
-        >
-          Teacher Assignments
-        </button>
-        <button
-          className={`px-6 py-2 font-semibold ${activeTab === "substitutes"
-            ? "border-b-2 border-[#5E35B1] textTheme"
-            : "text-gray-600"
+          >
+            <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teacher Assignments
+          </button>
+          <button
+            onClick={() => setActiveTab("substitutes")}
+            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
+              activeTab === "substitutes"
+                ? "border-[#5E35B1] textTheme"
+                : "border-transparent text-gray-600 hover:text-[#5E35B1]"
             }`}
-          onClick={() => setActiveTab("substitutes")}
-        >
-          Substitute Assignments
-        </button>
-      </div>
+          >
+            <i className="fa-solid fa-user-clock mr-2 text-3xl"></i> Substitute Assignments
+          </button>
+        </div>
 
-      {/* Teacher Assignments */}
-      {activeTab === "teachers" && (
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-              Teacher Assignments
+        {/* Teacher Assignments */}
+        {activeTab === "teachers" && (
+          <>
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 text-center mb-6">
+              <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teacher Assignments
             </h2>
+
             <input
               type="text"
               placeholder="Search Teacher..."
@@ -183,60 +187,90 @@ export const AllTeacherAssignments = () => {
                           ))}
                         </ul>
                       </div>
-                    ))
-                  ) : (
-                    <ErrorMessage text="No current assignments" />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                      <progress
+                        className="progress progress-primary w-full"
+                        value={data.total_assigned_periods}
+                        max={data.max_periods_allowed}
+                      />
+                    </div>
 
-      {/* Substitute Assignments */}
-      {activeTab === "substitutes" && (
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-              Substitute Assignments
+                    {data.assignments.length > 0 ? (
+                      data.assignments.map((assignment, idx) => (
+                        <div className="p-4" key={idx}>
+                          <h3 className="font-bold text-gray-700 mb-2 flex items-center">
+                            <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
+                              {assignment.year_level_name}
+                            </span>
+                          </h3>
+                          <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                            {assignment.periods.map((period, idx2) => (
+                              <li
+                                className="bg-gray-100 p-3 rounded-md border border-gray-200 flex justify-between"
+                                key={idx2}
+                              >
+                                <div>
+                                  <div className="font-medium text-gray-800">{period.subject_name}</div>
+                                  <div className="text-sm text-gray-600">{period.period_name}</div>
+                                </div>
+                                <div className="text-right text-sm font-semibold text-purple-600">
+                                  {period.start_time} - {period.end_time}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    ) : (
+                      <ErrorMessage text="No current assignments" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Substitute Assignments */}
+        {activeTab === "substitutes" && (
+          <>
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 text-center mb-6">
+              <i className="fa-solid fa-user-clock mr-2 text-3xl"></i> Substitute Assignments
             </h2>
-          </div>
-
-          {subLoading ? (
-            <Loader text="Loading substitute assignments..." />
-          ) : subError ? (
-            <ErrorMessage text="Failed to load substitute assignments, Try Again" />
-          ) : subAssignments.length === 0 ? (
-            <ErrorMessage text="No substitute assignments found" />
-          ) : (
-            <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
-              <table className="min-w-full table-fixed text-sm text-left text-gray-700">
-                <thead className="bgTheme text-white text-sm uppercase tracking-wide">
-                  <tr>
-                    <th className="px-6 py-3 w-[20%]">Date</th>
-                    <th className="px-6 py-3 w-[20%]">Absent Teacher</th>
-                    <th className="px-6 py-3 w-[20%]">Class</th>
-                    <th className="px-6 py-3 w-[20%]">Period</th>
-                    <th className="px-6 py-3 w-[20%]">Substitute Teacher</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-gray-200 bg-white">
-                  {subAssignments.map((a) => (
-                    <tr key={a.id} className="hover:bg-gray-50 transition-colors duration-200">
-                      <td className="px-6 py-3 text-nowrap">{a.date}</td>
-                      <td className="px-6 py-3 capitalize text-nowrap">{a.absent_teacher_name}</td>
-                      <td className="px-6 py-3 text-nowrap">{yearLevelMap[a.year_level] || `Class ${a.year_level}`}</td>
-                      <td className="px-6 py-3 text-nowrap capitalize">{a.period}</td>
-                      <td className="px-6 py-3 capitalize text-nowrap">{a.substitute_teacher_name}</td>
+            {subLoading ? (
+              <Loader text="Loading substitute assignments..." />
+            ) : subError ? (
+              <ErrorMessage text="Failed to load substitute assignments, Try Again" />
+            ) : subAssignments.length === 0 ? (
+              <ErrorMessage text="No substitute assignments found" />
+            ) : (
+              <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
+                <table className="min-w-full table-fixed text-sm text-left text-gray-700">
+                  <thead className="bgTheme text-white text-sm uppercase tracking-wide">
+                    <tr>
+                      <th className="px-6 py-3 w-[20%]">Date</th>
+                      <th className="px-6 py-3 w-[20%]">Absent Teacher</th>
+                      <th className="px-6 py-3 w-[20%]">Class</th>
+                      <th className="px-6 py-3 w-[20%]">Period</th>
+                      <th className="px-6 py-3 w-[20%]">Substitute Teacher</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+                  </thead>
+                  <tbody className="divide-gray-200 bg-white">
+                    {subAssignments.map((a) => (
+                      <tr key={a.id} className="hover:bg-gray-50 transition-colors duration-200">
+                        <td className="px-6 py-3 text-nowrap">{a.date}</td>
+                        <td className="px-6 py-3 capitalize text-nowrap">{a.absent_teacher_name}</td>
+                        <td className="px-6 py-3 text-nowrap">{yearLevelMap[a.year_level] || `Class ${a.year_level}`}</td>
+                        <td className="px-6 py-3 text-nowrap capitalize">{a.period}</td>
+                        <td className="px-6 py-3 capitalize text-nowrap">{a.substitute_teacher_name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
