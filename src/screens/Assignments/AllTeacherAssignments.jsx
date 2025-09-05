@@ -3,21 +3,22 @@ import { AuthContext } from "../../context/AuthContext";
 import { fetchAllTeacherAssignments, fetchSubAssignments } from "../../services/api/Api";
 
 const yearLevelMap = {
-  1: "Nursery",
-  2: "LKG",
-  3: "UKG",
-  4: "Class 1",
-  5: "Class 2",
-  6: "Class 3",
-  7: "Class 4",
-  8: "Class 5",
-  9: "Class 6",
-  10: "Class 7",
-  11: "Class 8",
-  12: "Class 9",
-  13: "Class 10",
-  14: "Class 11",
-  15: "Class 12",
+  1:"Pre Nursery",
+  2: "Nursery",
+  3: "LKG",
+  4: "UKG",
+  5: "Class 1",
+  6: "Class 2",
+  7: "Class 3",
+  8: "Class 4",
+  9: "Class 5",
+  10: "Class 6",
+  11: "Class 7",
+  12: "Class 8",
+  13: "Class 9",
+  14: "Class 10",
+  15: "Class 11",
+  16: "Class 12",
 };
 
 export const AllTeacherAssignments = () => {
