@@ -504,7 +504,8 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-percentage w-5"></i> Create
+                          <i className="fa-solid fa-tag"></i>
+                           Create
                           Discount
                         </Link>
                       </li>
@@ -521,7 +522,7 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-percentage w-5"></i>{" "}
+                         <i className="fa-solid fa-percentage w-5"></i> {" "}
                           Discounted Students
                         </Link>
                       </li>
@@ -549,7 +550,7 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                         <i className="fa-solid fa-money-check-dollar"></i>{" "}
                           View Total Expenses
                         </Link>
                       </li>
@@ -590,7 +591,7 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                          <i className="fa-solid fa-money-bills"></i>{" "}
                           View Total Income
                         </Link>
                       </li>
@@ -604,7 +605,7 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
+                          <i className="fa-solid fa-money-check-dollar"></i>{" "}
                           Create Income
                         </Link>
                       </li>
@@ -633,7 +634,7 @@ export const Sidebar = () => {
                           }
                           className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                         >
-                          <i className="fa-solid fa-money-bill-wave w-5"></i>
+                          <i className="fa-solid fa-vault"></i>
                           Create Salary
                         </Link>
                       </li>
