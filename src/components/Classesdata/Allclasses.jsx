@@ -58,9 +58,9 @@ const Allclasses = () => {
                     <i className="fa-solid fa-graduation-cap mr-2"></i> All Year Levels
                 </h1>
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-                        <thead className="bgTheme text-white text-center">
+                <div className="overflow-x-auto max-h-[70vh] rounded-lg">
+                    <table className="min-w-full table-auto  rounded-lg ">
+                        <thead className="bgTheme text-white text-center z-2 sticky top-0">
                             <tr>
                                 <th scope="col" className="px-4 py-3">S.NO</th>
                                 <th scope="col" className="px-4 py-3">Year Level</th>

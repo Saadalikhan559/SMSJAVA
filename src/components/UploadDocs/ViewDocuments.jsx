@@ -93,7 +93,7 @@ export const ViewDocuments = () => {
     doc.document_types_read.forEach(dt => {
       const type = dt.name.toLowerCase();
       grouped[key].docs[type] = doc.files.map(file =>
-        file.file.replace("http://localhost:7000", `${constants.baseUrl}`)
+        file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
       );
     });
   });
@@ -195,11 +195,11 @@ export const ViewDocuments = () => {
         )}
 
         {/* Table */}
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto max-h-[70vh]">
           <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow-sm rounded-lg">
+            <div className="shadow-sm rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white">
+                <thead className="bgTheme text-white z-2 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>

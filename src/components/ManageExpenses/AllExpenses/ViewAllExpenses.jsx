@@ -24,7 +24,7 @@ export const ViewAllExpenses = () => {
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [addCategory, setAddCategory] = useState("");
   const [apiError, setApiError] = useState("");
-  // Tabs + Edit/Delete form state
+
   const [activeTab, setActiveTab] = useState("Add");
   const [editCategoryId, setEditCategoryId] = useState("");
   const [editCategoryName, setEditCategoryName] = useState("");
@@ -33,13 +33,58 @@ export const ViewAllExpenses = () => {
   const confirmModalRef = useRef();
   const [deleteId, setDeleteId] = useState(null);
 
+  const [currentSchoolYearId, setCurrentSchoolYearId] = useState(null); // Add this line
+
   const access = JSON.parse(localStorage.getItem("authTokens"))?.access;
+
+  // const getSchoolYear = async () => {
+  //   try {
+  //     setError("");
+  //     const response = await fetchSchoolYear();
+  //     setSchoolYear(response);
+  //   } catch (err) {
+  //     console.error("Cannot get the school year:", err);
+  //     setError("Failed to load school years. Please try again later.");
+  //   }
+  // };
 
   const getSchoolYear = async () => {
     try {
       setError("");
       const response = await fetchSchoolYear();
       setSchoolYear(response);
+
+      // Get current date
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1; // 1 = January, 12 = December
+
+      // Find the current school year based on the current date
+      // School years typically run from August to July
+      let currentSchoolYearName;
+
+      if (currentMonth >= 8) {
+        // August (8) to December (12)
+        currentSchoolYearName = `${currentYear}-${currentYear + 1}`;
+      } else {
+        // January (1) to July (7)
+        currentSchoolYearName = `${currentYear - 1}-${currentYear}`;
+      }
+
+      // Find the school year object that matches the current school year name
+      const currentYearObj = response.find(
+        (year) => year.year_name === currentSchoolYearName
+      );
+
+      if (currentYearObj) {
+        setCurrentSchoolYearId(currentYearObj.id);
+      } else {
+        // Fallback: if exact match not found, try to find the most recent year
+        const currentYear = response.find((year) => year.is_current === true);
+        if (currentYear) {
+          setCurrentSchoolYearId(currentYear.id);
+        }
+      }
     } catch (err) {
       console.error("Cannot get the school year:", err);
       setError("Failed to load school years. Please try again later.");
@@ -149,8 +194,8 @@ export const ViewAllExpenses = () => {
     } catch (error) {
       setApiError(
         error?.response?.data?.detail ||
-        error?.message ||
-        "Error deleting expense"
+          error?.message ||
+          "Error deleting expense"
       );
     } finally {
       setLoading(false);
@@ -168,12 +213,11 @@ export const ViewAllExpenses = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-         <div className="mb-6">
+        <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
-          <i className="fa-solid fa-money-bill-wave mr-2"></i> Total Expenses
+            <i className="fa-solid fa-money-bill-wave mr-2"></i> Total Expenses
           </h1>
         </div>
-
 
         {/* Display API error message */}
         {apiError && (
@@ -240,9 +284,9 @@ export const ViewAllExpenses = () => {
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto rounded-lg">
+        <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
           <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bgTheme text-white">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                   Category
@@ -301,19 +345,34 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.payment_method}
                     </td>
-                    <td
-                      className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs"
-                      title={expense.attachment}
-                    >
-                      {expense.attachment}
+                    <td className="px-4 py-3 text-sm truncate max-w-xs">
+                      {expense.attachment ? (
+                        <a
+                          href={`${
+                            constants.baseUrl
+                          }${expense.attachment.replace(
+                            /^http:\/\/localhost:8000/,
+                            ""
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="textTheme font-bold"
+                        >
+                          Open Image
+                        </a>
+                      ) : (
+                        <span>Upload Attachment</span>
+                      )}
                     </td>
+
                     <td className="px-4 py-3 text-sm">
                       <span
                         className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border
-              ${expense.status === "pending"
-                            ? "text-yellow-700 bg-yellow-50 border-yellow-300"
-                            : "text-green-700 bg-green-50 border-green-300"
-                          }`}
+              ${
+                expense.status === "pending"
+                  ? "text-yellow-700 bg-yellow-50 border-yellow-300"
+                  : "text-green-700 bg-green-50 border-green-300"
+              }`}
                       >
                         {expense.status}
                       </span>
@@ -329,24 +388,45 @@ export const ViewAllExpenses = () => {
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">
-                        <Link
-                          to={allRouterLink.editExpenses.replace(
-                            ":id",
-                            expense.id
-                          )}
-                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setDeleteId(expense.id);
-                            confirmModalRef.current.show();
-                          }}
-                          className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
+                        {/* Edit Button */}
+                        {expense.school_year === currentSchoolYearId ? (
+                          <Link
+                            to={allRouterLink.editExpenses.replace(
+                              ":id",
+                              expense.id
+                            )}
+                            className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                          >
+                            Edit
+                          </Link>
+                        ) : (
+                          <button
+                            disabled
+                            className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
+                          >
+                            Edit
+                          </button>
+                        )}
+
+                        {/* Delete Button */}
+                        {expense.school_year === currentSchoolYearId ? (
+                          <button
+                            onClick={() => {
+                              setDeleteId(expense.id);
+                              confirmModalRef.current.show();
+                            }}
+                            className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                          >
+                            Delete
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -392,10 +472,11 @@ export const ViewAllExpenses = () => {
                     setActiveTab(tab);
                     setApiError("");
                   }}
-                  className={`px-4 py-2 -mb-px font-medium ${activeTab === tab
-                    ? "border-b-2 border-blue-600 text-blue-700"
-                    : "text-gray-500 hover:text-gray-700"
-                    }`}
+                  className={`px-4 py-2 -mb-px font-medium ${
+                    activeTab === tab
+                      ? "border-b-2 border-blue-600 text-blue-700"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
                 >
                   {tab}
                 </button>

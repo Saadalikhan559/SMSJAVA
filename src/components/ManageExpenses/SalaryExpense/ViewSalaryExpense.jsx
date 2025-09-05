@@ -11,11 +11,11 @@ import { AuthContext } from "../../../context/AuthContext";
 export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
 
-
+  const userRole = localStorage.getItem("userRole");
 
   // const {authTokens} = useContext(AuthContext);
   // const access = authTokens.access;
-  const authTokens = JSON.parse(localStorage.getItem('authTokens'));
+  const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const access = authTokens.access;
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -110,9 +110,9 @@ export const ViewSalaryExpense = () => {
         )}
 
         {/* Table */}
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto max-h-[70vh]">
           <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bgTheme text-white">
+            <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                   Name
@@ -142,7 +142,12 @@ export const ViewSalaryExpense = () => {
                       {expense.name}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                      {expense.role.map((r) => r)}
+                      {(typeof expense.role === "string"
+                        ? [expense.role]
+                        : expense.role
+                      )
+                        .map((r) => r)
+                        .join(", ")}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {expense.joining_date}
@@ -152,21 +157,26 @@ export const ViewSalaryExpense = () => {
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">
-                        <Link
-                          to={allRouterLink.editSalaryExpense.replace(
-                            ":id",
-                            expense.id
-                          )}
-                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDeleteClick(expense.id)}
-                          className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
-                        >
-                          Delete
-                        </button>
+                        {constants.roles.director === userRole && (
+                          <>
+                            <Link
+                              to={allRouterLink.editSalaryExpense.replace(
+                                ":id",
+                                expense.id
+                              )}
+                              className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                            >
+                              Edit
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteClick(expense.id)}
+                              className="inline-flex items-center px-3 py-1  shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+
                         <Link
                           to={allRouterLink.paySalaryExpense.replace(
                             ":id",

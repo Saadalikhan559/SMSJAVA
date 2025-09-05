@@ -133,6 +133,8 @@ export const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
 
         {/* Receipt Content */}
         <div ref={receiptRef} className="space-y-3 text-sm">
+
+
           {/* Receipt Details */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Receipt Details</h3>
