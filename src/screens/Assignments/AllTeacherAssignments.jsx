@@ -3,21 +3,22 @@ import { AuthContext } from "../../context/AuthContext";
 import { fetchAllTeacherAssignments, fetchSubAssignments } from "../../services/api/Api";
 
 const yearLevelMap = {
-  1: "Nursery",
-  2: "LKG",
-  3: "UKG",
-  4: "Class 1",
-  5: "Class 2",
-  6: "Class 3",
-  7: "Class 4",
-  8: "Class 5",
-  9: "Class 6",
-  10: "Class 7",
-  11: "Class 8",
-  12: "Class 9",
-  13: "Class 10",
-  14: "Class 11",
-  15: "Class 12",
+  1:"Pre Nursery",
+  2: "Nursery",
+  3: "LKG",
+  4: "UKG",
+  5: "Class 1",
+  6: "Class 2",
+  7: "Class 3",
+  8: "Class 4",
+  9: "Class 5",
+  10: "Class 6",
+  11: "Class 7",
+  12: "Class 8",
+  13: "Class 9",
+  14: "Class 10",
+  15: "Class 11",
+  16: "Class 12",
 };
 
 export const AllTeacherAssignments = () => {
@@ -141,9 +142,13 @@ export const AllTeacherAssignments = () => {
                   key={data.teacher_id}
                   className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl bg-white"
                 >
-                  <div className="p-4 bgTheme text-white">
+                  <div className="p-4 bgTheme text-white flex justify-between items-center">
                     <h2 className="text-xl font-bold truncate capitalize">{data.teacher_name}</h2>
+                    <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">
+                      {data.assignments.length > 0 ? data.assignments[0].year_level_name : ""}
+                    </span>
                   </div>
+
                   <div className="p-4 border-b">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium">Periods Assigned:</span>
@@ -159,11 +164,6 @@ export const AllTeacherAssignments = () => {
                   {data.assignments.length > 0 ? (
                     data.assignments.map((assignment, idx) => (
                       <div className="p-4" key={idx}>
-                        <h3 className="font-bold text-gray-700 mb-2 flex items-center">
-                          <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
-                            {assignment.year_level_name}
-                          </span>
-                        </h3>
                         <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
                           {assignment.periods.map((period, idx2) => (
                             <li
@@ -173,6 +173,8 @@ export const AllTeacherAssignments = () => {
                               <div>
                                 <div className="font-medium text-gray-800">{period.subject_name}</div>
                                 <div className="text-sm text-gray-600">{period.period_name}</div>
+                                <div className="text-sm text-gray-600 capitalize">{period.year_level_name}</div>
+
                               </div>
                               <div className="text-right text-sm font-semibold text-purple-600">
                                 {period.start_time} - {period.end_time}

@@ -139,28 +139,28 @@ export const ViewDocuments = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
-         <div className="mb-4">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
             <i className="fa-solid fa-folder-open"></i> Uploaded Documents
           </h1>
         </div>
-       
+
 
         {/* Teacher options */}
-    {userRole === "teacher" && (
-  <div className="mb-4 flex gap-4 items-center border-b pb-2">
-    <div>
-      <select
-        value={viewOption}
-        onChange={(e) => setViewOption(e.target.value)}
-        className="border p-2 rounded"
-      >
-        <option value="my">My Documents</option>
-        <option value="assigned">Assigned Class Documents</option>
-      </select>
-    </div>
-  </div>
-)}
+        {userRole === "teacher" && (
+          <div className="mb-4 flex gap-4 items-center border-b pb-2">
+            <div>
+              <select
+                value={viewOption}
+                onChange={(e) => setViewOption(e.target.value)}
+                className="border p-2 rounded"
+              >
+                <option value="my">My Documents</option>
+                <option value="assigned">Assigned Class Documents</option>
+              </select>
+            </div>
+          </div>
+        )}
 
 
 
@@ -216,15 +216,25 @@ export const ViewDocuments = () => {
                       <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.role}</td>
                       {userRole !== "student" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.yearLevel || "-"}</td>}
                       {allDocTypes.map(type => (
-                        <td key={type} className="px-4 py-3 text-sm text-blue-700">
-                          {person.docs[type] ? person.docs[type].map((url, i) => (
-                            <div key={i} className="max-w-[150px] truncate">
-                              <Link to={url} target="_blank" rel="noreferrer" className="underline textTheme hover:text-blue-800 truncate block" title={url.split("/").pop()}>
-                                {url.split("/").pop()}
-                              </Link>
-                            </div>
-                          )) : "-"}
+                        <td key={type} className="px-4 py-3 text-sm text-blue-600">
+                          {person.docs[type] && person.docs[type].length > 0 ? (
+                            person.docs[type].map((url, i) => (
+                              <div key={i}>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="underline textTheme hover:text-blue-800"
+                                >
+                                  View
+                                </a>
+                              </div>
+                            ))
+                          ) : (
+                            "-"
+                          )}
                         </td>
+
                       ))}
                     </tr>
                   ))}
