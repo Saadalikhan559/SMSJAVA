@@ -2,21 +2,22 @@ import React, { useState, useEffect } from "react";
 import { fetchAbsentTeachers, assignSubstitute } from "../../services/api/Api";
 
 const YEAR_LEVEL_MAP = {
-  "class 12": 15,
-  "class 11": 14,
-  "class 10": 13,
-  "class 9": 12,
-  "class 8": 11,
-  "class 7": 10,
-  "class 6": 9,
-  "class 5": 8,
-  "class 4": 7,
-  "class 3": 6,
-  "class 2": 5,
-  "class 1": 4,
-  UKG: 3,
-  LKG: 2,
-  Nursery: 1,
+  "Pre Nursery":1,
+  "Nursery": 2,
+  "LKG": 3,
+  "UKG": 4,
+  "class 1": 5,
+  "class 2": 6,
+  "class 3": 7,
+  "class 4": 8,
+  "class 5": 9,
+  "class 6": 10,
+  "class 7": 11,
+  "class 8": 12,
+  "class 9": 13,
+  "class 10": 14,
+  "class 11": 15,
+  "class 12": 16,
 };
 
 const TeacherSubstitute = () => {
@@ -131,10 +132,12 @@ const TeacherSubstitute = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center gap-2">
-            <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
-          </h2>
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
+         <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
+          </h1>
+        </div>
+        <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center  gap-4 mb-3 border-b pb-2">
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
             <input

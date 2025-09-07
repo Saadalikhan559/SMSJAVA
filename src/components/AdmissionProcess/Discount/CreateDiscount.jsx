@@ -188,7 +188,7 @@ const CreateDiscount = () => {
                 </span>
               </label>
               <select
-                className="select select-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="select select-bordered w-full focus:outline-none"
                 value={formData.student_id}
                 onChange={(e) => handleChange("student_id", e.target.value)}
                 disabled={!classId}
@@ -220,7 +220,7 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="input input-bordered w-full focus:outline-none"
                 placeholder="e.g. 100"
                 value={formData.admission_fee_discount}
                 onChange={(e) =>
@@ -239,7 +239,7 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+                className="input input-bordered w-full focus:outline-none"
                 placeholder="e.g. 500"
                 value={formData.tuition_fee_discount}
                 onChange={(e) =>
@@ -258,7 +258,7 @@ const CreateDiscount = () => {
               </span>
             </label>
             <textarea
-              className="textarea textarea-bordered w-full focus:outline-none focus:ring-2 focus:ring-primary"
+              className="textarea textarea-bordered w-full focus:outline-none"
               placeholder="e.g. Sibling concession"
               rows={3}
               value={formData.discount_reason}
@@ -293,7 +293,7 @@ const CreateDiscount = () => {
               <p className="py-4">{alertMessage}</p>
               <div className="modal-action">
                 <button
-                  className="btn btn-primary"
+                  className="btn bgTheme text-white w-30"
                   onClick={() => setShowAlert(false)}
                 >
                   OK

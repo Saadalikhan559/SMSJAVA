@@ -174,9 +174,7 @@ const EditDiscount = () => {
             >
               {submitLoading ? (
                 <div className="flex space-x-2 justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full animate-bounce"></div>
-                  <div className="w-3 h-3 bg-white rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-                  <div className="w-3 h-3 bg-white rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 </div>
               ) : (
                 <>
@@ -196,7 +194,7 @@ const EditDiscount = () => {
                 Student’s discount record has been successfully updated.
               </p>
               <div className="modal-action">
-                <button className="btn btn-primary w-25" onClick={closeModal}>
+                <button className="btn bgTheme text-white w-25" onClick={closeModal}>
                   OK
                 </button>
               </div>
