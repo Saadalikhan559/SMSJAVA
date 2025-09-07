@@ -1,49 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { createSchoolIncome, fetchSchoolYear, fetchIncomeCategories } from "../../services/api/Api";
+import { SuccessModal } from "../Modals/SuccessModal";
 
 const CreateIncome = () => {
   const [schoolYears, setSchoolYears] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const modalRef = useRef();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
-  // Months list
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December",
   ];
 
-  // Category map
-  const categoryMap = {
-    1: "Monthly Fees",
-    2: "Govt Fund",
-    3: "Hostel Rent",
-    4: "Canteen Rent",
-  };
-
-  // Fetch school years
   const getSchoolYears = async () => {
     try {
       const res = await fetchSchoolYear();
       setSchoolYears(res);
     } catch (err) {
-      console.error("Failed to load school years:", err);
+      console.error(err);
       alert("Failed to load school years");
     }
   };
@@ -53,18 +36,16 @@ const CreateIncome = () => {
       const res = await fetchIncomeCategories();
       setCategories(res);
     } catch (err) {
-      console.error("Failed to load categories:", err);
+      console.error(err);
       alert("Failed to load income categories");
     }
   };
-
 
   useEffect(() => {
     getSchoolYears();
     getCategories();
   }, []);
 
-  // On Submit
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("month", data.month);
@@ -81,60 +62,55 @@ const CreateIncome = () => {
     }
 
     try {
-      const res = await createSchoolIncome(formData);
-      console.log("Income created:", res);
-      alert("Income created successfully!");
+      setLoading(true);
+      await createSchoolIncome(formData);
+      modalRef.current.show();
       reset();
     } catch (error) {
-      console.error("Error creating income:", error);
-
-      // backend errors
-      if (error.response?.data?.non_field_errors) {
-        alert(`${error.response.data.non_field_errors.join(", ")}`);
-      } else if (error.response?.data) {
-        alert(`${JSON.stringify(error.response.data)}`);
-      } else {
-        alert("Failed to create income. Please try again.");
-      }
+      console.error(error);
+      alert("Failed to create income. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-3xl font-bold text-center mb-8">
-            Add School Income <i className="fa-solid fa-sack-dollar ml-2"></i>
-          </h1>
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Add School Income <i className="fa-solid fa-sack-dollar ml-2"></i>
+        </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
             {/* Month */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Month *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-calendar-days text-sm"></i>
+                  Month <span className="text-error">*</span>
+                </span>
               </label>
               <select
                 {...register("month", { required: "Month is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Month</option>
                 {months.map((m, idx) => (
-                  <option key={idx} value={m}>
-                    {m}
-                  </option>
+                  <option key={idx} value={m}>{m}</option>
                 ))}
               </select>
-              {errors.month && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.month.message}
-                </p>
-              )}
+              {errors.month && <p className="text-error text-sm mt-1">{errors.month.message}</p>}
             </div>
 
             {/* Amount */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Amount *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-sack-dollar text-sm"></i>
+                  Amount <span className="text-error">*</span>
+                </span>
               </label>
               <input
                 type="number"
@@ -143,160 +119,152 @@ const CreateIncome = () => {
                   required: "Amount is required",
                   min: { value: 1, message: "Amount must be greater than 0" },
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.amount && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.amount.message}
-                </p>
-              )}
+              {errors.amount && <p className="text-error text-sm mt-1">{errors.amount.message}</p>}
             </div>
 
             {/* Income Date */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Income Date *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-calendar-days text-sm"></i>
+                  Income Date <span className="text-error">*</span>
+                </span>
               </label>
               <input
                 type="date"
                 {...register("income_date", { required: "Income date is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.income_date && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.income_date.message}
-                </p>
-              )}
+              {errors.income_date && <p className="text-error text-sm mt-1">{errors.income_date.message}</p>}
             </div>
 
             {/* Category */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-list text-sm"></i>
+                  Category <span className="text-error">*</span>
+                </span>
               </label>
               <select
                 {...register("category", { required: "Category is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
-
-              {errors.category && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.category.message}
-                </p>
-              )}
+              {errors.category && <p className="text-error text-sm mt-1">{errors.category.message}</p>}
             </div>
 
             {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-pen text-sm"></i>
+                  Description
+                </span>
               </label>
               <input
                 type="text"
                 placeholder="Description"
                 {...register("description")}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="input input-bordered w-full focus:outline-none"
               />
             </div>
 
             {/* School Year */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                School Year *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-school text-sm"></i>
+                  School Year <span className="text-error">*</span>
+                </span>
               </label>
               <select
                 {...register("school_year", { required: "School year is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select School Year</option>
-                {schoolYears?.map((year) => (
-                  <option key={year.id} value={year.id}>
-                    {year.year_name}
-                  </option>
+                {schoolYears.map((year) => (
+                  <option key={year.id} value={year.id}>{year.year_name}</option>
                 ))}
               </select>
-              {errors.school_year && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.school_year.message}
-                </p>
-              )}
+              {errors.school_year && <p className="text-error text-sm mt-1">{errors.school_year.message}</p>}
             </div>
 
             {/* Payment Method */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Payment Method *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-credit-card text-sm"></i>
+                  Payment Method <span className="text-error">*</span>
+                </span>
               </label>
               <select
                 {...register("payment_method", { required: "Payment method is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="cash">Cash</option>
                 <option value="bank">Bank</option>
                 <option value="online">Online</option>
               </select>
-              {errors.payment_method && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.payment_method.message}
-                </p>
-              )}
+              {errors.payment_method && <p className="text-error text-sm mt-1">{errors.payment_method.message}</p>}
             </div>
 
             {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status *
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-circle-check text-sm"></i>
+                  Status <span className="text-error">*</span>
+                </span>
               </label>
               <select
                 {...register("status", { required: "Status is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="confirmed">Confirmed</option>
                 <option value="pending">Pending</option>
               </select>
-              {errors.status && (
-                <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
-              )}
+              {errors.status && <p className="text-error text-sm mt-1">{errors.status.message}</p>}
             </div>
 
             {/* Attachment */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Attachment (optional)
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-paperclip text-sm"></i>
+                  Attachment
+                </span>
               </label>
               <input
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
                 {...register("attachment")}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="file-input file-input-bordered w-full focus:outline-none"
               />
             </div>
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-center mt-10">
+          <div className="flex justify-center pt-6">
             <button
               type="submit"
-              className="btn text-white bgTheme w-52"
-              disabled={isSubmitting}
+              className="btn bgTheme text-white w-52"
+              disabled={loading}
             >
-              {isSubmitting ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2" />
-              ) : (
-                <i className="fa-solid fa-save mr-2" />
-              )}
-              {isSubmitting ? "Saving..." : "Save Income"}
+              {loading ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> :
+                         <i className="fa-solid fa-save mr-2"></i>}
+              {loading ? "Saving..." : "Save Income"}
             </button>
           </div>
         </form>
       </div>
+      <SuccessModal ref={modalRef} />
     </div>
   );
 };
