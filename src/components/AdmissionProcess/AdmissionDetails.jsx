@@ -57,7 +57,8 @@ export const AdmissionDetails = () => {
   if (!details) {
     return <div className="p-4 text-center">No admission records found</div>;
   }
-
+ console.log(details);
+ 
 
   const filterData = details.filter((detail) =>
     detail.year_level.toLowerCase().includes(selectedClass.toLowerCase())

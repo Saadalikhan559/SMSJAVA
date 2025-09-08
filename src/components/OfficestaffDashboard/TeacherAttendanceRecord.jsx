@@ -102,28 +102,30 @@ const TeacherAttendanceRecord = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
-         <div className="mb-4">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
             <i className="fa-solid fa-clipboard-list w-5"></i> Attendance Records
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
           <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+
             <input
-              type="text"
-              placeholder="Enter teacher name..."
-              value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
-              className="border px-3 py-2 rounded w-full sm:w-64"
-            />
-           
-          </div>
-           <input
               type="date"
               value={searchDate}
               onChange={(e) => setSearchDate(e.target.value)}
               className="border px-3 py-2 rounded w-full sm:w-64"
             />
+
+          </div>
+          <input
+            type="text"
+            placeholder="Enter teacher name..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="border px-3 py-2 rounded w-full sm:w-64"
+          />
+
         </div>
 
         <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">

@@ -176,11 +176,6 @@ export const AllTeacherAssignments = () => {
                     {data.assignments.length > 0 ? (
                       data.assignments.map((assignment, idx) => (
                         <div className="p-4" key={idx}>
-                          <h3 className="font-bold text-gray-700 mb-2 flex items-center">
-                            <span className="bg-blue-100 textTheme text-xs px-2 py-1 rounded mr-2">
-                              {assignment.year_level_name}
-                            </span>
-                          </h3>
                           <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
                             {assignment.periods.map((period, idx2) => (
                               <li
