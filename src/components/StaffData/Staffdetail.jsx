@@ -62,7 +62,7 @@ const Staffdetail = () => {
       <div className="p-6 bg-gray-100 w-full h-screen">
         <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
           <div className="bgTheme text-white px-4 py-2 rounded-t-md">
-            <h2 className="text-3xl font-semibold">
+            <h2 className="text-3xl font-semibold capitalize">
               Staff Profile - {staffData.first_name} {staffData.last_name}
             </h2>
           </div>
@@ -84,7 +84,7 @@ const Staffdetail = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-dm text-gray-700 mt-6">
-              <div>
+              <div className="capitalize">
                 <strong>Full Name:</strong><br />
                 {`${staffData.first_name} ${staffData.middle_name} ${staffData.last_name}`
                   .replace(/\s+/g, " ")
@@ -92,7 +92,7 @@ const Staffdetail = () => {
               </div>
               <div><strong>Email:</strong><br />{staffData.email || "N/A"}</div>
               <div><strong>Phone:</strong><br />{staffData.phone_no || "N/A"}</div>
-              <div><strong>Gender:</strong><br />{staffData.gender || "N/A"}</div>
+              <div className="capitalize"><strong>Gender:</strong><br />{staffData.gender || "N/A"}</div>
               <div><strong>Aadhar No:</strong><br />{staffData.aadhar_no || "N/A"}</div>
               <div><strong>PAN No:</strong><br />{staffData.pan_no || "N/A"}</div>
               <div><strong>Qualification:</strong><br />{staffData.qualification || "N/A"}</div>

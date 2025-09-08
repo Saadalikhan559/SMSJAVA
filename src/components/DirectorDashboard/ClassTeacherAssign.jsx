@@ -93,19 +93,74 @@ const ClassTeacherAssign = () => {
       }
     } catch (error) {
       const res = error.response?.data;
-      if (res?.error) {
-        setError("api", { message: res.error });
-      } else if (res?.detail) {
-        setError("api", { message: res.detail });
-      } else {
-        setError("api", { message: "Failed to assign class teacher" });
+
+      let errorMessage = "Failed to assign class teacher";
+
+      if (typeof res === "string") {
+        // agar plain string error hai
+        errorMessage = res;const handleSubmitForm = async (data) => {
+  const payload = {
+    teacher: data.teacher_id,
+    year_level: data.yearlevel_id,
+  };
+
+  setIsSubmitting(true);
+  try {
+    const response = await axios.post(
+      `${constants.baseUrl}/t/teacheryearlevel/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authTokens.access}`,
+        },
       }
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      alert("Class teacher assigned successfully!");
+      window.location.reload();
+    }
+  } catch (error) {
+    const res = error.response?.data;
+
+    let errorMessage = "Failed to assign class teacher";
+
+    if (typeof res === "string") {
+      // if simple string error
+      errorMessage = res;
+    } else if (res?.error) {
+      errorMessage = res.error;
+    } else if (res?.detail) {
+      errorMessage = res.detail;
+    } else if (typeof res === "object") {
+      // If multiple Fields Error
+      errorMessage = Object.values(res).flat().join(" | ");
+    }
+
+    setError("api", { message: errorMessage });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+      } else if (res?.error) {
+        errorMessage = res.error;
+      } else if (res?.detail) {
+        errorMessage = res.detail;
+      } else if (typeof res === "object") {
+       
+        errorMessage = Object.values(res).flat().join(" | ");
+      }
+
+      setError("api", { message: errorMessage });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // --- PAGE LOADER ---
+
+  // --- Loading---
   if (pageLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -119,7 +174,7 @@ const ClassTeacherAssign = () => {
     );
   }
 
-  // --- PAGE ERROR ---
+  // --- error ---
   if (pageError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
@@ -178,7 +233,7 @@ const ClassTeacherAssign = () => {
               </label>
               <select
                 {...register("teacher_id", { required: "Teacher is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full p-3 border border-gray-300 rounded-md"
                 onFocus={loadTeachers}
                 onChange={() => clearErrors(["teacher_id", "api"])}
               >
@@ -207,7 +262,7 @@ const ClassTeacherAssign = () => {
                 {...register("yearlevel_id", {
                   required: "Year level is required",
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full p-3 border border-gray-300 rounded-md"
                 onFocus={loadYearLevels}
                 onChange={() => clearErrors(["yearlevel_id", "api"])}
               >
@@ -235,9 +290,8 @@ const ClassTeacherAssign = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-              }`}
+              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                }`}
 
             >
               {isSubmitting ? (
