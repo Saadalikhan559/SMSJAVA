@@ -264,7 +264,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
                 Income record has been successfully updated.
               </p>
               <div className="modal-action">
-                <button className="btn btn-primary w-25" onClick={closeModal}>OK</button>
+                <button className="btn bgTheme text-white w-25" onClick={closeModal}>OK</button>
               </div>
             </div>
           </dialog>

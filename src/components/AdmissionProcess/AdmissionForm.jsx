@@ -37,6 +37,7 @@ export const AdmissionForm = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
     resetField,
   } = useForm({
     mode: "onChange",
@@ -247,7 +248,7 @@ useEffect(() => {
       await handleAdmissionForm(submitFormData);
       // Show success modal after successful submission
       setShowAdmissionSuccessModal(true);
-      formRef.current.reset();
+      reset();
       setSelectedGuardianType("");
       setIsRTE(false);
     } catch (error) {
