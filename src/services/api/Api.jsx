@@ -980,6 +980,37 @@ export const fetchIncomeCategories = async () => {
   }
 };
 
+// Notification api
+export const sendDueFeeNotifications = async () => {
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    if (!authTokens) throw new Error("No access token found. Please login.");
+
+    const accessToken = JSON.parse(authTokens).access;
+    if (!accessToken) throw new Error("Access token missing. Please login.");
+
+    console.log("Access Token:", accessToken); 
+
+    const response = await axios.get(
+      `${BASE_URL}/d/fee-record/student_unpaid_fees/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error(
+      "API sendDueFeeNotifications error:",
+      err.response?.data || err.message
+    );
+    throw err;
+  }
+};
+
 
 
 // POST APIS
@@ -1360,4 +1391,5 @@ export const fetchSchoolIncomeById = async (id) => {
     throw error;
   }
 };
+
 
