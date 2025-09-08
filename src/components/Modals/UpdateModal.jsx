@@ -10,17 +10,17 @@ const UpdateSuccessful = ({ handleCloseOnly, handleCloseAndNavigate }) => {
                     Profile Details Updated Successfully.
                 </p>
                 <div className="flex flex-col gap-3 justify-center px-4 md:flex-row md:items-center">
-                    <button
+                    {/* <button
                         className="btn border border-gray-400 text-gray-600 bg-transparent hover:bg-gray-100 min-w-[200px] text-sm"
                         onClick={handleCloseOnly}
                     >
                         OK
-                    </button>
+                    </button> */}
                     <button
-                        className="btn text-gray-600 bg-gray-100 hover:opacity-90 min-w-[200px] text-sm"
+                        className="btn border border-gray-400 text-gray-600 bg-transparent hover:bg-gray-100 min-w-[200px] text-sm"
                         onClick={handleCloseAndNavigate}
                     >
-                        Go to Profile
+                       OK
                     </button>
                 </div>
 

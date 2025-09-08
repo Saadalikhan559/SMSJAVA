@@ -446,7 +446,7 @@ if (loading) {
                   required: "Password is required",
                   maxLength: {
                     value: 100,
-                    message: "Password cannot exceed 100 characters",
+                    message: "Password cannot exceed 100 characters",  
                   },
                   pattern: {
                     value:
@@ -1751,8 +1751,8 @@ if (loading) {
                 {...register("banking_detail_input.ifsc_code", {
                   required: "IFSC code is required",
                   maxLength: {
-                    value: 225,
-                    message: "IFSC code cannot exceed 225 characters",
+                    value: 14,
+                    message: "IFSC code cannot exceed 14 characters",
                   },
                   pattern: {
                     // value: /^[A-Z]{4}0[A-Z0-9]{6}$/,

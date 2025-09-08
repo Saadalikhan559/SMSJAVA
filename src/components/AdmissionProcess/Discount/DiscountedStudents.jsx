@@ -168,8 +168,8 @@ const DiscountedStudents = () => {
               />
             </div>
 
-            <div className="w-full overflow-x-auto max-h-[70vh]  rounded-lg">
-              <table className="min-w-full divide-y   divide-gray-300  text-xs sm:text-sm  ">
+            <div className="w-full overflow-x-auto max-h-[70vh] no-scrollbar rounded-lg">
+              <table className="min-w-full divide-y divide-gray-300  text-xs sm:text-sm  ">
                 <thead className="bgTheme text-white z-2 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
