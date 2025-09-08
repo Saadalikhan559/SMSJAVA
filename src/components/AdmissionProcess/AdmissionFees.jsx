@@ -278,7 +278,7 @@ export const AdmissionFees = () => {
         },
         prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
         notes: { address: "Course Purchase" },
-        theme: { color: "#3399cc" },
+        theme: { color: "#5E35B1" },
       };
 
       const rzp = new window.Razorpay(options);
