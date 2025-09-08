@@ -316,6 +316,25 @@ export const DocumentUpload = () => {
           <li className={`step ${step >= 1 ? "step-primary" : ""}`}>Fill Form</li>
         </ul>
 
+        <style>
+        {`
+          
+          .steps .step.step-primary::before,
+          .steps .step.step-primary:before {
+            background-color: #6d28d9 !important; 
+            border-color: #6d28d9 !important;
+            color: #ffffff !important; 
+          }
+
+          .steps .step.step-primary {
+            color: #6d28d9 !important;
+          }
+
+          .steps .step.step-primary::after {
+            border-color: #6d28d9 !important;
+          }
+        `}
+      </style>
         {/* STEP 1 */}
         {step === 0 && (
           <div className="w-full max-w-6xl mx-auto p-6">

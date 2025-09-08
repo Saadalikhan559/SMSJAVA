@@ -1373,7 +1373,6 @@ export const deleteSchoolIncome = async (accessToken, id) => {
 
 
 
-
 export const fetchSchoolIncomeById = async (id) => {
   try {
     const authTokens = localStorage.getItem("authTokens");
