@@ -101,7 +101,7 @@ if (error) {
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
-        <div className="mb-6">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
           </h1>
@@ -180,8 +180,8 @@ if (error) {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-x-auto max-h-[70vh]">
-          <table className="min-w-full table-auto  rounded-lg">
+        <div className="overflow-x-auto  rounded-lg no-scrollbar max-h-[70vh]">
+          <table className="min-w-full table-auto ">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>

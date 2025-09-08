@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { fetchSchoolIncomeById, fetchSchoolYear, updateSchoolIncome } from "../../services/api/Api";
 import { useParams } from "react-router-dom";
+import { Loader } from "../../global/Loader";
 
 const months = [
   "January","February","March","April","May","June",
@@ -118,7 +119,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (loading) return <Loader/>;
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">

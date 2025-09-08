@@ -111,8 +111,8 @@ export const AdmissionDetails = () => {
         {filterData.length === 0 ? (
           <p className="text-gray-600">No admission records found.</p>
         ) : (
-          <div className="overflow-x-auto max-h-[70vh]">
-            <div className="inline-block min-w-full align-middle">
+          <div className="overflow-x-auto max-h-[70vh] rounded-lg">
+            <div className="inline-block min-w-full align-middle rounded-lg">
               <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bgTheme text-white z-2 sticky top-0">
