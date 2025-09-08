@@ -6,6 +6,9 @@ import { fetchYearLevels } from "../../services/api/Api";
 const ViewExamPaper = () => {
   const [accessToken, setAccessToken] = useState("");
   const [examPaper, setExamPaper] = useState([]);
+  const [selectedClass, setSelectedClass] = useState("");
+   const [yearLevels, setYearLevels] = useState([]);
+   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 

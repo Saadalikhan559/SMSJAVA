@@ -5,7 +5,9 @@ import { fetchMarksheets, fetchYearLevels } from "../../services/api/Api";
 const MarksheetsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
+   const [yearLevels, setYearLevels] = useState([]);
+   const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [marksheet, setMarksheet] = useState([]);
 
