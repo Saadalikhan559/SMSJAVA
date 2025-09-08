@@ -60,7 +60,7 @@ const UploadExamPaper = () => {
   const getExamType = async () => {
     try {
       if (!accessToken) return;
-      const obj = await fetchExamType(accessToken);
+      const obj = await fetchExamType(accessToken); 
       if (obj) setExamType(obj);
     } catch (err) {
       console.error("Failed to load exam types:", err);
