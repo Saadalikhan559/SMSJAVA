@@ -60,66 +60,112 @@ export const CreateExpenses = () => {
     getExpenseCategory();
   }, []);
 
-const onSubmit = async (data) => {
-  try {
-    setLoading(true);
-    setApiError("");
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      setApiError("");
 
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key !== "attachment") {
-        formData.append(key, data[key]);
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        if (key !== "attachment") {
+          formData.append(key, data[key]);
+        }
+      });
+
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
       }
-    });
 
-    if (selectedFile) {
-      formData.append("attachment", selectedFile);
-    }
-
-    // normalize payment_method if needed
-    if (data.payment_method) {
-      formData.set("payment_method", data.payment_method.toLowerCase());
-    }
-
-    const response = await axios.post(
-      `${constants.baseUrl}/d/School-Expense/`,
-      formData, // ✅ send FormData instead of payload
-      {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
+      if (data.payment_method) {
+        formData.set("payment_method", data.payment_method.toLowerCase());
       }
-    );
 
-    if (response.status === 200 || response.status === 201) {
-      modalRef.current?.show();
-    }
-  } catch (error) {
-    if (error.response?.data) {
-      const errors = error.response.data;
-      if (errors.non_field_errors) {
-        setApiError(errors.non_field_errors.join(" "));
+      if (data.payment_method.toLowerCase() === "online") {
+        const orderResponse = await axios.post(
+          `${constants.baseUrl}/d/School-Expense/initiate-expense-payment/`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        const { id: order_id, amount, currency } = orderResponse.data;
+
+        const options = {
+          key: "rzp_test_4h2aRSAPbYw3f8",
+          amount: amount * 100,
+          currency,
+          name: "School Expense",
+          description: data.description,  
+          order_id,
+          handler: async function (response) {
+            await axios.post(
+              `${constants.baseUrl}/confirm-expense-payment/`,
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              {
+                headers: { Authorization: `Bearer ${access}` },
+              }
+            );
+
+            modalRef.current?.show();
+          },
+          prefill: {
+            name: data.name || "Test User",
+            email: data.email || "test@example.com",
+            contact: data.contact || "9876543210",
+          },
+          theme: { color: constants.bgTheme },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
       } else {
-        const fieldErrors = Object.entries(errors)
-          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
-          .join(" | ");
-        setApiError(fieldErrors);
-      }
-    } else {
-      setApiError("An unexpected error occurred.");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+        const response = await axios.post(
+          `${constants.baseUrl}/d/School-Expense/`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
+        if (response.status === 200 || response.status === 201) {
+          modalRef.current?.show();
+        }
+      }
+    } catch (error) {
+      if (error.response?.data) {
+        const errors = error.response.data;
+        if (errors.non_field_errors) {
+          setApiError(errors.non_field_errors.join(" "));
+        } else {
+          const fieldErrors = Object.entries(errors)
+            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+            .join(" | ");
+          setApiError(fieldErrors);
+        }
+      } else {
+        setApiError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">
           Create Expense
-          <i className="fa-solid fa-percentage ml-2"></i>
+          <i className="fa-solid fa-receipt ml-2"></i>
         </h1>
 
         {/* Display API error message */}
@@ -134,18 +180,18 @@ const onSubmit = async (data) => {
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Category Selection */}
+            {/* School Year Selection */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-calendar-days text-sm"></i>
                   School Year <span className="text-error">*</span>
                 </span>
               </label>
               <select
                 className="select select-bordered w-full focus:outline-none"
                 {...register("school_year", {
-                  required: "Category is required",
+                  required: "School Year is required",
                 })}
               >
                 <option value="">Select School Year</option>
@@ -158,9 +204,9 @@ const onSubmit = async (data) => {
                     )
                 )}
               </select>
-              {errors.category && (
+              {errors.school_year && (
                 <p className="text-error text-sm mt-1">
-                  {errors.category.message}
+                  {errors.school_year.message}
                 </p>
               )}
             </div>
@@ -169,7 +215,7 @@ const onSubmit = async (data) => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-tags text-sm"></i>
                   Category <span className="text-error">*</span>
                 </span>
               </label>
@@ -198,7 +244,7 @@ const onSubmit = async (data) => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-money-bill-wave text-sm"></i>
                   Amount <span className="text-error">*</span>
                 </span>
               </label>
@@ -256,12 +302,12 @@ const onSubmit = async (data) => {
               )}
             </div>
 
-            {/* Expense Field */}
+            {/* Expense Date Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  Expense Date <span className="text-error"></span>
+                  <i className="fa-solid fa-calendar-day text-sm"></i>
+                  Expense Date <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -277,18 +323,19 @@ const onSubmit = async (data) => {
                 </p>
               )}
             </div>
+
             {/* Payment method */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  Payment Modes <span className="text-error"></span>
+                  <i className="fa-solid fa-credit-card text-sm"></i>
+                  Payment Method <span className="text-error">*</span>
                 </span>
               </label>
               <select
                 className="select select-bordered w-full focus:outline-none"
                 {...register("payment_method", {
-                  required: "payment_method is required",
+                  required: "Payment method is required",
                 })}
               >
                 <option value="">Select Payment Mode</option>
@@ -301,19 +348,20 @@ const onSubmit = async (data) => {
                     )
                 )}
               </select>
-              {errors.expense_date && (
+              {errors.payment_method && (
                 <p className="text-error text-sm mt-1">
-                  {errors.expense_date.message}
+                  {errors.payment_method.message}
                 </p>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Description Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
+                  <i className="fa-solid fa-align-left text-sm"></i>
                   Description <span className="text-error"></span>
                 </span>
               </label>

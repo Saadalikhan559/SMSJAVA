@@ -8,13 +8,15 @@ import {
 } from "../../../services/api/Api";
 import { AuthContext } from "../../../context/AuthContext";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { constants } from "../../../global/constants";
 import axios from "axios";
 import { Error } from "../../../global/Error";
+import { allRouterLink } from "../../../router/AllRouterLinks";
 
 export const EditExpenses = () => {
   const userRole = localStorage.getItem("userRole");
+  const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [category, setCategory] = useState([]);
@@ -147,6 +149,10 @@ export const EditExpenses = () => {
 
   if (error) {
     return <Error />;
+  }
+
+  const handleNavigation = ()=>{
+    navigate(`${allRouterLink.viewAllExpenses}`);
   }
 
   return (
@@ -349,7 +355,12 @@ export const EditExpenses = () => {
           </div>
         </form>
       </div>
-      <SuccessModal ref={modalRef} />
+      <SuccessModal
+        ref={modalRef}
+        navigateTo={handleNavigation}
+        buttonText="Continue"
+        message="Your profile has been updated successfully!"
+      />
     </div>
   );
 };
