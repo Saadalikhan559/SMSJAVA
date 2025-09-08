@@ -70,6 +70,9 @@ export const PaySalaryExpense = () => {
         }
       );
 
+      console.log('response', response.data);
+      
+
       setSalaryData(response.data);
 
       if (response.data && response.data.length > 0) {
@@ -81,16 +84,12 @@ export const PaySalaryExpense = () => {
         setValue("deductions", salary.deductions);
         setValue("net_amount", salary.net_amount);
         setValue("month", salary.month);
-
-        // ✅ Only set school_year if not already chosen by user
         if (!selectedSchoolYear) {
           setSelectedSchooYear(salary.school_year);
           setValue("school_year", salary.school_year);
         }
-
         setValue("payment_date", salary.payment_date);
         setValue("payment_method", salary.payment_method);
-        setValue("paid_by", salary.paid_by);
         setValue("remarks", salary.remarks);
       }
     } catch (error) {
@@ -359,30 +358,31 @@ export const PaySalaryExpense = () => {
               )}
             </div>
 
-            {/* Paid By */}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+            {/* Description Field */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user-check text-sm"></i>
-                  Paid By (User ID) <span className="text-error">*</span>
+                  <i className="fa-solid fa-align-left text-sm"></i>
+                  Description <span className="text-error"></span>
                 </span>
               </label>
-              <input
-                type="number"
-                min={1}
-                className="input input-bordered w-full focus:outline-none"
-                {...register("paid_by", {
-                  required: "Paid By is required",
-                  min: { value: 1, message: "Paid By must be positive" },
-                })}
+              <textarea
+                placeholder="Enter your category description"
+                className="textarea textarea-bordered w-full focus:outline-none"
+                rows={5}
+                {...register("description")}
               />
-              {errors.paid_by && (
+              {errors.description && (
                 <p className="text-error text-sm mt-1">
-                  {errors.paid_by.message}
+                  {errors.description.message}
                 </p>
               )}
             </div>
           </div>
+
           <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
             <button
               type="submit"
