@@ -11,16 +11,19 @@ const DirectorMarkHolidays = () => {
     end_date: "",
   });
 
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loder, setLoder] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
       setError("");
       try {
-        
+
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
         setError("Failed to load initial data. Try again.");
@@ -39,7 +42,7 @@ const DirectorMarkHolidays = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoder(true);
     setError("");
     setSuccess("");
 
@@ -66,12 +69,14 @@ const DirectorMarkHolidays = () => {
         throw new Error("Failed to mark holiday");
       }
 
-      setSuccess("Holiday marked successfully!");
+      setModalMessage("Holiday marked & notifications sent successfully!");
+      setShowModal(true);
       setFormData({ title: "", start_date: "", end_date: "" });
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "An error occurred");
+      setModalMessage(err.response?.data?.message || err.message || "An error occurred");
+      setShowModal(true);
     } finally {
-      setLoading(false);
+      setLoder(false);
     }
   };
 
@@ -103,7 +108,7 @@ const DirectorMarkHolidays = () => {
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
         <form onSubmit={handleSubmit}>
           <h1 className="text-3xl font-bold text-center mb-8">
-            Mark Holidays <i className="fa-solid fa-calendar-day ml-2"></i>
+          <i className="fa-solid fa-calendar-day ml-2"></i>  Mark Holidays 
           </h1>
 
           {success && (
@@ -183,17 +188,42 @@ const DirectorMarkHolidays = () => {
 
           {/* Submit Button */}
           <div className="flex justify-center mt-10">
-            <button type="submit" className="btn text-white bgTheme w-52" disabled={loading}>
-              {loading ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2" />
+            <button
+              type="submit"
+              className="btn text-white bgTheme w-52"
+              disabled={loder}
+            >
+              {loder ? (
+                <>
+                  <i className="fa-solid fa-spinner fa-spin mr-2" />
+                </>
               ) : (
-                <i className="fa-solid fa-calendar-plus ml-2" />
+                <>
+                  <i className="fa-solid fa-calendar-plus mr-2" />
+                  Mark Holiday
+                </>
               )}
-              {loading ? "Processing..." : "Mark Holiday"}
             </button>
           </div>
         </form>
       </div>
+      {/* Modal */}
+      {showModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Mark Holidays </h3>
+            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-32"
+                onClick={() => setShowModal(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
