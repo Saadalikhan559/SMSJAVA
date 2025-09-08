@@ -601,7 +601,7 @@ export const ViewAllExpenses = () => {
                   </button>
                   <button
                     type="submit"
-                    className=" btn px-4 py-2   hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-white rounded-md"
+                    className=" btn px-4 py-2   hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-yellow-700 rounded-md"
                   >
                     Update
                   </button>
