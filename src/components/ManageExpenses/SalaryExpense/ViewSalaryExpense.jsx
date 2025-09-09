@@ -108,9 +108,9 @@ export const ViewSalaryExpense = () => {
             </div>
           </div>
         )}
-
+   
         {/* Table */}
-        <div className="w-full overflow-x-auto max-h-[70vh]">
+        <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>

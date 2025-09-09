@@ -234,19 +234,24 @@ export const Register = () => {
       </div>
 
       {/* Success Modal */}
-      {registrationSuccess && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Registration Successful!</h3>
-            <p className="py-4">Your account has been created successfully.</p>
-            <div className="modal-action">
-              <button onClick={() => navigate("/login")} className="btn btn-primary">
-                Continue to Login
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Success Modal */}
+{registrationSuccess && (
+  <div className="modal modal-open">
+    <div className="modal-box">
+      <h3 className="font-bold text-lg">Registration Successful!</h3>
+      <p className="py-4">Your account has been created successfully.</p>
+      <div className="modal-action">
+        <button 
+          onClick={() => window.location.reload()} 
+          className="btn bgTheme text-white"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 };

@@ -4,9 +4,10 @@ import { useForm } from "react-hook-form";
 import { Loader } from "../../../global/Loader";
 import axios from "axios";
 import { constants } from "../../../global/constants";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchSchoolYear } from "../../../services/api/Api";
 import { Error } from "../../../global/Error";
+import { allRouterLink } from "../../../router/AllRouterLinks";
 
 export const PaySalaryExpense = () => {
   const { id } = useParams();
@@ -17,10 +18,8 @@ export const PaySalaryExpense = () => {
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [salaryData, setSalaryData] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedSchoolYear, setSelectedSchooYear] = useState("");
   const [schoolYear, setSchoolYear] = useState([]);
+  const navigate = useNavigate();
 
   const allMonths = [
     "January",
@@ -36,10 +35,7 @@ export const PaySalaryExpense = () => {
     "November",
     "December",
   ];
-  const paymentModes =
-    role === constants.roles.officeStaff || constants.roles.director
-      ? ["Cash", "Cheque", "Online"]
-      : ["Online"];
+  const paymentModes = ["cash", "cheque", "online"];
 
   const getSchoolYearLevel = async () => {
     try {
@@ -62,35 +58,17 @@ export const PaySalaryExpense = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${constants.baseUrl}/d/Employee-salary/?school_year_name=${selectedSchoolYear}&month=${selectedMonth}&user=${id}`,
+        `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
         {
           headers: {
             Authorization: `Bearer ${access}`,
           },
         }
       );
-
-      console.log('response', response.data);
-      
-
-      setSalaryData(response.data);
-
-      if (response.data && response.data.length > 0) {
-        const salary = response.data[0];
-
-        setValue("user", salary.user);
-        setValue("employee_name", salary.employee_name);
-        setValue("gross_amount", salary.gross_amount);
-        setValue("deductions", salary.deductions);
-        setValue("net_amount", salary.net_amount);
-        setValue("month", salary.month);
-        if (!selectedSchoolYear) {
-          setSelectedSchooYear(salary.school_year);
-          setValue("school_year", salary.school_year);
-        }
-        setValue("payment_date", salary.payment_date);
-        setValue("payment_method", salary.payment_method);
-        setValue("remarks", salary.remarks);
+      if (response.data) {
+        setValue("user", response.data.user);
+        setValue("name", response.data.name);
+        setValue("base_salary", response.data.base_salary);
       }
     } catch (error) {
       setError(error?.response?.message || "Failed to fetch salary data");
@@ -100,60 +78,115 @@ export const PaySalaryExpense = () => {
   };
 
   useEffect(() => {
-    if (selectedSchoolYear && selectedMonth) {
-      fetchSingleSalaryData();
-    } else {
-      setSalaryData([]);
-      setValue("status", "");
-      // setValue("employee_name", "");
-      setValue("gross_amount", "");
-      setValue("deductions", "");
-      setValue("net_amount", "");
-      setValue("payment_date", "");
-      setValue("payment_method", "");
-      setValue("paid_by", "");
-      setValue("remarks", "");
-    }
-  }, [id, selectedMonth, selectedSchoolYear]);
+    fetchSingleSalaryData();
+  }, [id]);
 
-  const fetchEmployeeDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${constants.baseUrl}/d/Employee-salary/?user=${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-          },
-        }
-      );
-      const name = response.data[0].employee_name;
-      setValue("employee_name", name);
-    } catch (error) {
-      setError(error?.response?.message || "Failed to fetch employee details");
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    getSchoolYearLevel();
+  }, []);
+
+  const handleNavigation = () => {
+    navigate(`${allRouterLink.viewSalaryExpense}`);
   };
 
   useEffect(() => {
-    fetchEmployeeDetails();
-    getSchoolYearLevel();
-  }, []);
+    const baseSalary = Number(watch("base_salary") || 0);
+    const deductions = Number(watch("deductions") || 0);
+
+    // Ensure deductions are not greater than baseSalary
+    const validDeductions = deductions > baseSalary ? baseSalary : deductions;
+
+    // Update fields
+    setValue("deductions", validDeductions);
+    setValue("gross_amount", baseSalary);
+    setValue("net_amount", baseSalary - validDeductions);
+  }, [watch("base_salary"), watch("deductions")]);
 
   const onSubmit = async (data) => {
     try {
       setLoading(true);
       setApiError("");
-      const formData = new formData();
-      const response = await axios.post(
-        `${constants.baseUrl}/d/Employee-salary/`
-      );
-      if (modalRef.current) {
-        modalRef.current.showModal();
+      if (data.payment_method.toLowerCase() === "online") {
+        const orderResponse = await axios.post(
+          `${constants.baseUrl}/d/Employee-salary/initiate-salary-payment/`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        const {
+          id: order_id,
+          amount,
+          currency,
+          salary_id,
+        } = orderResponse.data;
+
+        const options = {
+          key: "rzp_test_4h2aRSAPbYw3f8",
+          amount: data.net_amount, // ✅ take from backend, already in paise
+          currency,
+          name: "Salary Expense",
+          description: data.description,
+          order_id, // ✅ backend’s order id
+          handler: async function (response) {
+            console.log("Razorpay response:", response); // ✅ debug what you get
+            await axios.post(
+              `${constants.baseUrl}/d/Employee-salary/confirm-salary-payment/`,
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                salary_id,
+              },
+              {
+                headers: { Authorization: `Bearer ${access}` },
+              }
+            );
+
+            modalRef.current?.show();
+          },
+          prefill: {
+            name: data.name,
+            email: data.email,
+            contact: data.contact,
+          },
+          theme: { color: constants.bgTheme },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else {
+        const response = await axios.post(
+          `${constants.baseUrl}/d/Employee-salary/`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+            },
+          }
+        );
+        if (modalRef.current) {
+          modalRef.current.showModal();
+        }
       }
     } catch (error) {
-      setApiError(error.response.data.message);
+      if (error.response?.data) {
+        const errors = error.response.data;
+
+        if (errors.non_field_errors) {
+          setApiError(errors.non_field_errors.join(" "));
+        } else {
+          const fieldErrors = Object.entries(errors)
+            .map(([field, messages]) => ` ${messages.join(", ")}`)
+            .join(" | ");
+          setApiError(fieldErrors);
+        }
+      } else {
+        setApiError("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -167,7 +200,6 @@ export const PaySalaryExpense = () => {
     return <Error />;
   }
 
-  console.log("salaryData", salaryData);
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
@@ -200,7 +232,7 @@ export const PaySalaryExpense = () => {
                 disabled={true}
                 type="text"
                 className="input input-bordered w-full focus:outline-none"
-                {...register("employee_name")}
+                {...register("name")}
               />
             </div>
 
@@ -216,7 +248,6 @@ export const PaySalaryExpense = () => {
                 className="select select-bordered w-full focus:outline-none"
                 {...register("school_year", {
                   required: "School Year is required",
-                  onChange: (e) => setSelectedSchooYear(e.target.value),
                 })}
               >
                 <option value="">Select School year</option>
@@ -244,7 +275,6 @@ export const PaySalaryExpense = () => {
                 className="select select-bordered w-full focus:outline-none"
                 {...register("month", {
                   required: "Month is required",
-                  onChange: (e) => setSelectedMonth(e.target.value),
                 })}
               >
                 <option value="">Select Month</option>
@@ -274,7 +304,7 @@ export const PaySalaryExpense = () => {
                 min={0}
                 disabled
                 className="input input-bordered w-full focus:outline-none"
-                {...register("gross_amount")}
+                {...register("base_salary")}
               />
             </div>
 
@@ -287,9 +317,10 @@ export const PaySalaryExpense = () => {
                 </span>
               </label>
               <input
-                disabled
+                placeholder="Enter deduction amount: e.g :150 "
                 type="number"
                 min={0}
+                max={watch("base_salary")}
                 className="input input-bordered w-full focus:outline-none"
                 {...register("deductions")}
               />
@@ -311,6 +342,7 @@ export const PaySalaryExpense = () => {
               />
             </div>
 
+            {/* Payment Date */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -348,7 +380,9 @@ export const PaySalaryExpense = () => {
               >
                 <option value="">Select Payment Method</option>
                 {paymentModes.map((modes, idx) => (
-                  <option key={idx}>{modes}</option>
+                  <option key={idx} value={modes}>
+                    {modes}
+                  </option>
                 ))}
               </select>
               {errors.payment_method && (
@@ -357,9 +391,8 @@ export const PaySalaryExpense = () => {
                 </p>
               )}
             </div>
-
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Description Field */}
             <div className="form-control">
@@ -398,7 +431,12 @@ export const PaySalaryExpense = () => {
           </div>
         </form>
       </div>
-      <SuccessModal ref={modalRef} />
+      <SuccessModal
+        ref={modalRef}
+        navigateTo={handleNavigation}
+        buttonText="Continue"
+        message="Your profile has been updated successfully!"
+      />
     </div>
   );
 };

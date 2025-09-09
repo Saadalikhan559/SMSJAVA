@@ -89,9 +89,9 @@ const AllStudentsPerClass = () => {
 
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[70vh]">
           <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-            <thead className="bgTheme text-white text-center">
+            <thead className="bgTheme text-white text-center z-2 sticky top-0">
               <tr>
                 <th scope="col" className="px-4 py-3">S.NO</th>
                 <th scope="col" className="px-4 py-3">Student Name</th>

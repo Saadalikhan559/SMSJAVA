@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { fetchSchoolIncomeById, fetchSchoolYear, updateSchoolIncome } from "../../services/api/Api";
+
+import { Loader } from "../../global/Loader";
 import { useParams, useNavigate } from "react-router-dom";
+
 
 const months = [
   "January","February","March","April","May","June",
@@ -99,6 +102,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
     }
   };
 
+  if (loading) return <Loader/>;
   const closeModal = () => {
     setModalOpen(false);
     onClose?.();
@@ -128,6 +132,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
@@ -264,7 +269,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
                 Income record has been successfully updated.
               </p>
               <div className="modal-action">
-                <button className="btn btn-primary w-25" onClick={closeModal}>OK</button>
+                <button className="btn bgTheme text-white w-25" onClick={closeModal}>OK</button>
               </div>
             </div>
           </dialog>

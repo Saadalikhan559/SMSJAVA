@@ -37,6 +37,7 @@ export const AdmissionForm = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
     resetField,
   } = useForm({
     mode: "onChange",
@@ -181,33 +182,33 @@ export const AdmissionForm = () => {
     }
   };
 
- 
 
 
-useEffect(() => {
-  const fetchAllData = async () => {
-    try {
-      setLoading(true); // loader start
-      setError(null);
 
-      await Promise.all([
-        getYearLevels(),
-        getSchoolYears(),
-        getGuardianType(),
-        getCountry(),
-        getState(),
-        getCity(),
-      ]);
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setLoading(true); // loader start
+        setError(null);
 
-    } catch (err) {
-      setError("Failed to fetch data");
-    } finally {
-      setLoading(false); // loader stop
-    }
-  };
+        await Promise.all([
+          getYearLevels(),
+          getSchoolYears(),
+          getGuardianType(),
+          getCountry(),
+          getState(),
+          getCity(),
+        ]);
 
-  fetchAllData();
-}, []);
+      } catch (err) {
+        setError("Failed to fetch data");
+      } finally {
+        setLoading(false); // loader stop
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
 
   const onSubmit = async (data) => {
@@ -247,12 +248,12 @@ useEffect(() => {
       await handleAdmissionForm(submitFormData);
       // Show success modal after successful submission
       setShowAdmissionSuccessModal(true);
-      formRef.current.reset();
+      reset();
       setSelectedGuardianType("");
       setIsRTE(false);
     } catch (error) {
       console.log(error);
-      
+
       console.error("Submission error:", error.response?.data || error.message);
       alert(
         `Failed to submit the form: ${error.response?.data?.message || error.message
@@ -272,7 +273,7 @@ useEffect(() => {
     navigate("/addmissionDetails");
   };
 
-if (loading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
@@ -1692,20 +1693,33 @@ if (loading) {
                 {...register("banking_detail_input.holder_name", {
                   required: "Account holder name is required",
                   maxLength: {
-                    value: 255,
-                    message: "Holder name cannot exceed 255 characters",
+                    value: 50,
+                    message: "Holder name cannot exceed 50 characters",
+                  },
+                  validate: (value) => {
+                    if (!value.trim()) return "Account holder name is required"; // blank or just space ❌
+                    if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(value))
+                      return "Enter a valid name (alphabets & single spaces only)";
+                    return true;
                   },
                 })}
                 placeholder="Full Name as in Bank"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail?.holder_name ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.holder_name ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .replace(/[^A-Za-z\s]/g, "")
+                    .replace(/\s+/g, " ")       
+                    .replace(/^\s+/g, "");       
+                }}
               />
-              {errors.banking_detail?.holder_name && (
+              {errors.banking_detail_input?.holder_name && (
                 <span className="text-error text-sm">
-                  {errors.banking_detail.holder_name.message}
+                  {errors.banking_detail_input.holder_name.message}
                 </span>
               )}
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1714,25 +1728,24 @@ if (loading) {
                 </span>
               </label>
               <input
-                type="number"
+                type="text"
                 {...register("banking_detail_input.account_no", {
                   required: "Account number is required",
-                  min: {
-                    value: -9223372036854775808,
-                    message: "Invalid account number",
-                  },
-                  max: {
-                    value: 9223372036854775807,
-                    message: "Invalid account number",
+                  pattern: {
+                    value: /^[0-9]{9,18}$/,
+                    message: "Account number must be 9 to 18 digits",
                   },
                 })}
                 placeholder="Account Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail?.account_no ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.account_no ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
               />
-              {errors.banking_detail?.account_no && (
+              {errors.banking_detail_input?.account_no && (
                 <span className="text-error text-sm">
-                  {errors.banking_detail.account_no.message}
+                  {errors.banking_detail_input.account_no.message}
                 </span>
               )}
             </div>
@@ -1749,24 +1762,27 @@ if (loading) {
                 type="text"
                 {...register("banking_detail_input.ifsc_code", {
                   required: "IFSC code is required",
-                  maxLength: {
-                    value: 225,
-                    message: "IFSC code cannot exceed 225 characters",
-                  },
                   pattern: {
-                    // value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
-                    message: "Invalid IFSC code format",
+                    value: /^[A-Z]{4}[0-9A-Z][A-Z0-9]{6}$/,
+                    message: "Invalid IFSC code format (e.g. SBIN0001234 or BARBOBHOPAL)",
                   },
                 })}
                 placeholder="eg: SBIN0001234"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail?.ifsc_code ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.ifsc_code ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, "");
+                }}
+                maxLength={11}
               />
-              {errors.banking_detail?.ifsc_code && (
+              {errors.banking_detail_input?.ifsc_code && (
                 <span className="text-error text-sm">
-                  {errors.banking_detail.ifsc_code.message}
+                  {errors.banking_detail_input.ifsc_code.message}
                 </span>
               )}
+
             </div>
           </div>
         </div>

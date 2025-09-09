@@ -276,6 +276,8 @@ export const validAccountHolderName = (Account_Holder_Name) => {
 
 export const validAccountNumber = (Account_Number) => {
     if (!Account_Number) return "Account Number is required"
+    if (Account_Number.length > 18 ) return "Invalid Account Number Must be 9-18 digits"
+    if (Account_Number.length < 9 ) return "Invalid Account Number Must be 9-18 digits"
     return ""
 }
 
@@ -290,6 +292,8 @@ export const validBankName = (Bank_Name) => {
 
 export const validIFSCcode = (IFSC_code) => {
     if (!IFSC_code) return "IFSC Code is required"
+    if (IFSC_code <11) return "Invalid IFSC Code"
+    if (IFSC_code >11) return "Invalid IFSC Code"
     return ""
 }
 
