@@ -648,13 +648,17 @@ export const AdmissionForm = () => {
                 placeholder="Height"
                 className={`input input-bordered w-full focus:outline-none ${errors.student?.height ? "input-error" : ""
                   }`}
+                min={0} // prevents down arrow from going negative
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault(); // prevents typing negative or 'e'
+                }}
+                onWheel={(e) => e.target.blur()} // prevents scroll changing value
               />
               {errors.student?.height && (
-                <span className="text-error text-sm">
-                  {errors.student.height.message}
-                </span>
+                <span className="text-error text-sm">{errors.student.height.message}</span>
               )}
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1419,20 +1423,15 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="number"
-                {...register("address_input.ward_no", {
-                  required: "Ward number is required",
-                  min: { value: -2147483648, message: "Invalid ward number" },
-                  max: { value: 2147483647, message: "Invalid ward number" },
-                })}
                 placeholder="Ward Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.ward_no ? "input-error" : ""
-                  }`}
+                min={0} // prevents down arrow from going negative
+                className="input input-bordered w-full focus:outline-none"
+                {...register("address_input.ward_no")}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault(); // prevent negative & scientific notation
+                }}
+                onWheel={(e) => e.target.blur()} // prevent scroll changing value
               />
-              {errors.address?.ward_no && (
-                <span className="text-error text-sm">
-                  {errors.address.ward_no.message}
-                </span>
-              )}
             </div>
             <div className="form-control">
               <label className="label">
@@ -1443,20 +1442,15 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="number"
-                {...register("address_input.zone_no", {
-                  required: "Zone number is required",
-                  min: { value: -2147483648, message: "Invalid zone number" },
-                  max: { value: 2147483647, message: "Invalid zone number" },
-                })}
                 placeholder="Zone"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.zone_no ? "input-error" : ""
-                  }`}
+                min={0} // prevents down arrow from going negative
+                className="input input-bordered w-full focus:outline-none"
+                {...register("address_input.zone_no")}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                }}
+                onWheel={(e) => e.target.blur()}
               />
-              {errors.address?.zone_no && (
-                <span className="text-error text-sm">
-                  {errors.address.zone_no.message}
-                </span>
-              )}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
@@ -1709,8 +1703,8 @@ export const AdmissionForm = () => {
                 onInput={(e) => {
                   e.target.value = e.target.value
                     .replace(/[^A-Za-z\s]/g, "")
-                    .replace(/\s+/g, " ")       
-                    .replace(/^\s+/g, "");       
+                    .replace(/\s+/g, " ")
+                    .replace(/^\s+/g, "");
                 }}
               />
               {errors.banking_detail_input?.holder_name && (
