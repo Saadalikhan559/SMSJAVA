@@ -80,6 +80,8 @@ import { PaySalaryExpense } from "../components/ManageExpenses/SalaryExpense/Pay
 import { CreateExpenses } from "../components/ManageExpenses/AllExpenses/CreateExpenses";
 import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpenses";
 import UpdateIncome from "../components/Incomes/UpdateIncome";
+import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/UpdateSalaryExpense";
+import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
 
 
 export const routes = [
@@ -533,6 +535,18 @@ export const routes = [
   {
     path: allRouterLink.paySalaryExpense,
     element: <PaySalaryExpense />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.employeeMonthySalary,
+    element: <EmployeeMonthlySalary />,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
+  },
+  {
+    path: allRouterLink.updateSalaryExpense,
+    element: <UpdateSalaryExpense />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
