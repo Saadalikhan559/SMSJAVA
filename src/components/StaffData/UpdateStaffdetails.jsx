@@ -19,7 +19,7 @@ const UpdateStaffDetails = () => {
     email: "",
     phone_no: "",
     gender: "",
-    aadhar_no: "",
+    adhaar_no: "",
     pan_no: "",
     qualification: "",
     category: "",
@@ -49,7 +49,7 @@ const UpdateStaffDetails = () => {
         email: data.email || "",
         phone_no: data.phone_no || "",
         gender: data.gender || "",
-        aadhar_no: data.aadhar_no || "",
+        adhaar_no: data.adhaar_no || "",
         pan_no: data.pan_no || "",
         qualification: data.qualification || "",
         category: data.category || "",
@@ -150,10 +150,9 @@ const UpdateStaffDetails = () => {
             "email",
             "phone_no",
             "gender",
-            "aadhar_no",
+            "adhaar_no",
             "pan_no",
             "qualification",
-            "category",
           ].map((field) => (
             <input
               key={field}
