@@ -581,7 +581,8 @@ console.log(payload);
                                     className={`flex items-center gap-2 ${fee.status === "Paid" ? "text-green-600" : "text-yellow-700"
                                       }`}
                                   >
-                                    <span>{fee.status}</span> <span>Due:₹{fee.pending_amount}</span>
+                                    <span>{fee.status}</span> {
+                                    (totalAmount.Due > 0 && <span>Due:₹{fee.pending_amount}</span>)}
                                    
                                   </div>
                                   
@@ -622,6 +623,7 @@ console.log(payload);
                         </div>
                       </>
                     )}
+                    
                     {totalAmount.Due > 0 && (
                       <>
                         <div>Due Fee:</div>
