@@ -47,6 +47,9 @@ export const SubjectAssignments = () => {
   const [pageError, setPageError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
   useEffect(() => {
     const preloadData = async () => {
       try {
@@ -139,7 +142,8 @@ export const SubjectAssignments = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Subjects assigned successfully!");
+        setAlertMessage("Subjects assigned successfully!");
+        setShowAlert(true);
       }
     } catch (error) {
       const res = error.response?.data;
@@ -332,6 +336,30 @@ export const SubjectAssignments = () => {
           </div>
         </form>
       </div>
+      {showAlert && (
+  <dialog className="modal modal-open">
+    <div className="modal-box">
+      <h3 className="font-bold text-lg">Subject Assignment</h3>
+      <p className="py-4">
+        {alertMessage.split("\n").map((line, idx) => (
+          <span key={idx}>
+            {line}
+            <br />
+          </span>
+        ))}
+      </p>
+      <div className="modal-action">
+        <button
+          className="btn bgTheme text-white w-30"
+          onClick={() => setShowAlert(false)}
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}
+
     </div>
   );
 };

@@ -2,23 +2,24 @@ import React, { useState, useEffect } from "react";
 import { fetchAbsentTeachers, assignSubstitute } from "../../services/api/Api";
 
 const YEAR_LEVEL_MAP = {
-  "Pre Nursery":1,
+  "Pre Nursery": 1,
   "Nursery": 2,
   "LKG": 3,
   "UKG": 4,
-  "class 1": 5,
-  "class 2": 6,
-  "class 3": 7,
-  "class 4": 8,
-  "class 5": 9,
-  "class 6": 10,
-  "class 7": 11,
-  "class 8": 12,
-  "class 9": 13,
-  "class 10": 14,
-  "class 11": 15,
-  "class 12": 16,
+  "Class 1": 5,
+  "Class 2": 6,
+  "Class 3": 7,
+  "Class 4": 8,
+  "Class 5": 9,
+  "Class 6": 10,
+  "Class 7": 11,
+  "Class 8": 12,
+  "Class 9": 13,
+  "Class 10": 14,
+  "Class 11": 15,
+  "Class 12": 16,
 };
+
 
 const TeacherSubstitute = () => {
   const [teachers, setTeachers] = useState([]);
@@ -40,33 +41,41 @@ const TeacherSubstitute = () => {
       last_name: item.absent_teacher.name.split(" ")[1] || "",
       email: item.absent_teacher.email,
       phone_no: item.absent_teacher.phone_no || null,
-      year_levels: item.periods.map((p) => ({
-        id: YEAR_LEVEL_MAP[p.year_level],
-        level_name: p.year_level,
-        periods: [
-          {
-            id: p.period_id,
-            name: p.period_name,
-            subject: p.subject,
-            year_level_id: YEAR_LEVEL_MAP[p.year_level],
-            same_class_free_teachers: p.same_class_free_teachers.map((ft) => ({
-              ...ft,
-              selected: false,
-            })),
-            other_class_free_teachers: p.other_class_free_teachers.map((ft) => ({
-              ...ft,
-              selected: false,
-            })),
-            showSameClass: true,
-          },
-        ],
-      })),
+      year_levels: item.periods.map((p) => {
+        const normalized = p.year_level?.trim().toLowerCase();
+        const yearLevelId = YEAR_LEVEL_MAP[normalized.charAt(0).toUpperCase() + normalized.slice(1)]
+          || YEAR_LEVEL_MAP[p.year_level]
+          || null;
+
+        return {
+          id: yearLevelId,
+          level_name: p.year_level,
+          periods: [
+            {
+              id: p.period_id,
+              name: p.period_name,
+              subject: p.subject,
+              year_level_id: yearLevelId,
+              same_class_free_teachers: p.same_class_free_teachers.map((ft) => ({
+                ...ft,
+                selected: false,
+              })),
+              other_class_free_teachers: p.other_class_free_teachers.map((ft) => ({
+                ...ft,
+                selected: false,
+              })),
+              showSameClass: true,
+            },
+          ],
+        };
+      }),
       attendance: {
         date,
         status: "absent",
       },
     }));
   };
+
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -132,9 +141,9 @@ const TeacherSubstitute = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
         {/* Header */}
-         <div className="mb-4">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
-         <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
+            <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
           </h1>
         </div>
         <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center  gap-4 mb-3 border-b pb-2">
@@ -323,17 +332,17 @@ const TeacherSubstitute = () => {
                                       periods: lvl.periods.map((p) =>
                                         p.id === period.id
                                           ? {
-                                              ...p,
-                                              [period.showSameClass
-                                                ? "same_class_free_teachers"
-                                                : "other_class_free_teachers"]: p[
+                                            ...p,
+                                            [period.showSameClass
+                                              ? "same_class_free_teachers"
+                                              : "other_class_free_teachers"]: p[
                                                 period.showSameClass
                                                   ? "same_class_free_teachers"
                                                   : "other_class_free_teachers"
                                               ].map((t) =>
                                                 t.id === ft.id ? { ...t, selected: checked } : t
                                               ),
-                                            }
+                                          }
                                           : p
                                       ),
                                     }));
@@ -363,24 +372,24 @@ const TeacherSubstitute = () => {
                   Close
                 </button>
 
-              <button
-                className="btn bgTheme text-white w-30"
-                onClick={async () => {
-                  const assignments = [];
+                <button
+                  className="btn bgTheme text-white w-30"
+                  onClick={async () => {
+                    const assignments = [];
 
-                  selectedTeacher.year_levels.forEach((level) => {
-                    level.periods.forEach((period) => {
-                      const source = period.showSameClass
-                        ? period.same_class_free_teachers
-                        : period.other_class_free_teachers;
+                    selectedTeacher.year_levels.forEach((level) => {
+                      level.periods.forEach((period) => {
+                        const source = period.showSameClass
+                          ? period.same_class_free_teachers
+                          : period.other_class_free_teachers;
 
-                      source.forEach((ft) => {
-                        if (ft.selected) {
-                          assignments.push({ period, ft });
-                        }
+                        source.forEach((ft) => {
+                          if (ft.selected) {
+                            assignments.push({ period, ft });
+                          }
+                        });
                       });
                     });
-                  });
 
                     if (assignments.length === 0) {
                       setAlertMessage("No substitute teacher selected.");
@@ -410,11 +419,7 @@ const TeacherSubstitute = () => {
                   }}
                 >
                   {submitLoading && (
-                    <div className="flex space-x-1">
-                      <div className="w-3 h-3 bg-white rounded-full animate-bounce"></div>
-                      <div className="w-3 h-3 bg-white rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-                      <div className="w-3 h-3 bg-white rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-                    </div>
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                   )}
                   {!submitLoading && "Submit"}
                 </button>
@@ -423,31 +428,31 @@ const TeacherSubstitute = () => {
           </dialog>
         )}
 
-      {/*  modal */}
-      {showAlert && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Assign Substitute</h3>
-            <p className="py-4 capitalize">
-              {alertMessage.split("\n").map((line, idx) => (
-                <span key={idx}>
-                  {line}
-                  <br />
-                </span>
-              ))}
-            </p>
-            <div className="modal-action">
-              <button
-                className="btn bgTheme text-white w-30"
-                onClick={() => setShowAlert(false)}
-              >
-                OK
-              </button>
+        {/*  modal */}
+        {showAlert && (
+          <dialog className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Assign Substitute</h3>
+              <p className="py-4 capitalize">
+                {alertMessage.split("\n").map((line, idx) => (
+                  <span key={idx}>
+                    {line}
+                    <br />
+                  </span>
+                ))}
+              </p>
+              <div className="modal-action">
+                <button
+                  className="btn bgTheme text-white w-30"
+                  onClick={() => setShowAlert(false)}
+                >
+                  OK
+                </button>
+              </div>
             </div>
-          </div>
-        </dialog>
-      )}
-    </div>
+          </dialog>
+        )}
+      </div>
     </div>
   );
 };
