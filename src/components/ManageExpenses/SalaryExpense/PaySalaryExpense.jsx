@@ -122,27 +122,31 @@ export const PaySalaryExpense = () => {
           amount,
           currency,
           salary_id,
+          razorpay_key,
+          razorpay_order_id,
         } = orderResponse.data;
 
         const options = {
-          key: "rzp_test_4h2aRSAPbYw3f8",
-          amount: data.net_amount, // ✅ take from backend, already in paise
+          key: razorpay_key,
+          amount: data.net_amount,
           currency,
           name: "Salary Expense",
           description: data.description,
-          order_id, // ✅ backend’s order id
+          order_id: razorpay_order_id,
           handler: async function (response) {
-            console.log("Razorpay response:", response); // ✅ debug what you get
             await axios.post(
               `${constants.baseUrl}/d/Employee-salary/confirm-salary-payment/`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
-                salary_id,
+                salary_id: salary_id,
               },
               {
-                headers: { Authorization: `Bearer ${access}` },
+                headers: {
+                  Authorization: `Bearer ${access}`,
+                  "Content-Type": "application/json",
+                },
               }
             );
 
