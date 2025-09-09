@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { fetchUnpaidFees, fetchYearLevels } from "../../services/api/Api";
+import { fetchUnpaidFees, fetchYearLevels, sendDueFeeNotifications } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 
@@ -13,6 +13,10 @@ const UnpaidFeesList = () => {
   const [selectedClass, setSelectedClass] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [yearLevels, setYearLevels] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [loder, setLoder] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   // Fetch year levels from backend
   const getYearLevels = async () => {
@@ -57,6 +61,22 @@ const UnpaidFeesList = () => {
     }
   };
 
+  // Send notification function
+  const handleSendNotifications = async () => {
+    try {
+      setLoder(true);
+      const response = await sendDueFeeNotifications();
+      setNotifications(response.notifications || []);
+      setModalMessage(" WhatsApp notifications sent successfully!");
+      setShowModal(true);
+    } catch (err) {
+      setModalMessage(" Failed to send notifications!");
+      setShowModal(true);
+    } finally {
+      setLoder(false);
+    }
+  };
+
   useEffect(() => {
     getYearLevels();
   }, []);
@@ -76,32 +96,32 @@ const UnpaidFeesList = () => {
   );
 
   if (loading) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
-      <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-    </div>
-  );
-}
+    );
+  }
 
-if (error) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-      <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-    </div>
-  );
-}
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
 
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
-        <div className="mb-6">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
           </h1>
@@ -165,23 +185,37 @@ if (error) {
             </div>
 
             {/* Right Side: Search Bar */}
-            <div className="flex flex-col w-full sm:w-auto">
-              <label className="text-sm font-medium text-gray-700 mb-1">
-              </label>
-              <input
-                type="text"
-                placeholder="Enter student name"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border px-3 py-2 rounded w-full sm:w-64"
-              />
+            <div className="flex items-end gap-2 w-full sm:w-auto justify-end">
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1"></label>
+                <input
+                  type="text"
+                  placeholder="Enter student name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="border px-3 py-2 rounded w-full sm:w-64"
+                />
+              </div>
+              <button
+                onClick={handleSendNotifications}
+                className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 min-w-[120px] flex items-center justify-center"
+              >
+                {loder  ? (
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-bell mr-2"></i> Reminder
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
 
+
         {/* Table Section */}
-        <div className="overflow-x-auto max-h-[70vh]">
-          <table className="min-w-full table-auto  rounded-lg">
+        <div className="overflow-x-auto  rounded-lg no-scrollbar max-h-[70vh]">
+          <table className="min-w-full table-auto ">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
@@ -196,6 +230,7 @@ if (error) {
               </tr>
             </thead>
             <tbody>
+
               {filteredFees.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="text-center py-6 text-gray-500">
@@ -211,11 +246,11 @@ if (error) {
                         <td className="px-4 py-3 text-nowrap">{item.student?.name}</td>
                         <td className="px-4 py-3 text-nowrap">{group.year_level}</td>
                         <td className="px-4 py-3">{item.month}</td>
-                        <td className="px-4 py-3 ">{fee.fee_type}</td>
+                        <td className="px-4 py-3 text-nowrap">{fee.fee_type}</td>
                         <td className="px-4 py-3">₹{fee.amount}</td>
                         <td className="px-4 py-3">₹{item.paid_amount}</td>
                         <td className="px-4 py-3">₹{item.due_amount}</td>
-                        <td className="px-4 py-3">{item.payment_status}</td>
+                        <td className="inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium bg-red-100 text-red-600 m-2">{item.payment_status}</td>
                       </tr>
                     ))
                   )
@@ -225,6 +260,24 @@ if (error) {
           </table>
         </div>
       </div>
+      {/* Modal */}
+      {showModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg"> Notification</h3>
+            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-32"
+                onClick={() => setShowModal(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
     </div>
   );
 };

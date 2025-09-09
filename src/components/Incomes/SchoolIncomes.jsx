@@ -18,6 +18,7 @@ export const SchoolIncome = () => {
   const [loading, setLoading] = useState(true);
 
   // Delete states
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
   // Filters
@@ -73,14 +74,19 @@ export const SchoolIncome = () => {
     fetchData();
   }, [selectedMonth, selectedYear, selectedCategory]);
 
-  // Delete confirm
-  const confirmDelete = async (id) => {
+  // Confirm delete function
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
-      await deleteSchoolIncome(id);
-      setIncomeDetails((prev) => prev.filter((item) => item.id !== id));
+      const authTokens = localStorage.getItem("authTokens");
+      const access = authTokens ? JSON.parse(authTokens).access : null;
+
+      await deleteSchoolIncome(access, deleteId);
+      setIncomeDetails((prev) => prev.filter((item) => item.id !== deleteId));
     } catch (err) {
       console.error("Failed to delete:", err);
     } finally {
+      setConfirmOpen(false);
       setDeleteId(null);
     }
   };
@@ -186,7 +192,7 @@ export const SchoolIncome = () => {
             </div>
 
             {/* Table */}
-            <div className="w-full overflow-x-auto max-h-[70vh]">
+            <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bgTheme text-white z-2 sticky top-0">
                   <tr>
@@ -290,7 +296,10 @@ export const SchoolIncome = () => {
                               Edit
                             </Link>
                             <button
-                              onClick={() => confirmDelete(record.id)}
+                              onClick={() => {
+                                setDeleteId(record.id);
+                                setConfirmOpen(true);
+                              }}
                               className="px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
                             >
                               Delete
@@ -313,6 +322,30 @@ export const SchoolIncome = () => {
               </table>
             </div>
           </>
+        )}
+
+        {/* Confirm Delete Modal */}
+        {confirmOpen && (
+          <dialog className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Confirm Delete</h3>
+              <p className="py-4">Are you sure you want to continue?</p>
+              <div className="modal-action">
+                <button
+                  className="btn bgTheme text-white"
+                  onClick={confirmDelete}
+                >
+                  Continue
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => setConfirmOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </dialog>
         )}
       </div>
     </div>

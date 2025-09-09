@@ -172,7 +172,7 @@ const TeacherAttendance = () => {
             />
         </div>
 
-        <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
+        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
           <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>

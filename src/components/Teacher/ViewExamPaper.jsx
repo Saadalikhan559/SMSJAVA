@@ -115,8 +115,8 @@ const ViewExamPaper = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+        <div className="mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
             Examination Papers
           </h1>
         </div>
@@ -154,9 +154,9 @@ const ViewExamPaper = () => {
         </div>
        
 
-        <div className="w-full overflow-x-auto max-h-[70vh]">
+        <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
           <div className="inline-block min-w-full align-middle">
-            <div className=" shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
+            <div className=" shadow-sm ring-1 ring-black ring-opacity-5 ">
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bgTheme text-white z-2 sticky top-0">
                   <tr>

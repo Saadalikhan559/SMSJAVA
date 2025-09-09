@@ -21,6 +21,8 @@ function HolidayCalendar() {
   });
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   // new states for loading & error
   const [loading, setLoading] = useState(true);
@@ -81,50 +83,39 @@ function HolidayCalendar() {
 
   const handleImportHolidays = async () => {
     setIsImporting(true);
-    setImportMessage(null);
     try {
-      const response = await importHolidays(importYear);
-      setImportMessage({
-        type: "success",
-        text: `Holidays for ${importYear} imported successfully!`,
-      });
+      await importHolidays(importYear);
+      setModalMessage(`Holidays for ${importYear} imported successfully!`);
+      setShowModal(true);
       getCalendar();
     } catch (error) {
-      setImportMessage({
-        type: "error",
-        text: error.message || "Failed to import holidays",
-      });
+      setModalMessage(error.message || "Failed to import holidays");
+      setShowModal(true);
     } finally {
       setIsImporting(false);
+      setImportMessage(null);
     }
   };
+
 
   const handleCreateEvent = async () => {
     setIsCreatingEvent(true);
     try {
       await createEvent(newEvent);
-      setImportMessage({
-        type: "success",
-        text: "Event created successfully!",
-      });
+      setModalMessage("Event created successfully!");
+      setShowModal(true);
       getCalendar();
-      setNewEvent({
-        title: "",
-        start_date: "",
-        end_date: "",
-        description: "",
-        category: ""
-      });
-      setTimeout(() => setIsEventDialogOpen(false), 1000);
+      setNewEvent({ title: "", start_date: "", end_date: "", description: "", category: "" });
+      setIsEventDialogOpen(false);
     } catch (error) {
-      setImportMessage({
-        type: "error",
-        text: error.message || "Failed to create event",
-      });
+      setModalMessage(error.message || "Failed to create event");
+      setShowModal(true);
     } finally {
       setIsCreatingEvent(false);
+      setImportMessage(null);
     }
   };
+
 
   const handleDateChange = (newDate) => {
     setDate(newDate);
@@ -245,7 +236,7 @@ function HolidayCalendar() {
   };
 
   return (
-<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
@@ -353,11 +344,10 @@ function HolidayCalendar() {
 
                   {importMessage && (
                     <div
-                      className={`p-3 rounded-md ${
-                        importMessage.type === "success"
+                      className={`p-3 rounded-md ${importMessage.type === "success"
                           ? "bg-green-50 text-green-800"
                           : "bg-red-50 text-red-800"
-                      }`}
+                        }`}
                     >
                       {importMessage.text}
                     </div>
@@ -376,11 +366,10 @@ function HolidayCalendar() {
                     <button
                       onClick={handleImportHolidays}
                       disabled={isImporting}
-                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${
-                        isImporting
+                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${isImporting
                           ? "bgTheme cursor-not-allowed"
                           : "bgTheme hover:bg-[#4e1bb3]"
-                      }`}
+                        }`}
                     >
                       {isImporting ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Import"}
                     </button>
@@ -477,7 +466,7 @@ function HolidayCalendar() {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label
                       htmlFor="event-description"
@@ -499,11 +488,10 @@ function HolidayCalendar() {
 
                   {importMessage && (
                     <div
-                      className={`p-3 rounded-md ${
-                        importMessage.type === "success"
+                      className={`p-3 rounded-md ${importMessage.type === "success"
                           ? "bg-green-50 text-green-800"
                           : "bg-red-50 text-red-800"
-                      }`}
+                        }`}
                     >
                       {importMessage.text}
                     </div>
@@ -522,11 +510,10 @@ function HolidayCalendar() {
                     <button
                       onClick={handleCreateEvent}
                       disabled={isCreatingEvent}
-                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${
-                        isCreatingEvent
+                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${isCreatingEvent
                           ? "bgTheme cursor-not-allowed"
                           : "bgTheme hover:bg-[#4410ad]"
-                      }`}
+                        }`}
                     >
                       {isCreatingEvent ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Create Event"}
                     </button>
@@ -739,51 +726,68 @@ function HolidayCalendar() {
               </div>
             </div>
           </div>
-{(userRole === "office staff" || userRole === "director") && (
-          <div className="flex justify-end m-4 space-x-4">
-            <button
-              onClick={() => setIsEventDialogOpen(true)}
-              className="bgTheme text-white px-4 py-3 rounded-sm text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {(userRole === "office staff" || userRole === "director") && (
+            <div className="flex justify-end m-4 space-x-4">
+              <button
+                onClick={() => setIsEventDialogOpen(true)}
+                className="bgTheme text-white px-4 py-3 rounded-sm text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              <span>Create Event</span>
-            </button>
-            <button
-              onClick={() => setIsHolidayDialogOpen(true)}
-              className="bgTheme text-white px-4 py-3 rounded-sm text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                <span>Create Event</span>
+              </button>
+              <button
+                onClick={() => setIsHolidayDialogOpen(true)}
+                className="bgTheme text-white px-4 py-3 rounded-sm text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-              <span>Import Holidays</span>
-            </button>
-          </div>
-)}
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                <span>Import Holidays</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
-    </div>    
+      {/* Modal */}
+      {showModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Holiday Calender</h3>
+            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-32"
+                onClick={() => setShowModal(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+    </div>
   );
 }
 
