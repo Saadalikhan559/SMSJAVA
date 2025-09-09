@@ -989,7 +989,7 @@ export const sendDueFeeNotifications = async () => {
     const accessToken = JSON.parse(authTokens).access;
     if (!accessToken) throw new Error("Access token missing. Please login.");
 
-    console.log("Access Token:", accessToken); 
+    console.log("Access Token:", accessToken);
 
     const response = await axios.get(
       `${BASE_URL}/d/fee-record/student_unpaid_fees/`,
@@ -1010,8 +1010,6 @@ export const sendDueFeeNotifications = async () => {
     throw err;
   }
 };
-
-
 
 // POST APIS
 
@@ -1351,9 +1349,6 @@ export const updateSchoolIncome = async (id, payload) => {
   }
 };
 
-
-
-
 // Delete School Income
 export const deleteSchoolIncome = async (accessToken, id) => {
   try {
@@ -1370,7 +1365,6 @@ export const deleteSchoolIncome = async (accessToken, id) => {
     throw err;
   }
 };
-
 
 
 export const fetchSchoolIncomeById = async (id) => {
@@ -1391,5 +1385,4 @@ export const fetchSchoolIncomeById = async (id) => {
     throw error;
   }
 };
-
 

@@ -280,9 +280,7 @@ export const EditAddmissionDetails = () => {
       if (response.is_rte) setValue("is_rte", response.is_rte);
       if (response.rte_number) setValue("rte_number", response.rte_number);
       if (response.student_input.gender) setValue("student.gender", response.student_input.gender.toLowerCase())
-      if (response.guardian_type) {setValue("guardian_type_input", response.guardian_type.id); setSelectedGuardianType(response.guardian_type.id);}
-
-
+      if (response.guardian_type) { setValue("guardian_type_input", response.guardian_type); setSelectedGuardianType(response.guardian_type.id); }
 
     } catch (error) {
       console.error("Error fetching admission details:", error);
@@ -1752,7 +1750,9 @@ export const EditAddmissionDetails = () => {
         {/* Bank Details Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Bank Account Details</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Account Holder Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1765,13 +1765,25 @@ export const EditAddmissionDetails = () => {
                 {...register("banking_detail_input.holder_name", {
                   required: "Account holder name is required",
                   maxLength: {
-                    value: 255,
-                    message: "Holder name cannot exceed 255 characters",
+                    value: 50,
+                    message: "Holder name cannot exceed 50 characters",
+                  },
+                  validate: (value) => {
+                    if (!value.trim()) return "Account holder name is required";
+                    if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(value))
+                      return "Enter a valid name (alphabets & single spaces only)";
+                    return true;
                   },
                 })}
                 placeholder="Full Name as in Bank"
                 className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.holder_name ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .replace(/[^A-Za-z\s]/g, "")
+                    .replace(/\s+/g, " ")
+                    .replace(/^\s+/g, "");
+                }}
               />
               {errors.banking_detail_input?.holder_name && (
                 <span className="text-error text-sm">
@@ -1779,6 +1791,7 @@ export const EditAddmissionDetails = () => {
                 </span>
               )}
             </div>
+            {/* Account Number */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1790,10 +1803,28 @@ export const EditAddmissionDetails = () => {
                 type="text"
                 {...register("banking_detail_input.account_no", {
                   required: "Account number is required",
+                  minLength: {
+                    value: 9,
+                    message: "Account number must be at least 9 digits",
+                  },
+                  maxLength: {
+                    value: 18,
+                    message: "Account number cannot exceed 18 digits",
+                  },
+                  validate: (value) => {
+                    if (!/^[0-9]+$/.test(value))
+                      return "Account number must contain digits only";
+                    if (/^0+$/.test(value))
+                      return "Account number cannot be all zeros";
+                    return true;
+                  },
                 })}
                 placeholder="Account Number"
                 className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.account_no ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
               />
               {errors.banking_detail_input?.account_no && (
                 <span className="text-error text-sm">
@@ -1803,6 +1834,7 @@ export const EditAddmissionDetails = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* IFSC Code */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1814,18 +1846,21 @@ export const EditAddmissionDetails = () => {
                 type="text"
                 {...register("banking_detail_input.ifsc_code", {
                   required: "IFSC code is required",
-                  maxLength: {
-                    value: 225,
-                    message: "IFSC code cannot exceed 225 characters",
-                  },
-                  pattern: {
-                    // value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
-                    message: "Invalid IFSC code format",
+                  validate: (value) => {
+                    const trimmed = value.trim().toUpperCase();
+                    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(trimmed))
+                      return "Enter a valid IFSC code (e.g., SBIN0001234)";
+                    return true;
                   },
                 })}
                 placeholder="eg: SBIN0001234"
                 className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.ifsc_code ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, "");
+                }}
               />
               {errors.banking_detail_input?.ifsc_code && (
                 <span className="text-error text-sm">
@@ -1835,7 +1870,6 @@ export const EditAddmissionDetails = () => {
             </div>
           </div>
         </div>
-
         {/* Submit Button */}
         <div className="flex justify-center mt-10">
           <button
