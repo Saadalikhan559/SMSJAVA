@@ -135,7 +135,7 @@ export const EditExpenses = () => {
           setApiError(errors.non_field_errors.join(" "));
         } else {
           const fieldErrors = Object.entries(errors)
-            .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+            .map(([field, messages]) => `${messages.join(", ")}`)
             .join(" | ");
           setApiError(fieldErrors);
         }
@@ -151,9 +151,9 @@ export const EditExpenses = () => {
     return <Error />;
   }
 
-  const handleNavigation = ()=>{
+  const handleNavigation = () => {
     navigate(`${allRouterLink.viewAllExpenses}`);
-  }
+  };
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
@@ -226,27 +226,6 @@ export const EditExpenses = () => {
               {errors.amount && (
                 <p className="text-error text-sm mt-1">
                   {errors.amount.message}
-                </p>
-              )}
-            </div>
-
-            {/* Description Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-file-lines text-sm"></i>
-                  Description <span className="text-error"></span>
-                </span>
-              </label>
-              <textarea
-                type="number"
-                placeholder="Enter your category description"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("description")}
-              ></textarea>
-              {errors.description && (
-                <p className="text-error text-sm mt-1">
-                  {errors.description.message}
                 </p>
               )}
             </div>
@@ -340,6 +319,28 @@ export const EditExpenses = () => {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+            {/* Description Field */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-file-lines text-sm"></i>
+                  Description <span className="text-error"></span>
+                </span>
+              </label>
+              <textarea
+                placeholder="Enter your category description"
+                className="textarea textarea-bordered w-full focus:outline-none"
+                rows={5}
+                {...register("description")}
+              />
+              {errors.description && (
+                <p className="text-error text-sm mt-1">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+          </div>
           <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
             <button
               type="submit"
