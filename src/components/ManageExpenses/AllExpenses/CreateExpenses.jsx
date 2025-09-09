@@ -102,11 +102,12 @@ export const CreateExpenses = () => {
           order_id,
           handler: async function (response) {
             await axios.post(
-              `${constants.baseUrl}/confirm-expense-payment/`,
+              `${constants.baseUrl}/d/School-Expense/confirm-expense-payment/`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
+                expense_id: id
               },
               {
                 headers: { Authorization: `Bearer ${access}` },

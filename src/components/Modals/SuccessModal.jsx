@@ -3,10 +3,10 @@ import React, { forwardRef, useImperativeHandle, useState } from "react";
 export const SuccessModal = forwardRef((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
-    navigateTo,      // Function to execute on continue
-    buttonText = "Continue",  // Custom button text
+    navigateTo, // Function to execute on continue
+    buttonText = "Continue", // Custom button text
     message = "Your action was completed successfully.", // Custom message
-    title = "Success!" // Custom title
+    title = "Success!", // Custom title
   } = props;
 
   useImperativeHandle(ref, () => ({
@@ -36,9 +36,7 @@ export const SuccessModal = forwardRef((props, ref) => {
           <i className="fa-solid fa-circle-check text-green-700 text-5xl"></i>
         </div>
 
-        <p className="py-3 text-gray-600 mb-4 relative">
-          {message}
-        </p>
+        <p className="py-3 text-gray-600 mb-4 relative">{message}</p>
 
         <div className="mt-2 relative">
           <button
