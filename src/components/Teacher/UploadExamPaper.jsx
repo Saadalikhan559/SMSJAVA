@@ -58,9 +58,9 @@ const UploadExamPaper = () => {
   }, []);
 
   const getExamType = async () => {
+    if (!accessToken) return;
     try {
-      if (!accessToken) return;
-      const obj = await fetchExamType(accessToken); 
+      const obj = await fetchExamType(accessToken);
       if (obj) setExamType(obj);
     } catch (err) {
       console.error("Failed to load exam types:", err);
@@ -209,21 +209,15 @@ const UploadExamPaper = () => {
               <label className="label">
                 <span className="label-text">Exam Type <span className="text-error">*</span></span>
               </label>
-            <select
-  className={`select select-bordered w-full ${errors.exam_type ? "select-error" : ""}`}
-  {...register("exam_type", { required: "Exam type is required" })}
->
-  <option value="">Select Exam Type</option> {/* always visible */}
-  {examType.length === 0 ? (
-    <option disabled>Loading...</option>
-  ) : (
-    examType.map((item) => (
-      <option key={item.id} value={item.id}>{item.name}</option>
-    ))
-  )}
-</select>
-
-              {errors.exam_type && <label className="label"><span className="label-text-alt text-error">{errors.exam_type.message}</span></label>}
+              <select className="select select-bordered w-full"
+                {...register("exam_type", { required: "Exam type is required" })}
+              >
+                <option value="">Select Exam Type</option>
+                {examType.map((item) => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+              {errors.exam_type && <p className="text-error text-sm mt-1">{errors.exam_type.message}</p>}
             </div>
 
             {/* Year Level */}
@@ -231,22 +225,15 @@ const UploadExamPaper = () => {
               <label className="label">
                 <span className="label-text">Year Level <span className="text-error">*</span></span>
               </label>
-              <select
-                className={`select select-bordered w-full ${errors.year_level ? "select-error" : ""}`}
+              <select className="select select-bordered w-full"
                 {...register("year_level", { required: "Year level is required" })}
               >
-                {className1.length === 0 ? (
-                  <option>Loading...</option>
-                ) : (
-                  <>
-                    <option value="">Select Year Level</option>
-                    {className1.map((item) => (
-                      <option key={item.id} value={item.id}>{item.level_name}</option>
-                    ))}
-                  </>
-                )}
+                <option value="">Select Year Level</option>
+                {className1.map((item) => (
+                  <option key={item.id} value={item.id}>{item.level_name}</option>
+                ))}
               </select>
-              {errors.year_level && <label className="label"><span className="label-text-alt text-error">{errors.year_level.message}</span></label>}
+              {errors.year_level && <p className="text-error text-sm mt-1">{errors.year_level.message}</p>}
             </div>
 
             {/* Term */}
@@ -254,21 +241,15 @@ const UploadExamPaper = () => {
               <label className="label">
                 <span className="label-text">Term <span className="text-error">*</span></span>
               </label>
-             <select
-  className={`select select-bordered w-full ${errors.term ? "select-error" : ""}`}
-  {...register("term", { required: "Term is required" })}
->
-  <option value="">Select Term</option> 
-  {terms.length === 0 ? (
-    <option disabled>Loading...</option>
-  ) : (
-    terms.map((item) => (
-      <option key={item.id} value={item.id}>{item.year}</option>
-    ))
-  )}
-</select>
-
-              {errors.term && <label className="label"><span className="label-text-alt text-error">{errors.term.message}</span></label>}
+              <select className="select select-bordered w-full"
+                {...register("term", { required: "Term is required" })}
+              >
+                <option value="">Select Term</option>
+                {terms.map((item) => (
+                  <option key={item.id} value={item.id}>{item.year}</option>
+                ))}
+              </select>
+              {errors.term && <p className="text-error text-sm mt-1">{errors.term.message}</p>}
             </div>
 
             {/* Subject */}
@@ -276,23 +257,15 @@ const UploadExamPaper = () => {
               <label className="label">
                 <span className="label-text">Subject <span className="text-error">*</span></span>
               </label>
-              <select
-                className={`select select-bordered w-full ${errors.subject ? "select-error" : ""}`}
+              <select className="select select-bordered w-full"
                 {...register("subject", { required: "Subject is required" })}
               >
-                {subjects.length === 0 ? (
-                  
-                  <option>Loading...</option>
-                ) : (
-                  <>
-                    <option value="">Select Subject</option>
-                    {subjects.map((item) => (
-                      <option key={item.id} value={item.id}>{item.subject_name}</option>
-                    ))}
-                  </>
-                )}
+                <option value="">Select Subject</option>
+                {subjects.map((item) => (
+                  <option key={item.id} value={item.id}>{item.subject_name}</option>
+                ))}
               </select>
-              {errors.subject && <label className="label"><span className="label-text-alt text-error">{errors.subject.message}</span></label>}
+              {errors.subject && <p className="text-error text-sm mt-1">{errors.subject.message}</p>}
             </div>
 
             {/* Teacher */}
@@ -300,22 +273,15 @@ const UploadExamPaper = () => {
               <label className="label">
                 <span className="label-text">Teacher <span className="text-error">*</span></span>
               </label>
-              <select
-                className={`select select-bordered w-full ${errors.teacher ? "select-error" : ""}`}
+              <select className="select select-bordered w-full"
                 {...register("teacher", { required: "Teacher is required" })}
               >
-                {teachers.length === 0 ? (
-                  <option>Loading...</option>
-                ) : (
-                  <>
-                    <option value="">Select Teacher</option>
-                    {teachers.map((item) => (
-                      <option key={item.id} value={item.id}>{item.first_name} {item.last_name}</option>
-                    ))}
-                  </>
-                )}
+                <option value="">Select Teacher</option>
+                {teachers.map((item) => (
+                  <option key={item.id} value={item.id}>{item.first_name} {item.last_name}</option>
+                ))}
               </select>
-              {errors.teacher && <label className="label"><span className="label-text-alt text-error">{errors.teacher.message}</span></label>}
+              {errors.teacher && <p className="text-error text-sm mt-1">{errors.teacher.message}</p>}
             </div>
 
             {/* Total Marks */}
@@ -325,11 +291,11 @@ const UploadExamPaper = () => {
               </label>
               <input
                 type="number"
-                className={`input input-bordered w-full ${errors.total_marks ? "input-error" : ""}`}
+                className="input input-bordered w-full"
                 placeholder="Enter total marks"
                 {...register("total_marks", { required: "Total marks is required", min: { value: 1, message: "Marks must be positive" } })}
               />
-              {errors.total_marks && <label className="label"><span className="label-text-alt text-error">{errors.total_marks.message}</span></label>}
+              {errors.total_marks && <p className="text-error text-sm mt-1">{errors.total_marks.message}</p>}
             </div>
 
             {/* Paper Code */}
@@ -339,11 +305,11 @@ const UploadExamPaper = () => {
               </label>
               <input
                 type="text"
-                className={`input input-bordered w-full ${errors.paper_code ? "input-error" : ""}`}
+                className="input input-bordered w-full"
                 placeholder="Enter paper code"
                 {...register("paper_code", { required: "Paper code is required", pattern: { value: /^[a-zA-Z0-9-]+$/, message: "Only letters, numbers and hyphens allowed" } })}
               />
-              {errors.paper_code && <label className="label"><span className="label-text-alt text-error">{errors.paper_code.message}</span></label>}
+              {errors.paper_code && <p className="text-error text-sm mt-1">{errors.paper_code.message}</p>}
             </div>
 
             {/* File Upload */}
@@ -353,24 +319,24 @@ const UploadExamPaper = () => {
               </label>
               <input
                 type="file"
-                className={`file-input file-input-bordered w-full ${errors.uploaded_file ? "file-input-error" : ""}`}
+                className="file-input file-input-bordered w-full"
                 accept=".pdf,.doc,.docx"
                 {...register("uploaded_file", {
                   required: "File is required",
                   validate: {
                     fileSize: (files) => files[0]?.size <= 5 * 1024 * 1024 || "File size must be less than 5MB",
-                    fileType: (files) => ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(files[0]?.type) || "Only PDF and Word documents are allowed"
+                    fileType: (files) => ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(files[0]?.type) || "Only PDF and Word documents are allowed"
                   }
                 })}
               />
-              {errors.uploaded_file && <label className="label"><span className="label-text-alt text-error">{errors.uploaded_file.message}</span></label>}
+              {errors.uploaded_file && <p className="text-error text-sm mt-1">{errors.uploaded_file.message}</p>}
             </div>
           </div>
 
           <div className="flex justify-center mt-10">
             <button type="submit" className="btn bgTheme text-white w-52" disabled={isSubmitting}>
               {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2" /> : <i className="fa-solid fa-upload mr-2" />}
-              {isSubmitting ? "Uploading..." : "Upload Paper"}
+              {isSubmitting ? " " : "Upload Paper"}
             </button>
           </div>
         </form>

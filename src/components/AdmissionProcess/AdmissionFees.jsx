@@ -23,6 +23,8 @@ export const AdmissionFees = () => {
 
 
   console.log(availableFees);
+  console.log(selectedStudent);
+  
 
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const accessToken = authTokens?.access;
@@ -197,6 +199,7 @@ export const AdmissionFees = () => {
           if (selectedFeeIds.includes(fee.id)) {
             totalAmount += parseFloat(fee.final_amount);
             if (fee.late_fee) lateFeeAmount += parseFloat(fee.late_fee);
+            if(fee.pending_amount) totalAmount+= parseFloat(fee.pending_amount);
           }
         });
       });
@@ -302,6 +305,7 @@ export const AdmissionFees = () => {
       payment_mode: data.payment_mode,
       is_cheque_cleared: data.payment_mode === "Cheque" ? false : true,
     };
+console.log(payload);
 
     try {
       if (payload.payment_mode === "Online") await displayRazorpay(payload);
@@ -325,15 +329,19 @@ export const AdmissionFees = () => {
   const calculateTotalAmount = () => {
     let total = 0;
     let lateFeeTotal = 0;
+    let DueFeeTotal = 0;
     availableFees.forEach((yearLevel) => {
       yearLevel.fees.forEach((fee) => {
         if (selectedFeeIds.includes(fee.id)) {
           total += parseFloat(fee.final_amount);
           if (fee.late_fee) lateFeeTotal += parseFloat(fee.late_fee);
+          if (fee.pending_amount) DueFeeTotal += parseFloat(fee.pending_amount);
         }
       });
     });
-    return { baseAmount: total, lateFee: lateFeeTotal, totalAmount: total + lateFeeTotal };
+    console.log(DueFeeTotal);
+    
+    return { baseAmount: total, lateFee: lateFeeTotal, Due:DueFeeTotal, totalAmount: total + lateFeeTotal + DueFeeTotal};
   };
 
   const totalAmount = calculateTotalAmount();
@@ -563,8 +571,8 @@ export const AdmissionFees = () => {
                               )}
                               <div>
                                 <h3 className="card-title text-lg font-bold">
-                                  {fee.fee_type}
-                                </h3>
+                                  {fee.fee_type} 
+                                </h3> 
                                 {
                                   // <div className="flex items-center gap-2 text-success">
                                   //   <span>{fee.status}</span>
@@ -573,8 +581,11 @@ export const AdmissionFees = () => {
                                     className={`flex items-center gap-2 ${fee.status === "Paid" ? "text-green-600" : "text-yellow-700"
                                       }`}
                                   >
-                                    <span>{fee.status}</span>
+                                    <span>{fee.status}</span> {
+                                    (totalAmount.Due > 0 && <span>Due:₹{fee.pending_amount}</span>)}
+                                   
                                   </div>
+                                  
 
                                 }
                                 {fee.late_fee && (
@@ -593,7 +604,8 @@ export const AdmissionFees = () => {
               ))}
 
               {/* Total Amount Summary */}
-              {selectedFeeIds.length > 0 && (
+              { console.log(totalAmount)}
+              {selectedFeeIds.length > 0  && (
                 <div className="bg-base-300 p-4 rounded-lg mt-6">
                   <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
                   <div className="grid grid-cols-2 gap-2">
@@ -602,7 +614,8 @@ export const AdmissionFees = () => {
                       ₹{totalAmount.baseAmount.toFixed(2)}
                     </div>
 
-                    {totalAmount.lateFee > 0 && (
+                    {totalAmount.lateFee > 0 && 
+                     (
                       <>
                         <div>Late Fee:</div>
                         <div className="text-right text-warning">
@@ -610,6 +623,16 @@ export const AdmissionFees = () => {
                         </div>
                       </>
                     )}
+                    
+                    {totalAmount.Due > 0 && (
+                      <>
+                        <div>Due Fee:</div>
+                        <div className="text-right text-warning">
+                          ₹{totalAmount.Due.toFixed(2)}
+                        </div>
+                      </>
+                    )}
+                
 
                     <div className="font-bold mt-2 border-t pt-2">
                       Total Amount:

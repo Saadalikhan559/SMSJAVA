@@ -185,33 +185,33 @@ export const AdmissionForm = () => {
     }
   };
 
- 
 
 
-useEffect(() => {
-  const fetchAllData = async () => {
-    try {
-      setLoading(true); // loader start
-      setError(null);
 
-      await Promise.all([
-        getYearLevels(),
-        getSchoolYears(),
-        getGuardianType(),
-        getCountry(),
-        getState(),
-        getCity(),
-      ]);
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setLoading(true); // loader start
+        setError(null);
 
-    } catch (err) {
-      setError("Failed to fetch data");
-    } finally {
-      setLoading(false); // loader stop
-    }
-  };
+        await Promise.all([
+          getYearLevels(),
+          getSchoolYears(),
+          getGuardianType(),
+          getCountry(),
+          getState(),
+          getCity(),
+        ]);
 
-  fetchAllData();
-}, []);
+      } catch (err) {
+        setError("Failed to fetch data");
+      } finally {
+        setLoading(false); // loader stop
+      }
+    };
+
+    fetchAllData();
+  }, []);
 
 
   const onSubmit = async (data) => {
@@ -232,30 +232,41 @@ useEffect(() => {
     }
   });
 
-  if (data.student_user_profile) {
-    submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
+if (data.student_user_profile) {
+  submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
+}
+if (data.guardian_user_profile) {
+  submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
+}
+
+try {
+  await handleAdmissionForm(submitFormData);
+
+  // Show success modal after successful submission
+  setModalTitle("Admission Successful");
+  setModalMessage("Your admission has been successfully submitted.");
+  setModalShow(true);
+  setShowAdmissionSuccessModal(true);
+
+  reset();
+  setSelectedGuardianType("");
+  setIsRTE(false);
+} catch (error) {
+  console.log(error);
+  console.error("Submission error:", error.response?.data || error.message);
+  
+  // Extract error message from backend response dynamically
+  let errorMsg = "Admission failed. Please try again.";
+  if (error?.response?.data?.message) {
+    errorMsg = error.response.data.message;
+  } else if (error?.message) {
+    errorMsg = error.message;
   }
-  if (data.guardian_user_profile) {
-    submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
-  }
-
-  try {
-    await handleAdmissionForm(submitFormData);
-
-    setModalTitle("Admission Successful");
-    setModalMessage("Your admission has been successfully submitted.");
-    setModalShow(true);
-
-    reset();
-    setSelectedGuardianType("");
-    setIsRTE(false);
-  } catch (error) {
-    // Extract error message from backend response dynamically
-    let errorMsg = "Admission failed. Please try again.";
-    if (error?.response?.data?.message) {
-      errorMsg = error.response.data.message;
-    } else if (error?.message) {
-      errorMsg = error.message;
+  
+  alert(`Failed to submit the form: ${errorMsg}`);
+} finally {
+  setLoading(false);
+}
     }
 
     setModalTitle("Admission Failed");
@@ -275,7 +286,7 @@ useEffect(() => {
     navigate("/addmissionDetails");
   };
 
-if (loading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
@@ -448,7 +459,7 @@ if (loading) {
                   required: "Password is required",
                   maxLength: {
                     value: 100,
-                    message: "Password cannot exceed 100 characters",  
+                    message: "Password cannot exceed 100 characters",
                   },
                   pattern: {
                     value:
@@ -650,13 +661,17 @@ if (loading) {
                 placeholder="Height"
                 className={`input input-bordered w-full focus:outline-none ${errors.student?.height ? "input-error" : ""
                   }`}
+                min={0} // prevents down arrow from going negative
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault(); // prevents typing negative or 'e'
+                }}
+                onWheel={(e) => e.target.blur()} // prevents scroll changing value
               />
               {errors.student?.height && (
-                <span className="text-error text-sm">
-                  {errors.student.height.message}
-                </span>
+                <span className="text-error text-sm">{errors.student.height.message}</span>
               )}
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1421,20 +1436,15 @@ if (loading) {
               </label>
               <input
                 type="number"
-                {...register("address_input.ward_no", {
-                  required: "Ward number is required",
-                  min: { value: -2147483648, message: "Invalid ward number" },
-                  max: { value: 2147483647, message: "Invalid ward number" },
-                })}
                 placeholder="Ward Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.ward_no ? "input-error" : ""
-                  }`}
+                min={0} // prevents down arrow from going negative
+                className="input input-bordered w-full focus:outline-none"
+                {...register("address_input.ward_no")}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault(); // prevent negative & scientific notation
+                }}
+                onWheel={(e) => e.target.blur()} // prevent scroll changing value
               />
-              {errors.address?.ward_no && (
-                <span className="text-error text-sm">
-                  {errors.address.ward_no.message}
-                </span>
-              )}
             </div>
             <div className="form-control">
               <label className="label">
@@ -1445,20 +1455,15 @@ if (loading) {
               </label>
               <input
                 type="number"
-                {...register("address_input.zone_no", {
-                  required: "Zone number is required",
-                  min: { value: -2147483648, message: "Invalid zone number" },
-                  max: { value: 2147483647, message: "Invalid zone number" },
-                })}
                 placeholder="Zone"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.zone_no ? "input-error" : ""
-                  }`}
+                min={0} // prevents down arrow from going negative
+                className="input input-bordered w-full focus:outline-none"
+                {...register("address_input.zone_no")}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                }}
+                onWheel={(e) => e.target.blur()}
               />
-              {errors.address?.zone_no && (
-                <span className="text-error text-sm">
-                  {errors.address.zone_no.message}
-                </span>
-              )}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
@@ -1695,20 +1700,33 @@ if (loading) {
                 {...register("banking_detail_input.holder_name", {
                   required: "Account holder name is required",
                   maxLength: {
-                    value: 255,
-                    message: "Holder name cannot exceed 255 characters",
+                    value: 50,
+                    message: "Holder name cannot exceed 50 characters",
+                  },
+                  validate: (value) => {
+                    if (!value.trim()) return "Account holder name is required"; // blank or just space ❌
+                    if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(value))
+                      return "Enter a valid name (alphabets & single spaces only)";
+                    return true;
                   },
                 })}
                 placeholder="Full Name as in Bank"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail?.holder_name ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.holder_name ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .replace(/[^A-Za-z\s]/g, "")
+                    .replace(/\s+/g, " ")
+                    .replace(/^\s+/g, "");
+                }}
               />
-              {errors.banking_detail?.holder_name && (
+              {errors.banking_detail_input?.holder_name && (
                 <span className="text-error text-sm">
-                  {errors.banking_detail.holder_name.message}
+                  {errors.banking_detail_input.holder_name.message}
                 </span>
               )}
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1717,25 +1735,24 @@ if (loading) {
                 </span>
               </label>
               <input
-                type="number"
+                type="text"
                 {...register("banking_detail_input.account_no", {
                   required: "Account number is required",
-                  min: {
-                    value: -9223372036854775808,
-                    message: "Invalid account number",
-                  },
-                  max: {
-                    value: 9223372036854775807,
-                    message: "Invalid account number",
+                  pattern: {
+                    value: /^[0-9]{9,18}$/,
+                    message: "Account number must be 9 to 18 digits",
                   },
                 })}
                 placeholder="Account Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail?.account_no ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.account_no ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                }}
               />
-              {errors.banking_detail?.account_no && (
+              {errors.banking_detail_input?.account_no && (
                 <span className="text-error text-sm">
-                  {errors.banking_detail.account_no.message}
+                  {errors.banking_detail_input.account_no.message}
                 </span>
               )}
             </div>
@@ -1752,24 +1769,27 @@ if (loading) {
                 type="text"
                 {...register("banking_detail_input.ifsc_code", {
                   required: "IFSC code is required",
-                  maxLength: {
-                    value: 14,
-                    message: "IFSC code cannot exceed 14 characters",
-                  },
                   pattern: {
-                    // value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
-                    message: "Invalid IFSC code format",
+                    value: /^[A-Z]{4}[0-9A-Z][A-Z0-9]{6}$/,
+                    message: "Invalid IFSC code format (e.g. SBIN0001234 or BARBOBHOPAL)",
                   },
                 })}
                 placeholder="eg: SBIN0001234"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail?.ifsc_code ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.ifsc_code ? "input-error" : ""
                   }`}
+                onInput={(e) => {
+                  e.target.value = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, "");
+                }}
+                maxLength={11}
               />
-              {errors.banking_detail?.ifsc_code && (
+              {errors.banking_detail_input?.ifsc_code && (
                 <span className="text-error text-sm">
-                  {errors.banking_detail.ifsc_code.message}
+                  {errors.banking_detail_input.ifsc_code.message}
                 </span>
               )}
+
             </div>
           </div>
         </div>

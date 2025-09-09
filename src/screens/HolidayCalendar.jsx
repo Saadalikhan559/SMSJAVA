@@ -51,7 +51,7 @@ function HolidayCalendar() {
     if (year && month) {
       getCalendar();
     }
-  }, [year, month]);
+  }, []);
 
   // Loader UI
   if (loading) {
