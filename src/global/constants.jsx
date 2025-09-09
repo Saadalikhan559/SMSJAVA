@@ -24,6 +24,20 @@ export const constants = {
     student: "student",
     guardian: "guardian",
   },
+  allMonths : [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
 
   // roles: {
   //   director: "Director",
