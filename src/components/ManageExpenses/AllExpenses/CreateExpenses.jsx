@@ -91,15 +91,22 @@ export const CreateExpenses = () => {
             },
           }
         );
-        const { id: order_id, amount, currency } = orderResponse.data;
+        const {
+          id: order_id,
+          amount,
+          currency,
+          expense_id,
+          razorpay_key,
+          razorpay_order_id,
+        } = orderResponse.data;
 
         const options = {
-          key: "rzp_test_4h2aRSAPbYw3f8",
+          key: razorpay_key,
           amount: amount * 100,
           currency,
           name: "School Expense",
-          description: data.description,  
-          order_id,
+          description: data.description,
+          order_id: razorpay_order_id,
           handler: async function (response) {
             await axios.post(
               `${constants.baseUrl}/d/School-Expense/confirm-expense-payment/`,
@@ -107,10 +114,13 @@ export const CreateExpenses = () => {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
-                expense_id: id
+                expense_id: expense_id,
               },
               {
-                headers: { Authorization: `Bearer ${access}` },
+                headers: {
+                  Authorization: `Bearer ${access}`,
+                  "Content-Type": "application/json",
+                },
               }
             );
 
