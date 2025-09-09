@@ -34,7 +34,7 @@ const Staffdetail = () => {
     getStaff();
   }, [id, type]);
 
- if (loading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
@@ -93,10 +93,14 @@ const Staffdetail = () => {
               <div><strong>Email:</strong><br />{staffData.email || "N/A"}</div>
               <div><strong>Phone:</strong><br />{staffData.phone_no || "N/A"}</div>
               <div className="capitalize"><strong>Gender:</strong><br />{staffData.gender || "N/A"}</div>
-              <div><strong>Aadhar No:</strong><br />{staffData.aadhar_no || "N/A"}</div>
+              <div><strong>Aadhar No:</strong><br />{staffData.adhaar_no || "N/A"}</div>
               <div><strong>PAN No:</strong><br />{staffData.pan_no || "N/A"}</div>
-              <div><strong>Qualification:</strong><br />{staffData.qualification || "N/A"}</div>
-              <div><strong>Category:</strong><br />{staffData.category || "N/A"}</div>
+              {type === "teacher" && (
+                <div>
+                  <strong>Qualification:</strong><br />
+                  {staffData.qualification || "N/A"}
+                </div>
+              )}
             </div>
 
             <div className="flex justify-center p-8 gap-4">

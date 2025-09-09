@@ -34,6 +34,8 @@ export const DocumentUpload = () => {
   const [loadingOfficeStaff, setLoadingOfficeStaff] = useState(false);
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [role, setRole] = useState("");
 
@@ -238,12 +240,14 @@ export const DocumentUpload = () => {
     try {
       for (const [index, field] of uploadFields.entries()) {
         if (!field.files || !field.document_types) {
-          alert("Please select file and document type for all fields");
+          setAlertMessage("Please select file and document type for all fields");
+          setShowAlert(true);
           setLoading(false);
           return;
         }
         if (identityErrors[index]) {
-          alert("Please fix identity errors before uploading");
+          setAlertMessage("Please fix identity errors before uploading");
+          setShowAlert(true);
           setLoading(false);
           return;
         }
@@ -262,13 +266,15 @@ export const DocumentUpload = () => {
         });
       }
 
-      alert("All documents uploaded successfully!");
+      setAlertMessage("Documents uploaded successfully!");
+      setShowAlert(true);
       setUploadFields([{ files: null, document_types: "", identities: "" }]);
       setFormData({ student: "", teacher: "", guardian: "", office_staff: "", year_level: "" });
       setRole("");
       setStep(0);
     } catch {
-      alert("Upload failed");
+      setAlertMessage("Upload failed");
+      setShowAlert(true);
     } finally {
       setLoading(false);
     }
@@ -317,7 +323,7 @@ export const DocumentUpload = () => {
         </ul>
 
         <style>
-        {`
+          {`
           
           .steps .step.step-primary::before,
           .steps .step.step-primary:before {
@@ -334,7 +340,7 @@ export const DocumentUpload = () => {
             border-color: #6d28d9 !important;
           }
         `}
-      </style>
+        </style>
         {/* STEP 1 */}
         {step === 0 && (
           <div className="w-full max-w-6xl mx-auto p-6">
@@ -404,96 +410,96 @@ export const DocumentUpload = () => {
               <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
             </h1>
 
-          {uploadFields.map((field, index) => (
-  <div
-  key={index}
-  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full"
->
-  {/* Document Upload */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
-        <span className="text-error">*</span>
-      </span>
-    </label>
-    <input
-      type="file"
-      name="file"
-      className="file-input file-input-bordered w-full focus:outline-none"
-      required
-      onChange={(e) => handleFileChange(e, index)}
-    />
-  </div>
+            {uploadFields.map((field, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full"
+              >
+                {/* Document Upload */}
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
+                      <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <input
+                    type="file"
+                    name="file"
+                    className="file-input file-input-bordered w-full focus:outline-none"
+                    required
+                    onChange={(e) => handleFileChange(e, index)}
+                  />
+                </div>
 
-  {/* Document Type */}
-  <div className="form-control w-full">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-file text-sm"></i> Document Type
-        <span className="text-error">*</span>
-      </span>
-    </label>
-    <select
-      name="document_types"
-      className="select select-bordered w-full focus:outline-none cursor-pointer"
-      required
-      value={field.document_types}
-      onChange={(e) => handleUploadChange(e, index)}
-    >
-      <option value="">Select Document Type</option>
-      {getAvailableDocumentTypes(index).map((doc) => (
-        <option key={doc.id} value={doc.id}>
-          {doc.name}
-        </option>
-      ))}
-    </select>
-  </div>
+                {/* Document Type */}
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-file text-sm"></i> Document Type
+                      <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <select
+                    name="document_types"
+                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    required
+                    value={field.document_types}
+                    onChange={(e) => handleUploadChange(e, index)}
+                  >
+                    <option value="">Select Document Type</option>
+                    {getAvailableDocumentTypes(index).map((doc) => (
+                      <option key={doc.id} value={doc.id}>
+                        {doc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-  {/* Identity */}
-  <div className="form-control w-full pt-6">
-    <label className="label">
-      <span className="label-text flex items-center gap-1">
-        <i className="fa-solid fa-id-card text-sm"></i> Identity
-      </span>
-    </label>
-    <input
-      type="text"
-      name="identities"
-      className="input input-bordered w-full focus:outline-none"
-      value={field.identities}
-      onChange={(e) => handleUploadChange(e, index)}
-      placeholder="Enter identity ID"
-      style={{ marginBottom: "0" }} // extra tweak
-    />
-    <span className="text-red-500 text-sm mt-1 block min-h-[1.25rem]">
-      {identityErrors[index]}
-    </span>
-  </div>
+                {/* Identity */}
+                <div className="form-control w-full pt-6">
+                  <label className="label">
+                    <span className="label-text flex items-center gap-1">
+                      <i className="fa-solid fa-id-card text-sm"></i> Identity
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    name="identities"
+                    className="input input-bordered w-full focus:outline-none"
+                    value={field.identities}
+                    onChange={(e) => handleUploadChange(e, index)}
+                    placeholder="Enter identity ID"
+                    style={{ marginBottom: "0" }} // extra tweak
+                  />
+                  <span className="text-red-500 text-sm mt-1 block min-h-[1.25rem]">
+                    {identityErrors[index]}
+                  </span>
+                </div>
 
-  {/* Add/Remove Button */}
-  <div className="form-control w-full flex items-end pt-6">
-    {index === 0 ? (
-      <button
-        type="button"
-        className="btn bgTheme text-white w-full"
-        onClick={handleAddField}
-      >
-        <i className="fa-solid fa-plus mr-1"></i> Add
-      </button>
-    ) : (
-      <button
-        type="button"
-        className="btn btn-error w-full"
-        onClick={() =>
-          setUploadFields(uploadFields.filter((_, i) => i !== index))
-        }
-      >
-        <i className="fa-solid fa-trash mr-1"></i> Remove
-      </button>
-    )}
-  </div>
-</div>
+                {/* Add/Remove Button */}
+                <div className="form-control w-full flex items-end pt-6">
+                  {index === 0 ? (
+                    <button
+                      type="button"
+                      className="btn bgTheme text-white w-full"
+                      onClick={handleAddField}
+                    >
+                      <i className="fa-solid fa-plus mr-1"></i> Add
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn btn-error w-full"
+                      onClick={() =>
+                        setUploadFields(uploadFields.filter((_, i) => i !== index))
+                      }
+                    >
+                      <i className="fa-solid fa-trash mr-1"></i> Remove
+                    </button>
+                  )}
+                </div>
+              </div>
 
             ))}
 
@@ -615,50 +621,71 @@ export const DocumentUpload = () => {
         {/* NAVIGATION BUTTONS */}
 
         <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 p-6">
-  {/* Back button - Only for step > 0 */}
-  {step > 0 && (
-  <button
-    type="button"
-    onClick={prev}
-    className="btn bgTheme text-white w-40 hover:bg-blue-700 flex items-center justify-center"
-  >
-    <i className="fa-solid fa-arrow-left mr-2"></i> Back
-  </button>
-)}
-  {/* Next button - Only for step 0 */}
-  {step === 0 && (
-    <div className="flex-1 flex justify-end">
-      <button
-        type="button"
-        onClick={next}
-        className={`bgTheme text-white px-4 py-2 rounded-lg shadow w-40 ${
-          role.length === 0 || (role === constants.roles.student && !formData.year_level)
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-blue-700"
-        }`}
-        disabled={role.length === 0 || (role === constants.roles.student && !formData.year_level)}
-      >
-        Next
-      </button>
-    </div>
-  )}
+          {/* Back button - Only for step > 0 */}
+          {step > 0 && (
+            <button
+              type="button"
+              onClick={prev}
+              className="btn bgTheme text-white w-40 hover:bg-blue-700 flex items-center justify-center"
+            >
+              <i className="fa-solid fa-arrow-left mr-2"></i> Back
+            </button>
+          )}
+          {/* Next button - Only for step 0 */}
+          {step === 0 && (
+            <div className="flex-1 flex justify-end">
+              <button
+                type="button"
+                onClick={next}
+                className={`bgTheme text-white px-4 py-2 rounded-lg shadow w-40 ${role.length === 0 || (role === constants.roles.student && !formData.year_level)
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-700"
+                  }`}
+                disabled={role.length === 0 || (role === constants.roles.student && !formData.year_level)}
+              >
+                Next
+              </button>
+            </div>
+          )}
 
-  {/* Upload button - Only for step 1 */}
-  {step === 1 && (
-    <div className="flex-1 flex justify-end md:justify-end">
-      <button type="submit" className="btn bgTheme text-white w-40">
-        {loading ? (
-          <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-        ) : (
-          <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
-        )}
-        {loading ? "Uploading..." : "Upload"}
-      </button>
-    </div>
-  )}
-</div>
+          {/* Upload button - Only for step 1 */}
+          {step === 1 && (
+            <div className="flex-1 flex justify-end md:justify-end">
+              <button type="submit" className="btn bgTheme text-white w-40">
+                {loading ? (
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                ) : (
+                  <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+                )}
+                {loading ? "" : "Upload"}
+              </button>
+            </div>
+          )}
+        </div>
 
       </form>
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Document Upload</h3>
+            <p className="py-4">{alertMessage.split("\n").map((line, idx) => (
+              <span key={idx}>
+                {line}
+                <br />
+              </span>
+            ))}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
     </div>
   );
 };
