@@ -232,30 +232,41 @@ export const AdmissionForm = () => {
     }
   });
 
-  if (data.student_user_profile) {
-    submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
+if (data.student_user_profile) {
+  submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
+}
+if (data.guardian_user_profile) {
+  submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
+}
+
+try {
+  await handleAdmissionForm(submitFormData);
+
+  // Show success modal after successful submission
+  setModalTitle("Admission Successful");
+  setModalMessage("Your admission has been successfully submitted.");
+  setModalShow(true);
+  setShowAdmissionSuccessModal(true);
+
+  reset();
+  setSelectedGuardianType("");
+  setIsRTE(false);
+} catch (error) {
+  console.log(error);
+  console.error("Submission error:", error.response?.data || error.message);
+  
+  // Extract error message from backend response dynamically
+  let errorMsg = "Admission failed. Please try again.";
+  if (error?.response?.data?.message) {
+    errorMsg = error.response.data.message;
+  } else if (error?.message) {
+    errorMsg = error.message;
   }
-  if (data.guardian_user_profile) {
-    submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
-  }
-
-  try {
-    await handleAdmissionForm(submitFormData);
-
-    setModalTitle("Admission Successful");
-    setModalMessage("Your admission has been successfully submitted.");
-    setModalShow(true);
-
-    reset();
-    setSelectedGuardianType("");
-    setIsRTE(false);
-  } catch (error) {
-    // Extract error message from backend response dynamically
-    let errorMsg = "Admission failed. Please try again.";
-    if (error?.response?.data?.message) {
-      errorMsg = error.response.data.message;
-    } else if (error?.message) {
-      errorMsg = error.message;
+  
+  alert(`Failed to submit the form: ${errorMsg}`);
+} finally {
+  setLoading(false);
+}
     }
 
     setModalTitle("Admission Failed");
