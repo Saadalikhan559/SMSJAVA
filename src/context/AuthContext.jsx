@@ -33,6 +33,10 @@ export const AuthProvider = ({ children }) => {
   );
   const [yearLevelID, setYearLevelID] = useState(
     () => localStorage.getItem("year_level_id") || "");
+  const [stuyearLevelID, setstuYearLevelID] = useState(
+    () => localStorage.getItem("stu_year_level_id") || "");
+  const [stuyearLevelName, setstuYearLevelName] = useState(
+    () => localStorage.getItem("stu_year_level_name") || "");
 
 
 
@@ -132,6 +136,7 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
       const data = response.data;
 
+      console.log(data)
       if (!data["Access Token"] || !data["Refresh Token"] || !data.Roles) {
         throw new Error("Invalid login response structure");
       }
@@ -140,7 +145,7 @@ export const AuthProvider = ({ children }) => {
         access: data["Access Token"],
         refresh: data["Refresh Token"],
       };
-      
+
 
       setAuthTokens(tokens);
       localStorage.setItem("authTokens", JSON.stringify(tokens));
@@ -191,7 +196,14 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user_profile", normalizedProfile);
         setUserProfile(normalizedProfile);
       }
-
+      if (data.year_level?.id) {
+        localStorage.setItem("stu_year_level_id", data.year_level.id);
+        setstuYearLevelID(data.year_level.id)
+      }
+      if (data.year_level?.name) {
+        localStorage.setItem("stu_year_level_name", data.year_level.name);
+        setstuYearLevelName(data.year_level.name)
+      }
       return data;
     } catch (error) {
       console.error("Login error:", error);
@@ -220,6 +232,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("rzp_device_id");
     localStorage.removeItem("rzp_checkout_anon_id");
     localStorage.removeItem("year_level_id");
+    localStorage.removeItem("stu_year_level_id");
+    localStorage.removeItem("stu_year_level_name");
 
   };
 
