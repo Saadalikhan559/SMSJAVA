@@ -25,13 +25,10 @@ export const AdmissionForm = () => {
   const [city, setCity] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [modalTitle, setModalTitle] = useState("Admission Status");
-  const [modalShow, setModalShow] = useState(false);
 
-
-  const [modalMessage, setModalMessage] = useState("");
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const formRef = useRef(null);
+  const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] = useState(false);
   const [isRTE, setIsRTE] = useState(false);
 
   const {
@@ -215,21 +212,32 @@ export const AdmissionForm = () => {
 
 
   const onSubmit = async (data) => {
-  setLoading(true);
-  const submitFormData = new FormData();
+    setLoading(true);
+    const submitFormData = new FormData();
 
-  data.student.roll_number = null;
-  data.student.scholar_number = null;
-  data.student.contact_number = data.guardian.phone_no;
+    data.student.roll_number = null;
+    data.student.scholar_number = null;
+    data.student.contact_number = data.guardian.phone_no;
 
-  Object.entries(data).forEach(([key, value]) => {
-    if (typeof value === "object" && value !== null) {
-      Object.entries(value).forEach(([subKey, subValue]) => {
-        submitFormData.append(`${key}[${subKey}]`, subValue);
-      });
-    } else {
-      submitFormData.append(key, value);
+    // Append all payload data to FormData
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          submitFormData.append(`${key}[${subKey}]`, subValue);
+        });
+      } else {
+        submitFormData.append(key, value);
+      }
+    });
+
+    // Append files separately
+    if (data.student_user_profile) {
+      submitFormData.append(
+        "student[profile_picture]",
+        data.student_user_profile[0]
+      );
     }
+<<<<<<< HEAD
   });
 
 if (data.student_user_profile) {
@@ -275,6 +283,34 @@ try {
 const handleCloseOnly = () => {
   setShowAdmissionSuccessModal(false);
 };
+=======
+    if (data.guardian_user_profile) {
+      submitFormData.append(
+        "guardian[profile_picture]",
+        data.guardian_user_profile[0]
+      );
+    }
+
+    try {
+      await handleAdmissionForm(submitFormData);
+      // Show success modal after successful submission
+      setShowAdmissionSuccessModal(true);
+      reset();
+      setSelectedGuardianType("");
+      setIsRTE(false);
+    } catch (error) {
+      console.log(error);
+
+      console.error("Submission error:", error.response?.data || error.message);
+      alert(
+        `Failed to submit the form: ${error.response?.data?.message || error.message
+        }`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+>>>>>>> 3580883f8fe88dbbe14deaf5f1cf9873128fc1e0
 
 const handleCloseAndNavigate = () => {
   setShowAdmissionSuccessModal(false);
@@ -1806,20 +1842,12 @@ if (error) {
           </button>
         </div>
       </form>
-       {modalShow && (
-  <dialog className="modal modal-open">
-    <div className="modal-box">
-      <h3 className="font-bold text-lg">{modalTitle}</h3>
-      <p className="py-4 whitespace-pre-line">{modalMessage}</p>
-      <div className="modal-action">
-        <button className="btn bgTheme text-white" onClick={() => setModalShow(false)}>
-          OK
-        </button>
-      </div>
-    </div>
-  </dialog>
-)}
-
+      {showAdmissionSuccessModal && (
+        <AdmissionSuccessful
+          handleCloseOnly={handleCloseOnly}
+          handleCloseAndNavigate={handleCloseAndNavigate}
+        />
+      )}
     </>
 );
 }
