@@ -27,7 +27,7 @@ export const AdmissionForm = () => {
   const [error, setError] = useState(null);
   const [modalTitle, setModalTitle] = useState("Admission Status");
   const [modalShow, setModalShow] = useState(false);
-
+  const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] = useState(false);
 
   const [modalMessage, setModalMessage] = useState("");
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
@@ -185,9 +185,6 @@ export const AdmissionForm = () => {
     }
   };
 
-
-
-
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -213,69 +210,62 @@ export const AdmissionForm = () => {
     fetchAllData();
   }, []);
 
-
   const onSubmit = async (data) => {
-  setLoading(true);
-  const submitFormData = new FormData();
+    setLoading(true);
+    const submitFormData = new FormData();
 
-  data.student.roll_number = null;
-  data.student.scholar_number = null;
-  data.student.contact_number = data.guardian.phone_no;
+    data.student.roll_number = null;
+    data.student.scholar_number = null;
+    data.student.contact_number = data.guardian.phone_no;
 
-  Object.entries(data).forEach(([key, value]) => {
-    if (typeof value === "object" && value !== null) {
-      Object.entries(value).forEach(([subKey, subValue]) => {
-        submitFormData.append(`${key}[${subKey}]`, subValue);
-      });
-    } else {
-      submitFormData.append(key, value);
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "object" && value !== null) {
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          submitFormData.append(`${key}[${subKey}]`, subValue);
+        });
+      } else {
+        submitFormData.append(key, value);
+      }
+    });
+
+    if (data.student_user_profile) {
+      submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
     }
-  });
-
-if (data.student_user_profile) {
-  submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
-}
-if (data.guardian_user_profile) {
-  submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
-}
-
-try {
-  await handleAdmissionForm(submitFormData);
-
-  // Show success modal after successful submission
-  setModalTitle("Admission Successful");
-  setModalMessage("Your admission has been successfully submitted.");
-  setModalShow(true);
-  setShowAdmissionSuccessModal(true);
-
-  reset();
-  setSelectedGuardianType("");
-  setIsRTE(false);
-} catch (error) {
-  console.log(error);
-  console.error("Submission error:", error.response?.data || error.message);
-  
-  // Extract error message from backend response dynamically
-  let errorMsg = "Admission failed. Please try again.";
-  if (error?.response?.data?.message) {
-    errorMsg = error.response.data.message;
-  } else if (error?.message) {
-    errorMsg = error.message;
-  }
-  
-  alert(`Failed to submit the form: ${errorMsg}`);
-} finally {
-  setLoading(false);
-}
+    if (data.guardian_user_profile) {
+      submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
     }
 
-    setModalTitle("Admission Failed");
-    setModalMessage(errorMsg);
-    setModalShow(true);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      await handleAdmissionForm(submitFormData);
+
+      // Show success modal after successful submission
+      setModalTitle("Admission Successful");
+      setModalMessage("Your admission has been successfully submitted.");
+      setModalShow(true);
+      setShowAdmissionSuccessModal(true);
+
+      reset();
+      setSelectedGuardianType("");
+      setIsRTE(false);
+    } catch (error) {
+      console.log(error);
+      console.error("Submission error:", error.response?.data || error.message);
+      
+      // Extract error message from backend response dynamically
+      let errorMsg = "Admission failed. Please try again.";
+      if (error?.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error?.message) {
+        errorMsg = error.message;
+      }
+      
+      setModalTitle("Admission Failed");
+      setModalMessage(errorMsg);
+      setModalShow(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCloseOnly = () => {
     setShowAdmissionSuccessModal(false);
@@ -285,30 +275,6 @@ try {
     setShowAdmissionSuccessModal(false);
     navigate("/addmissionDetails");
   };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-      </div>
-    );
-  }
-
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <style>{constants.hideEdgeRevealStyle}</style>

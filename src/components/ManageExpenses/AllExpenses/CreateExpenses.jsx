@@ -2,14 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { SuccessModal } from "../../Modals/SuccessModal";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../../context/AuthContext";
-import {
-  fetchExpenseCategory,
-  fetchSchoolYear,
-} from "../../../services/api/Api";
+import { fetchSchoolYear } from "../../../services/api/Api";
 import { constants } from "../../../global/constants";
-import axios from "axios";
-import { Loader } from "../../../global/Loader";
-import { Error } from "../../../global/Error";
+import { allRouterLink } from "../../../router/AllRouterLinks";
+import { useNavigate } from "react-router-dom";
 
 export const CreateExpenses = () => {
   const [loading, setLoading] = useState(false);
@@ -20,8 +16,8 @@ export const CreateExpenses = () => {
   const [schoolYear, setSchoolYear] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const { authTokens } = useContext(AuthContext);
-  const access = authTokens.access;
+  const { axiosInstance } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const paymentModes = ["Cash", "Cheque", "Online"];
   const {
@@ -38,8 +34,8 @@ export const CreateExpenses = () => {
   const getExpenseCategory = async () => {
     try {
       setError("");
-      const response = await fetchExpenseCategory(access);
-      setCategory(response);
+      const response = await axiosInstance.get("/d/Expense-Category/");
+      setCategory(response.data);
     } catch (err) {
       console.error("Cannot get the category:", err);
       setError("Failed to load categories. Please try again later.");
@@ -81,15 +77,9 @@ export const CreateExpenses = () => {
       }
 
       if (data.payment_method.toLowerCase() === "online") {
-        const orderResponse = await axios.post(
-          `${constants.baseUrl}/d/School-Expense/initiate-expense-payment/`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${access}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
+        const orderResponse = await axiosInstance.post(
+          `/d/School-Expense/initiate-expense-payment/`,
+          formData
         );
         const {
           id: order_id,
@@ -108,19 +98,13 @@ export const CreateExpenses = () => {
           description: data.description,
           order_id: razorpay_order_id,
           handler: async function (response) {
-            await axios.post(
-              `${constants.baseUrl}/d/School-Expense/confirm-expense-payment/`,
+            await axiosInstance.post(
+              `/d/School-Expense/confirm-expense-payment/`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
                 expense_id: expense_id,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${access}`,
-                  "Content-Type": "application/json",
-                },
               }
             );
 
@@ -137,15 +121,9 @@ export const CreateExpenses = () => {
         const rzp = new window.Razorpay(options);
         rzp.open();
       } else {
-        const response = await axios.post(
-          `${constants.baseUrl}/d/School-Expense/`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${access}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
+        const response = await axiosInstance.post(
+          `/d/School-Expense/`,
+          formData
         );
 
         if (response.status === 200 || response.status === 201) {
@@ -170,7 +148,9 @@ export const CreateExpenses = () => {
       setLoading(false);
     }
   };
-
+  const handleNavigation = () => {
+    navigate(`${allRouterLink.viewAllExpenses}`);
+  };
   return (
     <div className="min-h-screen p-5 bg-gray-50">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
@@ -405,7 +385,12 @@ export const CreateExpenses = () => {
           </div>
         </form>
       </div>
-      <SuccessModal ref={modalRef} />
+      <SuccessModal
+        ref={modalRef}
+        navigateTo={handleNavigation}
+        buttonText="Continue"
+        message="Successfully paid the salary!"
+      />
     </div>
   );
 };

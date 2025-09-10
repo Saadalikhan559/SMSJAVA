@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   fetchExpenseCategory,
   fetchSchoolExpense,
@@ -12,8 +12,10 @@ import { Link } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
 import { SuccessModal } from "../../Modals/SuccessModal";
 import { ConfirmationModal } from "../../Modals/ConfirmationModal";
+import { AuthContext } from "../../../context/AuthContext";
 
 export const ViewAllExpenses = () => {
+  const { axiosInstance, authTokens } = useContext(AuthContext);
   const [schoolExpense, setSchoolExpense] = useState([]);
   const [loading, setLoading] = useState(false);
   const [schoolYear, setSchoolYear] = useState([]);
@@ -33,20 +35,7 @@ export const ViewAllExpenses = () => {
   const confirmModalRef = useRef();
   const [deleteId, setDeleteId] = useState(null);
 
-  const [currentSchoolYearId, setCurrentSchoolYearId] = useState(null); // Add this line
-
-  const access = JSON.parse(localStorage.getItem("authTokens"))?.access;
-
-  // const getSchoolYear = async () => {
-  //   try {
-  //     setError("");
-  //     const response = await fetchSchoolYear();
-  //     setSchoolYear(response);
-  //   } catch (err) {
-  //     console.error("Cannot get the school year:", err);
-  //     setError("Failed to load school years. Please try again later.");
-  //   }
-  // };
+  const [currentSchoolYearId, setCurrentSchoolYearId] = useState(null);
 
   const getSchoolYear = async () => {
     try {
@@ -57,21 +46,16 @@ export const ViewAllExpenses = () => {
       // Get current date
       const currentDate = new Date();
       const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth() + 1; // 1 = January, 12 = December
+      const currentMonth = currentDate.getMonth() + 1;
 
-      // Find the current school year based on the current date
-      // School years typically run from August to July
       let currentSchoolYearName;
 
       if (currentMonth >= 8) {
-        // August (8) to December (12)
         currentSchoolYearName = `${currentYear}-${currentYear + 1}`;
       } else {
-        // January (1) to July (7)
         currentSchoolYearName = `${currentYear - 1}-${currentYear}`;
       }
 
-      // Find the school year object that matches the current school year name
       const currentYearObj = response.find(
         (year) => year.year_name === currentSchoolYearName
       );
@@ -79,7 +63,6 @@ export const ViewAllExpenses = () => {
       if (currentYearObj) {
         setCurrentSchoolYearId(currentYearObj.id);
       } else {
-        // Fallback: if exact match not found, try to find the most recent year
         const currentYear = response.find((year) => year.is_current === true);
         if (currentYear) {
           setCurrentSchoolYearId(currentYear.id);
@@ -94,8 +77,8 @@ export const ViewAllExpenses = () => {
   const getExpenseCategory = async () => {
     try {
       setError("");
-      const response = await fetchExpenseCategory(access);
-      setCategory(response);
+      const response = await axiosInstance.get(`/d/Expense-Category/`);
+      setCategory(response.data);
     } catch (err) {
       setError("Failed to load categories. Please try again later.");
     }
@@ -105,12 +88,11 @@ export const ViewAllExpenses = () => {
     setLoading(true);
     try {
       setError("");
-      const response = await fetchSchoolExpense(
-        access,
-        selectedSchoolYear,
-        selectedCategory
+
+      const response = await axiosInstance.get(
+        `/d/School-Expense/?school_year=${selectedSchoolYear}&category=${selectedCategory}`
       );
-      setSchoolExpense(response);
+      setSchoolExpense(response.data);
     } catch (err) {
       console.error("Cannot get the school salary expense:", err);
       setError("Failed to load expenses. Please try again later.");
@@ -125,10 +107,8 @@ export const ViewAllExpenses = () => {
   }, []);
 
   useEffect(() => {
-    if (access) {
-      getSchoolExpense();
-    }
-  }, [selectedSchoolYear, selectedCategory, access]);
+    getSchoolExpense();
+  }, [selectedSchoolYear, selectedCategory]);
 
   const handleAddCategoryClick = (e) => {
     e.preventDefault();
@@ -150,16 +130,9 @@ export const ViewAllExpenses = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${constants.baseUrl}/d/Expense-Category/`,
-        { name: addCategory },
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axiosInstance.post(`/d/Expense-Category/`, {
+        name: addCategory,
+      });
 
       if (response.status === 201 || response.status === 200) {
         setAddCategory("");
@@ -178,15 +151,8 @@ export const ViewAllExpenses = () => {
   const handleDeleteExpense = async (id) => {
     try {
       setLoading(true);
-      const response = await axios.delete(
-        `${constants.baseUrl}/d/School-Expense/${id}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-          },
-        }
-      );
-      if (response.status === 201 || response.status === 200) {
+      const response = await axiosInstance.delete(`/d/School-Expense/${id}/`);
+      if (response.status === 200 || response.status === 204) {
         modalRef.current?.show();
         getSchoolExpense();
         setDeleteId(null);
@@ -201,6 +167,7 @@ export const ViewAllExpenses = () => {
       setLoading(false);
     }
   };
+
 
   if (loading) {
     return <Loader />;
@@ -533,15 +500,9 @@ export const ViewAllExpenses = () => {
                     return setApiError("New category name is required");
                   try {
                     setLoading(true);
-                    const res = await axios.patch(
-                      `${constants.baseUrl}/d/Expense-Category/${editCategoryId}/`,
-                      { name: editCategoryName },
-                      {
-                        headers: {
-                          Authorization: `Bearer ${access}`,
-                          "Content-Type": "application/json",
-                        },
-                      }
+                    const res = await axiosInstance.patch(
+                      `/d/Expense-Category/${editCategoryId}/`,
+                      { name: editCategoryName }
                     );
                     if (res.status === 200) {
                       setApiError("");
@@ -620,10 +581,7 @@ export const ViewAllExpenses = () => {
                     return setApiError("Please select a category to delete");
                   try {
                     setLoading(true);
-                    await axios.delete(
-                      `${constants.baseUrl}/d/Expense-Category/${deleteCategoryId}/`,
-                      { headers: { Authorization: `Bearer ${access}` } }
-                    );
+                    await axiosInstance.delete(`/d/Expense-Category/${deleteCategoryId}/`);
                     setApiError("");
                     setDeleteCategoryId("");
                     closeModal();
