@@ -27,7 +27,7 @@ export const EditExpenses = () => {
 
   const [amountDisabled, setAmountDisabled] = useState(false);
 
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, axiosInstance } = useContext(AuthContext);
   const access = authTokens.access;
 
   const Status = ["approved", "pending", "rejected"];
@@ -39,29 +39,6 @@ export const EditExpenses = () => {
     formState: { errors },
   } = useForm();
 
-  // const selectedCategory = watch("category");
-
-  // useEffect(() => {
-  //   if (!selectedCategory) {
-  //     setAmountDisabled(false);
-  //     return;
-  //   }
-  //   const selectedCatObj = category.find(
-  //     (cat) =>
-  //       cat.id == selectedCategory || cat.name?.toLowerCase() == "salary"
-  //   );
-
-  //   if (
-  //     selectedCatObj &&
-  //     (selectedCatObj.id == 1 ||
-  //       selectedCatObj.name?.toLowerCase() == "salary")
-  //   ) {
-  //     setAmountDisabled(true);
-  //   } else {
-  //     setAmountDisabled(false);
-  //   }
-  // }, [selectedCategory, category]);
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -70,14 +47,15 @@ export const EditExpenses = () => {
   const getSchoolExpenseById = async () => {
     try {
       setError("");
-      const response = await fetchSchoolExpenseById(access, id);
-      if (response) {
-        setValue("category", response.category);
-        setValue("amount", response.amount);
-        setValue("description", response.description);
-        setValue("expense_date", response.expense_date);
-        setValue("attachment", response.attachment);
-        setValue("status", response.status);
+      const response = await axiosInstance.get(`/d/School-Expense/${id}/`);
+      const data = response.data;
+      if (data) {
+        setValue("category", data.category);
+        setValue("amount", data.amount);
+        setValue("description", data.description);
+        setValue("expense_date", data.expense_date);
+        setValue("attachment", data.attachment);
+        setValue("status", data.status);
       }
     } catch (err) {
       setError("Failed to load expenses. Please try again later.");
@@ -87,65 +65,86 @@ export const EditExpenses = () => {
   const getExpenseCategory = async () => {
     try {
       setError("");
-      const response = await fetchExpenseCategory(access);
-      setCategory(response);
+      const response = await axiosInstance.get("/d/Expense-Category/");
+      setCategory(response.data);
     } catch (err) {
       console.error("Cannot get the category:", err);
       setError("Failed to load categories. Please try again later.");
     }
   };
-
   useEffect(() => {
     getExpenseCategory();
     getSchoolExpenseById();
   }, [id]);
 
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      setApiError("");
-      const formData = new FormData();
-      Object.keys(data).forEach((key) => {
-        if (key !== "attachment") {
-          formData.append(key, data[key]);
-        }
-      });
 
-      if (selectedFile) {
-        formData.append("attachment", selectedFile);
-      }
-      const response = await axios.patch(
-        `${constants.baseUrl}/d/School-Expense/${id}/`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${access}`,
-          },
-        }
-      );
-      if (response.status === 200 || response.status === 201) {
-        modalRef.current?.show();
-      }
-    } catch (error) {
-      if (error.response?.data) {
-        const errors = error.response.data;
+const onSubmit = async (data) => {
+  try {
+    setLoading(true);
+    setApiError("");
+    
+    console.log("Form data:", data);
+    console.log("Selected file:", selectedFile);
 
-        if (errors.non_field_errors) {
-          setApiError(errors.non_field_errors.join(" "));
-        } else {
-          const fieldErrors = Object.entries(errors)
-            .map(([field, messages]) => `${messages.join(", ")}`)
-            .join(" | ");
-          setApiError(fieldErrors);
-        }
-      } else {
-        setApiError("An unexpected error occurred.");
-      }
-    } finally {
-      setLoading(false);
+    const formData = new FormData();
+    
+    // Append all form fields
+    formData.append("category", data.category);
+    formData.append("amount", data.amount);
+    formData.append("description", data.description);
+    formData.append("expense_date", data.expense_date);
+    formData.append("status", data.status || "pending");
+
+    if (selectedFile) {
+      formData.append("attachment", selectedFile);
+    } else if (data.attachment) {
+      // If no new file selected but existing attachment exists
+      formData.append("attachment", data.attachment);
     }
-  };
+
+    console.log("Sending to:", `/d/School-Expense/${id}/`);
+
+    const response = await axiosInstance.patch(
+      `/d/School-Expense/${id}/`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    
+    console.log("Response:", response);
+    
+    if (response.status === 200) {
+      modalRef.current?.show();
+    }
+  } catch (error) {
+    console.error("Edit expense error:", error);
+    
+    if (error.response?.data) {
+      const errors = error.response.data;
+      console.error("Error details:", errors);
+
+      if (errors.non_field_errors) {
+        setApiError(errors.non_field_errors.join(" "));
+      } else if (typeof errors === 'object') {
+        const fieldErrors = Object.entries(errors)
+          .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(", ") : messages}`)
+          .join(" | ");
+        setApiError(fieldErrors);
+      } else {
+        setApiError(errors.toString());
+      }
+    } else if (error.request) {
+      setApiError("No response from server. Please check your connection.");
+    } else {
+      setApiError(error.message || "An unexpected error occurred.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (error) {
     return <Error />;
