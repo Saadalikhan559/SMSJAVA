@@ -12,6 +12,7 @@ export const ViewSalaryExpense = () => {
   const [schoolExpense, setSchoolExpense] = useState([]);
 
   const userRole = localStorage.getItem("userRole");
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   // const {authTokens} = useContext(AuthContext);
   // const access = authTokens.access;
@@ -91,13 +92,20 @@ export const ViewSalaryExpense = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4 border-b pb-4">
-           <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
+        <div className="mb-4 border-b">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+            <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
           </h1>
+          <div className="flex justify-end w-full sm:w-auto py-2">
+            <input
+              type="text"
+              placeholder="Search Student Name..."
+              className="input input-bordered w-full sm:max-w-xs focus:outline-none"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+            />
+          </div>
         </div>
-        
-
 
         {/* Display API error message */}
         {apiError && (
@@ -108,7 +116,6 @@ export const ViewSalaryExpense = () => {
             </div>
           </div>
         )}
-   
         {/* Table */}
         <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
           <table className="min-w-full divide-y divide-gray-300">
@@ -168,24 +175,24 @@ export const ViewSalaryExpense = () => {
                             >
                               Edit
                             </Link>
+
                             <button
                               onClick={() => handleDeleteClick(expense.id)}
-                              className="inline-flex items-center px-3 py-1  shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+                              className="inline-flex items-center px-3 py-1 shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
                             >
                               Delete
                             </button>
+                            <Link
+                              to={allRouterLink.employeeMonthySalary.replace(
+                                ":id",
+                                expense.id
+                              )}
+                              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100"
+                            >
+                              Details
+                            </Link>
                           </>
                         )}
-
-                        <Link
-                          to={allRouterLink.paySalaryExpense.replace(
-                            ":id",
-                            expense.id
-                          )}
-                          className="inline-flex items-center px-3 py-1 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100"
-                        >
-                          Pay
-                        </Link>
                       </div>
                     </td>
                   </tr>

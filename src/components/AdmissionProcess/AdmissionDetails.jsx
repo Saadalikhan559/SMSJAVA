@@ -27,7 +27,18 @@ export const AdmissionDetails = () => {
   useEffect(() => {
     getAdmissionDetails();
   }, []);
+   const getYearLevels = async () => {
+      try {
+        const data = await fetchYearLevels();
+        setYearLevels(data);
+      } catch (err) {
+        console.error("Error fetching year levels:", err);
+      }
+    };
 
+ useEffect(() => {
+    getYearLevels();
+  }, []);
   
   if (loading) {
     return (
@@ -112,7 +123,7 @@ export const AdmissionDetails = () => {
         {filterData.length === 0 ? (
           <p className="text-gray-600">No admission records found.</p>
         ) : (
-          <div className="overflow-x-auto max-h-[70vh] rounded-lg">
+          <div className="overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
             <div className="inline-block min-w-full align-middle rounded-lg">
               <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">

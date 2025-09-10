@@ -1,13 +1,13 @@
 import React, { use, useEffect, useRef, useState } from "react";
-import { SuccessModal } from "../../Modals/SuccessModal";
 import { useForm } from "react-hook-form";
 import { Loader } from "../../../global/Loader";
 import axios from "axios";
 import { constants } from "../../../global/constants";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchSchoolYear } from "../../../services/api/Api";
 import { Error } from "../../../global/Error";
 import { allRouterLink } from "../../../router/AllRouterLinks";
+import { SuccessModal } from "../../Modals/SuccessModal";
 
 export const PaySalaryExpense = () => {
   const { id } = useParams();
@@ -21,20 +21,8 @@ export const PaySalaryExpense = () => {
   const [schoolYear, setSchoolYear] = useState([]);
   const navigate = useNavigate();
 
-  const allMonths = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const location = useLocation();
+  const preSelectedMonth = location.state?.selectedMonth || ""; // get month
   const paymentModes = ["cash", "cheque", "online"];
 
   const getSchoolYearLevel = async () => {
@@ -52,7 +40,11 @@ export const PaySalaryExpense = () => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      month: preSelectedMonth, // <-- preselect month
+    },
+  });
 
   const fetchSingleSalaryData = async () => {
     try {
@@ -66,7 +58,7 @@ export const PaySalaryExpense = () => {
         }
       );
       if (response.data) {
-        setValue("user", response.data.user);
+        setValue("user", response.data.id);
         setValue("name", response.data.name);
         setValue("base_salary", response.data.base_salary);
       }
@@ -119,6 +111,7 @@ export const PaySalaryExpense = () => {
         );
         const {
           id: order_id,
+          net_amount,
           amount,
           currency,
           salary_id,
@@ -128,7 +121,7 @@ export const PaySalaryExpense = () => {
 
         const options = {
           key: razorpay_key,
-          amount: data.net_amount,
+          amount: net_amount,
           currency,
           name: "Salary Expense",
           description: data.description,
@@ -169,11 +162,12 @@ export const PaySalaryExpense = () => {
           {
             headers: {
               Authorization: `Bearer ${access}`,
+              "Content-Type": "application/json",
             },
           }
         );
-        if (modalRef.current) {
-          modalRef.current.showModal();
+        if (response.status == 201) {
+          modalRef.current.show();
         }
       }
     } catch (error) {
@@ -272,27 +266,16 @@ export const PaySalaryExpense = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-calendar text-sm"></i>
-                  Month <span className="text-error">*</span>
+                  Month
                 </span>
               </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("month", {
-                  required: "Month is required",
-                })}
-              >
-                <option value="">Select Month</option>
-                {allMonths.map((month, idx) => (
-                  <option key={idx} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              {errors.month && (
-                <p className="text-error text-sm mt-1">
-                  {errors.month.message}
-                </p>
-              )}
+              <input
+                type="text"
+                disabled
+                className="input input-bordered w-full focus:outline-none"
+                value={watch("month") || ""}
+                {...register("month")}
+              />
             </div>
 
             {/* Gross Amount Selection */}
@@ -359,6 +342,14 @@ export const PaySalaryExpense = () => {
                 className="input input-bordered w-full focus:outline-none"
                 {...register("payment_date", {
                   required: "Payment Date is required",
+                  validate: (value) => {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    return (
+                      selectedDate <= today ||
+                      "Payment date cannot be in the future"
+                    );
+                  },
                 })}
               />
               {errors.payment_date && (
@@ -430,7 +421,7 @@ export const PaySalaryExpense = () => {
               ) : (
                 <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
               )}
-              {loading ? "" : "Create"}
+              {loading ? "" : "Pay"}
             </button>
           </div>
         </form>
@@ -439,7 +430,7 @@ export const PaySalaryExpense = () => {
         ref={modalRef}
         navigateTo={handleNavigation}
         buttonText="Continue"
-        message="Your profile has been updated successfully!"
+        message="Successfully paid the salary!"
       />
     </div>
   );
