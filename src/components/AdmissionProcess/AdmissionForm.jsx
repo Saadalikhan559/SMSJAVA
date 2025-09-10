@@ -255,59 +255,56 @@ try {
   console.log(error);
   console.error("Submission error:", error.response?.data || error.message);
   
-  // Extract error message from backend response dynamically
   let errorMsg = "Admission failed. Please try again.";
+try {
+  // yaha aapka API call / logic ayega
+} catch (error) {
   if (error?.response?.data?.message) {
     errorMsg = error.response.data.message;
   } else if (error?.message) {
     errorMsg = error.message;
   }
-  
-  alert(`Failed to submit the form: ${errorMsg}`);
+
+  setModalTitle("Admission Failed");
+  setModalMessage(errorMsg);
+  setModalShow(true);
 } finally {
   setLoading(false);
 }
-    }
 
-    setModalTitle("Admission Failed");
-    setModalMessage(errorMsg);
-    setModalShow(true);
-  } finally {
-    setLoading(false);
-  }
+const handleCloseOnly = () => {
+  setShowAdmissionSuccessModal(false);
 };
 
-  const handleCloseOnly = () => {
-    setShowAdmissionSuccessModal(false);
-  };
+const handleCloseAndNavigate = () => {
+  setShowAdmissionSuccessModal(false);
+  navigate("/addmissionDetails");
+};
 
-  const handleCloseAndNavigate = () => {
-    setShowAdmissionSuccessModal(false);
-    navigate("/addmissionDetails");
-  };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+if (loading) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex space-x-2">
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
       </div>
-    );
-  }
+      <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+    </div>
+  );
+}
 
+if (error) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+      <p className="text-lg text-red-400 font-medium">
+        Failed to load data, Try Again
+      </p>
+    </div>
+  );
+}
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -1824,5 +1821,5 @@ try {
 )}
 
     </>
-  );
-};
+);
+}
