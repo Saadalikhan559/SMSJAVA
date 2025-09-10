@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { Error } from "../../../global/Error";
 import axios from "axios";
 import { constants } from "../../../global/constants";
-import { allRouterLink } from "../../../router/AllRouterLinks";
 
 export const UpdateSalaryExpense = () => {
   const { id } = useParams();
