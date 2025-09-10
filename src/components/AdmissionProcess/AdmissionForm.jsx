@@ -237,53 +237,6 @@ export const AdmissionForm = () => {
         data.student_user_profile[0]
       );
     }
-<<<<<<< HEAD
-  });
-
-if (data.student_user_profile) {
-  submitFormData.append("student[profile_picture]", data.student_user_profile[0]);
-}
-if (data.guardian_user_profile) {
-  submitFormData.append("guardian[profile_picture]", data.guardian_user_profile[0]);
-}
-
-try {
-  await handleAdmissionForm(submitFormData);
-
-  // Show success modal after successful submission
-  setModalTitle("Admission Successful");
-  setModalMessage("Your admission has been successfully submitted.");
-  setModalShow(true);
-  setShowAdmissionSuccessModal(true);
-
-  reset();
-  setSelectedGuardianType("");
-  setIsRTE(false);
-} catch (error) {
-  console.log(error);
-  console.error("Submission error:", error.response?.data || error.message);
-  
-  let errorMsg = "Admission failed. Please try again.";
-try {
-  // yaha aapka API call / logic ayega
-} catch (error) {
-  if (error?.response?.data?.message) {
-    errorMsg = error.response.data.message;
-  } else if (error?.message) {
-    errorMsg = error.message;
-  }
-
-  setModalTitle("Admission Failed");
-  setModalMessage(errorMsg);
-  setModalShow(true);
-} finally {
-  setLoading(false);
-}
-
-const handleCloseOnly = () => {
-  setShowAdmissionSuccessModal(false);
-};
-=======
     if (data.guardian_user_profile) {
       submitFormData.append(
         "guardian[profile_picture]",
@@ -310,37 +263,38 @@ const handleCloseOnly = () => {
       setLoading(false);
     }
   };
->>>>>>> 3580883f8fe88dbbe14deaf5f1cf9873128fc1e0
 
-const handleCloseAndNavigate = () => {
-  setShowAdmissionSuccessModal(false);
-  navigate("/addmissionDetails");
-};
+  const handleCloseOnly = () => {
+    setShowAdmissionSuccessModal(false);
+  };
 
-if (loading) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+  const handleCloseAndNavigate = () => {
+    setShowAdmissionSuccessModal(false);
+    navigate("/addmissionDetails");
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
-      <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-    </div>
-  );
-}
+    );
+  }
 
-if (error) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-      <p className="text-lg text-red-400 font-medium">
-        Failed to load data, Try Again
-      </p>
-    </div>
-  );
-}
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -1849,5 +1803,5 @@ if (error) {
         />
       )}
     </>
-);
-}
+  );
+};
