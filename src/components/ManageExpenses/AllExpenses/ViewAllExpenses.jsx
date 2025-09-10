@@ -232,7 +232,7 @@ export const ViewAllExpenses = () => {
         {/* Filters */}
         <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2">
           {/* School Year Filter */}
-          <div className="form-control md:w-1/3">
+          <div className="form-control md:w-1/4">
             <label className="label">
               <span className="label-text">Select School Year</span>
             </label>
@@ -251,7 +251,7 @@ export const ViewAllExpenses = () => {
           </div>
 
           {/* Category Filter */}
-          <div className="form-control md:w-1/3">
+          <div className="form-control md:w-1/4">
             <label className="label">
               <span className="label-text">Select Category</span>
             </label>
@@ -270,7 +270,7 @@ export const ViewAllExpenses = () => {
           </div>
 
           {/* Add Category */}
-          <div className="form-control w-full md:w-1/3">
+          <div className="form-control w-full">
             <label className="label">
               <span className="label-text">Actions</span>
             </label>
@@ -371,6 +371,8 @@ export const ViewAllExpenses = () => {
               ${
                 expense.status === "pending"
                   ? "text-yellow-700 bg-yellow-50 border-yellow-300"
+                  : expense.status === "rejected"
+                  ? "text-red-700 bg-red-50 border-red-300"
                   : "text-green-700 bg-green-50 border-green-300"
               }`}
                       >
@@ -383,7 +385,7 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {expense.created_by_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {expense.approved_by_name}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
