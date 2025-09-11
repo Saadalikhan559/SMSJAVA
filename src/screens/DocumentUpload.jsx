@@ -36,6 +36,8 @@ export const DocumentUpload = () => {
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [docTypeErrors, setDocTypeErrors] = useState([]);
+
 
   const [role, setRole] = useState("");
 
@@ -53,7 +55,8 @@ export const DocumentUpload = () => {
   ]);
   const [identityErrors, setIdentityErrors] = useState([]);
 
-  // ✅ VALIDATION FUNCTION
+  //  validation
+  //  validation
   const validateIdentity = (identity, docTypeId) => {
     if (!docTypeId || !identity) return "";
 
@@ -62,38 +65,72 @@ export const DocumentUpload = () => {
     );
     if (!selectedDoc) return "";
 
-    const name = selectedDoc.name.toLowerCase();
+    const name = selectedDoc.name.trim().toLowerCase();
 
-    if (name.includes("aadhaar")) {
+    // Aadhaar
+    if (name === "aadhaar") {
       const aadhaarRegex = /^\d{12}$/;
       return aadhaarRegex.test(identity)
         ? ""
         : "Aadhaar must be 12 digits (e.g. 123456789012)";
     }
-    if (name.includes("passport")) {
+
+    // Passport
+    else if (name === "passport") {
       const passportRegex = /^[A-Z]{1}[0-9]{7}$/;
       return passportRegex.test(identity)
         ? ""
         : "Passport format: 1 letter + 7 digits (e.g. K1234567)";
     }
-    if (name.includes("birth certificate")) {
+
+    // Birth Certificate
+    else if (name === "birth certificate") {
       const bcRegex = /^BRN-\d{4}-\d{3,}$/;
       return bcRegex.test(identity)
         ? ""
         : "Birth Certificate format: BRN-YYYY-XXX (e.g. BRN-2021-000123)";
     }
-    if (name.includes("transfer certificate")) {
+
+    // Transfer Certificate
+    else if (name === "transfer certificate") {
       const tcRegex = /^TC-\d{4}-\d{3,}$/;
       return tcRegex.test(identity)
         ? ""
         : "Transfer Certificate format: TC-YYYY-XXX (e.g. TC-2022-00123)";
     }
-    if (name.includes("caste certificate")) {
-      const ccRegex = /^CC-\d{4}-\d{3,}$/;
-      return ccRegex.test(identity)
+
+    // Bonafide Certificate
+    else if (name === "bonafide certificate") {
+      const bonafideRegex = /^BONAFIDE-\d{4}-\d{3,}$/;
+      return bonafideRegex.test(identity)
         ? ""
-        : "Caste Certificate format: CC-YYYY-XXX (e.g. CC-2020-0456)";
+        : "Bonafide format: BONAFIDE-YYYY-XXX (e.g. BONAFIDE-2023-001)";
     }
+
+    // PAN Card
+    else if (name === "pan card") {
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      return panRegex.test(identity)
+        ? ""
+        : "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)";
+    }
+
+    // Driving License
+    else if (name === "driving license") {
+      const dlRegex = /^[A-Z]{2}[ -]?\d{2}[ -]?\d{2,4}[ -]?\d{6,7}$/;
+      return dlRegex.test(identity)
+        ? ""
+        : "Driving License: 2 letters (State) + 2 digits (RTO) + Year + Number. Example: MH12 2011 0012345 or DL-01-2017-001234";
+    }
+
+    // Caste Certificate
+    else if (name === "caste certificate") {
+      const casteRegex = /^CASTE-\d{4}-\d{3,}$/;
+      return casteRegex.test(identity)
+        ? ""
+        : "Caste Certificate format: CASTE-YYYY-XXX (e.g. CASTE-2023-001)";
+    }
+
     return "";
   };
 
@@ -213,18 +250,32 @@ export const DocumentUpload = () => {
     setUploadFields(newFields);
   };
 
+
   const handleUploadChange = (e, index) => {
     const { name, value } = e.target;
     const newFields = [...uploadFields];
     newFields[index][name] = value;
     setUploadFields(newFields);
 
-    if (name === "document_types" || name === "identities") {
-      const newErrors = [...identityErrors];
-      newErrors[index] = validateIdentity(newFields[index].identities, newFields[index].document_types);
-      setIdentityErrors(newErrors);
+    const newErrors = [...identityErrors];
+    const newDocErrors = [...docTypeErrors];
+
+    if (name === "document_types") {
+      if (!value) {
+        newDocErrors[index] = "Please select a document type";
+      } else {
+        newDocErrors[index] = "";
+      }
     }
+
+    if (name === "document_types" || name === "identities") {
+      newErrors[index] = validateIdentity(newFields[index].identities, newFields[index].document_types);
+    }
+
+    setIdentityErrors(newErrors);
+    setDocTypeErrors(newDocErrors);
   };
+
 
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
@@ -435,7 +486,7 @@ export const DocumentUpload = () => {
                 {/* Document Type */}
                 <div className="form-control w-full">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text flex items-center gap-1 pt-6">
                       <i className="fa-solid fa-file text-sm"></i> Document Type
                       <span className="text-error">*</span>
                     </span>
@@ -443,7 +494,6 @@ export const DocumentUpload = () => {
                   <select
                     name="document_types"
                     className="select select-bordered w-full focus:outline-none cursor-pointer"
-                    required
                     value={field.document_types}
                     onChange={(e) => handleUploadChange(e, index)}
                   >
@@ -454,8 +504,14 @@ export const DocumentUpload = () => {
                       </option>
                     ))}
                   </select>
-                </div>
+                  <div className="h-5">
+                    <span className="text-red-500 text-sm leading-tight">
+                      {docTypeErrors[index] || ""}
+                    </span>
+                  </div>
 
+
+                </div>
                 {/* Identity */}
                 <div className="form-control w-full pt-6">
                   <label className="label">
@@ -470,13 +526,15 @@ export const DocumentUpload = () => {
                     value={field.identities}
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
-                    style={{ marginBottom: "0" }} // extra tweak
                   />
-                  <span className="text-red-500 text-sm mt-1 block min-h-[1.25rem]">
-                    {identityErrors[index]}
-                  </span>
-                </div>
+                  {/* Fixed space reserved for error */}
+                  <div className="h-5">
+                    <span className="text-red-500 text-sm leading-tight">
+                      {identityErrors[index] || ""}
+                    </span>
+                  </div>
 
+                </div>
                 {/* Add/Remove Button */}
                 <div className="form-control w-full flex items-end pt-6">
                   {index === 0 ? (
@@ -502,8 +560,6 @@ export const DocumentUpload = () => {
               </div>
 
             ))}
-
-
             {/* Select Student/Teacher/Guardian/Office Staff */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.student && (
@@ -558,7 +614,6 @@ export const DocumentUpload = () => {
                 </div>
               )}
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.guardian && (
                 <div className="form-control">
@@ -619,7 +674,6 @@ export const DocumentUpload = () => {
         )}
 
         {/* NAVIGATION BUTTONS */}
-
         <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 p-6">
           {/* Back button - Only for step > 0 */}
           {step > 0 && (
@@ -689,5 +743,3 @@ export const DocumentUpload = () => {
     </div>
   );
 };
-
-
