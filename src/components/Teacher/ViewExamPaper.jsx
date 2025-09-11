@@ -214,7 +214,7 @@ const ViewExamPaper = () => {
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                         <a 
-                          href={`${BASE_URL}${paper.uploaded_file}`} 
+                          href={paper.uploaded_file.replace("http://localhost:8000", constants.baseUrl)}
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:text-blue-800 hover:underline"
