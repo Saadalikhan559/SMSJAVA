@@ -1,11 +1,24 @@
 import React, { useRef } from "react";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 
 const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
   if (!paymentStatus) return null;
 
   const receiptRef = useRef();
+
+  const feeRecord = paymentStatus.fee_record || {
+    receipt_number: `RZP-${Date.now()}`,
+    payment_date: new Date().toISOString(),
+    month: paymentStatus.month || "-",
+    payment_mode: "Online (Razorpay)",
+    student: paymentStatus.student || { name: "Unknown" },
+    year_level_fees_grouped: paymentStatus.year_level_fees_grouped || [],
+    total_amount: paymentStatus.amount || 0,
+    paid_amount: paymentStatus.amount || 0,
+    due_amount: 0,
+    late_fee: 0,
+  };
 
   const formatDate = (dateString) => {
     try {
@@ -23,7 +36,6 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
       const element = receiptRef.current;
       if (!element) return;
 
-      // capture element as canvas
       const canvas = await html2canvas(element, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL("image/png");
 
@@ -37,11 +49,9 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
       let heightLeft = imgHeight;
       let position = 0;
 
-      // first page
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
 
-      // extra pages if needed
       while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
@@ -49,7 +59,7 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
         heightLeft -= pdfHeight;
       }
 
-      pdf.save(`receipt_${paymentStatus.fee_record.receipt_number}.pdf`);
+      pdf.save(`receipt_${feeRecord.receipt_number}.pdf`);
     } catch (error) {
       console.error("PDF download error:", error);
     }
@@ -67,28 +77,27 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
 
         {/* Receipt Content */}
         <div ref={receiptRef} className="space-y-3 text-sm">
-
           {/* Receipt Details */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Receipt Details</h3>
             <div className="grid grid-cols-2 gap-1 text-xs">
-              <p><strong>No:</strong> {paymentStatus.fee_record.receipt_number}</p>
-              <p><strong>Date:</strong> {formatDate(paymentStatus.fee_record.payment_date)}</p>
-              <p><strong>Month:</strong> {paymentStatus.fee_record.month}</p>
-              <p><strong>Mode:</strong> {paymentStatus.fee_record.payment_mode}</p>
+              <p><strong>No:</strong> {feeRecord.receipt_number}</p>
+              <p><strong>Date:</strong> {formatDate(feeRecord.payment_date)}</p>
+              <p><strong>Month:</strong> {feeRecord.month}</p>
+              <p><strong>Mode:</strong> {feeRecord.payment_mode}</p>
             </div>
           </div>
 
           {/* Student Info */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Student</h3>
-            <p className="text-xs">{paymentStatus.fee_record.student.name}</p>
+            <p className="text-xs">{feeRecord.student?.name}</p>
           </div>
 
           {/* Fees Breakdown */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Fees</h3>
-            {paymentStatus.fee_record.year_level_fees_grouped?.map((group, index) => (
+            {feeRecord.year_level_fees_grouped?.map((group, index) => (
               <div key={index} className="mt-1">
                 <p className="font-medium text-xs">{group.year_level}</p>
                 <ul className="list-disc ml-4 text-xs text-gray-700">
@@ -105,17 +114,16 @@ const PaymentStatusDialog = ({ paymentStatus, onClose }) => {
           {/* Summary */}
           <div className="border-t pt-2">
             <h3 className="font-semibold text-gray-700 text-sm">Summary</h3>
-            <p className="text-xs"><strong>Total:</strong> ₹{paymentStatus.fee_record.total_amount}</p>
+            <p className="text-xs"><strong>Total:</strong> ₹{feeRecord.total_amount}</p>
             <p className="text-xs text-green-600">
-              <strong>Paid:</strong> ₹{paymentStatus.fee_record.paid_amount}
+              <strong>Paid:</strong> ₹{feeRecord.paid_amount}
             </p>
             <p className="text-xs text-red-600">
-              <strong>Due:</strong> ₹{paymentStatus.fee_record.due_amount}
+              <strong>Due:</strong> ₹{feeRecord.due_amount}
             </p>
-            {paymentStatus.fee_record.late_fee &&
-              parseFloat(paymentStatus.fee_record.late_fee) > 0 && (
-                <p className="text-xs"><strong>Late Fee:</strong> ₹{paymentStatus.fee_record.late_fee}</p>
-              )}
+            {feeRecord.late_fee && parseFloat(feeRecord.late_fee) > 0 && (
+              <p className="text-xs"><strong>Late Fee:</strong> ₹{feeRecord.late_fee}</p>
+            )}
           </div>
         </div>
 
