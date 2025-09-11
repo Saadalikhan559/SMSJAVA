@@ -1,48 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
-// import { useNavigate } from "react-router-dom";
 import {
   fetchSchoolYear,
-  fetchExamType,
   fetchYearLevels,
   fetchSubjects,
   fetchAllTeachers,
   fetchStudents2,
 } from "../../services/api/Api";
-import { constants } from "../../global/constants";
-import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
 const StudentMarksFill = () => {
-  //   const navigate = useNavigate();
+  const { axiosInstance } = useContext(AuthContext);
   const [schoolYear, setSchoolYear] = useState([]);
   const [examType1, setExamType] = useState([]);
-  const [accessToken, setAccessToken] = useState("");
   const [className, setClassName] = useState([]);
   const [subjects1, setSubjects] = useState([]);
   const [teachers1, setTeachers] = useState([]);
   const [Students, setStudents] = useState([]);
-
-  const BASE_URL = constants.baseUrl;
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access && tokens.access !== accessToken) {
-          setAccessToken(tokens.access);
-        }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
-      }
+  // Fetch Exam Types
+  const getExamType = async () => {
+    try {
+      const response = await axiosInstance.get("/d/Exam-Type/");
+      setExamType(response.data);
+    } catch (err) {
+      console.error("Failed to load exam types:", err);
     }
-  }, []);
+  };
 
   // Fetch school_year
   const getSchool_year = async () => {
@@ -50,25 +43,7 @@ const StudentMarksFill = () => {
       const obj = await fetchSchoolYear();
       setSchoolYear(obj);
     } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
-    }
-  };
-
-  const getExamType = async () => {
-    try {
-      if (!accessToken) {
-        console.error("No access token available");
-        return;
-      }
-
-      const obj = await fetchExamType(accessToken);
-      if (obj) {
-        setExamType(obj);
-      } else {
-        console.error("Received empty response from fetchExamType");
-      }
-    } catch (err) {
-      console.error("Failed to load exam types:", err);
+      console.log("Failed to load school years. Please try again." + err);
     }
   };
 
@@ -88,7 +63,7 @@ const StudentMarksFill = () => {
       const obj = await fetchSubjects();
       setSubjects(obj);
     } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
+      console.log("Failed to load subjects. Please try again." + err);
     }
   };
 
@@ -98,7 +73,7 @@ const StudentMarksFill = () => {
       const obj = await fetchAllTeachers();
       setTeachers(obj);
     } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
+      console.log("Failed to load teachers. Please try again." + err);
     }
   };
 
@@ -108,7 +83,7 @@ const StudentMarksFill = () => {
       const obj = await fetchStudents2();
       setStudents(obj);
     } catch (err) {
-      console.log("Failed to load classes. Please try again." + err);
+      console.log("Failed to load students. Please try again." + err);
     }
   };
 
@@ -118,10 +93,8 @@ const StudentMarksFill = () => {
     getClassName();
     getSchool_year();
     getStudents();
-    if (accessToken) {
-      getExamType();
-    }
-  }, [accessToken]);
+    getExamType();
+  }, []);
 
   // Static data for dropdowns
   const examType = examType1;
@@ -150,32 +123,23 @@ const StudentMarksFill = () => {
       ],
     };
 
-    console.log("Form submitted with payload:", payload);
     try {
-      if (!accessToken) return;
-      const response = await axios.post(
-        `${BASE_URL}/d/Student-Marks/create_marks/`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+      const response = await axiosInstance.post(
+        "/d/Student-Marks/create_marks/",
+        payload
       );
 
       if (response.status === 200 || response.status === 201) {
-        console.error("ExamPaper submitted successfully");
-        alert(`Student marks filled successfully`);
-        window.location.reload();
+        setAlertMessage("Student marks filled successfully!");
+        setShowAlert(true);
+        reset();
       } else {
-        throw new Error(
-          response.data.message || "Failed to create exam schedule"
-        );
+        throw new Error("Failed to create exam schedule");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert(`Error: ${error.response?.data?.paper_code || "Submission failed"}`);
+      setAlertMessage("Error: Submission failed");
+      setShowAlert(true);
     }
   };
 
@@ -186,7 +150,6 @@ const StudentMarksFill = () => {
           <h1 className="text-3xl font-bold text-center mb-8">
             Fill Student Marks <i className="fa-solid fa-file-pen ml-2"></i>
           </h1>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* School Year */}
             <div>
@@ -197,7 +160,7 @@ const StudentMarksFill = () => {
                 {...register("school_year", {
                   required: "School year is required",
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select School Year</option>
                 {schoolYears?.map((year) => (
@@ -222,7 +185,7 @@ const StudentMarksFill = () => {
                 {...register("year_level", {
                   required: "Year level is required",
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Year Level</option>
                 {className1?.map((level) => (
@@ -245,7 +208,7 @@ const StudentMarksFill = () => {
               </label>
               <select
                 {...register("exam_type", { required: "Exam type is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Exam Type</option>
                 {examType?.map((type) => (
@@ -268,7 +231,7 @@ const StudentMarksFill = () => {
               </label>
               <select
                 {...register("subject", { required: "Subject is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Subject</option>
                 {subjects?.map((subject) => (
@@ -291,7 +254,7 @@ const StudentMarksFill = () => {
               </label>
               <select
                 {...register("teacher", { required: "Teacher is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Teacher</option>
                 {teachers?.map((teacher) => (
@@ -314,7 +277,7 @@ const StudentMarksFill = () => {
               </label>
               <select
                 {...register("student", { required: "Student is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Student</option>
                 {students?.map((student) => (
@@ -343,7 +306,7 @@ const StudentMarksFill = () => {
                   min: { value: 0, message: "Marks cannot be negative" },
                   max: { value: 100, message: "Marks cannot exceed 100" },
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               />
               {errors.marks && (
                 <p className="text-red-500 text-sm mt-1">
@@ -365,14 +328,27 @@ const StudentMarksFill = () => {
               ) : (
                 <i className="fa-solid fa-save mr-2" />
               )}
-              {isSubmitting ? "Saving..." : "Save Marks"}
+              {isSubmitting ? " " : "Save Marks"}
             </button>
           </div>
         </form>
       </div>
+      {/* Modal */}
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Student Marks</h3>
+            <p className="py-4">
+              {alertMessage.split("\n").map((line, idx) => <span key={idx}>{line}<br /></span>)}
+            </p>
+            <div className="modal-action">
+              <button className="btn bgTheme text-white w-30" onClick={() => setShowAlert(false)}>OK</button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
 
 export default StudentMarksFill;
-
