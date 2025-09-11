@@ -5,7 +5,6 @@ import {
   fetchTeachers,
   fetchYearLevels,
 } from "../../services/api/Api";
-import axios from "axios";
 import { constants } from "../../global/constants";
 import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
@@ -22,8 +21,7 @@ export const SubjectAssignments = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const { authTokens } = useContext(AuthContext);
-
+  const { axiosInstance } = useContext(AuthContext);
   const [teachers, setTeachers] = useState([]);
   const [yearLevels, setYearLevels] = useState([]);
   const [subjects, setSubjects] = useState([]);
@@ -130,15 +128,9 @@ export const SubjectAssignments = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post(
-        `${constants.baseUrl}/t/teacher/assign-teacher-details/`,
-        finalPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authTokens.access}`,
-          },
-        }
+      const response = await axiosInstance.post(
+        `/t/teacher/assign-teacher-details/`,
+        finalPayload
       );
 
       if (response.status === 200 || response.status === 201) {
