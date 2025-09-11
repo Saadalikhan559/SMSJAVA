@@ -99,8 +99,9 @@ const onSubmit = async (data) => {
       formData.append("attachment", selectedFile);
     } else if (data.attachment) {
       // If no new file selected but existing attachment exists
-      formData.append("attachment", data.attachment);
+      // formData.append("attachment", data.attachment);
     }
+console.log(formData);    
 
     console.log("Sending to:", `/d/School-Expense/${id}/`);
 
