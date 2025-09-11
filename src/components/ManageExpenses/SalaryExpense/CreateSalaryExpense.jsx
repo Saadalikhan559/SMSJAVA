@@ -1,11 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  createDiscount,
-  createSalary,
-  fetchEmployee,
-  fetchRoles,
-} from "../../../services/api/Api";
+import { fetchRoles } from "../../../services/api/Api";
 import { SuccessModal } from "../../Modals/SuccessModal";
 import { AuthContext } from "../../../context/AuthContext";
 
@@ -19,11 +14,7 @@ export const CreateSalaryExpense = () => {
   const [apiError, setApiError] = useState("");
   const modalRef = useRef();
 
-  
-
-  const {authTokens} = useContext(AuthContext);
-  const access = authTokens.access;
-  
+  const { authTokens, axiosInstance } = useContext(AuthContext);
 
   const {
     register,
@@ -35,6 +26,7 @@ export const CreateSalaryExpense = () => {
 
   const selectedRole = watch("role");
   const selectedEmployee = watch("employee");
+
   const getFullName = (employee) => {
     if (!employee) return "";
     return `${employee.first_name || ""} ${employee.last_name || ""}`.trim();
@@ -56,12 +48,12 @@ export const CreateSalaryExpense = () => {
     return role ? role.name : "";
   };
 
-  const filteredRoles = roles.filter((role) =>
-    role && (role.name === "teacher" || role.name === "office staff")
-      ? role
-      : null
+  const filteredRoles = roles.filter(
+    (role) =>
+      role && (role.name === "teacher" || role.name === "office staff")
+        ? role
+        : null
   );
-
 
   const filteredEmployees = employees.filter(
     (employee) =>
@@ -70,21 +62,22 @@ export const CreateSalaryExpense = () => {
       getFullName(employee).toLowerCase().includes(searchInput.toLowerCase())
   );
 
-
   const getEmployee = async () => {
     try {
       if (selectedRole) {
         const roleName = getRoleNameById(selectedRole);
         if (roleName) {
-          const fetchedEmployee = await fetchEmployee(access, roleName);
-          setEmployees(fetchedEmployee || []); // Ensure we always have an array
+          const { data } = await axiosInstance.get(
+            `/d/Employee/get_emp/?role=${roleName}`
+          );
+          setEmployees(data || []);
         }
       } else {
         setEmployees([]);
       }
     } catch (error) {
       console.log("Could not get employees", error.message);
-      setEmployees([]); // Set empty array on error
+      setEmployees([]);
     }
   };
 
@@ -109,7 +102,6 @@ export const CreateSalaryExpense = () => {
     }
   }, [selectedEmployee, employees]);
 
-
   const onSubmit = async (data) => {
     try {
       setLoading(true);
@@ -119,10 +111,10 @@ export const CreateSalaryExpense = () => {
         joining_date: data.joiningDate,
         base_salary: data.baseSalary,
       };
-      await createSalary(access, payload);
+      await axiosInstance.post("/d/Employee/create_emp/", payload);
       modalRef.current.show();
     } catch (err) {
-      if (err.response.data) {
+      if (err.response?.data?.error) {
         setApiError(err.response.data.error);
       } else {
         setApiError("Something Went Wrong. Try again");
@@ -140,7 +132,6 @@ export const CreateSalaryExpense = () => {
           <i className="fa-solid fa-percentage ml-2"></i>
         </h1>
 
-        {/* Display API error message */}
         {apiError && (
           <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
             <div className="flex items-center text-error">
@@ -152,7 +143,7 @@ export const CreateSalaryExpense = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Role Selection */}
+            {/* Role */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -179,7 +170,7 @@ export const CreateSalaryExpense = () => {
               )}
             </div>
 
-            {/* Employee Selection */}
+            {/* Employee */}
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -293,6 +284,7 @@ export const CreateSalaryExpense = () => {
               )}
             </div>
           </div>
+
           <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
             <button
               type="submit"

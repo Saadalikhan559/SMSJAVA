@@ -1,14 +1,9 @@
-import { useEffect, useState } from "react";
-import {
-  createDiscount,
-  fetchStudents1,
-  fetchYearLevels,
-} from "../../../services/api/Api";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { fetchStudents1, fetchYearLevels } from "../../../services/api/Api";
+import { AuthContext } from "../../../context/AuthContext";
 
 const CreateDiscount = () => {
-  const navigation = useNavigate();
-  const access = JSON.parse(localStorage.getItem("authTokens")).access;
+  const { axiosInstance } = useContext(AuthContext);
 
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -33,12 +28,10 @@ const CreateDiscount = () => {
   const [alertTitle, setAlertTitle] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
 
-  // Initial page loader
   useEffect(() => {
     setTimeout(() => setPageLoading(false), 800);
   }, []);
 
-  // Fetch all classes
   const loadClasses = async () => {
     if (classes.length > 0) return;
     setLoadingClasses(true);
@@ -54,7 +47,6 @@ const CreateDiscount = () => {
     }
   };
 
-  // Fetch students for selected class
   const loadStudents = async () => {
     if (!classId) return;
     setLoadingStudents(true);
@@ -76,7 +68,6 @@ const CreateDiscount = () => {
     setFormData((prev) => ({ ...prev, student_id: "" }));
   }, [classId]);
 
-  // Enable/disable submit button
   useEffect(() => {
     const hasFeeValue =
       formData.admission_fee_discount.trim() !== "" ||
@@ -92,16 +83,14 @@ const CreateDiscount = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       const payload = { ...formData, is_allowed: true };
-      await createDiscount(access, payload);
+      await axiosInstance.post("/d/fee-discounts/", payload);
 
       setAlertTitle("Success");
       setAlertMessage("Discount created successfully!");
       setShowAlert(true);
 
-      // Reset form
       setFormData({
         student_id: "",
         admission_fee_discount: "",
@@ -154,7 +143,7 @@ const CreateDiscount = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Class Selection */}
+            {/* Class */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -179,7 +168,7 @@ const CreateDiscount = () => {
               </select>
             </div>
 
-            {/* Student Selection */}
+            {/* Student */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
@@ -197,8 +186,8 @@ const CreateDiscount = () => {
                   {loadingStudents
                     ? "Loading students..."
                     : !classId
-                    ? "Select a class first"
-                    : "Select Student"}
+                      ? "Select a class first"
+                      : "Select Student"}
                 </option>
                 {students.map((std) => (
                   <option key={std.student_id} value={std.student_id}>
@@ -249,7 +238,7 @@ const CreateDiscount = () => {
             </div>
           </div>
 
-          {/* Discount Reason */}
+          {/* Reason */}
           <div className="form-control mt-6">
             <label className="label">
               <span className="label-text flex items-center gap-1">
@@ -266,7 +255,7 @@ const CreateDiscount = () => {
             ></textarea>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <div className="flex justify-center pt-6">
             <button
               type="submit"

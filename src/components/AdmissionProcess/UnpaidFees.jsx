@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
-import { fetchUnpaidFees, fetchYearLevels, sendDueFeeNotifications } from "../../services/api/Api";
+import { fetchYearLevels } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 
 const UnpaidFeesList = () => {
-  const { userRole, yearLevelID, userID, studentID } = useContext(AuthContext);
+  const { userRole, yearLevelID, userID, studentID, axiosInstance } = useContext(AuthContext);
+
   const [unpaidFees, setUnpaidFees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,7 +18,7 @@ const UnpaidFeesList = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  // Fetch year levels from backend
+  // Fetch year levels (external API, do not change)
   const getYearLevels = async () => {
     try {
       const data = await fetchYearLevels();
@@ -28,45 +28,57 @@ const UnpaidFeesList = () => {
     }
   };
 
-  // Fetch unpaid fees
+  // Fetch unpaid fees using axiosInstance
   const loadUnpaidFees = async () => {
     try {
       setLoading(true);
 
-      let params = {
-        role: userRole,
-        month: selectedMonth || "",
-        class_id: "",
-        student_id: ""
-      };
+      let endpoint = "";
+      let params = {};
 
       if (userRole === constants.roles.director || userRole === constants.roles.officeStaff) {
-        params.class_id = selectedClass || "";
+        endpoint = "/d/fee-record/overall_unpaid_fees/";
+        if (selectedClass) params.class_id = selectedClass;
+        if (selectedMonth) params.month = selectedMonth;
       } else if (userRole === constants.roles.teacher) {
-        params.class_id = yearLevelID || "";
+        endpoint = "/d/fee-record/overall_unpaid_fees/";
+        if (yearLevelID) params.class_id = yearLevelID;
+        if (selectedMonth) params.month = selectedMonth;
       } else if (userRole === constants.roles.guardian) {
-        params.student_id = studentID || "";
+        endpoint = "/d/fee-record/student_unpaid_fees/";
+        if (studentID) params.student_id = studentID;
       } else if (userRole === constants.roles.student) {
-        params.student_id = userID || "";
+        endpoint = "/d/fee-record/student_unpaid_fees/";
+        if (userID) params.student_id = userID;
+      } else {
+        throw new Error("Invalid role provided");
       }
 
-      const data = await fetchUnpaidFees(params);
+      const response = await axiosInstance.get(endpoint, { params });
+      let data = response.data;
+
+      // Filter student if director/officeStaff and studentID is given
+      if ((userRole === constants.roles.director || userRole === constants.roles.officeStaff) && studentID) {
+        data = data.filter((fee) => fee.student_id === studentID);
+      }
+
       setUnpaidFees(data || []);
       setError(null);
     } catch (err) {
       console.error("Error fetching unpaid fees:", err.response?.data || err.message);
       setError("Failed to load unpaid fees");
+      setUnpaidFees([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Send notification function
+  // Send notification using axiosInstance (not external API)
   const handleSendNotifications = async () => {
     try {
       setLoder(true);
-      const response = await sendDueFeeNotifications();
-      setNotifications(response.notifications || []);
+      const response = await axiosInstance.get("/d/fee-record/student_unpaid_fees/");
+      setNotifications(response.data.notifications || []);
       setModalMessage(" WhatsApp notifications sent successfully!");
       setShowModal(true);
     } catch (err) {
@@ -117,26 +129,22 @@ const UnpaidFeesList = () => {
     );
   }
 
-
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
           </h1>
         </div>
+
         {/* Filter Section */}
         <div className="w-full px-5">
           <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b pb-4">
-
-            {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  Search by Month:
-                </label>
+                <label className="text-sm font-medium text-gray-700 mb-1">Search by Month:</label>
                 <select
                   className="select select-bordered w-full focus:outline-none"
                   value={selectedMonth}
@@ -144,8 +152,8 @@ const UnpaidFeesList = () => {
                 >
                   <option value="">All Months</option>
                   {[
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
+                    "January", "February", "March", "April", "May", "June", "July",
+                    "August", "September", "October", "November", "December",
                   ].map((month) => (
                     <option key={month} value={month}>{month}</option>
                   ))}
@@ -155,9 +163,7 @@ const UnpaidFeesList = () => {
               {/* Class Filter (Director/Office Staff only) */}
               {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
                 <div className="flex flex-col w-full sm:w-auto">
-                  <label className="text-sm font-medium text-gray-700 mb-1">
-                    Search by Class:
-                  </label>
+                  <label className="text-sm font-medium text-gray-700 mb-1">Search by Class:</label>
                   <select
                     className="select select-bordered w-full focus:outline-none"
                     value={selectedClass}
@@ -165,9 +171,7 @@ const UnpaidFeesList = () => {
                   >
                     <option value="">All Classes</option>
                     {yearLevels.map((level) => (
-                      <option key={level.id} value={level.id}>
-                        {level.level_name}
-                      </option>
+                      <option key={level.id} value={level.id}>{level.level_name}</option>
                     ))}
                   </select>
                 </div>
@@ -184,10 +188,9 @@ const UnpaidFeesList = () => {
               </div>
             </div>
 
-            {/* Right Side: Search Bar */}
+            {/* Right Side: Search + Notification */}
             <div className="flex items-end gap-2 w-full sm:w-auto justify-end">
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1"></label>
                 <input
                   type="text"
                   placeholder="Enter student name"
@@ -200,7 +203,7 @@ const UnpaidFeesList = () => {
                 onClick={handleSendNotifications}
                 className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 min-w-[120px] flex items-center justify-center"
               >
-                {loder  ? (
+                {loder ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
                   <>
@@ -212,10 +215,9 @@ const UnpaidFeesList = () => {
           </div>
         </div>
 
-
         {/* Table Section */}
-        <div className="overflow-x-auto  rounded-lg no-scrollbar max-h-[70vh]">
-          <table className="min-w-full table-auto ">
+        <div className="overflow-x-auto rounded-lg no-scrollbar max-h-[70vh]">
+          <table className="min-w-full table-auto">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
@@ -230,12 +232,9 @@ const UnpaidFeesList = () => {
               </tr>
             </thead>
             <tbody>
-
               {filteredFees.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-6 text-gray-500">
-                    No data found.
-                  </td>
+                  <td colSpan="9" className="text-center py-6 text-gray-500">No data found.</td>
                 </tr>
               ) : (
                 filteredFees.map((item, index) =>
@@ -260,6 +259,7 @@ const UnpaidFeesList = () => {
           </table>
         </div>
       </div>
+
       {/* Modal */}
       {showModal && (
         <dialog className="modal modal-open">
@@ -267,26 +267,16 @@ const UnpaidFeesList = () => {
             <h3 className="font-bold text-lg"> Notification</h3>
             <p className="py-4 whitespace-pre-line">{modalMessage}</p>
             <div className="modal-action">
-              <button
-                className="btn bgTheme text-white w-32"
-                onClick={() => setShowModal(false)}
-              >
-                OK
-              </button>
+              <button className="btn bgTheme text-white w-32" onClick={() => setShowModal(false)}>OK</button>
             </div>
           </div>
         </dialog>
       )}
-
     </div>
   );
 };
 
 export default UnpaidFeesList;
-
-
-
-
 
 
 
