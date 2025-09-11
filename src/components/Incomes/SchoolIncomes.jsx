@@ -264,7 +264,7 @@ export const SchoolIncome = () => {
                           <td className="px-4 py-3 text-sm text-blue-600">
                             {record.attachment ? (
                               <a
-                                href={`${BASE_URL}${record.attachment}`}
+                                href={record.attachment.replace("http://localhost:8000", constants.baseUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

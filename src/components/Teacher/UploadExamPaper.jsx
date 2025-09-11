@@ -23,12 +23,16 @@ const UploadExamPaper = () => {
   const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const BASE_URL = constants.baseUrl;
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -155,14 +159,16 @@ const UploadExamPaper = () => {
         }
       );
       if (response.status === 200 || response.status === 201) {
-        alert("ExamPaper submitted successfully");
-        window.location.reload();
+        setAlertMessage("Exam Paper submitted successfully!");
+        setShowAlert(true);
+        reset();
       } else {
         throw new Error(response.data.message || "Failed to create exam schedule");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert(`Error: ${error.response?.data?.paper_code || error.message}`);
+      setAlertMessage(`Error: ${error.response?.data?.paper_code || error.message}`);
+      setShowAlert(true)
     }
   };
 
@@ -341,6 +347,31 @@ const UploadExamPaper = () => {
           </div>
         </form>
       </div>
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Upload Exam Paper</h3>
+            <p className="py-4">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                onClick={() => {
+                  setShowAlert(false);
+                }}
+              >
+                OK
+              </button>
+            </div>
+
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

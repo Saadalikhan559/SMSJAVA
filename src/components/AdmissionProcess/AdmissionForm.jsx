@@ -1424,13 +1424,13 @@ export const AdmissionForm = () => {
               <input
                 type="number"
                 placeholder="Ward Number"
-                min={0} // prevents down arrow from going negative
+                min={0}
                 className="input input-bordered w-full focus:outline-none"
                 {...register("address_input.ward_no")}
                 onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault(); // prevent negative & scientific notation
+                  if (e.key === "-" || e.key === "e") e.preventDefault();
                 }}
-                onWheel={(e) => e.target.blur()} // prevent scroll changing value
+                onWheel={(e) => e.target.blur()}
               />
             </div>
             <div className="form-control">
