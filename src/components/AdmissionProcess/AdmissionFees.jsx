@@ -24,11 +24,12 @@ export const AdmissionFees = () => {
 
   console.log(availableFees);
   console.log(selectedStudent);
-  
+
 
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
   const accessToken = authTokens?.access;
   const BASE_URL = constants.baseUrl;
+  const UserRole = window.localStorage.getItem("userRole");
 
   const {
     register,
@@ -146,6 +147,11 @@ export const AdmissionFees = () => {
     }
   };
 
+
+
+
+
+
   useEffect(() => {
     getClasses();
   }, []);
@@ -199,7 +205,7 @@ export const AdmissionFees = () => {
           if (selectedFeeIds.includes(fee.id)) {
             totalAmount += parseFloat(fee.final_amount);
             if (fee.late_fee) lateFeeAmount += parseFloat(fee.late_fee);
-            if(fee.pending_amount) totalAmount+= parseFloat(fee.pending_amount);
+            if (fee.pending_amount) totalAmount += parseFloat(fee.pending_amount);
           }
         });
       });
@@ -305,7 +311,7 @@ export const AdmissionFees = () => {
       payment_mode: data.payment_mode,
       is_cheque_cleared: data.payment_mode === "Cheque" ? false : true,
     };
-console.log(payload);
+    console.log(payload);
 
     try {
       if (payload.payment_mode === "Online") await displayRazorpay(payload);
@@ -340,17 +346,34 @@ console.log(payload);
       });
     });
     console.log(DueFeeTotal);
-    
-    return { baseAmount: total, lateFee: lateFeeTotal, Due:DueFeeTotal, totalAmount: total + lateFeeTotal + DueFeeTotal};
+
+    return { baseAmount: total, lateFee: lateFeeTotal, Due: DueFeeTotal, totalAmount: total + lateFeeTotal + DueFeeTotal };
   };
 
   const totalAmount = calculateTotalAmount();
+
+
+
+  const stuId = window.localStorage.getItem("student_id");
+  const stuYearlvlName = localStorage.getItem("stu_year_level_name"); 
+  const stuYearlvlId = localStorage.getItem("stu_year_level_id"); 
+  const student = students?.find((s) => {
+    return stuId == s.student_id
+
+  })
+  console.log(localStorage.getItem("stu_year_level_id"));
+  console.log(localStorage.getItem("stu_year_level_name"));
+  
+  console.log(student);
 
   const handleRetry = () => {
     if (selectedStudentId && selectedMonth) {
       fetchAvailableFees(selectedStudentId, selectedMonth);
     }
   };
+
+
+
 
 
   if (isLoading && !apiError) {
@@ -441,14 +464,19 @@ console.log(payload);
               <select
                 className="select select-bordered w-full focus:outline-none"
                 onChange={handleClassChange}
-                value={selectedClassId || ""}
+                value={selectedClassId || ""}  
               >
                 <option value="">Select Class</option>
-                {classes?.map((classItem) => (
+                {UserRole === "director" && classes?.map((classItem) => (
                   <option key={classItem.id} value={classItem.id}>
                     {classItem.level_name}
                   </option>
                 ))}
+                {UserRole === "student" && (
+                  <option key={stuYearlvlId} value={stuYearlvlId}>
+                    {stuYearlvlName}
+                  </option>
+                )}
               </select>
             </div>
 
@@ -474,13 +502,18 @@ console.log(payload);
                   <option value="" disabled>
                     Loading students...
                   </option>
-                ) : (
+                ) : UserRole === "director" ? (
                   students?.map((student) => (
                     <option key={student.student_id} value={student.student_id}>
                       {student.student_name} - {student.student_email}
                     </option>
                   ))
-                )}
+                ) : UserRole === "student" ? (
+                  <option key={student?.student_id} value={student?.student_id}>
+                      {student?.student_name} - {student?.student_email}
+                    </option>
+                ) : null}
+
               </select>
               {errors.student_id && (
                 <label className="label">
@@ -571,8 +604,8 @@ console.log(payload);
                               )}
                               <div>
                                 <h3 className="card-title text-lg font-bold">
-                                  {fee.fee_type} 
-                                </h3> 
+                                  {fee.fee_type}
+                                </h3>
                                 {
                                   // <div className="flex items-center gap-2 text-success">
                                   //   <span>{fee.status}</span>
@@ -582,10 +615,10 @@ console.log(payload);
                                       }`}
                                   >
                                     <span>{fee.status}</span> {
-                                    (totalAmount.Due > 0 && <span>Due:₹{fee.pending_amount}</span>)}
-                                   
+                                      (totalAmount.Due > 0 && <span>Due:₹{fee.pending_amount}</span>)}
+
                                   </div>
-                                  
+
 
                                 }
                                 {fee.late_fee && (
@@ -604,8 +637,8 @@ console.log(payload);
               ))}
 
               {/* Total Amount Summary */}
-              { console.log(totalAmount)}
-              {selectedFeeIds.length > 0  && (
+              {console.log(totalAmount)}
+              {selectedFeeIds.length > 0 && (
                 <div className="bg-base-300 p-4 rounded-lg mt-6">
                   <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
                   <div className="grid grid-cols-2 gap-2">
@@ -614,16 +647,16 @@ console.log(payload);
                       ₹{totalAmount.baseAmount.toFixed(2)}
                     </div>
 
-                    {totalAmount.lateFee > 0 && 
-                     (
-                      <>
-                        <div>Late Fee:</div>
-                        <div className="text-right text-warning">
-                          ₹{totalAmount.lateFee.toFixed(2)}
-                        </div>
-                      </>
-                    )}
-                    
+                    {totalAmount.lateFee > 0 &&
+                      (
+                        <>
+                          <div>Late Fee:</div>
+                          <div className="text-right text-warning">
+                            ₹{totalAmount.lateFee.toFixed(2)}
+                          </div>
+                        </>
+                      )}
+
                     {totalAmount.Due > 0 && (
                       <>
                         <div>Due Fee:</div>
@@ -632,7 +665,7 @@ console.log(payload);
                         </div>
                       </>
                     )}
-                
+
 
                     <div className="font-bold mt-2 border-t pt-2">
                       Total Amount:
