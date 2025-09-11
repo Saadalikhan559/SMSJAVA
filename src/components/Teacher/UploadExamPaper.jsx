@@ -361,6 +361,7 @@ const UploadExamPaper = () => {
             </p>
             <div className="modal-action">
               <button
+              className="btn bgTheme text-white w-30"
                 onClick={() => {
                   setShowAlert(false);
                 }}
