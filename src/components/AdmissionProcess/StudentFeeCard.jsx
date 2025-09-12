@@ -1,38 +1,36 @@
-import { useEffect, useState } from "react";
-import { fetchStudentFee } from "../../services/api/Api";
+import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { useParams } from "react-router-dom";
 
-export const StudentFeeCard = () => {
+const StudentFeeCard = () => {
+  const { student_id } = useParams();
+  const { axiosInstance } = useContext(AuthContext);
+
   const [details, setDetails] = useState(null);
   const [filteredSummary, setFilteredSummary] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [allFeeTypes, setAllFeeTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
 
-  const { student_id } = useParams();
-
-  const getStudentFeeDetails = async () => {
-    if (!student_id) {
-      console.warn("student_id is missing from URL");
-      return;
-    }
-
-    setLoading(true);
+  const fetchStudentFee = async () => {
     try {
-      const data = await fetchStudentFee(student_id);
-      console.log("Student Fee Data:", data);
+      setLoading(true);
+      setError(false);
 
-      if (
-        !data ||
-        !Array.isArray(data.monthly_summary) ||
-        data.monthly_summary.length === 0
-      ) {
+      const { data } = await axiosInstance.get(
+        `/d/fee-record/student-fee-card/?student_id=${student_id}`
+      );
+
+      if (!data || !Array.isArray(data.monthly_summary)) {
         setDetails(null);
         setFilteredSummary([]);
         setAllFeeTypes([]);
+        setLoading(false);
         return;
       }
 
@@ -44,23 +42,22 @@ export const StudentFeeCard = () => {
       });
       setAllFeeTypes([...uniqueTypes]);
       setFilteredSummary(data.monthly_summary);
-    } catch (error) {
-      console.error("Failed to fetch student fee data", error.response?.data || error);
-      setDetails(null);
-    } finally {
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to fetch student fee:", err);
+      setError(true);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (student_id) {
-      getStudentFeeDetails();
-    }
+    if (student_id) fetchStudentFee();
   }, [student_id]);
 
   useEffect(() => {
     if (!details) return;
     let filtered = [...details.monthly_summary];
+
     if (selectedMonth) {
       filtered = filtered.filter((item) =>
         item.month.toLowerCase().includes(selectedMonth.toLowerCase())
@@ -69,6 +66,7 @@ export const StudentFeeCard = () => {
     if (selectedYear) {
       filtered = filtered.filter((item) => item.year === selectedYear);
     }
+
     setFilteredSummary(filtered);
   }, [selectedMonth, selectedYear, details]);
 
@@ -153,12 +151,13 @@ export const StudentFeeCard = () => {
     );
   }
 
-
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }
@@ -172,25 +171,23 @@ export const StudentFeeCard = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
-          {details.student_name}'s Fee Report Card
-        </h1>
-
-        <div className="flex gap-4 justify-center mb-6 flex-wrap">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6 flex flex-col md:flex-row gap-6">
+        {/* Left Filters */}
+        <div className="flex flex-col w-full md:w-1/4 gap-4">
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2"
           >
             <option value="">All Months</option>
-            {[...new Set(details.monthly_summary.map((item) => item.month))].map((month, idx) => (
-              <option key={idx} value={month}>
-                {month}
-              </option>
-            ))}
+            {[...new Set(details.monthly_summary.map((item) => item.month))].map(
+              (month, idx) => (
+                <option key={idx} value={month}>
+                  {month}
+                </option>
+              )
+            )}
           </select>
 
           <select
@@ -216,12 +213,13 @@ export const StudentFeeCard = () => {
           </button>
         </div>
 
-        {filteredSummary.length === 0 ? (
-          <div className="text-center text-gray-600">No fee records found.</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-[1200px] table-auto border border-gray-300 rounded-lg overflow-hidden">
-              <thead className="bgTheme text-white">
+        {/* Right Table */}
+        <div className="flex-1 overflow-x-auto rounded-lg no-scrollbar max-h-[70vh]">
+          {filteredSummary.length === 0 ? (
+            <div className="text-center text-gray-600">No fee records found.</div>
+          ) : (
+            <table className="min-w-full table-auto border border-gray-300">
+              <thead className="bgTheme text-white sticky top-0">
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
                   {allFeeTypes.map((type, i) => (
@@ -233,10 +231,12 @@ export const StudentFeeCard = () => {
                   <th className="px-4 py-3 text-left text-sm font-semibold">Dues</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 bg-white">
                 {filteredSummary.map((item, index) => (
-                  <tr key={index} className="hover:bg-blue-50">
-                    <td className="px-4 py-3 text-sm text-gray-900">{item.month}</td>
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      {item.month}
+                    </td>
                     {allFeeTypes.map((type, i) => {
                       const amount = item.fee_type.find((f) => f.type === type)?.amount || 0;
                       return (
@@ -255,9 +255,11 @@ export const StudentFeeCard = () => {
                 ))}
               </tbody>
             </table>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
 };
+
+export default StudentFeeCard;

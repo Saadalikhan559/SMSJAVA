@@ -79,7 +79,12 @@ export const CreateExpenses = () => {
       if (data.payment_method.toLowerCase() === "online") {
         const orderResponse = await axiosInstance.post(
           `/d/School-Expense/initiate-expense-payment/`,
-          formData
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         const {
           id: order_id,
@@ -123,7 +128,12 @@ export const CreateExpenses = () => {
       } else {
         const response = await axiosInstance.post(
           `/d/School-Expense/`,
-          formData
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
 
         if (response.status === 200 || response.status === 201) {

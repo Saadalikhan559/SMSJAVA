@@ -1,35 +1,31 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { fetchSalaryExpense } from "../../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
 import { constants } from "../../../global/constants";
-import axios from "axios";
 import { ConfirmationModal } from "../../Modals/ConfirmationModal";
 import { Loader } from "../../../global/Loader";
+import { Error } from "../../../global/Error";
 import { AuthContext } from "../../../context/AuthContext";
 
 export const ViewSalaryExpense = () => {
+  const { axiosInstance } = useContext(AuthContext);
   const [schoolExpense, setSchoolExpense] = useState([]);
 
   const userRole = localStorage.getItem("userRole");
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  // const {authTokens} = useContext(AuthContext);
-  // const access = authTokens.access;
-  const authTokens = JSON.parse(localStorage.getItem("authTokens"));
-  const access = authTokens.access;
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [selectedId, setSelectedId] = useState(null); // 🔹 store ID for deletion
+  const [selectedId, setSelectedId] = useState(null); 
   const [searchName, setSearchName] = useState("");
   const modalRef = useRef();
 
   const getSchoolExpense = async () => {
     setLoading(true);
     try {
-      const response = await fetchSalaryExpense(access);
-      setSchoolExpense(response);
+      const response = await axiosInstance.get("/d/Employee/");
+      setSchoolExpense(response.data);
     } catch (error) {
       console.log("Failed to get the school salary expense", error.message);
       setError("Failed to get the school salary expense");
@@ -42,15 +38,8 @@ export const ViewSalaryExpense = () => {
     if (!selectedId) return;
     setLoading(true);
     try {
-      const response = await axios.delete(
-        `${constants.baseUrl}/d/Employee/${selectedId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-          },
-        }
-      );
-      if (response.status === 200) {
+      const response = await axiosInstance.delete(`/d/Employee/${selectedId}/`);
+      if (response.status === 200 || response.status === 204) {
         setSchoolExpense((prev) =>
           prev.filter((expense) => expense.id !== selectedId)
         );
@@ -58,7 +47,7 @@ export const ViewSalaryExpense = () => {
       }
     } catch (err) {
       if (err.response?.data) {
-        setApiError(err.response.data.error);
+        setApiError(err.response.data.error || err.response.data.detail);
       } else {
         setApiError("Something went wrong. Try again");
       }
@@ -215,7 +204,6 @@ export const ViewSalaryExpense = () => {
         </div>
       </div>
 
-      {/* 🔹 Modal for confirmation */}
       <ConfirmationModal
         ref={modalRef}
         onConfirm={confirmDelete}

@@ -1691,7 +1691,7 @@ export const AdmissionForm = () => {
                     message: "Holder name cannot exceed 50 characters",
                   },
                   validate: (value) => {
-                    if (!value.trim()) return "Account holder name is required"; // blank or just space ❌
+                    if (!value.trim()) return "Account holder name is required";
                     if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(value))
                       return "Enter a valid name (alphabets & single spaces only)";
                     return true;

@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { fetchViewDocuments, fetchTeacherYearLevel } from "../../services/api/Api";
+import { fetchViewDocuments } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 import { Loader } from "../../global/Loader";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
+const BASE_URL = constants.baseUrl;
+
 
 export const ViewDocuments = () => {
   const [details, setDetails] = useState(null);
@@ -12,6 +17,8 @@ export const ViewDocuments = () => {
   const [selectedClass, setSelectedClass] = useState("All");
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [viewOption, setViewOption] = useState("my"); // 'my' or 'assigned'
+  const { axiosInstance } = useContext(AuthContext);
+
 
   // Logged-in user info
   const studentId = localStorage.getItem("studentId");
@@ -19,9 +26,22 @@ export const ViewDocuments = () => {
   const teacherId = localStorage.getItem("teacherId");
   const officeStaffId = localStorage.getItem("officeStaffId");
   const userRole = localStorage.getItem("userRole");
+  
+  
+  
+  
+  const fetchTeacherYearLevel = async (teacherId) => {
+  try {
+    const response = await axiosInstance.get("/t/teacheryearlevel/");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching teacher year level:", error);
+    throw error;
+  }
+};
 
   useEffect(() => {
-    const fetchData = async () => {
+     const fetchData = async () => {
       try {
         const docs = await fetchViewDocuments();
         setDetails(docs);

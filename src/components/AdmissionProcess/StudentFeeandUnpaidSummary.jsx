@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { fetchStudentFee, fetchUnpaidFees, fetchYearLevels } from "../../services/api/Api";
+import { fetchYearLevels } from "../../services/api/Api";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useParams } from "react-router-dom";
@@ -14,7 +14,7 @@ const StudentFeeAndUnpaidSummary = () => {
     const [allFeeTypes, setAllFeeTypes] = useState([]);
     const [selectedMonthFee, setSelectedMonthFee] = useState("");
     const [selectedYearFee, setSelectedYearFee] = useState("");
-    const { userRole, yearLevelID, userID, studentID } = useContext(AuthContext);
+    const { userRole, yearLevelID, userID, studentID, axiosInstance } = useContext(AuthContext);
     const [unpaidFees, setUnpaidFees] = useState([]);
     const [loadingUnpaid, setLoadingUnpaid] = useState(false);
     const [error, setError] = useState(null);
@@ -23,6 +23,50 @@ const StudentFeeAndUnpaidSummary = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [yearLevels, setYearLevels] = useState([]);
     const { student_id } = useParams();
+
+    const fetchStudentFee = async (student_id) => {
+        try {
+            const response = await axiosInstance.get(
+                `/d/fee-record/student-fee-card/`,
+                { params: { student_id } }
+            );
+            return response.data;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    };
+
+
+    const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
+        try {
+            let endpoint = "";
+            let params = {};
+            if (role === constants.roles.director || role === constants.roles.officeStaff) {
+                endpoint = `/d/fee-record/overall_unpaid_fees/`;
+                if (class_id) params.class_id = class_id;
+                if (month) params.month = month;
+            } else if (role === constants.roles.teacher) {
+                endpoint = `/d/fee-record/overall_unpaid_fees/`;
+                if (month) params.month = month;
+            } else if (role === constants.roles.student) {
+                endpoint = `/d/fee-record/student_unpaid_fees/`;
+                if (student_id) params.student_id = student_id;
+            } else {
+                throw new Error("Invalid role");
+            }
+
+            const response = await axiosInstance.get(endpoint, { params });
+            let data = response.data;
+            if ((role === constants.roles.director || role === constants.roles.officeStaff) && student_id) {
+                data = data.filter((fee) => fee.student_id === student_id);
+            }
+            return data;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+    };
 
     const getStudentFeeDetails = async () => {
         if (!student_id) return;
@@ -48,8 +92,51 @@ const StudentFeeAndUnpaidSummary = () => {
         }
     };
 
+    const getYearLevels = async () => {
+        try {
+            const data = await fetchYearLevels();
+            setYearLevels(data);
+        } catch { }
+    };
+
+    const loadUnpaidFees = async () => {
+        try {
+            setLoadingUnpaid(true);
+            let params = { month: selectedMonthUnpaid || "" };
+
+            if (student_id) {
+                params.student_id = student_id;
+                params.role = "student";
+            } else if (userRole === constants.roles.guardian) {
+                params.student_id = studentID || "";
+                params.role = "student";
+            } else if (userRole === constants.roles.student) {
+                params.student_id = userID || "";
+                params.role = "student";
+            } else if (userRole === constants.roles.teacher) {
+                params.class_id = yearLevelID || "";
+                params.role = "teacher";
+            } else if (userRole === constants.roles.director || userRole === constants.roles.officeStaff) {
+                params.class_id = selectedClass || "";
+                params.role = userRole;
+            }
+
+            const data = await fetchUnpaidFees(params);
+
+            setUnpaidFees(Array.isArray(data) ? data : []);
+            setError(null);
+        } catch {
+            setUnpaidFees([]);
+            setError("Failed to load unpaid fees");
+        } finally {
+            setLoadingUnpaid(false);
+        }
+    };
+
     useEffect(() => {
         if (student_id) getStudentFeeDetails();
+        getYearLevels();
+        loadUnpaidFees();
     }, [student_id]);
 
     useEffect(() => {
@@ -65,6 +152,20 @@ const StudentFeeAndUnpaidSummary = () => {
         }
         setFilteredSummary(filtered);
     }, [selectedMonthFee, selectedYearFee, details]);
+
+    useEffect(() => {
+        loadUnpaidFees();
+    }, [selectedMonthUnpaid, selectedClass, student_id]);
+
+    const resetFilters = () => {
+        setSelectedMonthUnpaid("");
+        setSelectedClass("");
+        setSearchTerm("");
+    };
+
+    const filteredFees = unpaidFees.filter((item) =>
+        item.student?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const exportPDF = () => {
         if (!details || !filteredSummary.length) return;
@@ -105,61 +206,6 @@ const StudentFeeAndUnpaidSummary = () => {
         doc.save(`${details.student_name}_fee_report.pdf`);
     };
 
-    const getYearLevels = async () => {
-        try {
-            const data = await fetchYearLevels();
-            setYearLevels(data);
-        } catch { }
-    };
-
-    const loadUnpaidFees = async () => {
-        try {
-            setLoadingUnpaid(true);
-            let params = { month: selectedMonthUnpaid || "" };
-            if (student_id) {
-                params.student_id = student_id;
-                params.role = "student";
-            } else if (userRole === constants.roles.guardian) {
-                params.student_id = studentID || "";
-                params.role = "student";
-            } else if (userRole === constants.roles.student) {
-                params.student_id = userID || "";
-                params.role = "student";
-            } else if (userRole === constants.roles.teacher) {
-                params.class_id = yearLevelID || "";
-                params.role = "teacher";
-            } else if (userRole === constants.roles.director || userRole === constants.roles.officeStaff) {
-                params.class_id = selectedClass || "";
-                params.role = userRole;
-            }
-            const data = await fetchUnpaidFees(params);
-            setUnpaidFees(data || []);
-            setError(null);
-        } catch {
-            setError("Failed to load unpaid fees");
-        } finally {
-            setLoadingUnpaid(false);
-        }
-    };
-
-    useEffect(() => {
-        getYearLevels();
-    }, []);
-
-    useEffect(() => {
-        loadUnpaidFees();
-    }, [selectedMonthUnpaid, selectedClass, student_id]);
-
-    const resetFilters = () => {
-        setSelectedMonthUnpaid("");
-        setSelectedClass("");
-        setSearchTerm("");
-    };
-
-    const filteredFees = unpaidFees.filter((item) =>
-        item.student?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     if (loadingStudent || loadingUnpaid) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen">
@@ -176,28 +222,28 @@ const StudentFeeAndUnpaidSummary = () => {
     return (
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white shadow-lg rounded-lg p-6 w-full">
-                 <div >
-                <button
-                    onClick={() => setActiveTab("fee")}
-                    className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
-                        ? "border-b-2 border-textTheme textTheme"
-                        : "text-gray-600  hover:text-[#5E35B1]"
-                        }`}
-                >
-                    Fee Report Card
-                </button>
-                <button
-                    onClick={() => setActiveTab("unpaid")}
-                    className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
-                        ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
-                        : "text-gray-600 hover:text-[#5E35B1]"
-                        }`}
-                >
-                    Unpaid Accounts Summary
-                </button>
-            </div>
-            {activeTab === "fee" && ( <div className="pt-4">
-            
+                <div >
+                    <button
+                        onClick={() => setActiveTab("fee")}
+                        className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
+                            ? "border-b-2 border-textTheme textTheme"
+                            : "text-gray-600  hover:text-[#5E35B1]"
+                            }`}
+                    >
+                        Fee Report Card
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("unpaid")}
+                        className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
+                            ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
+                            : "text-gray-600 hover:text-[#5E35B1]"
+                            }`}
+                    >
+                        Unpaid Accounts Summary
+                    </button>
+                </div>
+                {activeTab === "fee" && (<div className="pt-4">
+
                     <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
                         <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
                         {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
@@ -294,8 +340,8 @@ const StudentFeeAndUnpaidSummary = () => {
                             </table>
                         </div>
                     )}
-             </div>   )}
-                </div>
+                </div>)}
+            </div>
 
             {activeTab === "unpaid" && (
                 <div className="bg-white shadow-lg rounded-lg p-6 w-full">

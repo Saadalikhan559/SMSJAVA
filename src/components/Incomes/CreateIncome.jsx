@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
-import { createSchoolIncome, fetchSchoolYear, fetchIncomeCategories } from "../../services/api/Api";
+import { fetchSchoolYear } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
 
 const CreateIncome = () => {
+  const { axiosInstance } = useContext(AuthContext);
   const [schoolYears, setSchoolYears] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showModal, setShowModal] = useState(false); 
@@ -15,31 +17,11 @@ const CreateIncome = () => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // Months list
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January","February","March","April","May","June","July",
+    "August","September","October","November","December",
   ];
 
-  // Category map
-  const categoryMap = {
-    1: "Monthly Fees",
-    2: "Govt Fund",
-    3: "Hostel Rent",
-    4: "Canteen Rent",
-  };
-
-  // Fetch school years
   const getSchoolYears = async () => {
     try {
       const res = await fetchSchoolYear();
@@ -53,8 +35,8 @@ const CreateIncome = () => {
 
   const getCategories = async () => {
     try {
-      const res = await fetchIncomeCategories();
-      setCategories(res);
+      const res = await axiosInstance.get("/d/income-category/");
+      setCategories(res.data);
     } catch (err) {
       console.error("Failed to load categories:", err);
       setModalMessage("Failed to load income categories.");
@@ -62,13 +44,11 @@ const CreateIncome = () => {
     }
   };
 
-
   useEffect(() => {
     getSchoolYears();
     getCategories();
   }, []);
 
-  // On Submit
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("month", data.month);
@@ -79,27 +59,24 @@ const CreateIncome = () => {
     formData.append("school_year", parseInt(data.school_year));
     formData.append("payment_method", data.payment_method);
     formData.append("status", data.status);
-
-    if (data.attachment && data.attachment[0]) {
-      formData.append("attachment", data.attachment[0]);
-    }
+    if (data.attachment?.[0]) formData.append("attachment", data.attachment[0]);
 
     try {
-      const res = await createSchoolIncome(formData);
-      console.log("Income created:", res);
-      setModalMessage(" Income created successfully!");
+      const res = await axiosInstance.post("/d/school-income/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("Income created:", res.data);
+      setModalMessage("Income created successfully!");
       setShowModal(true);
       reset();
     } catch (error) {
       console.error("Error creating income:", error);
-
-      // backend errors
       if (error.response?.data?.non_field_errors) {
-        alert(`${error.response.data.non_field_errors.join(", ")}`);
+        setModalMessage(`${error.response.data.non_field_errors.join(", ")}`);
       } else if (error.response?.data) {
-        alert(`${JSON.stringify(error.response.data)}`);
+        setModalMessage(JSON.stringify(error.response.data));
       } else {
-        setModalMessage(" Failed to create income. Please try again.");
+        setModalMessage("Failed to create income. Please try again.");
       }
       setShowModal(true);
     }
@@ -121,20 +98,14 @@ const CreateIncome = () => {
               </label>
               <select
                 {...register("month", { required: "Month is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Month</option>
                 {months.map((m, idx) => (
-                  <option key={idx} value={m}>
-                    {m}
-                  </option>
+                  <option key={idx} value={m}>{m}</option>
                 ))}
               </select>
-              {errors.month && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.month.message}
-                </p>
-              )}
+              {errors.month && <p className="text-red-500 text-sm mt-1">{errors.month.message}</p>}
             </div>
 
             {/* Amount */}
@@ -149,13 +120,9 @@ const CreateIncome = () => {
                   required: "Amount is required",
                   min: { value: 1, message: "Amount must be greater than 0" },
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               />
-              {errors.amount && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.amount.message}
-                </p>
-              )}
+              {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount.message}</p>}
             </div>
 
             {/* Income Date */}
@@ -166,13 +133,9 @@ const CreateIncome = () => {
               <input
                 type="date"
                 {...register("income_date", { required: "Income date is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               />
-              {errors.income_date && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.income_date.message}
-                </p>
-              )}
+              {errors.income_date && <p className="text-red-500 text-sm mt-1">{errors.income_date.message}</p>}
             </div>
 
             {/* Category */}
@@ -182,21 +145,14 @@ const CreateIncome = () => {
               </label>
               <select
                 {...register("category", { required: "Category is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
-
-              {errors.category && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.category.message}
-                </p>
-              )}
+              {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
             </div>
 
             {/* Description */}
@@ -208,7 +164,7 @@ const CreateIncome = () => {
                 type="text"
                 placeholder="Description"
                 {...register("description")}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               />
             </div>
 
@@ -219,20 +175,14 @@ const CreateIncome = () => {
               </label>
               <select
                 {...register("school_year", { required: "School year is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="">Select School Year</option>
                 {schoolYears?.map((year) => (
-                  <option key={year.id} value={year.id}>
-                    {year.year_name}
-                  </option>
+                  <option key={year.id} value={year.id}>{year.year_name}</option>
                 ))}
               </select>
-              {errors.school_year && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.school_year.message}
-                </p>
-              )}
+              {errors.school_year && <p className="text-red-500 text-sm mt-1">{errors.school_year.message}</p>}
             </div>
 
             {/* Payment Method */}
@@ -242,17 +192,13 @@ const CreateIncome = () => {
               </label>
               <select
                 {...register("payment_method", { required: "Payment method is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="cash">Cash</option>
                 <option value="bank">Bank</option>
                 <option value="online">Online</option>
               </select>
-              {errors.payment_method && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.payment_method.message}
-                </p>
-              )}
+              {errors.payment_method && <p className="text-red-500 text-sm mt-1">{errors.payment_method.message}</p>}
             </div>
 
             {/* Status */}
@@ -262,14 +208,12 @@ const CreateIncome = () => {
               </label>
               <select
                 {...register("status", { required: "Status is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               >
                 <option value="confirmed">Confirmed</option>
                 <option value="pending">Pending</option>
               </select>
-              {errors.status && (
-                <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
-              )}
+              {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
             </div>
 
             {/* Attachment */}
@@ -281,7 +225,7 @@ const CreateIncome = () => {
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
                 {...register("attachment")}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none"
+                className="select select-bordered w-full focus:outline-none"
               />
             </div>
           </div>
@@ -303,7 +247,8 @@ const CreateIncome = () => {
           </div>
         </form>
       </div>
-       {/* Modal */}
+
+      {/* Modal */}
       {showModal && (
         <dialog className="modal modal-open">
           <div className="modal-box">
