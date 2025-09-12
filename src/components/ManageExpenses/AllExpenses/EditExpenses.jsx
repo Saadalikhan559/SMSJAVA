@@ -27,8 +27,7 @@ export const EditExpenses = () => {
 
   const [amountDisabled, setAmountDisabled] = useState(false);
 
-  const { authTokens, axiosInstance } = useContext(AuthContext);
-  const access = authTokens.access;
+  const { axiosInstance } = useContext(AuthContext);
 
   const Status = ["approved", "pending", "rejected"];
   const {
@@ -77,74 +76,72 @@ export const EditExpenses = () => {
     getSchoolExpenseById();
   }, [id]);
 
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      setApiError("");
 
-const onSubmit = async (data) => {
-  try {
-    setLoading(true);
-    setApiError("");
-    
-    console.log("Form data:", data);
-    console.log("Selected file:", selectedFile);
+      console.log("Form data:", data);
+      console.log("Selected file:", selectedFile);
 
-    const formData = new FormData();
-    
-    // Append all form fields
-    formData.append("category", data.category);
-    formData.append("amount", data.amount);
-    formData.append("description", data.description);
-    formData.append("expense_date", data.expense_date);
-    formData.append("status", data.status || "pending");
+      const formData = new FormData();
 
-    if (selectedFile) {
-      formData.append("attachment", selectedFile);
-    } else if (data.attachment) {
-      // If no new file selected but existing attachment exists
-      formData.append("attachment", data.attachment);
-    }
+      // Append all form fields
+      formData.append("category", data.category);
+      formData.append("amount", data.amount);
+      formData.append("description", data.description);
+      formData.append("expense_date", data.expense_date);
+      formData.append("status", data.status || "pending");
 
-    console.log("Sending to:", `/d/School-Expense/${id}/`);
-
-    const response = await axiosInstance.patch(
-      `/d/School-Expense/${id}/`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      } else if (data.attachment) {
+        formData.append("attachment", data.attachment);
       }
-    );
-    
-    console.log("Response:", response);
-    
-    if (response.status === 200) {
-      modalRef.current?.show();
-    }
-  } catch (error) {
-    console.error("Edit expense error:", error);
-    
-    if (error.response?.data) {
-      const errors = error.response.data;
-      console.error("Error details:", errors);
+      const response = await axiosInstance.patch(
+        `/d/School-Expense/${id}/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      if (errors.non_field_errors) {
-        setApiError(errors.non_field_errors.join(" "));
-      } else if (typeof errors === 'object') {
-        const fieldErrors = Object.entries(errors)
-          .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(", ") : messages}`)
-          .join(" | ");
-        setApiError(fieldErrors);
+      if (response.status === 200) {
+        modalRef.current?.show();
+      }
+    } catch (error) {
+      console.error("Edit expense error:", error);
+
+      if (error.response?.data) {
+        const errors = error.response.data;
+        console.error("Error details:", errors);
+
+        if (errors.non_field_errors) {
+          setApiError(errors.non_field_errors.join(" "));
+        } else if (typeof errors === "object") {
+          const fieldErrors = Object.entries(errors)
+            .map(
+              ([field, messages]) =>
+                `${field}: ${
+                  Array.isArray(messages) ? messages.join(", ") : messages
+                }`
+            )
+            .join(" | ");
+          setApiError(fieldErrors);
+        } else {
+          setApiError(errors.toString());
+        }
+      } else if (error.request) {
+        setApiError("No response from server. Please check your connection.");
       } else {
-        setApiError(errors.toString());
+        setApiError(error.message || "An unexpected error occurred.");
       }
-    } else if (error.request) {
-      setApiError("No response from server. Please check your connection.");
-    } else {
-      setApiError(error.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   if (error) {
     return <Error />;

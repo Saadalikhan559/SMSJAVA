@@ -15,7 +15,7 @@ import { ConfirmationModal } from "../../Modals/ConfirmationModal";
 import { AuthContext } from "../../../context/AuthContext";
 
 export const ViewAllExpenses = () => {
-  const { axiosInstance, authTokens } = useContext(AuthContext);
+  const { axiosInstance } = useContext(AuthContext);
   const [schoolExpense, setSchoolExpense] = useState([]);
   const [loading, setLoading] = useState(false);
   const [schoolYear, setSchoolYear] = useState([]);
