@@ -195,27 +195,34 @@ export const AdmissionFees = () => {
     }
   }, [selectedStudentId, selectedMonth, students]);
 
-  useEffect(() => {
-    if (selectedFeeIds.length > 0 && availableFees.length > 0) {
-      let totalAmount = 0;
-      let lateFeeAmount = 0;
+useEffect(() => {
+  if (selectedFeeIds.length > 0 && availableFees.length > 0) {
+    let totalAmount = 0;
+    let lateFeeAmount = 0;
+    let totalPending = 0;
 
-      availableFees.forEach((yearLevel) => {
-        yearLevel.fees.forEach((fee) => {
-          if (selectedFeeIds.includes(fee.id)) {
-            totalAmount += parseFloat(fee.final_amount);
-            if (fee.late_fee) lateFeeAmount += parseFloat(fee.late_fee);
-            if (fee.pending_amount) totalAmount += parseFloat(fee.pending_amount);
-          }
-        });
+    availableFees.forEach((yearLevel) => {
+      yearLevel.fees.forEach((fee) => {
+        if (selectedFeeIds.includes(fee.id)) {
+          const finalAmount = parseFloat(fee.final_amount) || 0;
+          const lateFee = parseFloat(fee.late_fee) || 0;
+          const dueAmount = parseFloat(fee.due_amount) || 0;
+
+          totalAmount += finalAmount;
+          lateFeeAmount += lateFee;
+          totalPending += dueAmount;
+        }
       });
+    });
 
-      totalAmount += lateFeeAmount;
-      setValue("paid_amount", totalAmount.toFixed(2));
-    } else {
-      setValue("paid_amount", "0.00");
-    }
-  }, [selectedFeeIds, availableFees, setValue]);
+    totalAmount += lateFeeAmount + totalPending;
+
+    setValue("paid_amount", totalAmount.toFixed(2));
+  } else {
+    setValue("paid_amount", "0.00");
+  }
+}, [selectedFeeIds, availableFees, setValue]);
+
 
   const role = localStorage.getItem("userRole");
   const loadRazorpayScript = () => {
@@ -332,25 +339,35 @@ export const AdmissionFees = () => {
     else setSelectedFeeIds((prev) => prev.filter((id) => id !== feeId));
   };
 
-  const calculateTotalAmount = () => {
-    let total = 0;
-    let lateFeeTotal = 0;
-    let DueFeeTotal = 0;
-    availableFees.forEach((yearLevel) => {
-      yearLevel.fees.forEach((fee) => {
-        if (selectedFeeIds.includes(fee.id)) {
-          total += parseFloat(fee.final_amount);
-          if (fee.late_fee) lateFeeTotal += parseFloat(fee.late_fee);
-          if (fee.due_amount) DueFeeTotal += parseFloat(fee.due_amount);
-        }
-      });
+const calculateTotalAmount = () => {
+  let total = 0;
+  let lateFeeTotal = 0;
+  let dueFeeTotal = 0;
+
+  availableFees.forEach((yearLevel) => {
+    yearLevel.fees.forEach((fee) => {
+      if (selectedFeeIds.includes(fee.id)) {
+        const finalAmount = parseFloat(fee.final_amount) || 0;
+        const lateFee = parseFloat(fee.late_fee) || 0;
+        const dueAmount = parseFloat(fee.due_amount) || 0;
+
+        total += finalAmount;
+        lateFeeTotal += lateFee;
+        dueFeeTotal += dueAmount;
+      }
     });
-   
+  });
 
-    return { baseAmount: total, lateFee: lateFeeTotal,  totalAmount: DueFeeTotal + total + lateFeeTotal  };
+  return {
+    baseAmount: total,
+    lateFee: lateFeeTotal,
+    Due: dueFeeTotal,
+    totalAmount: total + lateFeeTotal + dueFeeTotal,
   };
+};
 
-  const totalAmount = calculateTotalAmount();
+const totalAmount = calculateTotalAmount();
+
 
 
 
@@ -637,7 +654,6 @@ export const AdmissionFees = () => {
               ))}
 
               {/* Total Amount Summary */}
-              {console.log(totalAmount)}
               {selectedFeeIds.length > 0 && (
                 <div className="bg-base-300 p-4 rounded-lg mt-6">
                   <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
