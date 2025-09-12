@@ -1,16 +1,38 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
-  fetchExamType,
   fetchYearLevels,
   fetchSubjects,
   fetchTerms,
   fetchAllTeachers,
 } from "../../services/api/Api";
 import { useNavigate } from "react-router-dom";
-import { allRouterLink } from "../../router/AllRouterLinks";
 import axios from "axios";
+import { allRouterLink } from "../../router/AllRouterLinks";
 import { constants } from "../../global/constants";
+
+//  Axios instance with interceptor
+const axiosInstance = axios.create({
+  baseURL: constants.baseUrl,
+});
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const tokenData = localStorage.getItem("authTokens");
+    if (tokenData) {
+      try {
+        const tokens = JSON.parse(tokenData);
+        if (tokens?.access) {
+          config.headers.Authorization = `Bearer ${tokens.access.trim()}`;
+        }
+      } catch (err) {
+        console.error("Error parsing token:", err);
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 const UploadExamPaper = () => {
   const navigate = useNavigate();
@@ -20,14 +42,10 @@ const UploadExamPaper = () => {
   const [subjects, setSubjects] = useState([]);
   const [terms, setTerms] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-
-
-  const BASE_URL = constants.baseUrl;
 
   const {
     register,
@@ -47,76 +65,47 @@ const UploadExamPaper = () => {
     },
   });
 
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access && tokens.access !== accessToken) {
-          setAccessToken(tokens.access);
-        }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
-      }
-    }
-  }, []);
-
-  const getExamType = async () => {
-    if (!accessToken) return;
+  // fetch ExamType 
+  const fetchExamType = async () => {
     try {
-      const obj = await fetchExamType(accessToken);
-      if (obj) setExamType(obj);
+      const response = await axiosInstance.get(`/d/Exam-Type/`);
+      return response.data;
     } catch (err) {
-      console.error("Failed to load exam types:", err);
+      console.error("Failed to fetch exam type:", err);
       throw err;
     }
+  };
+
+  const getExamType = async () => {
+    const obj = await fetchExamType();
+    if (obj) setExamType(obj);
   };
 
   const getClassName = async () => {
-    try {
-      const ClassName = await fetchYearLevels();
-      setClassName(ClassName);
-    } catch (err) {
-      console.error("Failed to load classes:", err);
-      throw err;
-    }
+    const ClassName = await fetchYearLevels();
+    setClassName(ClassName);
   };
 
   const getSubjects = async () => {
-    try {
-      const obj = await fetchSubjects();
-      setSubjects(obj);
-    } catch (err) {
-      console.error("Failed to load subjects:", err);
-      throw err;
-    }
+    const obj = await fetchSubjects();
+    setSubjects(obj);
   };
 
   const getTerms = async () => {
-    try {
-      const obj = await fetchTerms();
-      setTerms(obj);
-    } catch (err) {
-      console.error("Failed to load terms:", err);
-      throw err;
-    }
+    const obj = await fetchTerms();
+    setTerms(obj);
   };
 
   const getTeachers = async () => {
-    try {
-      const obj = await fetchAllTeachers();
-      setTeachers(obj);
-    } catch (err) {
-      console.error("Failed to load teachers:", err);
-      throw err;
-    }
+    const obj = await fetchAllTeachers();
+    setTeachers(obj);
   };
 
   useEffect(() => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        if (accessToken) await getExamType();
+        await getExamType();
         await getClassName();
         await getSubjects();
         await getTerms();
@@ -129,7 +118,7 @@ const UploadExamPaper = () => {
       }
     };
     fetchAllData();
-  }, [accessToken]);
+  }, []);
 
   const handleNavigate = () => {
     navigate(allRouterLink.UpdateExamPaper);
@@ -147,28 +136,31 @@ const UploadExamPaper = () => {
     formData.append("uploaded_file", data.uploaded_file[0]);
 
     try {
-      if (!accessToken) return;
-      const response = await axios.post(
-        `${BASE_URL}/d/Exam-Paper/create_exampaper/`,
+      const response = await axiosInstance.post(
+        `/d/Exam-Paper/create_exampaper/`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
+
       if (response.status === 200 || response.status === 201) {
         setAlertMessage("Exam Paper submitted successfully!");
         setShowAlert(true);
         reset();
       } else {
-        throw new Error(response.data.message || "Failed to create exam schedule");
+        throw new Error(
+          response.data.message || "Failed to create exam paper"
+        );
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      setAlertMessage(`Error: ${error.response?.data?.paper_code || error.message}`);
-      setShowAlert(true)
+      setAlertMessage(
+        `Error: ${error.response?.data?.paper_code || error.message}`
+      );
+      setShowAlert(true);
     }
   };
 
@@ -189,7 +181,9 @@ const UploadExamPaper = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }
@@ -205,7 +199,7 @@ const UploadExamPaper = () => {
         </button>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-3xl font-bold text-center mb-8">
+                    <h1 className="text-3xl font-bold text-center mb-8">
             Upload Exam Paper <i className="fa-solid fa-file-upload ml-2"></i>
           </h1>
 
@@ -347,6 +341,7 @@ const UploadExamPaper = () => {
           </div>
         </form>
       </div>
+
       {showAlert && (
         <dialog className="modal modal-open">
           <div className="modal-box">
@@ -361,14 +356,12 @@ const UploadExamPaper = () => {
             </p>
             <div className="modal-action">
               <button
-                onClick={() => {
-                  setShowAlert(false);
-                }}
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
               >
                 OK
               </button>
             </div>
-
           </div>
         </dialog>
       )}
@@ -377,3 +370,4 @@ const UploadExamPaper = () => {
 };
 
 export default UploadExamPaper;
+
