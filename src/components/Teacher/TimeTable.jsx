@@ -1,53 +1,19 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { constants } from "../../global/constants";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 const TimeTable = () => {
-  const [accessToken, setAccessToken] = useState("");
   const [timetable, settimetable] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
-  const BASE_URL = constants.baseUrl;
-
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access) {
-          setAccessToken(tokens.access);
-        }
-      } catch (err) {
-        console.error("Error parsing auth tokens:", err);
-        setError(true);
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  const { axiosInstance } = useContext(AuthContext);
 
   const fetchtimetable = async () => {
-    if (!accessToken) {
-      console.log("Access token not available yet");
-      setLoading(false);
-      return;
-    }
-
     try {
       setLoading(true);
       setError(false);
 
-      const response = await axios.get(
-        `${BASE_URL}/d/Exam-Schedule/get_timetable/`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken.trim()}`,
-          },
-        }
+      const response = await axiosInstance.get(
+        "/d/Exam-Schedule/get_timetable/"
       );
       settimetable(response.data);
       setLoading(false);
@@ -59,10 +25,8 @@ const TimeTable = () => {
   };
 
   useEffect(() => {
-    if (accessToken) {
-      fetchtimetable();
-    }
-  }, [accessToken]);
+    fetchtimetable();
+  }, []);
 
   if (loading) {
     return (
@@ -102,10 +66,9 @@ const TimeTable = () => {
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4 border-b pb-4">
-              Examination Time Table
+            Examination Time Table
           </h1>
         </div>
-       
 
         {timetable.map((classData) => (
           <div key={classData.id} className="mb-10">
@@ -121,79 +84,70 @@ const TimeTable = () => {
               </div>
             </div>
 
-            <div className="w-full overflow-x-auto">
-              <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-blue-600 text-white">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                          Subject
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                          Date
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                          Day
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                          Start Time
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                          End Time
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                          Duration
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 bg-white">
-                      {classData.papers.map((paper, index) => {
-                        const start = new Date(`2000-01-01T${paper.start_time}`);
-                        const end = new Date(`2000-01-01T${paper.end_time}`);
-                        const durationMs = end - start;
-                        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
-                        const durationMinutes = Math.floor(
-                          (durationMs % (1000 * 60 * 60)) / (1000 * 60)
-                        );
-                        const duration = `${
-                          durationHours > 0 ? `${durationHours} hr` : ""
-                        } ${
-                          durationMinutes > 0 ? `${durationMinutes} min` : ""
-                        }`.trim();
+            <div className="w-full overflow-x-auto rounded-lg no-scrollbar max-h-[70vh]">
+  <div className="inline-block min-w-full align-middle">
+    <div className="shadow-sm rounded-lg">
+      <table className="min-w-full">
+        <thead className="bgTheme text-white sticky top-0">
+          <tr>
+            <th className="px-4 py-3 text-left text-sm font-semibold">Subject</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold">Day</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold">Start Time</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold">End Time</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold">Duration</th>
+          </tr>
+        </thead>
+        <tbody className=" divide-gray-200 bg-white">
+          {timetable.map((classData) =>
+            classData.papers.map((paper, index) => {
+              const start = new Date(`2000-01-01T${paper.start_time}`);
+              const end = new Date(`2000-01-01T${paper.end_time}`);
+              const durationMs = end - start;
+              const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+              const durationMinutes = Math.floor(
+                (durationMs % (1000 * 60 * 60)) / (1000 * 60)
+              );
+              const duration = `${
+                durationHours > 0 ? `${durationHours} hr` : ""
+              } ${
+                durationMinutes > 0 ? `${durationMinutes} min` : ""
+              }`.trim();
 
-                        return (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm font-medium text-gray-900 text-nowrap capitalize">
-                              {paper.subject_name}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                              {new Date(paper.exam_date).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                              {paper.day}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                              {formatTime(paper.start_time)}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                              {formatTime(paper.end_time)}
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                              {duration}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+              return (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900 text-nowrap capitalize">
+                    {paper.subject_name}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                    {new Date(paper.exam_date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                    {paper.day}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                    {formatTime(paper.start_time)}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                    {formatTime(paper.end_time)}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                    {duration}
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
           </div>
         ))}
       </div>

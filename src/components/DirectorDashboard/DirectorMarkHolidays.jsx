@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 
 const DirectorMarkHolidays = () => {
+  const { axiosInstance } = useContext(AuthContext);
   const BASE_URL = constants.baseUrl;
 
+  
   const [formData, setFormData] = useState({
     title: "",
     start_date: "",
@@ -57,13 +60,7 @@ const DirectorMarkHolidays = () => {
         end_date: formData.end_date || formData.start_date,
       };
 
-      const response = await axios.post(
-        `${BASE_URL}/a/attendance/mark-holidays/`,
-        payload,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axiosInstance.post("/a/attendance/mark-holidays/",   payload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Failed to mark holiday");

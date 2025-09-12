@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { fetchAllTeacherAssignments, fetchSubAssignments } from "../../services/api/Api";
+import { fetchSubAssignments } from "../../services/api/Api";
 
 const yearLevelMap = {
   1: "Pre Nursery",
@@ -22,8 +22,7 @@ const yearLevelMap = {
 };
 
 export const AllTeacherAssignments = () => {
-  const { authTokens } = useContext(AuthContext);
-  const accessToken = authTokens.access;
+  const { axiosInstance } = useContext(AuthContext);
 
   const [teacherAssignments, setTeacherAssignment] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,19 +35,22 @@ export const AllTeacherAssignments = () => {
 
   const [activeTab, setActiveTab] = useState("teachers");
 
+  // Teacher assignments fetched inside component
   const getAllTeacherAssignment = async () => {
     try {
       setLoading(true);
       setError(false);
-      const allAssignments = await fetchAllTeacherAssignments(accessToken);
-      setTeacherAssignment(allAssignments);
-    } catch {
+      const res = await axiosInstance.get("/t/teacher/all-teacher-assignments/");
+      setTeacherAssignment(res.data);
+    } catch (err) {
+      console.error("Failed to fetch all teacher assignments:", err);
       setError(true);
     } finally {
       setLoading(false);
     }
   };
 
+  // Substitute assignments fetched from API file
   const getSubAssignments = async () => {
     try {
       setSubLoading(true);
@@ -67,10 +69,12 @@ export const AllTeacherAssignments = () => {
     getSubAssignments();
   }, []);
 
+  // Search filter
   const filteredData = teacherAssignments.filter((assignment) =>
     assignment.teacher_name.toLowerCase().includes(searchInput.toLowerCase())
   );
 
+  // Loader and ErrorMessage same as before
   const Loader = ({ text = "Loading data..." }) => (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex space-x-2">
