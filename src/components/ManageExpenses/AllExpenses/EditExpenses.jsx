@@ -86,22 +86,13 @@ export const EditExpenses = () => {
 
       const formData = new FormData();
 
-<<<<<<< HEAD
-      // Append all form fields
-      formData.append("category", data.category);
-      formData.append("amount", data.amount);
-      formData.append("description", data.description);
-      formData.append("expense_date", data.expense_date);
-      formData.append("status", data.status || "pending");
-=======
     if (selectedFile) {
       formData.append("attachment", selectedFile);
     } else if (data.attachment) {
       // If no new file selected but existing attachment exists
-      // formData.append("attachment", data.attachment);
+      formData.append("attachment", data.attachment);
     }
 console.log(formData);    
->>>>>>> 9263670ac41ccb5206c7efffb887088e4b86efbf
 
       if (selectedFile) {
         formData.append("attachment", selectedFile);
