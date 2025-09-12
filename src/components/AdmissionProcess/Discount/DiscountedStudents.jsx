@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { fetchDiscounts, fetchYearLevels } from "../../../services/api/Api";
-import { deleteDiscount } from "../../../services/api/Api";
-import { updateDiscount } from "../../../services/api/Api";
+import React, { useEffect, useState, useContext } from "react";
+import { fetchYearLevels } from "../../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
+import { AuthContext } from "../../../context/AuthContext";
 
 const DiscountedStudents = () => {
+  const { axiosInstance } = useContext(AuthContext);
+
   const [students, setStudents] = useState([]);
   const [editingStudent, setEditingStudent] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-    const [selectedClass, setSelectedClass] = useState("");
-    const [yearLevels, setYearLevels] = useState([]);
+  const [selectedClass, setSelectedClass] = useState("");
+  const [yearLevels, setYearLevels] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState({
     student_name: "",
@@ -24,23 +25,17 @@ const DiscountedStudents = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+  const getYearLevels = async () => {
+    try {
+      const data = await fetchYearLevels();
+      setYearLevels(data);
+    } catch (err) {
+      console.error("Error fetching year levels:", err);
+    }
+  };
 
-
-
-    const getYearLevels = async () => {
-        try {
-          const data = await fetchYearLevels();
-          setYearLevels(data);
-        } catch (err) {
-          console.error("Error fetching year levels:", err);
-        }
-      };
-  
-   useEffect(() => {
-      getYearLevels();
-    }, []);
   useEffect(() => {
+    getYearLevels();
     loadDiscounts();
   }, []);
 
@@ -48,7 +43,7 @@ const DiscountedStudents = () => {
     setLoading(true);
     setError(false);
     try {
-      const data = await fetchDiscounts(token);
+      const { data } = await axiosInstance.get("/d/fee-discounts/");
       setStudents(data);
     } catch (err) {
       console.error("Error fetching students:", err);
@@ -60,32 +55,17 @@ const DiscountedStudents = () => {
 
   const handleDelete = async (id) => {
     try {
-      await deleteDiscount(token, id);
+      await axiosInstance.delete(`/d/fee-discounts/${id}/`);
       setStudents(students.filter((s) => s.id !== id));
     } catch (err) {
       console.error("Error deleting student:", err);
     }
   };
 
-  const handleEdit = (student) => {
-    setEditingStudent(student.id);
-    setFormData({ ...student });
-  };
-
-  const handleSave = async () => {
-    try {
-      await updateDiscount(token, editingStudent, formData);
-      loadDiscounts();
-      setEditingStudent(null);
-    } catch (err) {
-      console.error("Error updating student:", err);
-    }
-  };
-
   const confirmDelete = async () => {
     if (!deleteId) return;
     try {
-      await deleteDiscount(token, deleteId);
+      await axiosInstance.delete(`/d/fee-discounts/${deleteId}/`);
       setStudents(students.filter((s) => s.id !== deleteId));
     } catch (err) {
       console.error("Error deleting student:", err);
@@ -133,15 +113,14 @@ const DiscountedStudents = () => {
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
         <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
-           <div className="mb-1">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
-           <i className="fa-solid fa-percentage ml-2"></i> Discounted Students
-          </h1>
-        </div>
+          <div className="mb-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
+              <i className="fa-solid fa-percentage ml-2"></i> Discounted Students
+            </h1>
+          </div>
           <div className="p-2">
             <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b pb-4">
-            
-               <div className=" w-full  sm:w-xs">
+              <div className="w-full sm:w-xs">
                 <label className="text-sm font-medium text-gray-700 mb-1">
                   Select Class:
                 </label>
@@ -169,7 +148,7 @@ const DiscountedStudents = () => {
             </div>
 
             <div className="w-full overflow-x-auto max-h-[70vh] no-scrollbar rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300  text-xs sm:text-sm  ">
+              <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
                 <thead className="bgTheme text-white z-2 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
@@ -187,9 +166,7 @@ const DiscountedStudents = () => {
                   {filteredStudents.length > 0 ? (
                     filteredBysearch.map((s) => (
                       <tr key={s.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-700 font-bold capitalize text-nowrap">
-                          {s.student_name}
-                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700 font-bold capitalize text-nowrap">{s.student_name}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap text-center">{s.year_level}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.admission_fee_discount}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.tuition_fee_discount}</td>
@@ -197,7 +174,6 @@ const DiscountedStudents = () => {
                         <td className="px-4 py-3 text-sm text-gray-700 text-center">₹{s.tuition_fee}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 text-nowrap text-center">{s.discount_reason || "-"}</td>
                         <td className="px-4 py-3 text-sm text-gray-500 flex gap-3">
-
                           <Link
                             to={`${allRouterLink.editStudentDiscount}/${s.id}`}
                             className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
@@ -206,19 +182,16 @@ const DiscountedStudents = () => {
                           </Link>
                           <button
                             className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-
                             onClick={() => openDeleteModal(s.id)}
                           >
-
                             Delete
                           </button>
                         </td>
-
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className="px-4 py-6 text-center text-sm text-gray-500">
+                      <td colSpan="8" className="px-4 py-6 text-center text-sm text-gray-500">
                         No students found
                       </td>
                     </tr>
@@ -233,15 +206,11 @@ const DiscountedStudents = () => {
       {confirmOpen && (
         <dialog className="modal modal-open">
           <div className="modal-box">
-            <h3 className="font-bold text-lg ">Confirm Delete</h3>
+            <h3 className="font-bold text-lg">Confirm Delete</h3>
             <p className="py-4">Are you sure you want to continue?</p>
             <div className="modal-action">
-              <button className="btn bgTheme text-white" onClick={confirmDelete}>
-                Continue
-              </button>
-              <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>
-                Cancel
-              </button>
+              <button className="btn bgTheme text-white" onClick={confirmDelete}>Continue</button>
+              <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>Cancel</button>
             </div>
           </div>
         </dialog>
@@ -251,3 +220,4 @@ const DiscountedStudents = () => {
 };
 
 export default DiscountedStudents;
+
