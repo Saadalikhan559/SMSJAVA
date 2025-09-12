@@ -308,8 +308,8 @@ const DirectorProfile = () => {
 
         {/* Dialog Box */}
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl">
+          <div className="fixed inset-0 bg-transparent bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-xl font-bold textTheme mb-4">
                   Update Director Profile
@@ -373,7 +373,7 @@ const DirectorProfile = () => {
                         <div className="flex gap-2">
                           <label className="btn bgTheme text-white">
                             <FontAwesomeIcon icon={faCamera} className="mr-2" />
-                            Change Photo
+                            Change
                             <input
                               className="hidden"
                               type="file"
@@ -392,7 +392,7 @@ const DirectorProfile = () => {
                               onClick={handleRemoveImage}
                               className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
                             >
-                              Remove
+                              <span className="mr-2">X</span>Remove
                             </button>
                           )}
 

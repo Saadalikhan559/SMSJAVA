@@ -22,6 +22,8 @@ function OfficestaffProfile() {
   const [imagePreview, setImagePreview] = useState(null);
   const [departments, setDepartments] = useState([]);
   const [officeStaffFullName, setOfficeStaffFullName] = useState("");
+  const [removeImage, setRemoveImage] = useState(false);
+
 
   const BASE_URL = constants.baseUrl;
 
@@ -81,10 +83,12 @@ function OfficestaffProfile() {
       formData.append("email", data.email);
       formData.append("phone_no", data.phone_no);
       formData.append("gender", data.gender);
-      formData.append("department", data.department);
+      // formData.append("department", data.department);
       formData.append("middle_name", data.middle_name || "");
 
-      if (imagePreview && typeof imagePreview !== "string") {
+      if (removeImage) {
+        formData.append("user_profile", "");
+      } else if (imagePreview && typeof imagePreview !== "string") {
         formData.append("user_profile", imagePreview);
       }
 
@@ -152,7 +156,7 @@ function OfficestaffProfile() {
                 src={
                   profileData.user_profile
                     ? `${BASE_URL}${profileData.user_profile}`
-                    : "https://images.unsplash.com/photo-1531123897727-8f129e1688ce"
+                    : " "
                 }
                 alt="Profile"
                 className="h-full w-full object-cover"
@@ -214,7 +218,7 @@ function OfficestaffProfile() {
                   readOnly
                 />
               </div>
-              <div className="flex flex-col gap-1">
+              {/* <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500">
                   <FontAwesomeIcon icon={faBuilding} className="w-4 h-4 mr-2" />
                   Department
@@ -225,7 +229,7 @@ function OfficestaffProfile() {
                   className="input input-bordered w-full text-sm"
                   readOnly
                 />
-              </div>
+              </div> */}
             </div>
 
             {/* Column 2 */}
@@ -288,29 +292,32 @@ function OfficestaffProfile() {
           </div>
 
           {/* Buttons section */}
-          {/* <div className="flex justify-end gap-4 mt-8">
-          <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <span className="mr-1">X</span> Cancel
-          </button>
-          <button
-            onClick={handleEditClick}
-            className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <span className="mr-2 text-lg leading-none">↑</span> Update
-          </button>
-        </div> */}
+          <div className="flex justify-end gap-4 mt-8">
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEditClick}
+              className="btn bgTheme text-white"
+            >
+              <i class="fa-solid fa-pen-to-square"></i> Update
+            </button>
+          </div>
         </div>
 
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl">
+          <div className="fixed inset-0 bg-transparent bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold text-[#167bff] mb-4">
+                <h2 className="text-xl font-bold textTheme mb-4">
                   Update Office Staff Profile
                 </h2>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Column 1 - Profile Image */}
                     <div className="space-y-4">
                       <h3 className="text-md font-semibold text-gray-700 border-b pb-2">
@@ -322,14 +329,12 @@ function OfficestaffProfile() {
                           <div className="h-32 w-32 rounded-full bg-gray-100 overflow-hidden shadow-md border-2 border-gray-300 hover:border-blue-400 transition-all duration-200">
                             {imagePreview ? (
                               typeof imagePreview === "string" ? (
-                                // Display existing image URL
                                 <img
                                   src={imagePreview}
                                   alt="Profile Preview"
                                   className="h-full w-full object-cover"
                                 />
                               ) : (
-                                // Display newly selected file preview
                                 <img
                                   src={URL.createObjectURL(imagePreview)}
                                   alt="Profile Preview"
@@ -367,9 +372,9 @@ function OfficestaffProfile() {
                         </div>
 
                         <div className="flex gap-2">
-                          <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors">
+                          <label className="btn bgTheme text-white">
                             <FontAwesomeIcon icon={faCamera} className="mr-2" />
-                            Change Photo
+                            Change
                             <input
                               className="hidden"
                               type="file"
@@ -381,20 +386,24 @@ function OfficestaffProfile() {
                               }}
                             />
                           </label>
+
                           {imagePreview && (
                             <button
                               type="button"
-                              onClick={() => setImagePreview(null)}
-                              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={() => {
+                                setImagePreview(null);
+                                setRemoveImage(true);
+                              }}
+                              className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
                             >
-                              Remove
+                              <span className="mr-2">X</span>Remove
                             </button>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    {/* Column 2 - Personal Info */}
+                    {/* Column 2 - Form Fields */}
                     <div className="space-y-4">
                       <h3 className="text-md font-semibold text-gray-700 border-b pb-2">
                         Personal Information
@@ -449,35 +458,6 @@ function OfficestaffProfile() {
 
                       <div className="flex flex-col gap-1">
                         <label className="text-sm font-semibold text-gray-500">
-                          Gender
-                        </label>
-                        <select
-                          {...register("gender", {
-                            required: "Gender is required",
-                          })}
-                          className="select select-bordered w-full text-sm"
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                        {errors.gender && (
-                          <p className="text-red-500 text-xs mt-1">
-                            {errors.gender.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Column 3 - Contact & Professional Info */}
-                    <div className="space-y-4">
-                      <h3 className="text-md font-semibold text-gray-700 border-b pb-2">
-                        Contact Information
-                      </h3>
-
-                      <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
                           Email
                         </label>
                         <input
@@ -503,7 +483,7 @@ function OfficestaffProfile() {
                           Phone Number
                         </label>
                         <input
-                          type="text"
+                          type="tel"
                           {...register("phone_no", {
                             required: "Phone number is required",
                           })}
@@ -515,11 +495,32 @@ function OfficestaffProfile() {
                           </p>
                         )}
                       </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-sm font-semibold text-gray-500">
+                          Gender
+                        </label>
+                        <select
+                          {...register("gender", {
+                            required: "Gender is required",
+                          })}
+                          className="select select-bordered w-full text-sm"
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                        {errors.gender && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {errors.gender.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Buttons - Full width below columns */}
-                  <div className="flex justify-end gap-4 mt-6 border-t pt-4">
+                  <div className="flex justify-end gap-4 mt-6">
                     <button
                       type="button"
                       onClick={() => {
@@ -532,7 +533,7 @@ function OfficestaffProfile() {
                     </button>
                     <button
                       type="submit"
-                      className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+                      className="btn bgTheme text-white"
                     >
                       Save Changes
                     </button>

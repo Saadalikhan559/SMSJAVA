@@ -23,6 +23,7 @@ const GuardianProfile = () => {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [guardianData, setGuardianData] = useState(null);
+  const [removeImage, setRemoveImage] = useState(false);
 
   const BASE_URL = constants.baseUrl;
 
@@ -67,7 +68,11 @@ const GuardianProfile = () => {
       formData.append("occupation", data.occupation || "");
       formData.append("designation", data.designation || "");
 
-      if (imagePreview && typeof imagePreview !== "string") {
+      if (removeImage) {
+        formData.append("user_profile", "");
+
+
+      } else if (imagePreview && typeof imagePreview !== "string") {
         formData.append("user_profile", imagePreview);
       }
 
@@ -97,6 +102,11 @@ const GuardianProfile = () => {
     if (guardianData?.user_profile) {
       setImagePreview(`${BASE_URL}${guardianData.user_profile}`);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setRemoveImage(true);
   };
 
   if (loading) {
@@ -307,25 +317,26 @@ const GuardianProfile = () => {
           </div>
 
           {/* Buttons section */}
-          {/* <div className="flex justify-end gap-4 mt-8">
-          <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <span className="mr-1">X</span> Cancel
-          </button>
-          <button
-            onClick={handleEditClick}
-            className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <span className="mr-2 text-lg leading-none">↑</span> Update
-          </button>
-        </div> */}
+          <div className="flex justify-end gap-4 mt-8">
+            <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              onClick={() => window.history.back()}>
+              Cancel
+            </button>
+            <button
+              onClick={handleEditClick}
+              className="btn bgTheme text-white"
+            >
+              <i class="fa-solid fa-pen-to-square"></i> Update
+            </button>
+          </div>
         </div>
 
         {/* Dialog Box */}
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl">
+          <div className="fixed inset-0 bg-transparent bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold text-[#167bff] mb-4">Update Guardian Profile</h2>
+                <h2 className="text-xl font-bold textTheme mb-4">Update Guardian Profile</h2>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -385,9 +396,9 @@ const GuardianProfile = () => {
                         </div>
 
                         <div className="flex gap-2">
-                          <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors">
+                          <label className="btn bgTheme text-white">
                             <FontAwesomeIcon icon={faCamera} className="mr-2" />
-                            Change Photo
+                            Change
                             <input
                               className="hidden"
                               type="file"
@@ -402,9 +413,10 @@ const GuardianProfile = () => {
                           {imagePreview && (
                             <button
                               type="button"
-                              onClick={() => setImagePreview(null)}
-                              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={handleRemoveImage}
+                              className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
                             >
+                              <span className="mr-2">X</span>
                               Remove
                             </button>
                           )}
@@ -574,7 +586,7 @@ const GuardianProfile = () => {
                     </button>
                     <button
                       type="submit"
-                      className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+                      className="btn bgTheme text-white"
                     >
                       Save Changes
                     </button>
