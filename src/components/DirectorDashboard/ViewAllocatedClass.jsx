@@ -1,37 +1,29 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { constants } from "../../global/constants";
 import { AuthContext } from "../../context/AuthContext";
 
-import { fetchAllocatedClasses } from "../../services/api/Api";
-
 const ViewAllocatedClass = () => {
-  const { authTokens } = useContext(AuthContext);
-
+  const { axiosInstance } = useContext(AuthContext);
   const [allocatedClasses, setAllocatedClasses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const loadClasses = async () => {
-      setLoading(true);
-      setError(false);
-      try {
-        const data = await fetchAllocatedClasses(authTokens.access);
-        setAllocatedClasses(data);
-      } catch (err) {
-        console.error(err);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (authTokens?.access) {
-      loadClasses();
+  // Fetch Allocated Classes
+  const fetchAllocatedClasses = async () => {
+    try {
+      const response = await axiosInstance.get("/t/teacheryearlevel/");
+      setAllocatedClasses(response.data);
+    } catch (err) {
+      console.error("Failed to fetch allocated classes:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
     }
-  }, [authTokens]);
+  };
+
+  useEffect(() => {
+    fetchAllocatedClasses();
+  }, []);
 
   const filteredClasses = allocatedClasses.filter(
     (classItem) =>
@@ -66,7 +58,7 @@ const ViewAllocatedClass = () => {
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <div className="flex items-center justify-between mb-6 border-b pb-2">
           <h2 className="text-3xl font-semibold text-gray-800">
-            <i className="fa-solid fa-landmark"></i> Allocated Classes 
+            <i className="fa-solid fa-landmark"></i> Allocated Classes
           </h2>
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -123,10 +115,11 @@ const ViewAllocatedClass = () => {
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );
 };
 
 export default ViewAllocatedClass;
+
+
