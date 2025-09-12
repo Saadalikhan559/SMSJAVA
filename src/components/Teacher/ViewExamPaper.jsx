@@ -1,91 +1,57 @@
-import { useState, useEffect } from "react";
-import { constants } from '../../global/constants';
+import { useState, useEffect, useContext } from "react";
+import { constants } from "../../global/constants";
 import axios from "axios";
 import { fetchYearLevels } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
 
 const ViewExamPaper = () => {
-  const [accessToken, setAccessToken] = useState("");
   const [examPaper, setExamPaper] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
-   const [yearLevels, setYearLevels] = useState([]);
-   const [searchInput, setSearchInput] = useState("");
+  const [yearLevels, setYearLevels] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { axiosInstance } = useContext(AuthContext);
 
-  const BASE_URL = constants.baseUrl;
+  const getYearLevels = async () => {
+    try {
+      const data = await fetchYearLevels();
+      setYearLevels(data);
+    } catch (err) {
+      console.error("Error fetching year levels:", err);
+    }
+  };
 
-
-   const getYearLevels = async () => {
-      try {
-        const data = await fetchYearLevels();
-        setYearLevels(data);
-      } catch (err) {
-        console.error("Error fetching year levels:", err);
-      }
-    };
-
- useEffect(() => {
+  useEffect(() => {
     getYearLevels();
   }, []);
 
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access) {
-          setAccessToken(tokens.access);
-        }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
-      }
-    }
-  }, []);
-
   const fetchExamPaper = async () => {
-    if (!accessToken) {
-      console.log("Access token not available yet");
-      return;
-    }
-
     setLoading(true);
     setError(false);
-
     try {
-      const response = await axios.get(
-        `${BASE_URL}/d/Exam-Paper/get_exampaper/`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken.trim()}`, 
-          },
-        }
-      );
-      setExamPaper(response.data); 
+      const response = await axiosInstance.get(`/d/Exam-Paper/get_exampaper/`);
+      setExamPaper(response.data);
     } catch (err) {
-      console.error("Failed to fetch timetable:", err);
+      console.error("Failed to fetch exam papers:", err);
       setError(true);
     } finally {
       setLoading(false);
     }
   };
 
- const filterData = examPaper.filter((detail) =>
-    detail.year_level_name.toLowerCase()
-      .includes(selectedClass.toLowerCase()) 
-  );
- const filterBySearch = filterData.filter((detail) =>
-    detail.subject_name.toLowerCase()
-      .includes(searchInput.toLowerCase()) 
-  );
-
-
   useEffect(() => {
-    if (accessToken) {
-      fetchExamPaper();
-    }
-  }, [accessToken]);
+    fetchExamPaper();
+  }, []);
+
+  const filterData = examPaper.filter((detail) =>
+    detail.year_level_name.toLowerCase()
+     .includes(selectedClass.toLowerCase())
+  );
+  const filterBySearch = filterData.filter((detail) =>
+    detail.subject_name.toLowerCase()
+    .includes(searchInput.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -104,61 +70,55 @@ const ViewExamPaper = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }
 
-  const ExamPapers = examPaper;
-
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
-            Examination Papers
-          </h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6">
+          Examination Papers
+        </h1>
+
+        <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
+          <div className="flex flex-col w-full sm:w-xs">
+            <label className="text-sm font-medium text-gray-700 mb-1">
+              Select Class:
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none"
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+            >
+              <option value="">All Classes</option>
+              {yearLevels.map((level) => (
+                <option key={level.id} value={level.level_name}>
+                  {level.level_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col w-full sm:w-auto">
+            <input
+              type="text"
+              placeholder="Search Subject Name..."
+              className="border px-3 py-2 rounded w-full sm:w-64"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
         </div>
-       
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
-           <div className="flex flex-col w-full sm:w-xs">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  Select Class:
-                </label>
-                <select
-                  className="select select-bordered w-full focus:outline-none"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option value="">All Classes</option>
-                  {yearLevels.map((level) => (
-                    <option key={level.id} value={level.level_name}>
-                      {level.level_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col w-full sm:w-auto">
-           <input
-            type="text"
-            placeholder="Search Subject Name..."
-            className="border px-3 py-2 rounded w-full sm:w-64"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-              </div>
-           
-            
-         
-        </div>
-       
 
         <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
           <div className="inline-block min-w-full align-middle">
-            <div className=" shadow-sm ring-1 ring-black ring-opacity-5 ">
+            <div className="shadow-sm ring-1 ring-black ring-opacity-5">
               <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white z-2 sticky top-0">
+                <thead className="bgTheme text-white sticky top-0 z-10">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                       Subject
@@ -185,47 +145,59 @@ const ViewExamPaper = () => {
                       Actions
                     </th>
                   </tr>
-                </thead> {filterData.length === 0 ? (
-          <p className="text-gray-600">No Examination Papers found.</p>
-        ) : ( <tbody className="divide-y divide-gray-200 bg-white">
-                  
-                  {filterBySearch.map((paper) => (
-                    <tr key={paper.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900 text-nowrap capitalize">
-                        {paper.subject_name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
-                        {paper.year_level_name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                        {paper.exam_name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap capitalize">
-                        {paper.teacher_name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                        {paper.total_marks}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                        {paper.paper_code}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                        {paper.year}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                        <a 
-                          href={paper.uploaded_file.replace("http://localhost:8000", constants.baseUrl)}
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          View Paper
-                        </a>
+                </thead>
+
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {filterBySearch.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="8"
+                        className="px-4 py-6 text-center text-gray-600"
+                      >
+                        No Examination Papers found.
                       </td>
                     </tr>
-                  ))}
-                </tbody>)}
-               
+                  ) : (
+                    filterBySearch.map((paper) => (
+                      <tr key={paper.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900 capitalize">
+                          {paper.subject_name}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700 capitalize">
+                          {paper.year_level_name}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {paper.exam_name}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700 capitalize">
+                          {paper.teacher_name}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {paper.total_marks}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {paper.paper_code}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {paper.year}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          <a
+                            href={paper.uploaded_file.replace(
+                              "http://localhost:8000",
+                              constants.baseUrl
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 hover:underline"
+                          >
+                            View Paper
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
               </table>
             </div>
           </div>
@@ -233,6 +205,7 @@ const ViewExamPaper = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ViewExamPaper;
+

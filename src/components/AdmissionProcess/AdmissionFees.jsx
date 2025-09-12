@@ -341,13 +341,13 @@ export const AdmissionFees = () => {
         if (selectedFeeIds.includes(fee.id)) {
           total += parseFloat(fee.final_amount);
           if (fee.late_fee) lateFeeTotal += parseFloat(fee.late_fee);
-          if (fee.pending_amount) DueFeeTotal += parseFloat(fee.pending_amount);
+          if (fee.due_amount) DueFeeTotal += parseFloat(fee.due_amount);
         }
       });
     });
-    console.log(DueFeeTotal);
+   
 
-    return { baseAmount: total, lateFee: lateFeeTotal, Due: DueFeeTotal, totalAmount: total + lateFeeTotal + DueFeeTotal };
+    return { baseAmount: total, lateFee: lateFeeTotal,  totalAmount: DueFeeTotal + total + lateFeeTotal  };
   };
 
   const totalAmount = calculateTotalAmount();
@@ -588,7 +588,7 @@ export const AdmissionFees = () => {
                         <div className="card-body p-4">
                           <div className="form-control">
                             <label className="label cursor-pointer justify-start gap-4">
-                              {fee.final_amount > 0 ? (
+                              {fee.final_amount > 0 || fee.due_amount > 0 ? (
                                 <input
                                   type="checkbox"
                                   checked={selectedFeeIds.includes(fee.id)}
@@ -614,8 +614,8 @@ export const AdmissionFees = () => {
                                     className={`flex items-center gap-2 ${fee.status === "Paid" ? "text-green-600" : "text-yellow-700"
                                       }`}
                                   >
-                                    <span>{fee.status}</span> {
-                                      (totalAmount.Due > 0 && <span>Due:₹{fee.pending_amount}</span>)}
+                                    <span>{fee.status}</span> 
+                                      
 
                                   </div>
 

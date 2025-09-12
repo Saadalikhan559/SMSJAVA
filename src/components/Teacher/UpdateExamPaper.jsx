@@ -1,30 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import {
-  fetchExamType,
   fetchYearLevels,
   fetchSubjects,
   fetchTerms,
   fetchAllTeachers,
 } from "../../services/api/Api";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
-import { constants } from "../../global/constants";
+import { AuthContext } from "../../context/AuthContext";
 
 const UpdateExamPaper = () => {
   const navigate = useNavigate();
+  const { axiosInstance } = useContext(AuthContext); 
 
   const [examType, setExamType] = useState([]);
   const [className1, setClassName] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [terms, setTerms] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [accessToken, setAccessToken] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-
-  const BASE_URL = constants.baseUrl;
 
   const {
     register,
@@ -44,25 +40,11 @@ const UpdateExamPaper = () => {
     },
   });
 
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access && tokens.access !== accessToken) {
-          setAccessToken(tokens.access);
-        }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
-      }
-    }
-  }, []);
-
+  // ExamType fetch
   const getExamType = async () => {
-    if (!accessToken) return;
     try {
-      const obj = await fetchExamType(accessToken);
-      if (obj) setExamType(obj);
+      const response = await axiosInstance.get("/d/Exam-Type/");
+      setExamType(response.data);
     } catch (err) {
       console.error("Failed to load exam types:", err);
     }
@@ -105,12 +87,12 @@ const UpdateExamPaper = () => {
   };
 
   useEffect(() => {
-    if (accessToken) getExamType();
+    getExamType();
     getClassName();
     getSubjects();
     getTerms();
     getTeachers();
-  }, [accessToken]);
+  }, []);
 
   const handleNavigate = () => {
     navigate(allRouterLink.UploadExamPaper);
@@ -128,15 +110,11 @@ const UpdateExamPaper = () => {
     formData.append("uploaded_file", data.uploaded_file[0]);
 
     try {
-      if (!accessToken) return;
-      const response = await axios.put(
-        `${BASE_URL}/d/Exam-Paper/update_exampaper/`,
+      const response = await axiosInstance.put(
+        "/d/Exam-Paper/update_exampaper/",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
@@ -151,7 +129,7 @@ const UpdateExamPaper = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-       setAlertMessage(
+      setAlertMessage(
         `Error: ${error.response?.data?.paper_code || error.message}`
       );
       setShowAlert(true);
@@ -173,7 +151,7 @@ const UpdateExamPaper = () => {
             Update Exam Paper <i className="fa-solid fa-pen-nib ml-2"></i>
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Exam Type */}
             <div className="form-control">
               <label className="label">
@@ -384,7 +362,7 @@ const UpdateExamPaper = () => {
           </div>
         </form>
       </div>
-       {showAlert && (
+      {showAlert && (
         <dialog className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg">Update Exam Paper</h3>
@@ -412,4 +390,3 @@ const UpdateExamPaper = () => {
 };
 
 export default UpdateExamPaper;
-

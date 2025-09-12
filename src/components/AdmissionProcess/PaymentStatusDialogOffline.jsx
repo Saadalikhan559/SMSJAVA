@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 
 const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
   if (!paymentStatus) return null;
@@ -36,11 +36,9 @@ const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
       let heightLeft = imgHeight;
       let position = 0;
 
-      // first page
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
 
-      // extra pages if needed
       while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
@@ -57,17 +55,12 @@ const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-2">
       <div className="bg-white w-full max-w-md p-4 rounded-lg shadow-lg">
-        
-        {/* Header */}
         <div className="flex justify-between items-center border-b pb-2 mb-3">
           <h2 className="text-lg font-bold text-green-600">Payment Receipt</h2>
           <button onClick={onClose} className="btn btn-circle btn-xs">✕</button>
         </div>
 
-        {/* Receipt Content */}
         <div ref={receiptRef} className="space-y-3 text-sm">
-
-          {/* Receipt Details */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Receipt Details</h3>
             <div className="grid grid-cols-2 gap-1 text-xs">
@@ -84,13 +77,11 @@ const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
             </div>
           </div>
 
-          {/* Student Info */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Student</h3>
             <p className="text-xs">{paymentStatus.student.name}</p>
           </div>
 
-          {/* Fees Breakdown */}
           <div>
             <h3 className="font-semibold text-gray-700 text-sm">Fees</h3>
             {paymentStatus.year_level_fees_grouped?.map((group, index) => (
@@ -107,7 +98,6 @@ const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
             ))}
           </div>
 
-          {/* Summary */}
           <div className="border-t pt-2">
             <h3 className="font-semibold text-gray-700 text-sm">Summary</h3>
             <p className="text-xs"><strong>Total:</strong> ₹{paymentStatus.total_amount}</p>
@@ -124,7 +114,6 @@ const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="mt-4 flex justify-end gap-2">
           <button onClick={handleDownload} className="btn bgTheme text-white btn-sm">
             Download
@@ -139,4 +128,3 @@ const PaymentStatusDialogOffline = ({ paymentStatus, onClose }) => {
 };
 
 export default PaymentStatusDialogOffline;
-

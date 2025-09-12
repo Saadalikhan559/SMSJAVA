@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { fetchStudentFee, fetchUnpaidFees, fetchYearLevels } from "../../services/api/Api";
+import { fetchYearLevels } from "../../services/api/Api";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useParams } from "react-router-dom";
@@ -14,7 +14,7 @@ const StudentFeeAndUnpaidSummary = () => {
     const [allFeeTypes, setAllFeeTypes] = useState([]);
     const [selectedMonthFee, setSelectedMonthFee] = useState("");
     const [selectedYearFee, setSelectedYearFee] = useState("");
-    const { userRole, yearLevelID, userID, studentID } = useContext(AuthContext);
+    const { userRole, yearLevelID, userID, studentID, axiosInstance } = useContext(AuthContext);
     const [unpaidFees, setUnpaidFees] = useState([]);
     const [loadingUnpaid, setLoadingUnpaid] = useState(false);
     const [error, setError] = useState(null);
@@ -24,6 +24,46 @@ const StudentFeeAndUnpaidSummary = () => {
     const [yearLevels, setYearLevels] = useState([]);
     const { student_id } = useParams();
 
+    const fetchStudentFee = async (student_id) => {
+        try {
+            const response = await axiosInstance.get(`/d/fee-record/student_fee_details/${student_id}/`);
+            return response.data;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    };
+
+    const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
+        try {
+            let endpoint = "";
+            let params = {};
+            if (role === constants.roles.director || role === constants.roles.officeStaff) {
+                endpoint = `/d/fee-record/overall_unpaid_fees/`;
+                if (class_id) params.class_id = class_id;
+                if (month) params.month = month;
+            } else if (role === constants.roles.teacher) {
+                endpoint = `/d/fee-record/overall_unpaid_fees/`;
+                if (month) params.month = month;
+            } else if (role === constants.roles.student) {
+                endpoint = `/d/fee-record/student_unpaid_fees/`;
+                if (student_id) params.student_id = student_id;
+            } else {
+                throw new Error("Invalid role");
+            }
+
+            const response = await axiosInstance.get(endpoint, { params });
+            let data = response.data;
+            if ((role === constants.roles.director || role === constants.roles.officeStaff) && student_id) {
+                data = data.filter((fee) => fee.student_id === student_id);
+            }
+            return data;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+    };
+    
     const getStudentFeeDetails = async () => {
         if (!student_id) return;
         setLoadingStudent(true);
@@ -48,8 +88,51 @@ const StudentFeeAndUnpaidSummary = () => {
         }
     };
 
+    const getYearLevels = async () => {
+        try {
+            const data = await fetchYearLevels();
+            setYearLevels(data);
+        } catch { }
+    };
+
+    const loadUnpaidFees = async () => {
+        try {
+            setLoadingUnpaid(true);
+            let params = { month: selectedMonthUnpaid || "" };
+
+            if (student_id) {
+                params.student_id = student_id;
+                params.role = "student";
+            } else if (userRole === constants.roles.guardian) {
+                params.student_id = studentID || "";
+                params.role = "student";
+            } else if (userRole === constants.roles.student) {
+                params.student_id = userID || "";
+                params.role = "student";
+            } else if (userRole === constants.roles.teacher) {
+                params.class_id = yearLevelID || "";
+                params.role = "teacher";
+            } else if (userRole === constants.roles.director || userRole === constants.roles.officeStaff) {
+                params.class_id = selectedClass || "";
+                params.role = userRole;
+            }
+
+            const data = await fetchUnpaidFees(params);
+
+            setUnpaidFees(Array.isArray(data) ? data : []);
+            setError(null);
+        } catch {
+            setUnpaidFees([]); 
+            setError("Failed to load unpaid fees");
+        } finally {
+            setLoadingUnpaid(false);
+        }
+    };
+   
     useEffect(() => {
         if (student_id) getStudentFeeDetails();
+        getYearLevels();
+        loadUnpaidFees();
     }, [student_id]);
 
     useEffect(() => {
@@ -65,6 +148,20 @@ const StudentFeeAndUnpaidSummary = () => {
         }
         setFilteredSummary(filtered);
     }, [selectedMonthFee, selectedYearFee, details]);
+
+    useEffect(() => {
+        loadUnpaidFees();
+    }, [selectedMonthUnpaid, selectedClass, student_id]);
+
+    const resetFilters = () => {
+        setSelectedMonthUnpaid("");
+        setSelectedClass("");
+        setSearchTerm("");
+    };
+
+    const filteredFees = unpaidFees.filter((item) =>
+        item.student?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const exportPDF = () => {
         if (!details || !filteredSummary.length) return;
@@ -104,61 +201,6 @@ const StudentFeeAndUnpaidSummary = () => {
         autoTable(doc, { startY: 100, head: headers, body: data });
         doc.save(`${details.student_name}_fee_report.pdf`);
     };
-
-    const getYearLevels = async () => {
-        try {
-            const data = await fetchYearLevels();
-            setYearLevels(data);
-        } catch { }
-    };
-
-    const loadUnpaidFees = async () => {
-        try {
-            setLoadingUnpaid(true);
-            let params = { month: selectedMonthUnpaid || "" };
-            if (student_id) {
-                params.student_id = student_id;
-                params.role = "student";
-            } else if (userRole === constants.roles.guardian) {
-                params.student_id = studentID || "";
-                params.role = "student";
-            } else if (userRole === constants.roles.student) {
-                params.student_id = userID || "";
-                params.role = "student";
-            } else if (userRole === constants.roles.teacher) {
-                params.class_id = yearLevelID || "";
-                params.role = "teacher";
-            } else if (userRole === constants.roles.director || userRole === constants.roles.officeStaff) {
-                params.class_id = selectedClass || "";
-                params.role = userRole;
-            }
-            const data = await fetchUnpaidFees(params);
-            setUnpaidFees(data || []);
-            setError(null);
-        } catch {
-            setError("Failed to load unpaid fees");
-        } finally {
-            setLoadingUnpaid(false);
-        }
-    };
-
-    useEffect(() => {
-        getYearLevels();
-    }, []);
-
-    useEffect(() => {
-        loadUnpaidFees();
-    }, [selectedMonthUnpaid, selectedClass, student_id]);
-
-    const resetFilters = () => {
-        setSelectedMonthUnpaid("");
-        setSelectedClass("");
-        setSearchTerm("");
-    };
-
-    const filteredFees = unpaidFees.filter((item) =>
-        item.student?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     if (loadingStudent || loadingUnpaid) {
         return (

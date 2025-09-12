@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { fetchYearLevels, fetchFeeSummary } from "../../services/api/Api";
+import React, { useEffect, useState, useContext } from "react";
+import { fetchYearLevels } from "../../services/api/Api";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const FeeSummaryTable = () => {
+  const { axiosInstance } = useContext(AuthContext);
+
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState("");
   const [yearLevels, setYearLevels] = useState([]);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,23 +25,22 @@ const FeeSummaryTable = () => {
     }
   };
 
-  const filteredStudents = students.filter((student) =>
-    student.student_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const getFeeData = async () => {
     setLoading(true);
     setError(null);
     setStudents([]);
 
     try {
-      const data = await fetchFeeSummary({ selectedMonth, selectedClass });
+      const params = {};
+      if (selectedMonth) params.month = selectedMonth;
+      if (selectedClass) params.year_level = selectedClass;
+      if (selectedSchoolYear) params.school_year = selectedSchoolYear;
 
-      if (
-        data &&
-        typeof data === "object" &&
-        data.detail === "No records found."
-      ) {
+      const response = await axiosInstance.get("/d/fee-record/monthly-summary/", { params });
+
+      const data = response.data;
+
+      if (data && typeof data === "object" && data.detail === "No records found.") {
         setStudents([]);
       } else if (Array.isArray(data)) {
         setStudents(data);
@@ -51,9 +54,7 @@ const FeeSummaryTable = () => {
         if (err.response.status === 404) {
           setError("No data found (404 Not Found).");
         } else {
-          setError(
-            `Server error: ${err.response.status} ${err.response.statusText}`
-          );
+          setError(`Server error: ${err.response.status} ${err.response.statusText}`);
         }
       } else {
         setError("Network error. Please check your connection.");
@@ -71,13 +72,26 @@ const FeeSummaryTable = () => {
 
   useEffect(() => {
     getFeeData();
-  }, [selectedMonth, selectedClass]);
+  }, [selectedMonth, selectedClass, selectedSchoolYear]);
 
   const resetFilters = () => {
     setSelectedMonth("");
     setSelectedClass("");
+    setSelectedSchoolYear("");
     setSearchTerm("");
   };
+
+  const filteredStudents = students.filter((student) => {
+    const matchName = student.student_name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchYear =
+      !selectedSchoolYear ||
+      student.school_year?.toLowerCase() === selectedSchoolYear.toLowerCase();
+
+    return matchName && matchYear;
+  });
 
   if (loading) {
     return (
@@ -90,37 +104,34 @@ const FeeSummaryTable = () => {
         <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
-}
+  }
 
-if (error) {
+  if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
         <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
       </div>
     );
-}
+  }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg  mx-auto">
+      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center ">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Students Fee Record
           </h1>
         </div>
 
         {/* Filter + Fee Dashboard Section */}
-        <div className="w-full px-5 ">
+        <div className="w-full px-5">
           <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b pb-4">
-
             {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  Select Month:
-                </label>
+                <label className="text-sm font-medium text-gray-700 mb-1">Select Month:</label>
                 <select
                   className="select select-bordered w-full focus:outline-none"
                   value={selectedMonth}
@@ -128,8 +139,8 @@ if (error) {
                 >
                   <option value="">All Months</option>
                   {[
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December",
+                    "January", "February", "March", "April", "May", "June", "July",
+                    "August", "September", "October", "November", "December",
                   ].map((month) => (
                     <option key={month} value={month}>{month}</option>
                   ))}
@@ -138,9 +149,7 @@ if (error) {
 
               {/* Class Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  Select Class:
-                </label>
+                <label className="text-sm font-medium text-gray-700 mb-1">Select Class:</label>
                 <select
                   className="select select-bordered w-full focus:outline-none"
                   value={selectedClass}
@@ -148,9 +157,22 @@ if (error) {
                 >
                   <option value="">All Classes</option>
                   {yearLevels.map((level) => (
-                    <option key={level.id} value={level.id}>
-                      {level.level_name}
-                    </option>
+                    <option key={level.id} value={level.id}>{level.level_name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Year Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 mb-1">Select Year:</label>
+                <select
+                  className="select select-bordered w-full focus:outline-none"
+                  value={selectedSchoolYear}
+                  onChange={(e) => setSelectedSchoolYear(e.target.value)}
+                >
+                  <option value="">All Years</option>
+                  {[...new Set(students.map((s) => s.school_year))].map((year) => (
+                    <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
               </div>
@@ -168,39 +190,34 @@ if (error) {
 
             {/* Right Side: Fee Dashboard + Search */}
             <div className="flex flex-col w-full sm:flex-row sm:items-end gap-4 sm:w-auto">
-              {/* Search Bar */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                </label>
                 <input
                   type="text"
                   placeholder="Enter student name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border px-3 py-2 rounded w-full sm:w-64"
+                  className="border px-3 py-2 rounded w-full sm:w-64"
                 />
               </div>
-              {/* Fee Dashboard Button */}
               <Link
                 to={allRouterLink.feeDashboard}
                 className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto text-center"
               >
                 Fee Dashboard
               </Link>
-
-
             </div>
           </div>
         </div>
 
         {/* Table Section */}
         <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
-          <table className="min-w-full divide-y   rounded-lg">
+          <table className="min-w-full divide-y rounded-lg">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Class</th>
+                <th className="px-4 py-3 text-left whitespace-nowrap">Year</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Month</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Total Amount</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Paid Amount</th>
@@ -210,7 +227,7 @@ if (error) {
             <tbody>
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="text-center py-6 text-gray-500">
+                  <td colSpan="8" className="text-center py-6 text-gray-500">
                     No data found.
                   </td>
                 </tr>
@@ -220,6 +237,7 @@ if (error) {
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3">{record.student_name}</td>
                     <td className="px-4 py-3">{record.year_level}</td>
+                    <td className="px-4 py-3">{record.school_year}</td>
                     <td className="px-4 py-3">{record.month}</td>
                     <td className="px-4 py-3">₹{record.total_amount}</td>
                     <td className="px-4 py-3">₹{record.paid_amount}</td>
@@ -236,3 +254,4 @@ if (error) {
 };
 
 export default FeeSummaryTable;
+
