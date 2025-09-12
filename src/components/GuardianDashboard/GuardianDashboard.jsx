@@ -6,6 +6,7 @@ import LoginSuccessHandler from "../Modals/LoginSucces";
 export const GuardianDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
   // const {guardianID} = useContext(AuthContext);
   const {userID} = useContext(AuthContext);
   
@@ -24,14 +25,29 @@ export const GuardianDashboard = () => {
   useEffect(() => {
     getGuardianDashboardData();
   }, []);
+if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+      </div>
+    );
+  }
 
- if (loading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <i className="fa-solid fa-spinner fa-spin mr-2 text-4xl" />
-            </div>
-        );
-    }
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
+      </div>
+    );
+  }
 
   if (!dashboardData) {
     return <div className="p-4 text-center">Failed to load dashboard data</div>;

@@ -1,48 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { fetchMarksheets, fetchYearLevels } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
 
 const MarksheetsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedClass, setSelectedClass] = useState("");
-   const [yearLevels, setYearLevels] = useState([]);
-   const [searchInput, setSearchInput] = useState("");
-  const [accessToken, setAccessToken] = useState("");
+  const [yearLevels, setYearLevels] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
   const [marksheet, setMarksheet] = useState([]);
-
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access && tokens.access !== accessToken) {
-          setAccessToken(tokens.access);
-        }
-      } catch (err) {
-        console.error("Error parsing auth tokens:", err);
-        setLoading(false);
-        setError(true);
-      }
-    } else {
-      setLoading(false);
-      setError(true);
-    }
-  }, []);
+  const { axiosInstance } = useContext(AuthContext);
 
   const getMarksheet = async () => {
     setLoading(true);
     setError(false);
     try {
-      if (!accessToken) {
-        throw new Error("No access token available");
-      }
-
-      const obj = await fetchMarksheets(accessToken);
-      if (obj && obj.length > 0) {
-        setMarksheet(obj);
+      const response = await axiosInstance.get(`/d/report-cards/`);
+      if (response.data && response.data.length > 0) {
+        setMarksheet(response.data);
       } else {
-        throw new Error("Received empty response from fetchMarksheet");
+        throw new Error("Received empty response from API");
       }
     } catch (err) {
       console.error("Failed to load marksheet:", err);
@@ -51,23 +28,23 @@ const MarksheetsTable = () => {
       setLoading(false);
     }
   };
-   const getYearLevels = async () => {
-      try {
-        const data = await fetchYearLevels();
-        setYearLevels(data);
-      } catch (err) {
-        console.error("Error fetching year levels:", err);
-      }
-    };
 
- useEffect(() => {
-    getYearLevels();
-  }, []);
-  useEffect(() => {
-    if (accessToken) {
-      getMarksheet();
+  const getYearLevels = async () => {
+    try {
+      const response = await axiosInstance.get("/d/year-levels/");
+      setYearLevels(response.data);
+    } catch (err) {
+      console.error("Error fetching year levels:", err);
     }
-  }, [accessToken]);
+  };
+
+  useEffect(() => {
+    getYearLevels();
+    getMarksheet();
+  }, []);
+
+
+
 
   const staticPayload = marksheet;
 
