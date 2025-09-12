@@ -17,7 +17,7 @@ export const ViewSalaryExpense = () => {
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState(null); 
   const [searchName, setSearchName] = useState("");
   const modalRef = useRef();
 

@@ -25,6 +25,7 @@ const StudentProfile = () => {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState(null);
+  const [removeImage, setRemoveImage] = useState(false);
 
   const BASE_URL = constants.baseUrl;
 
@@ -72,6 +73,12 @@ const StudentProfile = () => {
       formData.append("blood_group", data.blood_group);
       formData.append("number_of_siblings", data.number_of_siblings);
 
+      if (removeImage) {
+        formData.append("user_profile", "");
+      } else if (imagePreview && typeof imagePreview !== "string") {
+        formData.append("user_profile", imagePreview);
+      }
+
       if (imagePreview && typeof imagePreview !== "string") {
         formData.append("user_profile", imagePreview);
       }
@@ -102,6 +109,11 @@ const StudentProfile = () => {
     if (profileData?.user_profile) {
       setImagePreview(`${BASE_URL}${profileData.user_profile}`);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setRemoveImage(true);
   };
 
   if (loading) {
@@ -361,25 +373,28 @@ const StudentProfile = () => {
           </div>
 
           {/* Buttons section */}
-          {/* <div className="flex justify-end gap-4 mt-8">
-          <button className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <span className="mr-1">X</span> Cancel
-          </button>
-          <button
-            onClick={handleEditClick}
-            className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <span className="mr-2 text-lg leading-none">↑</span> Update
-          </button>
-        </div> */}
+          <div className="flex justify-end gap-4 mt-8">
+            <button
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              onClick={() => window.history.back()}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEditClick}
+              className="btn bgTheme text-white"
+            >
+              <i className="fa-solid fa-pen-to-square"></i>Update
+            </button>
+          </div>
         </div>
 
         {/* Dialog Box */}
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl">
+          <div className="fixed inset-0 bg-transparent bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold text-[#167bff] mb-4">
+                <h2 className="text-xl font-bold textTheme mb-4">
                   Update Student Profile
                 </h2>
 
@@ -439,9 +454,9 @@ const StudentProfile = () => {
                         </div>
 
                         <div className="flex gap-2">
-                          <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors">
+                          <label className="btn bgTheme text-white text-nowrap">
                             <FontAwesomeIcon icon={faCamera} className="mr-2" />
-                            Change Photo
+                            Change
                             <input
                               className="hidden"
                               type="file"
@@ -456,12 +471,14 @@ const StudentProfile = () => {
                           {imagePreview && (
                             <button
                               type="button"
-                              onClick={() => setImagePreview(null)}
-                              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+                              onClick={handleRemoveImage}
+                              className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
                             >
+                              <span className="mr-2">X</span>
                               Remove
                             </button>
                           )}
+
                         </div>
                       </div>
                     </div>
@@ -754,7 +771,7 @@ const StudentProfile = () => {
                     </button>
                     <button
                       type="submit"
-                      className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+                      className="btn bgTheme text-white"
                     >
                       Save Changes
                     </button>

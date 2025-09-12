@@ -86,6 +86,7 @@ export const EditExpenses = () => {
 
       const formData = new FormData();
 
+<<<<<<< HEAD
     if (selectedFile) {
       formData.append("attachment", selectedFile);
     } else if (data.attachment) {
@@ -93,6 +94,15 @@ export const EditExpenses = () => {
       // formData.append("attachment", data.attachment);
     }
 console.log(formData);    
+=======
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      } else if (data.attachment) {
+        // If no new file selected but existing attachment exists
+        // formData.append("attachment", data.attachment);
+      }
+      console.log(formData);
+>>>>>>> 0c0b6250cfd8188a63d284d18acc75504abfee94
 
       if (selectedFile) {
         formData.append("attachment", selectedFile);
@@ -125,8 +135,7 @@ console.log(formData);
           const fieldErrors = Object.entries(errors)
             .map(
               ([field, messages]) =>
-                `${field}: ${
-                  Array.isArray(messages) ? messages.join(", ") : messages
+                `${field}: ${Array.isArray(messages) ? messages.join(", ") : messages
                 }`
             )
             .join(" | ");
