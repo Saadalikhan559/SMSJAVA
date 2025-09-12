@@ -21,7 +21,7 @@ export const ViewSalaryExpense = () => {
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState(null); // 🔹 store ID for deletion
   const [searchName, setSearchName] = useState("");
   const modalRef = useRef();
 
