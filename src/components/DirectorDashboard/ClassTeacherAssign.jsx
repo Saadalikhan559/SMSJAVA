@@ -27,6 +27,9 @@ const ClassTeacherAssign = () => {
 
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   useEffect(() => {
     const preloadData = async () => {
@@ -88,8 +91,8 @@ const ClassTeacherAssign = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Class teacher assigned successfully!");
-        window.location.reload();
+        setAlertMessage("Class teacher assigned successfully!");
+        setShowAlert(true);
       }
     } catch (error) {
       const res = error.response?.data;
@@ -138,7 +141,8 @@ const ClassTeacherAssign = () => {
               errorMessage = Object.values(res).flat().join(" | ");
             }
 
-            setError("api", { message: errorMessage });
+            setAlertMessage(errorMessage);
+            setShowAlert(true);
           } finally {
             setIsSubmitting(false);
           }
@@ -306,6 +310,23 @@ const ClassTeacherAssign = () => {
           </div>
         </form>
       </div>
+      {/* Modal */}
+      {showAlert && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Class Allocation to Teachers</h3>
+            <p className="py-4">{alertMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
