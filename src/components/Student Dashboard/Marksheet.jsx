@@ -1,45 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
-import { fetchMarksheet } from "../../services/api/Api";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Marksheet = () => {
   const printRef = useRef();
   const { id } = useParams();
   const [marksheet, setMarksheet] = useState([]);
-  const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const tokenData = localStorage.getItem("authTokens");
-    if (tokenData) {
-      try {
-        const tokens = JSON.parse(tokenData);
-        if (tokens?.access && tokens.access !== accessToken) {
-          setAccessToken(tokens.access);
-        }
-      } catch (error) {
-        console.error("Error parsing auth tokens:", error);
-      }
-    }
-  }, []);
+  const { axiosInstance } = useContext(AuthContext);
 
   const getMarksheet = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!accessToken) {
-        throw new Error("No access token available");
-      }
+      if (!id) throw new Error("No id available");
 
-      if (!id) {
-        throw new Error("No id available");
-      }
-
-      const obj = await fetchMarksheet(accessToken, id); 
-      console.log(obj);
-      setMarksheet(obj);
+      const response = await axiosInstance.get(`/d/report-cards/${id}/`);
+      setMarksheet(response.data);
     } catch (err) {
       console.error("Failed to load marksheet:", err);
       setError(err.message || "Failed to load marksheet data");
@@ -49,11 +28,8 @@ const Marksheet = () => {
   };
 
   useEffect(() => {
-    if (accessToken) {
-      // Only call getExamType if we have a token
-      getMarksheet();
-    }
-  }, [accessToken]);
+    getMarksheet();
+  }, []);
 
   const handlePrint = () => {
     const originalContents = document.body.innerHTML;
@@ -62,8 +38,11 @@ const Marksheet = () => {
     document.body.innerHTML = printContents;
     window.print();
     document.body.innerHTML = originalContents;
-    window.location.reload(); // reload to restore the app
+    window.location.reload();
   };
+
+
+
 
   // Static payload data
   const data = marksheet;
@@ -221,18 +200,24 @@ const Marksheet = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <strong>Error:</strong> {error}
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }

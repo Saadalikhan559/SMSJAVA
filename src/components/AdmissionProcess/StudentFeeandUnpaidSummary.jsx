@@ -26,13 +26,17 @@ const StudentFeeAndUnpaidSummary = () => {
 
     const fetchStudentFee = async (student_id) => {
         try {
-            const response = await axiosInstance.get(`/d/fee-record/student_fee_details/${student_id}/`);
+            const response = await axiosInstance.get(
+                `/d/fee-record/student-fee-card/`,
+                { params: { student_id } }
+            );
             return response.data;
         } catch (err) {
             console.error(err);
             return null;
         }
     };
+
 
     const fetchUnpaidFees = async ({ role, class_id, student_id, month }) => {
         try {
@@ -63,7 +67,7 @@ const StudentFeeAndUnpaidSummary = () => {
             return [];
         }
     };
-    
+
     const getStudentFeeDetails = async () => {
         if (!student_id) return;
         setLoadingStudent(true);
@@ -122,13 +126,13 @@ const StudentFeeAndUnpaidSummary = () => {
             setUnpaidFees(Array.isArray(data) ? data : []);
             setError(null);
         } catch {
-            setUnpaidFees([]); 
+            setUnpaidFees([]);
             setError("Failed to load unpaid fees");
         } finally {
             setLoadingUnpaid(false);
         }
     };
-   
+
     useEffect(() => {
         if (student_id) getStudentFeeDetails();
         getYearLevels();
@@ -218,28 +222,28 @@ const StudentFeeAndUnpaidSummary = () => {
     return (
         <div className="min-h-screen p-5 bg-gray-50">
             <div className="bg-white shadow-lg rounded-lg p-6 w-full">
-                 <div >
-                <button
-                    onClick={() => setActiveTab("fee")}
-                    className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
-                        ? "border-b-2 border-textTheme textTheme"
-                        : "text-gray-600  hover:text-[#5E35B1]"
-                        }`}
-                >
-                    Fee Report Card
-                </button>
-                <button
-                    onClick={() => setActiveTab("unpaid")}
-                    className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
-                        ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
-                        : "text-gray-600 hover:text-[#5E35B1]"
-                        }`}
-                >
-                    Unpaid Accounts Summary
-                </button>
-            </div>
-            {activeTab === "fee" && ( <div className="pt-4">
-            
+                <div >
+                    <button
+                        onClick={() => setActiveTab("fee")}
+                        className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
+                            ? "border-b-2 border-textTheme textTheme"
+                            : "text-gray-600  hover:text-[#5E35B1]"
+                            }`}
+                    >
+                        Fee Report Card
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("unpaid")}
+                        className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
+                            ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
+                            : "text-gray-600 hover:text-[#5E35B1]"
+                            }`}
+                    >
+                        Unpaid Accounts Summary
+                    </button>
+                </div>
+                {activeTab === "fee" && (<div className="pt-4">
+
                     <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
                         <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
                         {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
@@ -336,8 +340,8 @@ const StudentFeeAndUnpaidSummary = () => {
                             </table>
                         </div>
                     )}
-             </div>   )}
-                </div>
+                </div>)}
+            </div>
 
             {activeTab === "unpaid" && (
                 <div className="bg-white shadow-lg rounded-lg p-6 w-full">

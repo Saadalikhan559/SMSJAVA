@@ -5,6 +5,8 @@ import { constants } from "../../global/constants";
 import PaymentStatusDialog from "./PaymentStatusDialog";
 import PaymentStatusDialogOffline from "./PaymentStatusDialogOffline";
 import { fetchStudents1 } from "../../services/api/Api";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 export const AdmissionFees = () => {
   const [students, setStudents] = useState([]);
@@ -20,10 +22,10 @@ export const AdmissionFees = () => {
   const [isLoadingFees, setIsLoadingFees] = useState(false);
   const [availableMonths, setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
+  const { axiosInstance } = useContext(AuthContext);
 
 
-  console.log(availableFees);
-  console.log(selectedStudent);
+
 
 
   const authTokens = JSON.parse(localStorage.getItem("authTokens"));
@@ -102,11 +104,10 @@ export const AdmissionFees = () => {
     try {
       setIsLoadingFees(true);
       setApiError("");
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}&month=${month}`,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         }
@@ -199,23 +200,30 @@ export const AdmissionFees = () => {
     if (selectedFeeIds.length > 0 && availableFees.length > 0) {
       let totalAmount = 0;
       let lateFeeAmount = 0;
+      let totalPending = 0;
 
       availableFees.forEach((yearLevel) => {
         yearLevel.fees.forEach((fee) => {
           if (selectedFeeIds.includes(fee.id)) {
-            totalAmount += parseFloat(fee.final_amount);
-            if (fee.late_fee) lateFeeAmount += parseFloat(fee.late_fee);
-            if (fee.pending_amount) totalAmount += parseFloat(fee.pending_amount);
+            const finalAmount = parseFloat(fee.final_amount) || 0;
+            const lateFee = parseFloat(fee.late_fee) || 0;
+            const dueAmount = parseFloat(fee.due_amount) || 0;
+
+            totalAmount += finalAmount;
+            lateFeeAmount += lateFee;
+            totalPending += dueAmount;
           }
         });
       });
 
-      totalAmount += lateFeeAmount;
+      totalAmount += lateFeeAmount + totalPending;
+
       setValue("paid_amount", totalAmount.toFixed(2));
     } else {
       setValue("paid_amount", "0.00");
     }
   }, [selectedFeeIds, availableFees, setValue]);
+
 
   const role = localStorage.getItem("userRole");
   const loadRazorpayScript = () => {
@@ -243,10 +251,14 @@ export const AdmissionFees = () => {
       const isScriptLoaded = await loadRazorpayScript();
       if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
 
-      const orderResponse = await axios.post(
+      const orderResponse = await axiosInstance.post(
         `${BASE_URL}/d/fee-record/initiate-payment/`,
         payload,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
@@ -261,7 +273,7 @@ export const AdmissionFees = () => {
         order_id: orderId,
         handler: async function (response) {
           try {
-            const verificationResponse = await axios.post(
+            const verificationResponse = await axiosInstance.post(
               `${BASE_URL}/d/fee-record/confirm-payment/`,
               {
                 razorpay_order_id: response.razorpay_order_id,
@@ -274,7 +286,11 @@ export const AdmissionFees = () => {
                 payment_mode,
                 paid_amount,
               },
-              { headers: { Authorization: `Bearer ${accessToken}` } }
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
             );
 
             if (verificationResponse.data) {
@@ -335,35 +351,45 @@ export const AdmissionFees = () => {
   const calculateTotalAmount = () => {
     let total = 0;
     let lateFeeTotal = 0;
-    let DueFeeTotal = 0;
+    let dueFeeTotal = 0;
+
     availableFees.forEach((yearLevel) => {
       yearLevel.fees.forEach((fee) => {
         if (selectedFeeIds.includes(fee.id)) {
-          total += parseFloat(fee.final_amount);
-          if (fee.late_fee) lateFeeTotal += parseFloat(fee.late_fee);
-          if (fee.due_amount) DueFeeTotal += parseFloat(fee.due_amount);
+          const finalAmount = parseFloat(fee.final_amount) || 0;
+          const lateFee = parseFloat(fee.late_fee) || 0;
+          const dueAmount = parseFloat(fee.due_amount) || 0;
+
+          total += finalAmount;
+          lateFeeTotal += lateFee;
+          dueFeeTotal += dueAmount;
         }
       });
     });
-   
 
-    return { baseAmount: total, lateFee: lateFeeTotal,  totalAmount: DueFeeTotal + total + lateFeeTotal  };
+    return {
+      baseAmount: total,
+      lateFee: lateFeeTotal,
+      Due: dueFeeTotal,
+      totalAmount: total + lateFeeTotal + dueFeeTotal,
+    };
   };
 
   const totalAmount = calculateTotalAmount();
 
 
 
+
   const stuId = window.localStorage.getItem("student_id");
-  const stuYearlvlName = localStorage.getItem("stu_year_level_name"); 
-  const stuYearlvlId = localStorage.getItem("stu_year_level_id"); 
+  const stuYearlvlName = localStorage.getItem("stu_year_level_name");
+  const stuYearlvlId = localStorage.getItem("stu_year_level_id");
   const student = students?.find((s) => {
     return stuId == s.student_id
 
   })
   console.log(localStorage.getItem("stu_year_level_id"));
   console.log(localStorage.getItem("stu_year_level_name"));
-  
+
   console.log(student);
 
   const handleRetry = () => {
@@ -464,7 +490,7 @@ export const AdmissionFees = () => {
               <select
                 className="select select-bordered w-full focus:outline-none"
                 onChange={handleClassChange}
-                value={selectedClassId || ""}  
+                value={selectedClassId || ""}
               >
                 <option value="">Select Class</option>
                 {UserRole === "director" && classes?.map((classItem) => (
@@ -510,8 +536,8 @@ export const AdmissionFees = () => {
                   ))
                 ) : UserRole === "student" ? (
                   <option key={student?.student_id} value={student?.student_id}>
-                      {student?.student_name} - {student?.student_email}
-                    </option>
+                    {student?.student_name} - {student?.student_email}
+                  </option>
                 ) : null}
 
               </select>
@@ -614,8 +640,8 @@ export const AdmissionFees = () => {
                                     className={`flex items-center gap-2 ${fee.status === "Paid" ? "text-green-600" : "text-yellow-700"
                                       }`}
                                   >
-                                    <span>{fee.status}</span> 
-                                      
+                                    <span>{fee.status}</span>
+
 
                                   </div>
 
@@ -637,7 +663,6 @@ export const AdmissionFees = () => {
               ))}
 
               {/* Total Amount Summary */}
-              {console.log(totalAmount)}
               {selectedFeeIds.length > 0 && (
                 <div className="bg-base-300 p-4 rounded-lg mt-6">
                   <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>

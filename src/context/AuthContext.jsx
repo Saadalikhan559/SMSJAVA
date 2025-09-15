@@ -40,6 +40,10 @@ export const AuthProvider = ({ children }) => {
   const [yearLevelID, setYearLevelID] = useState(
     () => localStorage.getItem("year_level_id") || ""
   );
+    const [stuyearLevelID, setstuYearLevelID] = useState(
+      () => localStorage.getItem("stu_year_level_id") || "");
+    const [stuyearLevelName, setstuYearLevelName] = useState(
+      () => localStorage.getItem("stu_year_level_name") || "");
   const [loading, setLoading] = useState(true);
 
   // Ref to avoid stale tokens in interceptors
@@ -191,6 +195,14 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user_profile", normalizedProfile);
       }
 
+         if (data.year_level?.id) {
+        localStorage.setItem("stu_year_level_id", data.year_level.id);
+        setstuYearLevelID(data.year_level.id)
+      }
+      if (data.year_level?.name) {
+        localStorage.setItem("stu_year_level_name", data.year_level.name);
+        setstuYearLevelName(data.year_level.name)
+      }
       return data;
     } catch (error) {
       console.error("Login error:", error);
