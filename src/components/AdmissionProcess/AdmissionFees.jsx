@@ -24,6 +24,7 @@ export const AdmissionFees = () => {
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
 
+console.log("fee",availableFees);
 
 
 
@@ -493,11 +494,18 @@ export const AdmissionFees = () => {
                 value={selectedClassId || ""}
               >
                 <option value="">Select Class</option>
-                {UserRole === "director" && classes?.map((classItem) => (
+                {UserRole === "director"  ? classes?.map((classItem) => (
                   <option key={classItem.id} value={classItem.id}>
                     {classItem.level_name}
                   </option>
-                ))}
+                ))
+                :UserRole === "office staff"  ? classes?.map((classItem) => (
+                  <option key={classItem.id} value={classItem.id}>
+                    {classItem.level_name}
+                  </option>
+                ))
+                
+                :null}
                 {UserRole === "student" && (
                   <option key={stuYearlvlId} value={stuYearlvlId}>
                     {stuYearlvlName}
@@ -534,7 +542,14 @@ export const AdmissionFees = () => {
                       {student.student_name} - {student.student_email}
                     </option>
                   ))
-                ) : UserRole === "student" ? (
+                ) :UserRole === "office staff" ? (
+                  students?.map((student) => (
+                    <option key={student.student_id} value={student.student_id}>
+                      {student.student_name} - {student.student_email}
+                    </option>
+                  ))
+                )
+                : UserRole === "student" ? (
                   <option key={student?.student_id} value={student?.student_id}>
                     {student?.student_name} - {student?.student_email}
                   </option>

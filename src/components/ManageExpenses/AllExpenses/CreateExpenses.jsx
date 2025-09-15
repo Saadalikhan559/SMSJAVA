@@ -15,6 +15,8 @@ export const CreateExpenses = () => {
   const modalRef = useRef();
   const [schoolYear, setSchoolYear] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+   const [showModal, setShowModal] = useState(false); 
+  const [modalMessage, setModalMessage] = useState("");
 
   const { axiosInstance } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -39,6 +41,8 @@ export const CreateExpenses = () => {
     } catch (err) {
       console.error("Cannot get the category:", err);
       setError("Failed to load categories. Please try again later.");
+       setModalMessage("Failed to load categories. Please try again later.");
+      setShowModal(true);
     }
   };
 
@@ -48,6 +52,8 @@ export const CreateExpenses = () => {
       setSchoolYear(response);
     } catch (error) {
       setError(error);
+        setModalMessage("Failed to load School Year Level.");
+      setShowModal(true);
     }
   };
 
@@ -145,13 +151,19 @@ export const CreateExpenses = () => {
         const errors = error.response.data;
         if (errors.non_field_errors) {
           setApiError(errors.non_field_errors.join(" "));
+           setModalMessage(errors.non_field_errors.join(" "));
+         setShowModal(true);
         } else {
           const fieldErrors = Object.entries(errors)
             .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
             .join(" | ");
           setApiError(fieldErrors);
+           setModalMessage(fieldErrors);
+         setShowModal(true);
         }
       } else {
+         setModalMessage("An unexpected error occurred..");
+         setShowModal(true);
         setApiError("An unexpected error occurred.");
       }
     } finally {
@@ -170,14 +182,14 @@ export const CreateExpenses = () => {
         </h1>
 
         {/* Display API error message */}
-        {apiError && (
+        {/* {apiError && (
           <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
             <div className="flex items-center text-error">
               <i className="fa-solid fa-circle-exclamation mr-2"></i>
               <span className="font-medium">{apiError}</span>
             </div>
           </div>
-        )}
+        )} */}
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -401,6 +413,22 @@ export const CreateExpenses = () => {
         buttonText="Continue"
         message="Successfully paid the salary!"
       />
+       {showModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Expenses Submission</h3>
+            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-32"
+                onClick={() => setShowModal(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

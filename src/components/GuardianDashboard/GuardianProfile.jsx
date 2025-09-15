@@ -154,7 +154,7 @@ const GuardianProfile = () => {
                 src={
                   guardianData.user_profile
                     ? `${BASE_URL}${guardianData.user_profile}`
-                    : "https://images.unsplash.com/photo-1531123897727-8f129e1688ce"
+                    : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 }
                 alt="Profile"
                 className="h-full w-full object-cover"
@@ -326,7 +326,7 @@ const GuardianProfile = () => {
               onClick={handleEditClick}
               className="btn bgTheme text-white"
             >
-              <i class="fa-solid fa-pen-to-square"></i> Update
+              <i className="fa-solid fa-pen-to-square"></i> Update
             </button>
           </div>
         </div>

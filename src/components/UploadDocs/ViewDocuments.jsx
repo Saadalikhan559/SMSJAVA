@@ -204,9 +204,9 @@ export const ViewDocuments = () => {
               </select>
             </div>
             {selectedRole === "Student" && (
-              <div>
-                <label className="mr-2 font-medium">Filter by Class:</label>
-                <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="border p-2 rounded">
+              <div className="flex w-full sm:w-xs">
+                <label className="font-medium ">Filter by Class:</label>
+                <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="select select-bordered w-full focus:outline-none border p-2 rounded">
                   {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
                 </select>
               </div>
