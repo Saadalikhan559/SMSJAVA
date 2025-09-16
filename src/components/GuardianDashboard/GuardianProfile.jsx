@@ -60,7 +60,6 @@ const GuardianProfile = () => {
       formData.append("last_name", data.last_name);
       formData.append("email", data.email);
       formData.append("phone_no", data.phone_no);
-
       formData.append("middle_name", data.middle_name || "");
       formData.append("annual_income", data.annual_income || "");
       formData.append("means_of_livelihood", data.means_of_livelihood || "");

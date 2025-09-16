@@ -188,6 +188,7 @@ export const ViewDocuments = () => {
         {userRole !== "student" && userRole !== "guardian" && userRole !== "teacher" && userRole !== "officestaff" && (
           <div className="mb-4 flex gap-4 border-b pb-2">
             <div className="flex flex-col w-full sm:w-xs">
+               <label className="mr-2 font-sm">Select Role:</label>
               <select
                 value={selectedRole}
                 onChange={e => {
@@ -204,10 +205,10 @@ export const ViewDocuments = () => {
               </select>
             </div>
             {selectedRole === "Student" && (
-              <div className="flex w-full sm:w-xs">
-                <label className="font-medium ">Filter by Class:</label>
-                <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="select select-bordered w-full focus:outline-none border p-2 rounded">
-                  {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
+             <div className="flex flex-col">
+                <label className="mr-2 font-sm">Select Class:</label>
+                <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="select select-bordered w-full focus:outline-none">
+                 {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
                 </select>
               </div>
             )}
