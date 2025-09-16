@@ -27,6 +27,9 @@ const ClassTeacherAssign = () => {
 
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   useEffect(() => {
     const preloadData = async () => {
@@ -88,8 +91,8 @@ const ClassTeacherAssign = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Class teacher assigned successfully!");
-        window.location.reload();
+        setAlertMessage("Class teacher assigned successfully!");
+        setShowAlert(true);
       }
     } catch (error) {
       const res = error.response?.data;
@@ -98,58 +101,59 @@ const ClassTeacherAssign = () => {
 
       if (typeof res === "string") {
         // agar plain string error hai
-        errorMessage = res;const handleSubmitForm = async (data) => {
-  const payload = {
-    teacher: data.teacher_id,
-    year_level: data.yearlevel_id,
-  };
+        errorMessage = res; const handleSubmitForm = async (data) => {
+          const payload = {
+            teacher: data.teacher_id,
+            year_level: data.yearlevel_id,
+          };
 
-  setIsSubmitting(true);
-  try {
-    const response = await axios.post(
-      `${constants.baseUrl}/t/teacheryearlevel/`,
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authTokens.access}`,
-        },
-      }
-    );
+          setIsSubmitting(true);
+          try {
+            const response = await axios.post(
+              `${constants.baseUrl}/t/teacheryearlevel/`,
+              payload,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${authTokens.access}`,
+                },
+              }
+            );
 
-    if (response.status === 200 || response.status === 201) {
-      alert("Class teacher assigned successfully!");
-      window.location.reload();
-    }
-  } catch (error) {
-    const res = error.response?.data;
+            if (response.status === 200 || response.status === 201) {
+              alert("Class teacher assigned successfully!");
+              window.location.reload();
+            }
+          } catch (error) {
+            const res = error.response?.data;
 
-    let errorMessage = "Failed to assign class teacher";
+            let errorMessage = "Failed to assign class teacher";
 
-    if (typeof res === "string") {
-      // if simple string error
-      errorMessage = res;
-    } else if (res?.error) {
-      errorMessage = res.error;
-    } else if (res?.detail) {
-      errorMessage = res.detail;
-    } else if (typeof res === "object") {
-      // If multiple Fields Error
-      errorMessage = Object.values(res).flat().join(" | ");
-    }
+            if (typeof res === "string") {
+              // if simple string error
+              errorMessage = res;
+            } else if (res?.error) {
+              errorMessage = res.error;
+            } else if (res?.detail) {
+              errorMessage = res.detail;
+            } else if (typeof res === "object") {
+              // If multiple Fields Error
+              errorMessage = Object.values(res).flat().join(" | ");
+            }
 
-    setError("api", { message: errorMessage });
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+            setAlertMessage(errorMessage);
+            setShowAlert(true);
+          } finally {
+            setIsSubmitting(false);
+          }
+        };
 
       } else if (res?.error) {
         errorMessage = res.error;
       } else if (res?.detail) {
         errorMessage = res.detail;
       } else if (typeof res === "object") {
-       
+
         errorMessage = Object.values(res).flat().join(" | ");
       }
 
@@ -192,7 +196,7 @@ const ClassTeacherAssign = () => {
         <div className="mb-6">
           <button
             onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
-            className="flex items-center textTheme hover:text-blue-800 transition-colors"
+            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -233,7 +237,7 @@ const ClassTeacherAssign = () => {
               </label>
               <select
                 {...register("teacher_id", { required: "Teacher is required" })}
-                className="w-full p-3 border border-gray-300 rounded-md"
+                className="select select-bordered w-full focus:outline-none"
                 onFocus={loadTeachers}
                 onChange={() => clearErrors(["teacher_id", "api"])}
               >
@@ -262,7 +266,7 @@ const ClassTeacherAssign = () => {
                 {...register("yearlevel_id", {
                   required: "Year level is required",
                 })}
-                className="w-full p-3 border border-gray-300 rounded-md"
+                className="select select-bordered w-full focus:outline-none"
                 onFocus={loadYearLevels}
                 onChange={() => clearErrors(["yearlevel_id", "api"])}
               >
@@ -296,27 +300,8 @@ const ClassTeacherAssign = () => {
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center w-30">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
 
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 </span>
               ) : (
                 "Assign Class Teacher"
@@ -325,6 +310,23 @@ const ClassTeacherAssign = () => {
           </div>
         </form>
       </div>
+      {/* Modal */}
+      {showAlert && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Class Allocation to Teachers</h3>
+            <p className="py-4">{alertMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
