@@ -156,7 +156,7 @@ function OfficestaffProfile() {
                 src={
                   profileData.user_profile
                     ? `${BASE_URL}${profileData.user_profile}`
-                    : " "
+                    : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 }
                 alt="Profile"
                 className="h-full w-full object-cover"

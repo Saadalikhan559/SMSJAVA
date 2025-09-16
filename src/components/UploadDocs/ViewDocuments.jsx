@@ -205,10 +205,10 @@ export const ViewDocuments = () => {
               </select>
             </div>
             {selectedRole === "Student" && (
-              <div className="flex flex-col">
+             <div className="flex flex-col">
                 <label className="mr-2 font-sm">Select Class:</label>
                 <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="select select-bordered w-full focus:outline-none">
-                  {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
+                 {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
                 </select>
               </div>
             )}

@@ -56,10 +56,12 @@ const ViewAllocatedClass = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6 border-b pb-2">
-          <h2 className="text-3xl font-semibold text-gray-800">
-            <i className="fa-solid fa-landmark"></i> Allocated Classes
-          </h2>
+         <div className="mb-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
+             <i className="fa-solid fa-landmark"></i> Allocated Classes
+            </h1>
+          </div>
+        <div className="flex items-center justify-end mb-6 border-b pb-2">
           <div className="relative w-72">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
