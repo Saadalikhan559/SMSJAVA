@@ -27,6 +27,9 @@ const ClassTeacherAssign = () => {
 
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   useEffect(() => {
     const preloadData = async () => {
@@ -88,8 +91,8 @@ const ClassTeacherAssign = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Class teacher assigned successfully!");
-        window.location.reload();
+        setAlertMessage("Class teacher assigned successfully!");
+        setShowAlert(true);
       }
     } catch (error) {
       const res = error.response?.data;
@@ -98,58 +101,59 @@ const ClassTeacherAssign = () => {
 
       if (typeof res === "string") {
         // agar plain string error hai
-        errorMessage = res;const handleSubmitForm = async (data) => {
-  const payload = {
-    teacher: data.teacher_id,
-    year_level: data.yearlevel_id,
-  };
+        errorMessage = res; const handleSubmitForm = async (data) => {
+          const payload = {
+            teacher: data.teacher_id,
+            year_level: data.yearlevel_id,
+          };
 
-  setIsSubmitting(true);
-  try {
-    const response = await axios.post(
-      `${constants.baseUrl}/t/teacheryearlevel/`,
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authTokens.access}`,
-        },
-      }
-    );
+          setIsSubmitting(true);
+          try {
+            const response = await axios.post(
+              `${constants.baseUrl}/t/teacheryearlevel/`,
+              payload,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${authTokens.access}`,
+                },
+              }
+            );
 
-    if (response.status === 200 || response.status === 201) {
-      alert("Class teacher assigned successfully!");
-      window.location.reload();
-    }
-  } catch (error) {
-    const res = error.response?.data;
+            if (response.status === 200 || response.status === 201) {
+              alert("Class teacher assigned successfully!");
+              window.location.reload();
+            }
+          } catch (error) {
+            const res = error.response?.data;
 
-    let errorMessage = "Failed to assign class teacher";
+            let errorMessage = "Failed to assign class teacher";
 
-    if (typeof res === "string") {
-      // if simple string error
-      errorMessage = res;
-    } else if (res?.error) {
-      errorMessage = res.error;
-    } else if (res?.detail) {
-      errorMessage = res.detail;
-    } else if (typeof res === "object") {
-      // If multiple Fields Error
-      errorMessage = Object.values(res).flat().join(" | ");
-    }
+            if (typeof res === "string") {
+              // if simple string error
+              errorMessage = res;
+            } else if (res?.error) {
+              errorMessage = res.error;
+            } else if (res?.detail) {
+              errorMessage = res.detail;
+            } else if (typeof res === "object") {
+              // If multiple Fields Error
+              errorMessage = Object.values(res).flat().join(" | ");
+            }
 
-    setError("api", { message: errorMessage });
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+            setAlertMessage(errorMessage);
+            setShowAlert(true);
+          } finally {
+            setIsSubmitting(false);
+          }
+        };
 
       } else if (res?.error) {
         errorMessage = res.error;
       } else if (res?.detail) {
         errorMessage = res.detail;
       } else if (typeof res === "object") {
-       
+
         errorMessage = Object.values(res).flat().join(" | ");
       }
 

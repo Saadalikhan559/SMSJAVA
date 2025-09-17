@@ -94,7 +94,7 @@ export const AdmissionForm = () => {
         ifsc_code: "",
         holder_name: "",
       },
-      guardian_type: null,
+      guardian_type: "",
       year_level: "",
       school_year: "",
       previous_school_name: "",

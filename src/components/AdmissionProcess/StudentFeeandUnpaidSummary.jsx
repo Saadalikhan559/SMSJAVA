@@ -248,10 +248,10 @@ const StudentFeeAndUnpaidSummary = () => {
                         <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
                         {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
                     </h1>
-                    <div className="w-full max-w-5xl mx-auto">
-                        <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
+                    <div className="w-full max-w-7xl mx-auto">
+                        <div className="flex flex-wrap justify-start items-end gap-4 mb-6">
                             <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
+                                <label className="text-sm font-medium text-gray-700 mb-1">Search by Month:</label>
                                 <select
                                     value={selectedMonthFee}
                                     onChange={(e) => setSelectedMonthFee(e.target.value)}
@@ -267,7 +267,7 @@ const StudentFeeAndUnpaidSummary = () => {
                                 </select>
                             </div>
                             <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Filter By Academic Year:</label>
+                                <label className="text-sm font-medium text-gray-700 mb-1">Search By Academic Year:</label>
                                 <select
                                     value={selectedYearFee}
                                     onChange={(e) => setSelectedYearFee(e.target.value)}
@@ -288,7 +288,7 @@ const StudentFeeAndUnpaidSummary = () => {
                                 <div className="mt-1">
                                     <button
                                         onClick={exportPDF}
-                                        className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium px-4 py-2 rounded border border-blue-300"
+                                        className="btn bgTheme text-white"
                                     >
                                         <i className="fa-solid fa-download mr-2" /> Download Report
                                     </button>
@@ -350,10 +350,10 @@ const StudentFeeAndUnpaidSummary = () => {
                             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
                         </h1>
                     </div>
-                    <div className="w-full max-w-5xl mx-auto">
-                        <div className="flex flex-wrap justify-center items-end gap-4 mb-6">
+                    <div className="w-full max-w-7xl mx-auto">
+                        <div className="flex flex-wrap justify-start items-end gap-4 mb-6">
                             <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Filter by Month:</label>
+                                <label className="text-sm font-medium text-gray-700 mb-1">Search by Month:</label>
                                 <select
                                     className="border rounded px-3 py-2 text-sm"
                                     value={selectedMonthUnpaid}
@@ -372,7 +372,7 @@ const StudentFeeAndUnpaidSummary = () => {
                             </div>
                             {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
                                 <div className="flex flex-col">
-                                    <label className="text-sm font-medium text-gray-700 mb-1">Filter by Class:</label>
+                                    <label className="text-sm font-medium text-gray-700 mb-1">Search by Class:</label>
                                     <select
                                         className="border rounded px-3 py-2 text-sm"
                                         value={selectedClass}
@@ -400,7 +400,7 @@ const StudentFeeAndUnpaidSummary = () => {
                             <div className="mt-1">
                                 <button
                                     onClick={resetFilters}
-                                    className="bg-gray-200 hover:bg-gray-300 text-sm px-4 py-2 rounded"
+                                    className="btn bgTheme text-white"
                                 >
                                     Reset Filters
                                 </button>

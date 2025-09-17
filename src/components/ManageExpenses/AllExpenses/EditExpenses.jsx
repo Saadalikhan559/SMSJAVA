@@ -82,23 +82,21 @@ export const EditExpenses = () => {
       setApiError("");
 
       console.log("Form data:", data);
-      console.log("Selected file:", selectedFile);
 
       const formData = new FormData();
 
-      if (selectedFile) {
-        formData.append("attachment", selectedFile);
-      } else if (data.attachment) {
-        // If no new file selected but existing attachment exists
-        // formData.append("attachment", data.attachment);
-      }   
-      console.log(formData);
+      // Append text fields
+      formData.append("category", data.category);
+      formData.append("amount", data.amount);
+      formData.append("description", data.description || "");
+      formData.append("expense_date", data.expense_date);
+      formData.append("status", data.status);
 
+      // Append file if selected
       if (selectedFile) {
         formData.append("attachment", selectedFile);
-      } else if (data.attachment) {
-        formData.append("attachment", data.attachment);
       }
+
       const response = await axiosInstance.patch(
         `/d/School-Expense/${id}/`,
         formData,
@@ -114,25 +112,16 @@ export const EditExpenses = () => {
       }
     } catch (error) {
       console.error("Edit expense error:", error);
-
       if (error.response?.data) {
         const errors = error.response.data;
-        console.error("Error details:", errors);
-
-        if (errors.non_field_errors) {
-          setApiError(errors.non_field_errors.join(" "));
-        } else if (typeof errors === "object") {
-          const fieldErrors = Object.entries(errors)
-            .map(
-              ([field, messages]) =>
-                `${field}: ${Array.isArray(messages) ? messages.join(", ") : messages
-                }`
-            )
-            .join(" | ");
-          setApiError(fieldErrors);
-        } else {
-          setApiError(errors.toString());
-        }
+        const fieldErrors = Object.entries(errors)
+          .map(
+            ([field, messages]) =>
+              `${field}: ${Array.isArray(messages) ? messages.join(", ") : messages
+              }`
+          )
+          .join(" | ");
+        setApiError(fieldErrors);
       } else if (error.request) {
         setApiError("No response from server. Please check your connection.");
       } else {
@@ -142,6 +131,7 @@ export const EditExpenses = () => {
       setLoading(false);
     }
   };
+
 
   if (error) {
     return <Error />;
