@@ -648,11 +648,11 @@ export const AdmissionForm = () => {
                 placeholder="Height"
                 className={`input input-bordered w-full focus:outline-none ${errors.student?.height ? "input-error" : ""
                   }`}
-                min={0} // prevents down arrow from going negative
+                min={0} 
                 onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault(); // prevents typing negative or 'e'
+                  if (e.key === "-" || e.key === "e") e.preventDefault(); 
                 }}
-                onWheel={(e) => e.target.blur()} // prevents scroll changing value
+                onWheel={(e) => e.target.blur()}
               />
               {errors.student?.height && (
                 <span className="text-error text-sm">{errors.student.height.message}</span>

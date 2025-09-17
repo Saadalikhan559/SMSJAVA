@@ -3,13 +3,13 @@ export const constants = {
   isOffline: true,
 
 
-  baseUrl: "https://smsproject1.pythonanywhere.com", 
-  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  // baseUrl: "https://smsproject1.pythonanywhere.com", 
+  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
   // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
   // baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms", //saba
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
-
+baseUrl:"https://187gwsw1-8000.inc1.devtunnels.ms/",
 
 
   hideEdgeRevealStyle: `
