@@ -91,7 +91,7 @@ export const EditExpenses = () => {
       } else if (data.attachment) {
         // If no new file selected but existing attachment exists
         // formData.append("attachment", data.attachment);
-      }
+      }   
       console.log(formData);
 
       if (selectedFile) {

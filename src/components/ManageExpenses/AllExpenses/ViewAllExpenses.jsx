@@ -177,474 +177,210 @@ export const ViewAllExpenses = () => {
     return <Error />;
   }
 
-  return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
-            <i className="fa-solid fa-money-bill-wave mr-2"></i> Total Expenses
-          </h1>
-        </div>
-
-        {/* Display API error message */}
-        {apiError && (
-          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
-            <div className="flex items-center text-error">
-              <i className="fa-solid fa-circle-exclamation mr-2"></i>
-              <span className="font-medium">{apiError}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Filters */}
-        <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2">
-          {/* School Year Filter */}
-          <div className="form-control md:w-1/4">
-            <label className="label">
-              <span className="label-text">Select School Year</span>
-            </label>
-            <select
-              value={selectedSchoolYear}
-              onChange={(e) => setSelectedSchoolYear(e.target.value)}
-              className="select select-bordered w-full focus:outline-none"
-            >
-              <option value="">Select School Year</option>
-              {schoolYear.map((year) => (
-                <option key={year.id} value={year.id}>
-                  {year.year_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Category Filter */}
-          <div className="form-control md:w-1/4">
-            <label className="label">
-              <span className="label-text">Select Category</span>
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="select select-bordered w-full focus:outline-none"
-            >
-              <option value="">Category</option>
-              {category.map((cate) => (
-                <option key={cate.id} value={cate.id}>
-                  {cate.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Add Category */}
-          <div className="form-control w-full">
-            <label className="label">
-              <span className="label-text">Actions</span>
-            </label>
-            <button
-              onClick={handleAddCategoryClick}
-              className="btn bgTheme text-white flex items-center justify-center md:justify-start text-nowrap"
-            >
-              Category
-            </button>
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bgTheme text-white z-2 sticky top-0">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Category
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Amount
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Description
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Expense Date
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Payment Method
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Attachment
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Created At
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Created By
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Approved By
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {schoolExpense.length > 0 ? (
-                schoolExpense.map((expense) => (
-                  <tr key={expense.id}>
-                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                      {expense.category_name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {expense.amount}
-                    </td>
-                    <td
-                      className="px-4 py-3 text-sm text-gray-700 truncate max-w-xs"
-                      title={expense.description}
-                    >
-                      {expense.description}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {expense.expense_date}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {expense.payment_method}
-                    </td>
-                    <td className="px-4 py-3 text-sm truncate max-w-xs">
-                      {expense.attachment ? (
-                        <a
-                          href={`${
-                            constants.baseUrl
-                          }${expense.attachment.replace(
-                            /^http:\/\/localhost:8000/,
-                            ""
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="textTheme font-bold"
-                        >
-                          Open Attachment
-                        </a>
-                      ) : (
-                        <span>Upload Attachment</span>
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3 text-sm">
-                      <span
-                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border
-              ${
-                expense.status === "pending"
-                  ? "text-yellow-700 bg-yellow-50 border-yellow-300"
-                  : expense.status === "rejected"
-                  ? "text-red-700 bg-red-50 border-red-300"
-                  : "text-green-700 bg-green-50 border-green-300"
-              }`}
-                      >
-                        {expense.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {expense.created_at}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {expense.created_by_name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
-                      {expense.approved_by_name}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
-                      <div className="flex space-x-2">
-                        {/* Edit Button */}
-                        {expense.school_year === currentSchoolYearId ? (
-                          <Link
-                            to={allRouterLink.editExpenses.replace(
-                              ":id",
-                              expense.id
-                            )}
-                            className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                          >
-                            Edit
-                          </Link>
-                        ) : (
-                          <button
-                            disabled
-                            className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
-                          >
-                            Edit
-                          </button>
-                        )}
-
-                        {/* Delete Button */}
-                        {expense.school_year === currentSchoolYearId ? (
-                          <button
-                            onClick={() => {
-                              setDeleteId(expense.id);
-                              confirmModalRef.current.show();
-                            }}
-                            className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
-                          >
-                            Delete
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="10"
-                    className="px-4 py-12 text-center text-gray-500"
-                  >
-                    <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
-                    <p>No expenses found for the selected criteria</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+ return (
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-4">
+          <i className="fa-solid fa-money-bill-wave mr-2"></i> Total Expenses
+        </h1>
       </div>
 
-      {/* Category Modal with Tabs */}
-
-      {showAddCategoryModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Manage Category</h3>
-              <button
-                onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <i className="fa-solid fa-times"></i>
-              </button>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex border-b mb-4">
-              {["Add", "Edit", "Delete"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => {
-                    setActiveTab(tab);
-                    setApiError("");
-                  }}
-                  className={`px-4 py-2 -mb-px font-medium ${
-                    activeTab === tab
-                      ? "border-b-2 border-blue-600 text-blue-700"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* ADD TAB */}
-            {activeTab === "Add" && (
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Category Name
-                  </label>
-                  <input
-                    value={addCategory}
-                    onChange={(e) => setAddCategory(e.target.value)}
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                    placeholder="Enter category name"
-                  />
-                  {apiError && (
-                    <p className="text-sm text-red-500 mt-1">{apiError}</p>
-                  )}
-                </div>
-
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn px-4 py-2 bgTheme text-white rounded-md"
-                  >
-                    Add Category
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* EDIT TAB */}
-            {activeTab === "Edit" && (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (!editCategoryId)
-                    return setApiError("Please select a category");
-                  if (!editCategoryName.trim())
-                    return setApiError("New category name is required");
-                  try {
-                    setLoading(true);
-                    const res = await axiosInstance.patch(
-                      `/d/Expense-Category/${editCategoryId}/`,
-                      { name: editCategoryName }
-                    );
-                    if (res.status === 200) {
-                      setApiError("");
-                      setEditCategoryId("");
-                      setEditCategoryName("");
-                      closeModal();
-                      getExpenseCategory();
-                      if (selectedCategory === String(editCategoryId))
-                        setSelectedCategory("");
-                    }
-                  } catch (err) {
-                    setApiError(
-                      err.response?.data?.detail || "Something went wrong"
-                    );
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-              >
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Select Category
-                  </label>
-                  <select
-                    value={editCategoryId}
-                    onChange={(e) => setEditCategoryId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                  >
-                    <option value="">Choose category</option>
-                    {category.map((cate) => (
-                      <option key={cate.id} value={cate.id}>
-                        {cate.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    New Category Name
-                  </label>
-                  <input
-                    value={editCategoryName}
-                    onChange={(e) => setEditCategoryName(e.target.value)}
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                    placeholder="Enter new name"
-                  />
-                </div>
-                {apiError && (
-                  <p className="text-sm text-red-500 -mt-2 mb-2">{apiError}</p>
-                )}
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className=" btn px-4 py-2   hover:bg-yellow-100 bg-yellow-50 border-yellow-300 border  text-yellow-700 rounded-md"
-                  >
-                    Update
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* DELETE TAB */}
-            {activeTab === "Delete" && (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (!deleteCategoryId)
-                    return setApiError("Please select a category to delete");
-                  try {
-                    setLoading(true);
-                    await axiosInstance.delete(`/d/Expense-Category/${deleteCategoryId}/`);
-                    setApiError("");
-                    setDeleteCategoryId("");
-                    closeModal();
-                    getExpenseCategory();
-                    if (selectedCategory === String(deleteCategoryId))
-                      setSelectedCategory("");
-                  } catch (err) {
-                    setApiError(
-                      err.response?.data?.detail || "Something went wrong"
-                    );
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-              >
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Select Category to Delete
-                  </label>
-                  <select
-                    value={deleteCategoryId}
-                    onChange={(e) => setDeleteCategoryId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                  >
-                    <option value="">Choose category</option>
-                    {category.map((cate) => (
-                      <option key={cate.id} value={cate.id}>
-                        {cate.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {apiError && (
-                  <p className="text-sm text-red-500 -mt-2 mb-2">{apiError}</p>
-                )}
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className=" btn px-4 py-2 border bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className=" btn px-4 py-2 text-red-700 bg-red-50 hover:bg-red-100 border rounded-md"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </form>
-            )}
+      {/* Display API error */}
+      {apiError && (
+        <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white dark:bg-gray-700">
+          <div className="flex items-center text-error">
+            <i className="fa-solid fa-circle-exclamation mr-2"></i>
+            <span className="font-medium">{apiError}</span>
           </div>
         </div>
       )}
-      {/* confirmation Modal */}
-      <ConfirmationModal
-        ref={confirmModalRef}
-        onConfirm={() => handleDeleteExpense(deleteId)}
-        onCancel={() => setDeleteId(null)}
-      />
 
-      <SuccessModal ref={modalRef} />
+      {/* Filters */}
+      <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2 dark:border-gray-700">
+        {/* School Year Filter */}
+        <div className="form-control md:w-1/4">
+          <label className="label">
+            <span className="label-text dark:text-gray-200">Select School Year</span>
+          </label>
+          <select
+            value={selectedSchoolYear}
+            onChange={(e) => setSelectedSchoolYear(e.target.value)}
+            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            <option value="">Select School Year</option>
+            {schoolYear.map((year) => (
+              <option key={year.id} value={year.id}>
+                {year.year_name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Category Filter */}
+        <div className="form-control md:w-1/4">
+          <label className="label">
+            <span className="label-text dark:text-gray-200">Select Category</span>
+          </label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            <option value="">Category</option>
+            {category.map((cate) => (
+              <option key={cate.id} value={cate.id}>
+                {cate.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Add Category Button */}
+        <div className="form-control w-full">
+          <label className="label">
+            <span className="label-text dark:text-gray-200">Actions</span>
+          </label>
+          <button
+            onClick={handleAddCategoryClick}
+            className="btn bgTheme text-white flex items-center justify-center md:justify-start text-nowrap"
+          >
+            Category
+          </button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
+        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600">
+          <thead className="bgTheme text-white sticky top-0 z-10">
+            <tr>
+              {[
+                "Category",
+                "Amount",
+                "Description",
+                "Expense Date",
+                "Payment Method",
+                "Attachment",
+                "Status",
+                "Created At",
+                "Created By",
+                "Approved By",
+                "Actions",
+              ].map((header) => (
+                <th
+                  key={header}
+                  className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            {schoolExpense.length > 0 ? (
+              schoolExpense.map((expense) => (
+                <tr key={expense.id}>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.category_name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.amount}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 truncate max-w-xs" title={expense.description}>
+                    {expense.description}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.expense_date}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.payment_method}</td>
+                  <td className="px-4 py-3 text-sm truncate max-w-xs">
+                    {expense.attachment ? (
+                      <a
+                        href={`${constants.baseUrl}${expense.attachment.replace(/^http:\/\/localhost:8000/, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="textTheme font-bold"
+                      >
+                        Open Attachment
+                      </a>
+                    ) : (
+                      <span className="text-gray-500 dark:text-gray-400">Upload Attachment</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    <span
+                      className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${
+                        expense.status === "pending"
+                          ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:bg-yellow-100"
+                          : expense.status === "rejected"
+                          ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
+                          : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
+                      }`}
+                    >
+                      {expense.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.created_at}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.created_by_name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.approved_by_name}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
+                    <div className="flex space-x-2">
+                      {expense.school_year === currentSchoolYearId ? (
+                        <Link
+                          to={allRouterLink.editExpenses.replace(":id", expense.id)}
+                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                        >
+                          Edit
+                        </Link>
+                      ) : (
+                        <button
+                          disabled
+                          className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
+                        >
+                          Edit
+                        </button>
+                      )}
+
+                      {expense.school_year === currentSchoolYearId ? (
+                        <button
+                          onClick={() => {
+                            setDeleteId(expense.id);
+                            confirmModalRef.current.show();
+                          }}
+                          className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                        >
+                          Delete
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-100 cursor-not-allowed"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="11" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
+                  <p>No expenses found for the selected criteria</p>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
-  );
+
+    {/* ... keep modals and rest of logic as-is, just add dark classes inside them too if needed ... */}
+
+    <SuccessModal ref={modalRef} />
+    <ConfirmationModal
+      ref={confirmModalRef}
+      onConfirm={() => handleDeleteExpense(deleteId)}
+      onCancel={() => setDeleteId(null)}
+    />
+  </div>
+);
+
 };

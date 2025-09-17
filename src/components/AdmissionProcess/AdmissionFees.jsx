@@ -150,10 +150,6 @@ console.log("fee",availableFees);
   };
 
 
-
-
-
-
   useEffect(() => {
     getClasses();
   }, []);

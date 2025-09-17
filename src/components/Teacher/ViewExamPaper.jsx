@@ -77,134 +77,131 @@ const ViewExamPaper = () => {
     );
   }
 
-  return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6">
-          Examination Papers
-        </h1>
+return (
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-6">
+        Examination Papers
+      </h1>
 
-        <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
-          <div className="flex flex-col w-full sm:w-xs">
-            <label className="text-sm font-medium text-gray-700 mb-1">
-              Select Class:
-            </label>
-            <select
-              className="select select-bordered w-full focus:outline-none"
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-            >
-              <option value="">All Classes</option>
-              {yearLevels.map((level) => (
-                <option key={level.id} value={level.level_name}>
-                  {level.level_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col w-full sm:w-auto">
-            <input
-              type="text"
-              placeholder="Search Subject Name..."
-              className="border px-3 py-2 rounded w-full sm:w-64"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
+      <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4 dark:border-gray-700">
+        {/* Select Class */}
+        <div className="flex flex-col w-full sm:w-xs">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            Select Class:
+          </label>
+          <select
+            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+          >
+            <option value="">All Classes</option>
+            {yearLevels.map((level) => (
+              <option key={level.id} value={level.level_name}>
+                {level.level_name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
-          <div className="inline-block min-w-full align-middle">
-            <div className="shadow-sm ring-1 ring-black ring-opacity-5">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bgTheme text-white sticky top-0 z-10">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Subject
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Class
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Exam Type
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Teacher
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Total Marks
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Paper Code
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Academic Year
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
+        {/* Search Input */}
+        <div className="flex flex-col w-full sm:w-auto">
+          <input
+            type="text"
+            placeholder="Search Subject Name..."
+            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+        </div>
+      </div>
 
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {filterBySearch.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan="8"
-                        className="px-4 py-6 text-center text-gray-600"
-                      >
-                        No Examination Papers found.
+      {/* Table */}
+      <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
+        <div className="inline-block min-w-full align-middle">
+          <div className="shadow-sm ring-1 ring-black ring-opacity-5 dark:ring-white/10">
+            <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+              <thead className="bgTheme text-white sticky top-0 z-10">
+                <tr>
+                  {[
+                    "Subject",
+                    "Class",
+                    "Exam Type",
+                    "Teacher",
+                    "Total Marks",
+                    "Paper Code",
+                    "Academic Year",
+                    "Actions",
+                  ].map((title) => (
+                    <th
+                      key={title}
+                      className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
+                    >
+                      {title}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                {filterBySearch.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="px-4 py-6 text-center text-gray-600 dark:text-gray-400"
+                    >
+                      No Examination Papers found.
+                    </td>
+                  </tr>
+                ) : (
+                  filterBySearch.map((paper) => (
+                    <tr key={paper.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 capitalize">
+                        {paper.subject_name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">
+                        {paper.year_level_name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        {paper.exam_name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">
+                        {paper.teacher_name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        {paper.total_marks}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        {paper.paper_code}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        {paper.year}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <a
+                          href={paper.uploaded_file.replace(
+                            "http://localhost:8000",
+                            constants.baseUrl
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 hover:underline"
+                        >
+                          View Paper
+                        </a>
                       </td>
                     </tr>
-                  ) : (
-                    filterBySearch.map((paper) => (
-                      <tr key={paper.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900 capitalize">
-                          {paper.subject_name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 capitalize">
-                          {paper.year_level_name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">
-                          {paper.exam_name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 capitalize">
-                          {paper.teacher_name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">
-                          {paper.total_marks}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">
-                          {paper.paper_code}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">
-                          {paper.year}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">
-                          <a
-                            href={paper.uploaded_file.replace(
-                              "http://localhost:8000",
-                              constants.baseUrl
-                            )}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 hover:underline"
-                          >
-                            View Paper
-                          </a>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default ViewExamPaper;

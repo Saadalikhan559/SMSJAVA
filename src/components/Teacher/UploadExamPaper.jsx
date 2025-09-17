@@ -188,185 +188,208 @@ const UploadExamPaper = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-        <button
-          className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
-          onClick={handleNavigate}
-        >
-          Update Exam Paper <span>&rarr;</span>
-        </button>
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
+      <button
+        className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
+        onClick={handleNavigate}
+      >
+        Update Exam Paper <span>&rarr;</span>
+      </button>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-                    <h1 className="text-3xl font-bold text-center mb-8">
-            Upload Exam Paper <i className="fa-solid fa-file-upload ml-2"></i>
-          </h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <h1 className="text-3xl font-bold text-center mb-8 dark:text-white">
+          Upload Exam Paper <i className="fa-solid fa-file-upload ml-2"></i>
+        </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Exam Type */}
-            <div className="form-control">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {/* Reusable field block */}
+          {[
+            {
+              label: "Exam Type",
+              name: "exam_type",
+              data: examType,
+              key: "name",
+              error: errors.exam_type,
+              requiredMsg: "Exam type is required",
+            },
+            {
+              label: "Year Level",
+              name: "year_level",
+              data: className1,
+              key: "level_name",
+              error: errors.year_level,
+              requiredMsg: "Year level is required",
+            },
+            {
+              label: "Term",
+              name: "term",
+              data: terms,
+              key: "year",
+              error: errors.term,
+              requiredMsg: "Term is required",
+            },
+            {
+              label: "Subject",
+              name: "subject",
+              data: subjects,
+              key: "subject_name",
+              error: errors.subject,
+              requiredMsg: "Subject is required",
+            },
+            {
+              label: "Teacher",
+              name: "teacher",
+              data: teachers,
+              key: "first_name", // Combine below
+              error: errors.teacher,
+              requiredMsg: "Teacher is required",
+              renderValue: (item) => `${item.first_name} ${item.last_name}`,
+            },
+          ].map(({ label, name, data, key, error, requiredMsg, renderValue = null }) => (
+            <div className="form-control" key={name}>
               <label className="label">
-                <span className="label-text">Exam Type <span className="text-error">*</span></span>
+                <span className="label-text dark:text-gray-200">
+                  {label} <span className="text-error">*</span>
+                </span>
               </label>
-              <select className="select select-bordered w-full"
-                {...register("exam_type", { required: "Exam type is required" })}
+              <select
+                className="select select-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                {...register(name, { required: requiredMsg })}
               >
-                <option value="">Select Exam Type</option>
-                {examType.map((item) => (
-                  <option key={item.id} value={item.id}>{item.name}</option>
+                <option value="">Select {label}</option>
+                {data.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {renderValue ? renderValue(item) : item[key]}
+                  </option>
                 ))}
               </select>
-              {errors.exam_type && <p className="text-error text-sm mt-1">{errors.exam_type.message}</p>}
+              {error && <p className="text-error text-sm mt-1">{error.message}</p>}
             </div>
+          ))}
 
-            {/* Year Level */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Year Level <span className="text-error">*</span></span>
-              </label>
-              <select className="select select-bordered w-full"
-                {...register("year_level", { required: "Year level is required" })}
-              >
-                <option value="">Select Year Level</option>
-                {className1.map((item) => (
-                  <option key={item.id} value={item.id}>{item.level_name}</option>
-                ))}
-              </select>
-              {errors.year_level && <p className="text-error text-sm mt-1">{errors.year_level.message}</p>}
-            </div>
-
-            {/* Term */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Term <span className="text-error">*</span></span>
-              </label>
-              <select className="select select-bordered w-full"
-                {...register("term", { required: "Term is required" })}
-              >
-                <option value="">Select Term</option>
-                {terms.map((item) => (
-                  <option key={item.id} value={item.id}>{item.year}</option>
-                ))}
-              </select>
-              {errors.term && <p className="text-error text-sm mt-1">{errors.term.message}</p>}
-            </div>
-
-            {/* Subject */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Subject <span className="text-error">*</span></span>
-              </label>
-              <select className="select select-bordered w-full"
-                {...register("subject", { required: "Subject is required" })}
-              >
-                <option value="">Select Subject</option>
-                {subjects.map((item) => (
-                  <option key={item.id} value={item.id}>{item.subject_name}</option>
-                ))}
-              </select>
-              {errors.subject && <p className="text-error text-sm mt-1">{errors.subject.message}</p>}
-            </div>
-
-            {/* Teacher */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Teacher <span className="text-error">*</span></span>
-              </label>
-              <select className="select select-bordered w-full"
-                {...register("teacher", { required: "Teacher is required" })}
-              >
-                <option value="">Select Teacher</option>
-                {teachers.map((item) => (
-                  <option key={item.id} value={item.id}>{item.first_name} {item.last_name}</option>
-                ))}
-              </select>
-              {errors.teacher && <p className="text-error text-sm mt-1">{errors.teacher.message}</p>}
-            </div>
-
-            {/* Total Marks */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Total Marks <span className="text-error">*</span></span>
-              </label>
-              <input
-                type="number"
-                className="input input-bordered w-full"
-                placeholder="Enter total marks"
-                {...register("total_marks", { required: "Total marks is required", min: { value: 1, message: "Marks must be positive" } })}
-              />
-              {errors.total_marks && <p className="text-error text-sm mt-1">{errors.total_marks.message}</p>}
-            </div>
-
-            {/* Paper Code */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Paper Code <span className="text-error">*</span></span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                placeholder="Enter paper code"
-                {...register("paper_code", { required: "Paper code is required", pattern: { value: /^[a-zA-Z0-9-]+$/, message: "Only letters, numbers and hyphens allowed" } })}
-              />
-              {errors.paper_code && <p className="text-error text-sm mt-1">{errors.paper_code.message}</p>}
-            </div>
-
-            {/* File Upload */}
-            <div className="form-control md:col-span-2">
-              <label className="label">
-                <span className="label-text">Exam Paper File <span className="text-error">*</span></span>
-              </label>
-              <input
-                type="file"
-                className="file-input file-input-bordered w-full"
-                accept=".pdf,.doc,.docx"
-                {...register("uploaded_file", {
-                  required: "File is required",
-                  validate: {
-                    fileSize: (files) => files[0]?.size <= 5 * 1024 * 1024 || "File size must be less than 5MB",
-                    fileType: (files) => ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(files[0]?.type) || "Only PDF and Word documents are allowed"
-                  }
-                })}
-              />
-              {errors.uploaded_file && <p className="text-error text-sm mt-1">{errors.uploaded_file.message}</p>}
-            </div>
+          {/* Total Marks */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Total Marks <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="number"
+              className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              placeholder="Enter total marks"
+              {...register("total_marks", {
+                required: "Total marks is required",
+                min: { value: 1, message: "Marks must be positive" },
+              })}
+            />
+            {errors.total_marks && (
+              <p className="text-error text-sm mt-1">{errors.total_marks.message}</p>
+            )}
           </div>
 
-          <div className="flex justify-center mt-10">
-            <button type="submit" className="btn bgTheme text-white w-52" disabled={isSubmitting}>
-              {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2" /> : <i className="fa-solid fa-upload mr-2" />}
-              {isSubmitting ? " " : "Upload Paper"}
+          {/* Paper Code */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Paper Code <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              placeholder="Enter paper code"
+              {...register("paper_code", {
+                required: "Paper code is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9-]+$/,
+                  message: "Only letters, numbers and hyphens allowed",
+                },
+              })}
+            />
+            {errors.paper_code && (
+              <p className="text-error text-sm mt-1">{errors.paper_code.message}</p>
+            )}
+          </div>
+
+          {/* File Upload */}
+          <div className="form-control md:col-span-2">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Exam Paper File <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="file"
+              className="file-input file-input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              accept=".pdf,.doc,.docx"
+              {...register("uploaded_file", {
+                required: "File is required",
+                validate: {
+                  fileSize: (files) =>
+                    files[0]?.size <= 5 * 1024 * 1024 || "File size must be less than 5MB",
+                  fileType: (files) =>
+                    [
+                      "application/pdf",
+                      "application/msword",
+                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    ].includes(files[0]?.type) || "Only PDF and Word documents are allowed",
+                },
+              })}
+            />
+            {errors.uploaded_file && (
+              <p className="text-error text-sm mt-1">{errors.uploaded_file.message}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-center mt-10">
+          <button
+            type="submit"
+            className="btn bgTheme text-white w-52"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <i className="fa-solid fa-spinner fa-spin mr-2" />
+            ) : (
+              <i className="fa-solid fa-upload mr-2" />
+            )}
+            {isSubmitting ? " " : "Upload Paper"}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {/* Alert Modal */}
+    {showAlert && (
+      <dialog className="modal modal-open">
+        <div className="modal-box dark:bg-gray-800 dark:text-white">
+          <h3 className="font-bold text-lg">Upload Exam Paper</h3>
+          <p className="py-4">
+            {alertMessage.split("\n").map((line, idx) => (
+              <span key={idx}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </p>
+          <div className="modal-action">
+            <button
+              className="btn bgTheme text-white w-30"
+              onClick={() => setShowAlert(false)}
+            >
+              OK
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </dialog>
+    )}
+  </div>
+);
 
-      {showAlert && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Upload Exam Paper</h3>
-            <p className="py-4">
-              {alertMessage.split("\n").map((line, idx) => (
-                <span key={idx}>
-                  {line}
-                  <br />
-                </span>
-              ))}
-            </p>
-            <div className="modal-action">
-              <button
-                className="btn bgTheme text-white w-30"
-                onClick={() => setShowAlert(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
-    </div>
-  );
 };
 
 export default UploadExamPaper;

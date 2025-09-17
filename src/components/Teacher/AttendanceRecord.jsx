@@ -97,45 +97,50 @@ const AttendanceRecord = () => {
     );
   }
 
-  return (
-    <>
-      <div className="min-h-screen p-5 bg-gray-50">
-        <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-          <span className='font-bold text-2xl flex pt-5 justify-center gap-1'>
-            <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
-          </span>
+return (
+  <>
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-lg">
+        <span className="font-bold text-2xl flex pt-5 justify-center gap-1 text-gray-900 dark:text-gray-100">
+          <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
+        </span>
 
-          <div className="flex flex-wrap justify-center gap-4 p-4">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="input input-bordered focus:outline-none"
-            />
-            <button onClick={handleReset} className="btn" disabled={!selectedDate}>
-              Reset
-            </button>
-          </div>
+        <div className="flex flex-wrap justify-center gap-4 p-4">
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="input input-bordered focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          />
+          <button
+            onClick={handleReset}
+            className="btn bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white"
+            disabled={!selectedDate}
+          >
+            Reset
+          </button>
+        </div>
 
-          <div className="flex justify-center gap-10 font-semibold text-lg mb-4">
-            <div>Total Present Students: {overallAttendance.present}</div>
-            <div>Total Students: {overallAttendance.total}</div>
-            <div>Overall Attendance: {overallAttendance.percentage}</div>
-          </div>
+        <div className="flex justify-center gap-10 font-semibold text-lg mb-4 text-gray-900 dark:text-gray-100">
+          <div>Total Present Students: {overallAttendance.present}</div>
+          <div>Total Students: {overallAttendance.total}</div>
+          <div>Overall Attendance: {overallAttendance.percentage}</div>
+        </div>
 
-          <div className="p-4 flex justify-center">
-            <Chart
-              options={chartData.options}
-              series={chartData.series}
-              type="bar"
-              height={500}
-              width={1200}
-            />
-          </div>
+        <div className="p-4 flex justify-center overflow-auto">
+          <Chart
+            options={chartData.options}
+            series={chartData.series}
+            type="bar"
+            height={500}
+            width={1200}
+          />
         </div>
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
 };
 
 export default AttendanceRecord;
