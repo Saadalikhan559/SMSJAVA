@@ -192,7 +192,7 @@ export const CreateSalaryExpense = () => {
               </div>
 
               {showDropdown && (
-                <div className="absolute z-10 bg-white rounded w-full mt-1 shadow-lg">
+                <div className="absolute z-10 bg-white rounded w-full mt-1 shadow-lg dark:bg-gray-900">
                   <div className="p-2 sticky top-0 shadow-sm">
                     <input
                       type="text"
