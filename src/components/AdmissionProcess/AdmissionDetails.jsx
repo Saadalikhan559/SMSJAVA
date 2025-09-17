@@ -27,19 +27,19 @@ export const AdmissionDetails = () => {
   useEffect(() => {
     getAdmissionDetails();
   }, []);
-   const getYearLevels = async () => {
-      try {
-        const data = await fetchYearLevels();
-        setYearLevels(data);
-      } catch (err) {
-        console.error("Error fetching year levels:", err);
-      }
-    };
+  const getYearLevels = async () => {
+    try {
+      const data = await fetchYearLevels();
+      setYearLevels(data);
+    } catch (err) {
+      console.error("Error fetching year levels:", err);
+    }
+  };
 
- useEffect(() => {
+  useEffect(() => {
     getYearLevels();
   }, []);
-  
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -53,7 +53,7 @@ export const AdmissionDetails = () => {
     );
   }
 
- 
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
@@ -68,8 +68,8 @@ export const AdmissionDetails = () => {
   if (!details) {
     return <div className="p-4 text-center">No admission records found</div>;
   }
- console.log(details);
- 
+  console.log(details);
+
 
   const filterData = details.filter((detail) =>
     detail.year_level.toLowerCase().includes(selectedClass.toLowerCase())
@@ -81,119 +81,99 @@ export const AdmissionDetails = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
-           <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
-           <i className="fa-solid fa-clipboard-list w-5"></i>  Admission Details
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4  border-gray-200 dark:border-gray-700">
+            <i className="fa-solid fa-clipboard-list w-5"></i> Admission Details
           </h1>
         </div>
-        <div className="w-full px-5 ">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
-         <div className="flex flex-col w-full sm:w-xs">
-                 <label className="text-sm font-medium text-gray-700 mb-1">
-                  Select Class:
-                </label>
-                <select
-                  className="select select-bordered w-full focus:outline-none"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option value="">All Classes</option>
-                  {yearLevels.map((level) => (
-                    <option key={level.id} value={level.level_name}>
-                      {level.level_name}
-                    </option>
-                  ))}
-                </select>
-                </div>
-         <div className="flex flex-col w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search Student Name..."
-            className="input input-bordered w-full sm:max-w-xs focus:outline-none"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-         </div> </div>
+
+        <div className="w-full px-5">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4 border-gray-200 dark:border-gray-700">
+
+            {/* Class Filter */}
+            <div className="flex flex-col w-full sm:w-xs">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Select Class:
+              </label>
+              <select
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+              >
+                <option value="">All Classes</option>
+                {yearLevels.map((level) => (
+                  <option key={level.id} value={level.level_name}>
+                    {level.level_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Search Input */}
+            <div className="flex flex-col w-full sm:w-auto">
+              <input
+                type="text"
+                placeholder="Search Student Name..."
+                className="input input-bordered w-full sm:max-w-xs focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-     
-         
 
         {filterData.length === 0 ? (
-          <p className="text-gray-600">No admission records found.</p>
+          <p className="text-gray-600 dark:text-gray-400">No admission records found.</p>
         ) : (
           <div className="overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
             <div className="inline-block min-w-full align-middle rounded-lg">
               <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
-                <table className="min-w-full divide-y divide-gray-300">
+                <table className="min-w-full  divide-gray-300 dark:divide-gray-700">
                   <thead className="bgTheme text-white z-2 sticky top-0">
                     <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Student Name
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Parent/Guardian
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Date of Birth
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Gender
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Class
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Admission Date
-                      </th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
-                        Actions
-                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Parent/Guardian</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Date of Birth</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Gender</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Class</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Date</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className=" divide-gray-200 bg-white">
+                  <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                     {filterBysearch.map((detail) => (
-                      <tr key={detail.id} className="hover:bg-gray-50">
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
-                          {detail.student_input.first_name}{" "}
-                          {detail.student_input.last_name}
+                      <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                          {detail.student_input.first_name} {detail.student_input.last_name}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                          {detail.guardian_input.first_name}{" "}
-                          {detail.guardian_input.last_name} (
-                          {detail.guardian_type || "N/A"})
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          {detail.guardian_input.first_name} {detail.guardian_input.last_name} ({detail.guardian_type || "N/A"})
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                           {detail.student_input.date_of_birth}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                           {detail.student_input.gender}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                           {detail.year_level}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                           {detail.admission_date}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-4 py-3 text-sm">
                           <div className="flex space-x-2">
                             <Link
-                              to={allRouterLink.editAddmisionDetails.replace(
-                                ":id",
-                                detail.id
-                              )}
+                              to={allRouterLink.editAddmisionDetails.replace(":id", detail.id)}
                               className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                             >
                               Edit
                             </Link>
                             <Link
-                              to={allRouterLink.addmissionDetailsById.replace(
-                                ":id",
-                                detail.id
-                              )}
-                              className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1]"
-                            >
+                              to={allRouterLink.addmissionDetailsById.replace(":id", detail.id)}
+                              className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1]">
                               More
                             </Link>
                           </div>

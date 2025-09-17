@@ -362,59 +362,57 @@ export const DocumentUpload = () => {
 
   // --- RENDER ---
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
-
+        className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-5"
       >
+        {/* Steps */}
         <ul className="steps mb-6 w-full">
           <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>
           <li className={`step ${step >= 1 ? "step-primary" : ""}`}>Fill Form</li>
         </ul>
 
+        {/* Custom theme for steps */}
         <style>
           {`
-          
-          .steps .step.step-primary::before,
-          .steps .step.step-primary:before {
-            background-color: #6d28d9 !important; 
-            border-color: #6d28d9 !important;
-            color: #ffffff !important; 
-          }
-
-          .steps .step.step-primary {
-            color: #6d28d9 !important;
-          }
-
-          .steps .step.step-primary::after {
-            border-color: #6d28d9 !important;
-          }
-        `}
+        .steps .step.step-primary::before,
+        .steps .step.step-primary:before {
+          background-color: #6d28d9 !important; 
+          border-color: #6d28d9 !important;
+          color: #ffffff !important; 
+        }
+        .steps .step.step-primary {
+          color: #6d28d9 !important;
+        }
+        .steps .step.step-primary::after {
+          border-color: #6d28d9 !important;
+        }
+      `}
         </style>
-        {/* STEP 1 */}
+
+        {/* STEP 0 */}
         {step === 0 && (
           <div className="w-full max-w-6xl mx-auto p-6">
-            <h1 className="text-3xl font-bold text-center mb-8">
-              Select Role
-              <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+              Select Role <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              {/* Role */}
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text flex items-center gap-1">
+                  <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                     <i className="fa-solid fa-user-shield text-sm"></i> Role
                   </span>
                 </label>
                 <select
-                  className="select select-bordered w-full focus:outline-none cursor-pointer"
+                  className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                   value={role}
                   onChange={handleRoleChange}
                 >
                   <option value="">
                     {loadingRoles ? "Loading roles..." : "Select Role"}
                   </option>
-
                   {filteredRoles.map((roleItem) => (
                     <option key={roleItem.id} value={roleItem.name}>
                       {roleItem.name}
@@ -422,17 +420,19 @@ export const DocumentUpload = () => {
                   ))}
                 </select>
               </div>
+
+              {/* Class for Student */}
               {role === constants.roles.student && (
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-graduation-cap text-sm"></i> Class{" "}
                       <span className="text-error">*</span>
                     </span>
                   </label>
                   <select
                     name="year_level"
-                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                     required
                     value={formData.year_level}
                     onChange={handleChange}
@@ -440,7 +440,6 @@ export const DocumentUpload = () => {
                     <option value="">
                       {yearLevel.length === 0 ? "Loading classes..." : "Select Class"}
                     </option>
-
                     {yearLevel.map((yearlev) => (
                       <option value={yearlev.id} key={yearlev.id}>
                         {yearlev.level_name}
@@ -453,12 +452,11 @@ export const DocumentUpload = () => {
           </div>
         )}
 
-        {/* STEP 2 */}
+        {/* STEP 1 */}
         {step === 1 && (
           <div className="w-full max-w-6xl mx-auto p-6">
-            <h1 className="text-3xl font-bold text-center mb-8">
-              Upload your documents
-              <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+              Upload your documents <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
             </h1>
 
             {uploadFields.map((field, index) => (
@@ -466,10 +464,10 @@ export const DocumentUpload = () => {
                 key={index}
                 className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full"
               >
-                {/* Document Upload */}
+                {/* File Upload */}
                 <div className="form-control w-full">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
                       <span className="text-error">*</span>
                     </span>
@@ -477,7 +475,8 @@ export const DocumentUpload = () => {
                   <input
                     type="file"
                     name="file"
-                    className="file-input file-input-bordered w-full focus:outline-none"
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    className="file-input file-input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                     required
                     onChange={(e) => handleFileChange(e, index)}
                   />
@@ -486,14 +485,14 @@ export const DocumentUpload = () => {
                 {/* Document Type */}
                 <div className="form-control w-full">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1 pt-6">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1 pt-6">
                       <i className="fa-solid fa-file text-sm"></i> Document Type
                       <span className="text-error">*</span>
                     </span>
                   </label>
                   <select
                     name="document_types"
-                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                     value={field.document_types}
                     onChange={(e) => handleUploadChange(e, index)}
                   >
@@ -509,33 +508,31 @@ export const DocumentUpload = () => {
                       {docTypeErrors[index] || ""}
                     </span>
                   </div>
-
-
                 </div>
+
                 {/* Identity */}
                 <div className="form-control w-full pt-6">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-id-card text-sm"></i> Identity
                     </span>
                   </label>
                   <input
                     type="text"
                     name="identities"
-                    className="input input-bordered w-full focus:outline-none"
+                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                     value={field.identities}
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
                   />
-                  {/* Fixed space reserved for error */}
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
                     </span>
                   </div>
-
                 </div>
-                {/* Add/Remove Button */}
+
+                {/* Add/Remove */}
                 <div className="form-control w-full flex items-end pt-6">
                   {index === 0 ? (
                     <button
@@ -558,20 +555,20 @@ export const DocumentUpload = () => {
                   )}
                 </div>
               </div>
-
             ))}
-            {/* Select Student/Teacher/Guardian/Office Staff */}
+
+            {/* Role-based dropdowns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.student && (
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-graduate text-sm"></i> Student
                     </span>
                   </label>
                   <select
                     name="student"
-                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                     value={formData.student}
                     onChange={handleChange}
                   >
@@ -591,13 +588,13 @@ export const DocumentUpload = () => {
               {role === constants.roles.teacher && (
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-chalkboard-teacher text-sm"></i> Teacher
                     </span>
                   </label>
                   <select
                     name="teacher"
-                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                     value={formData.teacher}
                     onChange={handleChange}
                   >
@@ -614,17 +611,18 @@ export const DocumentUpload = () => {
                 </div>
               )}
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.guardian && (
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-shield text-sm"></i> Guardian
                     </span>
                   </label>
                   <select
                     name="guardian"
-                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                     value={formData.guardian}
                     onChange={handleChange}
                   >
@@ -637,7 +635,6 @@ export const DocumentUpload = () => {
                           {guardian.first_name} {guardian.last_name}
                         </option>
                       ))}
-
                   </select>
                 </div>
               )}
@@ -645,14 +642,13 @@ export const DocumentUpload = () => {
               {role === constants.roles.officeStaff && (
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-briefcase text-sm"></i> Office Staff
-
                     </span>
                   </label>
                   <select
                     name="office_staff"
-                    className="select select-bordered w-full focus:outline-none cursor-pointer"
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
                     value={formData.office_staff}
                     onChange={handleChange}
                   >
@@ -665,7 +661,6 @@ export const DocumentUpload = () => {
                           {staff.first_name} {staff.last_name}
                         </option>
                       ))}
-
                   </select>
                 </div>
               )}
@@ -673,61 +668,66 @@ export const DocumentUpload = () => {
           </div>
         )}
 
-        {/* NAVIGATION BUTTONS */}
+        {/* Navigation Buttons */}
         <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 p-6">
-          {/* Back button - Only for step > 0 */}
           {step > 0 && (
             <button
               type="button"
               onClick={prev}
-              className="btn bgTheme text-white w-40 hover:bg-blue-700 flex items-center justify-center"
+              className="btn bgTheme text-white w-40 hover:bg-purple-700 flex items-center justify-center"
             >
               <i className="fa-solid fa-arrow-left mr-2"></i> Back
             </button>
           )}
-          {/* Next button - Only for step 0 */}
           {step === 0 && (
             <div className="flex-1 flex justify-end">
               <button
                 type="button"
                 onClick={next}
-                className={`bgTheme text-white px-4 py-2 rounded-lg shadow w-40 ${role.length === 0 || (role === constants.roles.student && !formData.year_level)
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-blue-700"
+                className={`btn bgTheme text-white w-40 ${role.length === 0 || (role === constants.roles.student && !formData.year_level)
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purple-700"
                   }`}
-                disabled={role.length === 0 || (role === constants.roles.student && !formData.year_level)}
+                disabled={
+                  role.length === 0 ||
+                  (role === constants.roles.student && !formData.year_level)
+                }
               >
                 Next
               </button>
             </div>
           )}
-
-          {/* Upload button - Only for step 1 */}
           {step === 1 && (
             <div className="flex-1 flex justify-end md:justify-end">
               <button type="submit" className="btn bgTheme text-white w-40">
                 {loading ? (
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i> Uploading...
+                  </>
                 ) : (
-                  <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+                  <>
+                    <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Upload
+                  </>
                 )}
-                {loading ? "" : "Upload"}
               </button>
             </div>
           )}
         </div>
-
       </form>
+
+      {/* Modal */}
       {showAlert && (
         <dialog className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
             <h3 className="font-bold text-lg">Document Upload</h3>
-            <p className="py-4">{alertMessage.split("\n").map((line, idx) => (
-              <span key={idx}>
-                {line}
-                <br />
-              </span>
-            ))}</p>
+            <p className="py-4">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
             <div className="modal-action">
               <button
                 className="btn bgTheme text-white w-30"
@@ -739,7 +739,6 @@ export const DocumentUpload = () => {
           </div>
         </dialog>
       )}
-
     </div>
   );
 };

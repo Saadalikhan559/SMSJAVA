@@ -101,127 +101,126 @@ const DirectorMarkHolidays = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-        <form onSubmit={handleSubmit}>
-          <h1 className="text-3xl font-bold text-center mb-8">
-          <i className="fa-solid fa-calendar-day ml-2"></i>  Mark Holidays 
-          </h1>
+   <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+  <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
+    <form onSubmit={handleSubmit}>
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+        <i className="fa-solid fa-calendar-day ml-2"></i> Mark Holidays
+      </h1>
 
-          {success && (
-            <div className="alert alert-success mb-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{success}</span>
-            </div>
-          )}
-
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 w-full md:w-1/2 gap-6 mt-6">
-              {/* Holiday Title */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">
-                    Holiday Title <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  className="input input-bordered w-full"
-                  placeholder="Enter holiday title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Start Date */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">
-                  Start Date <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="date"
-                name="start_date"
-                className="input input-bordered w-full"
-                value={formData.start_date}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {/* End Date */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">End Date</span>
-              </label>
-              <input
-                type="date"
-                name="end_date"
-                className="input input-bordered w-full"
-                value={formData.end_date}
-                onChange={handleChange}
-                min={formData.start_date}
-              />
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-center mt-10">
-            <button
-              type="submit"
-              className="btn text-white bgTheme w-52"
-              disabled={loder}
-            >
-              {loder ? (
-                <>
-                  <i className="fa-solid fa-spinner fa-spin mr-2" />
-                </>
-              ) : (
-                <>
-                  <i className="fa-solid fa-calendar-plus mr-2" />
-                  Mark Holiday
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-      {/* Modal */}
-      {showModal && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Mark Holidays </h3>
-            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
-            <div className="modal-action">
-              <button
-                className="btn bgTheme text-white w-32"
-                onClick={() => setShowModal(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </dialog>
+      {success && (
+        <div className="alert alert-success mb-6 bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-100 flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{success}</span>
+        </div>
       )}
-    </div>
+
+      <div className="flex justify-center">
+        <div className="grid grid-cols-1 w-full md:w-1/2 gap-6 mt-6">
+          {/* Holiday Title */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-gray-800 dark:text-gray-100">
+                Holiday Title <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="text"
+              name="title"
+              className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+              placeholder="Enter holiday title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        {/* Start Date */}
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text text-gray-800 dark:text-gray-100">
+              Start Date <span className="text-error">*</span>
+            </span>
+          </label>
+          <input
+            type="date"
+            name="start_date"
+            className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            value={formData.start_date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        {/* End Date */}
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text text-gray-800 dark:text-gray-100">End Date</span>
+          </label>
+          <input
+            type="date"
+            name="end_date"
+            className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            value={formData.end_date}
+            onChange={handleChange}
+            min={formData.start_date}
+          />
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex justify-center mt-10">
+        <button
+          type="submit"
+          className="btn text-white bgTheme w-52"
+          disabled={loder}
+        >
+          {loder ? (
+            <i className="fa-solid fa-spinner fa-spin mr-2" />
+          ) : (
+            <>
+              <i className="fa-solid fa-calendar-plus mr-2" />
+              Mark Holiday
+            </>
+          )}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {/* Modal */}
+  {showModal && (
+    <dialog className="modal modal-open">
+      <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+        <h3 className="font-bold text-lg">Mark Holidays</h3>
+        <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+        <div className="modal-action">
+          <button
+            className="btn bgTheme text-white w-32"
+            onClick={() => setShowModal(false)}
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </dialog>
+  )}
+</div>
   );
 };
 
