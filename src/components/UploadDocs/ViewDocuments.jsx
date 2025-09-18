@@ -26,22 +26,22 @@ export const ViewDocuments = () => {
   const teacherId = localStorage.getItem("teacherId");
   const officeStaffId = localStorage.getItem("officeStaffId");
   const userRole = localStorage.getItem("userRole");
-  
-  
-  
-  
+
+
+
+
   const fetchTeacherYearLevel = async (teacherId) => {
-  try {
-    const response = await axiosInstance.get("/t/teacheryearlevel/");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching teacher year level:", error);
-    throw error;
-  }
-};
+    try {
+      const response = await axiosInstance.get("/t/teacheryearlevel/");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching teacher year level:", error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
-     const fetchData = async () => {
+    const fetchData = async () => {
       try {
         const docs = await fetchViewDocuments();
         setDetails(docs);
@@ -157,23 +157,22 @@ export const ViewDocuments = () => {
   });
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl  mx-auto bg-white shadow-lg rounded-lg p-6">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
             <i className="fa-solid fa-folder-open"></i> Uploaded Documents
           </h1>
         </div>
 
-
         {/* Teacher options */}
         {userRole === "teacher" && (
-          <div className="mb-4 flex gap-4 items-center border-b pb-2">
+          <div className="mb-4 flex gap-4 items-center border-b dark:border-gray-700 pb-2">
             <div>
               <select
                 value={viewOption}
                 onChange={(e) => setViewOption(e.target.value)}
-                className="border p-2 rounded"
+                className="border p-2 rounded bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
               >
                 <option value="my">My Documents</option>
                 <option value="assigned">Assigned Class Documents</option>
@@ -182,62 +181,96 @@ export const ViewDocuments = () => {
           </div>
         )}
 
-
-
         {/* Admin filters */}
-        {userRole !== "student" && userRole !== "guardian" && userRole !== "teacher" && userRole !== "officestaff" && (
-          <div className="mb-4 flex gap-4 border-b pb-2">
-            <div className="flex flex-col w-full sm:w-xs">
-               <label className="mr-2 font-sm">Select Role:</label>
-              <select
-                value={selectedRole}
-                onChange={e => {
-                  setSelectedRole(e.target.value);
-                  setSelectedClass("All");
-                }}
-                className="select select-bordered w-full focus:outline-none"
-              >
-                <option value="All">Select Role</option>
-                <option value="Student">Student</option>
-                <option value="Guardian">Guardian</option>
-                <option value="Office Staff">Office Staff</option>
-                <option value="Teacher">Teacher</option>
-              </select>
-            </div>
-            {selectedRole === "Student" && (
-             <div className="flex flex-col">
-                <label className="mr-2 font-sm">Select Class:</label>
-                <select value={selectedClass} onChange={e => setSelectedClass(e.target.value)} className="select select-bordered w-full focus:outline-none">
-                 {allClasses.map((cls, idx) => <option key={idx} value={cls}>{cls}</option>)}
+        {userRole !== "student" &&
+          userRole !== "guardian" &&
+          userRole !== "teacher" &&
+          userRole !== "officestaff" && (
+            <div className="mb-4 flex gap-4 border-b dark:border-gray-700 pb-2">
+              <div className="flex flex-col w-full sm:w-xs">
+                <label className="mr-2 text-sm text-gray-700 dark:text-gray-300">
+                  Select Role:
+                </label>
+                <select
+                  value={selectedRole}
+                  onChange={(e) => {
+                    setSelectedRole(e.target.value);
+                    setSelectedClass("All");
+                  }}
+                  className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
+                >
+                  <option value="All">Select Role</option>
+                  <option value="Student">Student</option>
+                  <option value="Guardian">Guardian</option>
+                  <option value="Office Staff">Office Staff</option>
+                  <option value="Teacher">Teacher</option>
                 </select>
               </div>
-            )}
-          </div>
-        )}
+              {selectedRole === "Student" && (
+                <div className="flex flex-col">
+                  <label className="mr-2 text-sm text-gray-700 dark:text-gray-300">
+                    Select Class:
+                  </label>
+                  <select
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
+                  >
+                    {allClasses.map((cls, idx) => (
+                      <option key={idx} value={cls}>
+                        {cls}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          )}
 
         {/* Table */}
         <div className="w-full overflow-x-auto rounded-lg no-scrollbar max-h-[70vh]">
           <div className="inline-block min-w-full align-middle">
             <div className="shadow-sm rounded-lg">
-              <table className="min-w-full divide-y  divide-gray-300">
-                <thead className="bgTheme text-white z-2 sticky top-0">
+              <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                <thead className="bgTheme text-white sticky top-0 z-10">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
-                    {userRole !== "student" && selectedRole === "Student" && <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>}
-                    {allDocTypes.map(type => (
-                      <th key={type} className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize">{type}</th>
+                    {userRole !== "student" && selectedRole === "Student" && (
+                      <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>
+                    )}
+                    {allDocTypes.map((type) => (
+                      <th
+                        key={type}
+                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize"
+                      >
+                        {type}
+                      </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className=" divide-gray-200 bg-white">
+                <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredData.map((person, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.role}</td>
-                      {userRole !== "student" && selectedRole === "Student" && <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">{person.yearLevel || "-"}</td>}
-                      {allDocTypes.map(type => (
-                        <td key={type} className="px-4 py-3 text-sm text-blue-600">
+                    <tr
+                      key={idx}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                    >
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                        {person.name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                        {person.role}
+                      </td>
+                      {userRole !== "student" && selectedRole === "Student" && (
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                          {person.yearLevel || "-"}
+                        </td>
+                      )}
+                      {allDocTypes.map((type) => (
+                        <td
+                          key={type}
+                          className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
+                        >
                           {person.docs[type] && person.docs[type].length > 0 ? (
                             person.docs[type].map((url, i) => (
                               <div key={i}>
@@ -245,7 +278,7 @@ export const ViewDocuments = () => {
                                   href={url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="underline textTheme hover:text-blue-800"
+                                  className="underline textTheme hover:text-blue-800 dark:hover:text-blue-200"
                                 >
                                   View
                                 </a>
@@ -255,7 +288,6 @@ export const ViewDocuments = () => {
                             "-"
                           )}
                         </td>
-
                       ))}
                     </tr>
                   ))}
