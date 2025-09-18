@@ -232,7 +232,7 @@ export const ViewDocuments = () => {
           <div className="inline-block min-w-full align-middle">
             <div className="shadow-sm rounded-lg">
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                <thead className="bgTheme text-white sticky top-0 z-10">
+                <thead className="bgTheme text-white sticky top-0 z-2">
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>

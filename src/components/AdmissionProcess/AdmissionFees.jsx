@@ -435,7 +435,7 @@ console.log("fee",availableFees);
 
   return (
     <>
-      <div className="min-h-screen p-5 bg-gray-50">
+      <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
         <form
           className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
           onSubmit={handleSubmit(onSubmit)}

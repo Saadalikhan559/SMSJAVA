@@ -14,7 +14,8 @@ export const constants = {
 
 
   hideEdgeRevealStyle: `
-      input[type="password"]::-ms-reveal,
+      input[type="password"]::-ms-reveal,   
+      
       input[type="password"]::-ms-clear {
         display: none;
       }

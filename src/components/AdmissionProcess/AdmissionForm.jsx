@@ -243,8 +243,19 @@ export const AdmissionForm = () => {
         data.guardian_user_profile[0]
       );
     }
+    if (data.guardian_type) {
+     submitFormData.append("guardian_type", data.guardian_type);
+
+    }
 
     try {
+    const debugPayload = {};
+for (let [key, value] of submitFormData.entries()) {
+  debugPayload[key] = value;
+}
+console.log("FormData Payload:", debugPayload);
+   
+      
       await handleAdmissionForm(submitFormData);
       // Show success modal after successful submission
       setShowAdmissionSuccessModal(true);
