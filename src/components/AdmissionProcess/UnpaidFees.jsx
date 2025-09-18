@@ -130,23 +130,24 @@ const UnpaidFeesList = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
+        {/* Title */}
         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
           </h1>
         </div>
 
         {/* Filter Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b pb-4">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">Search by Month:</label>
+                <label className="text-sm font-medium mb-1">Search by Month:</label>
                 <select
-                  className="select select-bordered w-full focus:outline-none"
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
                 >
@@ -163,9 +164,9 @@ const UnpaidFeesList = () => {
               {/* Class Filter (Director/Office Staff only) */}
               {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
                 <div className="flex flex-col w-full sm:w-auto">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Search by Class:</label>
+                  <label className="text-sm font-medium mb-1">Search by Class:</label>
                   <select
-                    className="select select-bordered w-full focus:outline-none"
+                    className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
                   >
@@ -196,7 +197,7 @@ const UnpaidFeesList = () => {
                   placeholder="Enter student name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border px-3 py-2 rounded w-full sm:w-64"
+                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ringTheme focus:outline-none"
                 />
               </div>
               <button
@@ -217,8 +218,8 @@ const UnpaidFeesList = () => {
 
         {/* Table Section */}
         <div className="overflow-x-auto rounded-lg no-scrollbar max-h-[70vh]">
-          <table className="min-w-full table-auto">
-            <thead className="bgTheme text-white z-2 sticky top-0">
+          <table className="min-w-full table-auto divide-y divide-gray-300 dark:divide-gray-700">
+            <thead className="bgTheme text-white sticky top-0 z-2">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
                 <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>
@@ -231,16 +232,16 @@ const UnpaidFeesList = () => {
                 <th className="px-4 py-3 text-left whitespace-nowrap">Payment Status</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white dark:bg-gray-800">
               {filteredFees.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-6 text-gray-500">No data found.</td>
+                  <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">No data found.</td>
                 </tr>
               ) : (
                 filteredFees.map((item, index) =>
                   item.year_level_fees_grouped?.map((group) =>
                     group.fees?.map((fee) => (
-                      <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-gray-50">
+                      <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-4 py-3">{index + 1}</td>
                         <td className="px-4 py-3 text-nowrap">{item.student?.name}</td>
                         <td className="px-4 py-3 text-nowrap">{group.year_level}</td>
@@ -249,7 +250,9 @@ const UnpaidFeesList = () => {
                         <td className="px-4 py-3">₹{fee.amount}</td>
                         <td className="px-4 py-3">₹{item.paid_amount}</td>
                         <td className="px-4 py-3">₹{item.due_amount}</td>
-                        <td className="inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium bg-red-100 text-red-600 m-2">{item.payment_status}</td>
+                        <td className="inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium bg-red-100 text-red-600 m-2">
+                          {item.payment_status}
+                        </td>
                       </tr>
                     ))
                   )
@@ -263,7 +266,7 @@ const UnpaidFeesList = () => {
       {/* Modal */}
       {showModal && (
         <dialog className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
             <h3 className="font-bold text-lg"> Notification</h3>
             <p className="py-4 whitespace-pre-line">{modalMessage}</p>
             <div className="modal-action">
@@ -277,7 +280,3 @@ const UnpaidFeesList = () => {
 };
 
 export default UnpaidFeesList;
-
-
-
-

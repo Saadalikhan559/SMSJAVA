@@ -116,24 +116,26 @@ const FeeSummaryTable = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">
             <i className="fa-solid fa-graduation-cap mr-2"></i> Students Fee Record
           </h1>
         </div>
 
         {/* Filter + Fee Dashboard Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b pb-4">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b pb-4 border-gray-200 dark:border-gray-700">
+
             {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
+
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">Select Month:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Month:</label>
                 <select
-                  className="select select-bordered w-full focus:outline-none"
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
                 >
@@ -149,9 +151,9 @@ const FeeSummaryTable = () => {
 
               {/* Class Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">Select Class:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Class:</label>
                 <select
-                  className="select select-bordered w-full focus:outline-none"
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={selectedClass}
                   onChange={(e) => setSelectedClass(e.target.value)}
                 >
@@ -164,9 +166,9 @@ const FeeSummaryTable = () => {
 
               {/* Year Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 mb-1">Select Year:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Year:</label>
                 <select
-                  className="select select-bordered w-full focus:outline-none"
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={selectedSchoolYear}
                   onChange={(e) => setSelectedSchoolYear(e.target.value)}
                 >
@@ -196,7 +198,7 @@ const FeeSummaryTable = () => {
                   placeholder="Enter student name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border px-3 py-2 rounded w-full sm:w-64"
+                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none"
                 />
               </div>
               <Link
@@ -211,7 +213,7 @@ const FeeSummaryTable = () => {
 
         {/* Table Section */}
         <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
-          <table className="min-w-full divide-y rounded-lg">
+          <table className="min-w-full rounded-lg">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
@@ -224,24 +226,27 @@ const FeeSummaryTable = () => {
                 <th className="px-4 py-3 text-left whitespace-nowrap">Due Amount</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className=" divide-gray-200 dark:divide-gray-700">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-6 text-gray-500">
+                  <td colSpan="8" className="text-center py-6 text-gray-500 dark:text-gray-400">
                     No data found.
                   </td>
                 </tr>
               ) : (
                 filteredStudents.map((record, index) => (
-                  <tr key={record.student_id || index} className="hover:bg-gray-50">
-                    <td className="px-4 py-3">{index + 1}</td>
-                    <td className="px-4 py-3">{record.student_name}</td>
-                    <td className="px-4 py-3">{record.year_level}</td>
-                    <td className="px-4 py-3">{record.school_year}</td>
-                    <td className="px-4 py-3">{record.month}</td>
-                    <td className="px-4 py-3">₹{record.total_amount}</td>
-                    <td className="px-4 py-3">₹{record.paid_amount}</td>
-                    <td className="px-4 py-3">₹{record.due_amount}</td>
+                  <tr
+                    key={record.student_id || index}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                  >
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{index + 1}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.student_name}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.year_level}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.school_year}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.month}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">₹{record.total_amount}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">₹{record.paid_amount}</td>
+                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">₹{record.due_amount}</td>
                   </tr>
                 ))
               )}
@@ -254,4 +259,3 @@ const FeeSummaryTable = () => {
 };
 
 export default FeeSummaryTable;
-

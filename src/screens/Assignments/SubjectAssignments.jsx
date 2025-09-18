@@ -182,176 +182,178 @@ export const SubjectAssignments = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-        <button
-          className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
-          onClick={handleNavigate}
-        >
-          Teacher Assignments <span>&rarr;</span>
+   <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+  <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
+    <button
+      className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+      onClick={handleNavigate}
+    >
+      Teacher Assignments <span>&rarr;</span>
+    </button>
+
+    <form onSubmit={handleSubmit(handleSubmitForm)}>
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
+        Assign Subjects <i className="fa-solid fa-book ml-2" />
+      </h1>
+
+      {errors.api && (
+        <p className="text-red-600 text-center mb-4 font-medium">{errors.api.message}</p>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        {/* Teacher Dropdown */}
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text text-gray-700 dark:text-gray-200">
+              Teacher <span className="text-error">*</span>
+            </span>
+          </label>
+          <select
+            {...register("teacher_id", { required: "Teacher is required" })}
+            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+          >
+            <option value="">
+              {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
+            </option>
+            {teachers.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.first_name} {t.middle_name} {t.last_name}
+              </option>
+            ))}
+          </select>
+          {errors.teacher_id && <p className="text-red-500">{errors.teacher_id.message}</p>}
+        </div>
+
+        {/* Year Level Dropdown */}
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text text-gray-700 dark:text-gray-200">
+              Year Level <span className="text-error">*</span>
+            </span>
+          </label>
+          <select
+            {...register("yearlevel_id", { required: "Year level is required" })}
+            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+          >
+            <option value="">
+              {loadingYearLevels ? "Loading year levels..." : "Select Year Level"}
+            </option>
+            {yearLevels.map((y) => (
+              <option key={y.id} value={y.id}>{y.level_name}</option>
+            ))}
+          </select>
+          {errors.yearlevel_id && <p className="text-red-500">{errors.yearlevel_id.message}</p>}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        {/* Subjects Dropdown */}
+        <div className="form-control relative" ref={subjectRef}>
+          <label className="label">
+            <span className="label-text text-gray-700 dark:text-gray-200">
+              Subjects <span className="text-error">*</span>
+            </span>
+          </label>
+          <div>
+            <div
+              className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+              onClick={() => setIsSubjectOpen(!isSubjectOpen)}
+            >
+              {subject_ids.length > 0
+                ? `${subject_ids.length} selected`
+                : loadingSubjects
+                ? "Loading subjects..."
+                : "Select Subjects"}
+            </div>
+            {isSubjectOpen && (
+              <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                {subjects.map((s) => (
+                  <label key={s.id} className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-primary mr-2"
+                      checked={subject_ids.includes(s.id)}
+                      onChange={() => handleMultiSelect("subject_ids", s.id)}
+                    />
+                    {s.subject_name} ({s.department})
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+          {errors.subject_ids && <p className="text-red-500 mt-1">{errors.subject_ids.message}</p>}
+        </div>
+
+        {/* Periods Dropdown */}
+        <div className="form-control relative" ref={periodRef}>
+          <label className="label">
+            <span className="label-text text-gray-700 dark:text-gray-200">
+              Periods <span className="text-error">*</span>
+            </span>
+          </label>
+          <div>
+            <div
+              className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+              onClick={() => setIsPeriodOpen(!isPeriodOpen)}
+            >
+              {period_ids.length > 0
+                ? `${period_ids.length} selected`
+                : loadingPeriods
+                ? "Loading periods..."
+                : "Select Periods"}
+            </div>
+            {isPeriodOpen && (
+              <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                {periods.map((p) => (
+                  <label key={p.id} className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-primary mr-2"
+                      checked={period_ids.includes(p.id)}
+                      onChange={() => handleMultiSelect("period_ids", p.id)}
+                    />
+                    {p.name} | {p.start_period_time} - {p.end_period_time}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+          {errors.period_ids && <p className="text-red-500 mt-1">{errors.period_ids.message}</p>}
+        </div>
+      </div>
+
+      <div className="flex justify-center mt-10">
+        <button type="submit" className="btn text-white bgTheme w-52" disabled={isSubmitting}>
+          {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2" /> : <i className="fa-solid fa-book ml-2" />}
+          {isSubmitting ? "" : "Assign"}
         </button>
+      </div>
+    </form>
 
-        <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <h1 className="text-3xl font-bold text-center mb-6">
-            Assign Subjects <i className="fa-solid fa-book ml-2" />
-          </h1>
-
-          {errors.api && (
-            <p className="text-red-600 text-center mb-4 font-medium">
-              {errors.api.message}
-            </p>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {/* Teacher Dropdown */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Teacher <span className="text-error">*</span></span>
-              </label>
-              <select
-                {...register("teacher_id", { required: "Teacher is required" })}
-                className="select select-bordered w-full focus:outline-none"
-              >
-                <option value="">
-                  {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
-                </option>
-                {teachers.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.first_name} {t.middle_name} {t.last_name}
-                  </option>
-                ))}
-              </select>
-              {errors.teacher_id && <p className="text-red-500">{errors.teacher_id.message}</p>}
-            </div>
-
-            {/* Year Level Dropdown */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Year Level <span className="text-error">*</span></span>
-              </label>
-              <select
-                {...register("yearlevel_id", { required: "Year level is required" })}
-                className="select select-bordered w-full focus:outline-none"
-              >
-                <option value="">
-                  {loadingYearLevels ? "Loading year levels..." : "Select Year Level"}
-                </option>
-                {yearLevels.map((y) => (
-                  <option key={y.id} value={y.id}>{y.level_name}</option>
-                ))}
-              </select>
-              {errors.yearlevel_id && <p className="text-red-500">{errors.yearlevel_id.message}</p>}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Subjects Dropdown */}
-            <div className="form-control" ref={subjectRef}>
-              <label className="label">
-                <span className="label-text">Subjects <span className="text-error">*</span></span>
-              </label>
-              <div className="relative">
-                <div
-                  className="select select-bordered w-full cursor-pointer focus:outline-none"
-                  onClick={() => setIsSubjectOpen(!isSubjectOpen)}
-                >
-                  {subject_ids.length > 0
-                    ? `${subject_ids.length} selected`
-                    : loadingSubjects
-                    ? "Loading subjects..."
-                    : "Select Subjects"}
-                </div>
-                {isSubjectOpen && (
-                  <div className="absolute z-10 w-full bg-white border rounded-md shadow max-h-60 overflow-y-auto">
-                    {subjects.map((s) => (
-                      <label key={s.id} className="flex items-center p-3 hover:bg-gray-100">
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-primary mr-2"
-                          checked={subject_ids.includes(s.id)}
-                          onChange={() => handleMultiSelect("subject_ids", s.id)}
-                        />
-                        {s.subject_name} ({s.department})
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {errors.subject_ids && <p className="text-red-500 mt-1">{errors.subject_ids.message}</p>}
-            </div>
-
-            {/* Periods Dropdown */}
-            <div className="form-control" ref={periodRef}>
-              <label className="label">
-                <span className="label-text">Periods <span className="text-error">*</span></span>
-              </label>
-              <div className="relative">
-                <div
-                  className="select select-bordered w-full cursor-pointer focus:outline-none"
-                  onClick={() => setIsPeriodOpen(!isPeriodOpen)}
-                >
-                  {period_ids.length > 0
-                    ? `${period_ids.length} selected`
-                    : loadingPeriods
-                    ? "Loading periods..."
-                    : "Select Periods"}
-                </div>
-                {isPeriodOpen && (
-                  <div className="absolute z-10 w-full bg-white border rounded-md shadow max-h-60 overflow-y-auto">
-                    {periods.map((p) => (
-                      <label key={p.id} className="flex items-center p-3 hover:bg-gray-100">
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-primary mr-2"
-                          checked={period_ids.includes(p.id)}
-                          onChange={() => handleMultiSelect("period_ids", p.id)}
-                        />
-                        {p.name} | {p.start_period_time} - {p.end_period_time}
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-              {errors.period_ids && <p className="text-red-500 mt-1">{errors.period_ids.message}</p>}
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-10">
-            <button type="submit" className="btn text-white bgTheme w-52" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2" />
-              ) : (
-                <i className="fa-solid fa-book ml-2" />
-              )}
-              {isSubmitting ? "" : "Assign"}
+    {showAlert && (
+      <dialog className="modal modal-open">
+        <div className="modal-box bg-white dark:bg-gray-800">
+          <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">Subject Assignment</h3>
+          <p className="py-4 text-gray-700 dark:text-gray-200">
+            {alertMessage.split("\n").map((line, idx) => (
+              <span key={idx}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </p>
+          <div className="modal-action">
+            <button
+              className="btn bgTheme text-white w-30"
+              onClick={() => setShowAlert(false)}
+            >
+              OK
             </button>
           </div>
-        </form>
-      </div>
-      {showAlert && (
-  <dialog className="modal modal-open">
-    <div className="modal-box">
-      <h3 className="font-bold text-lg">Subject Assignment</h3>
-      <p className="py-4">
-        {alertMessage.split("\n").map((line, idx) => (
-          <span key={idx}>
-            {line}
-            <br />
-          </span>
-        ))}
-      </p>
-      <div className="modal-action">
-        <button
-          className="btn bgTheme text-white w-30"
-          onClick={() => setShowAlert(false)}
-        >
-          OK
-        </button>
-      </div>
-    </div>
-  </dialog>
-)}
-
-    </div>
+        </div>
+      </dialog>
+    )}
+  </div>
+</div>
   );
 };

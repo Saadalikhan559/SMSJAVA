@@ -71,8 +71,8 @@ export const SingleAdmissionDetails = () => {
     obj && obj[key] !== undefined && obj[key] !== null ? obj[key] : fallback;
 
   return (
-    <div className="p-3 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="p-3 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         {/* Header Section */}
         <div className="bgTheme text-white px-6 py-4">
           <h1 className="text-2xl font-bold">
@@ -84,7 +84,7 @@ export const SingleAdmissionDetails = () => {
         <div className="p-6">
           {/* Student Information */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-200 dark:border-gray-700">
               Student Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -153,7 +153,7 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Has RTE?</p>
-                {details.is_rte === true ? (
+                {details.is_rte ? (
                   <svg
                     className="w-6 h-6 text-green-500"
                     fill="none"
@@ -192,7 +192,7 @@ export const SingleAdmissionDetails = () => {
 
           {/* Parent/Guardian Information */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-200 dark:border-gray-700">
               Parent/Guardian Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -240,7 +240,7 @@ export const SingleAdmissionDetails = () => {
 
           {/* Address Information */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-200 dark:border-gray-700">
               Address Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -283,7 +283,7 @@ export const SingleAdmissionDetails = () => {
 
           {/* Admission Details */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-200 dark:border-gray-700">
               Admission Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -305,10 +305,7 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Distance to School:</p>
-                <p>
-                  {details.entire_road_distance_from_home_to_school ||
-                    "Not Provided"}
-                </p>
+                <p>{details.entire_road_distance_from_home_to_school || "Not Provided"}</p>
               </div>
               <div>
                 <p className="font-medium">Previous School:</p>
@@ -339,7 +336,7 @@ export const SingleAdmissionDetails = () => {
 
           {/* Banking Details */}
           <div>
-            <h2 className="text-xl font-semibold border-b pb-2 mb-4">
+            <h2 className="text-xl font-semibold border-b pb-2 mb-4 border-gray-200 dark:border-gray-700">
               Banking Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
