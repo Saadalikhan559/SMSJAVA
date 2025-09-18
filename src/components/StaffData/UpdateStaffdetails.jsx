@@ -129,81 +129,84 @@ const UpdateStaffDetails = () => {
   }
 
   return (
-    <>
-      <div className="p-6 bg-gray-100 min-h-screen">
-        <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow">
-          <h1 className="text-3xl font-bold mb-8 text-center">
-            <i className="fa-solid fa-pen-to-square mr-2"></i> Update Staff Details
-          </h1>
+   <>
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
+        <i className="fa-solid fa-pen-to-square mr-2"></i> Update Staff Details
+      </h1>
 
-          {error && <div className="text-red-500 text-center mb-4">{error}</div>}
-
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            encType="multipart/form-data"
-          >
-            {[
-              "first_name",
-              "middle_name",
-              "last_name",
-              "email",
-              "phone_no",
-              "gender",
-              "adhaar_no",
-              "pan_no",
-              // qualification ko yahan se hata diya
-            ].map((field) => (
-              <input
-                key={field}
-                type="text"
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                placeholder={field
-                  .replace(/_/g, " ")
-                  .replace(/\b\w/g, (c) => c.toUpperCase())}
-                className="input input-bordered w-full focus:outline-none"
-              />
-            ))}
-            {type === "teacher" && (
-              <input
-                type="text"
-                name="qualification"
-                value={formData.qualification}
-                onChange={handleChange}
-                placeholder="Qualification"
-                className="input input-bordered w-full focus:outline-none"
-              />
-            )}
-
-
-            <div className="md:col-span-2 lg:col-span-3">
-              <label className="block mb-2 font-medium">Update Profile Picture</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="file-input file-input-bordered w-full focus:outline-none"
-              />
-            </div>
-
-            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center mt-6">
-              <button type="submit" className="btn bgTheme text-white">
-                <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {UpdateModal && (
-        <UpdateSuccessful
-          handleCloseOnly={() => setUpdateModal(false)}
-          handleCloseAndNavigate={() => navigate(`/staffDetail/${type}/${id}`)}
-        />
+      {error && (
+        <div className="text-red-500 text-center mb-4">{error}</div>
       )}
-    </>
+
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        encType="multipart/form-data"
+      >
+        {[
+          "first_name",
+          "middle_name",
+          "last_name",
+          "email",
+          "phone_no",
+          "gender",
+          "adhaar_no",
+          "pan_no",
+        ].map((field) => (
+          <input
+            key={field}
+            type="text"
+            name={field}
+            value={formData[field]}
+            onChange={handleChange}
+            placeholder={field
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase())}
+            className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+          />
+        ))}
+
+        {type === "teacher" && (
+          <input
+            type="text"
+            name="qualification"
+            value={formData.qualification}
+            onChange={handleChange}
+            placeholder="Qualification"
+            className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+          />
+        )}
+
+        <div className="md:col-span-2 lg:col-span-3">
+          <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
+            Update Profile Picture
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="file-input file-input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+          />
+        </div>
+
+        <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center mt-6">
+          <button type="submit" className="btn bgTheme text-white">
+            <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {UpdateModal && (
+    <UpdateSuccessful
+      handleCloseOnly={() => setUpdateModal(false)}
+      handleCloseAndNavigate={() => navigate(`/staffDetail/${type}/${id}`)}
+    />
+  )}
+</>
   );
 };
 

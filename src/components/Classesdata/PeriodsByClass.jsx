@@ -46,57 +46,57 @@ if (error) {
     );
   }
     return (
-        <div className="min-h-screen p-5 bg-gray-50">
-            <div className="bg-white p-6 max-w-7xl rounded-lg shadow-lg  mx-auto">
-                <h1 className="text-3xl font-bold text-center mb-4 text-gray-800 border-b pb-4">
-                    <i className="fa-solid fa-graduation-cap mr-2"></i> Periods By Class
-                </h1>
+        <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+  <div className="bg-white dark:bg-gray-800 p-6 max-w-7xl rounded-lg shadow-lg mx-auto">
+    <h1 className="text-3xl font-bold text-center mb-4 text-gray-800 dark:text-gray-100 border-b pb-4">
+      <i className="fa-solid fa-graduation-cap mr-2"></i> Periods By Class
+    </h1>
 
-                {error && (
-                    <div className="text-red-600 text-center mb-4 font-medium">
-                        {error}
-                    </div>
-                )}
+    {error && (
+      <div className="text-red-600 dark:text-red-400 text-center mb-4 font-medium">
+        {error}
+      </div>
+    )}
 
-                <div className="overflow-x-auto text-center">
-                    <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-                        <thead className="bgTheme text-white text-center">
-                            <tr>
-                                <th scope="col" className="px-4 py-3">S.NO</th>
-                                <th scope="col" className="px-4 py-3">Year Level</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {yearLevels.length === 0 ? (
-                                <tr>
-                                    <td colSpan="2" className="text-center py-6 text-gray-500">
-                                        No data found.
-                                    </td>
-                                </tr>
-                            ) : (
-                                yearLevels.map((record, index) => (
-                                    <tr key={record.id || index} className="hover:bg-gray-50 text-center textTheme">
-                                        <td className="px-4 py-3">{index + 1}.</td>
-                                        <td className="px-4 py-3">
-                                            <Link
-                                                to={`/periodAssignment/${record.id}`}  // This is the year_level_id
-                                                state={{ level_name: record.level_name }}
-                                                className="textTheme hover:underline"
-                                            >
-                                                {record.level_name}
-                                            </Link>
-
-
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div className="overflow-x-auto text-center">
+      <table className="min-w-full table-auto border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+        <thead className="bgTheme text-white text-center">
+          <tr>
+            <th scope="col" className="px-4 py-3">S.NO</th>
+            <th scope="col" className="px-4 py-3">Year Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {yearLevels.length === 0 ? (
+            <tr>
+              <td colSpan="2" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                No data found.
+              </td>
+            </tr>
+          ) : (
+            yearLevels.map((record, index) => (
+              <tr
+                key={record.id || index}
+                className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center"
+              >
+                <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{index + 1}.</td>
+                <td className="px-4 py-3">
+                  <Link
+                    to={`/periodAssignment/${record.id}`}  // year_level_id
+                    state={{ level_name: record.level_name }}
+                    className="textTheme hover:underline"
+                  >
+                    {record.level_name}
+                  </Link>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
     );
 };
 
