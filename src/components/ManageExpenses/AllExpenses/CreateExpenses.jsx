@@ -173,262 +173,228 @@ export const CreateExpenses = () => {
   const handleNavigation = () => {
     navigate(`${allRouterLink.viewAllExpenses}`);
   };
-  return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Create Expense
-          <i className="fa-solid fa-receipt ml-2"></i>
-        </h1>
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 dark:text-white rounded-box my-5 shadow-lg">
+      <h1 className="text-3xl font-bold text-center mb-8">
+        Create Expense <i className="fa-solid fa-receipt ml-2"></i>
+      </h1>
 
-        {/* Display API error message */}
-        {/* {apiError && (
-          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
-            <div className="flex items-center text-error">
-              <i className="fa-solid fa-circle-exclamation mr-2"></i>
-              <span className="font-medium">{apiError}</span>
-            </div>
-          </div>
-        )} */}
-
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* School Year Selection */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  School Year <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("school_year", {
-                  required: "School Year is required",
-                })}
-              >
-                <option value="">Select School Year</option>
-                {schoolYear?.map(
-                  (year) =>
-                    year && (
-                      <option key={year.id} value={year.id}>
-                        {year.year_name}
-                      </option>
-                    )
-                )}
-              </select>
-              {errors.school_year && (
-                <p className="text-error text-sm mt-1">
-                  {errors.school_year.message}
-                </p>
-              )}
-            </div>
-
-            {/* Category Selection */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-tags text-sm"></i>
-                  Category <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("category", { required: "Category is required" })}
-              >
-                <option value="">Select Category</option>
-                {category?.map(
-                  (cat) =>
-                    cat && (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    )
-                )}
-              </select>
-              {errors.category && (
-                <p className="text-error text-sm mt-1">
-                  {errors.category.message}
-                </p>
-              )}
-            </div>
-
-            {/* Amount Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-money-bill-wave text-sm"></i>
-                  Amount <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="number"
-                min={0}
-                placeholder="Enter Amount e.g: 15000"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("amount", {
-                  required: "Amount salary is required",
-                  min: { value: 0, message: "Salary must be positive" },
-                })}
-              />
-              {errors.amount && (
-                <p className="text-error text-sm mt-1">
-                  {errors.amount.message}
-                </p>
-              )}
-            </div>
-
-            {/* Attachments */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-paperclip text-sm"></i>
-                  Attachments <span className="text-error"></span>
-                </span>
-              </label>
-
-              {!selectedFile ? (
-                <input
-                  type="file"
-                  className="file-input file-input-bordered w-full focus:outline-none"
-                  onChange={handleFileChange}
-                />
-              ) : (
-                <div className="file-input file-input-bordered w-full flex items-center justify-between">
-                  <span className="text-sm text-gray-700 truncate px-3">
-                    {selectedFile.name}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFile(null)}
-                    className="btn btn-xs text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
-                  >
-                    <span>Remove</span>
-                  </button>
-                </div>
-              )}
-
-              {errors.attachment && (
-                <p className="text-error text-sm mt-1">
-                  {errors.attachment.message}
-                </p>
-              )}
-            </div>
-
-            {/* Expense Date Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-day text-sm"></i>
-                  Expense Date <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="date"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("expense_date", {
-                  required: "Expense Date is required",
-                })}
-              />
-              {errors.expense_date && (
-                <p className="text-error text-sm mt-1">
-                  {errors.expense_date.message}
-                </p>
-              )}
-            </div>
-
-            {/* Payment method */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-credit-card text-sm"></i>
-                  Payment Method <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("payment_method", {
-                  required: "Payment method is required",
-                })}
-              >
-                <option value="">Select Payment Mode</option>
-                {paymentModes?.map(
-                  (modes, idx) =>
-                    modes && (
-                      <option key={idx} value={modes}>
-                        {modes}
-                      </option>
-                    )
-                )}
-              </select>
-              {errors.payment_method && (
-                <p className="text-error text-sm mt-1">
-                  {errors.payment_method.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-            {/* Description Field */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-align-left text-sm"></i>
-                  Description <span className="text-error"></span>
-                </span>
-              </label>
-              <textarea
-                placeholder="Enter your category description"
-                className="textarea textarea-bordered w-full focus:outline-none"
-                rows={5}
-                {...register("description")}
-              />
-              {errors.description && (
-                <p className="text-error text-sm mt-1">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
-            <button
-              type="submit"
-              className="btn bgTheme text-white w-full md:w-40"
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* School Year Selection */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-calendar-days text-sm"></i>
+                School Year <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              {...register("school_year", { required: "School Year is required" })}
             >
-              {loading ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              ) : (
-                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-              )}
-              {loading ? "" : "Create"}
+              <option value="">Select School Year</option>
+              {schoolYear?.map((year) => year && (
+                <option key={year.id} value={year.id}>
+                  {year.year_name}
+                </option>
+              ))}
+            </select>
+            {errors.school_year && (
+              <p className="text-error text-sm mt-1">{errors.school_year.message}</p>
+            )}
+          </div>
+
+          {/* Category Selection */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-tags text-sm"></i>
+                Category <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              {...register("category", { required: "Category is required" })}
+            >
+              <option value="">Select Category</option>
+              {category?.map((cat) => cat && (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+            {errors.category && (
+              <p className="text-error text-sm mt-1">{errors.category.message}</p>
+            )}
+          </div>
+
+          {/* Amount Field */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-money-bill-wave text-sm"></i>
+                Amount <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Enter Amount e.g: 15000"
+              className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              {...register("amount", {
+                required: "Amount salary is required",
+                min: { value: 0, message: "Salary must be positive" },
+              })}
+            />
+            {errors.amount && (
+              <p className="text-error text-sm mt-1">{errors.amount.message}</p>
+            )}
+          </div>
+
+          {/* Attachments */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-paperclip text-sm"></i>
+                Attachments
+              </span>
+            </label>
+
+            {!selectedFile ? (
+              <input
+                type="file"
+                className="file-input file-input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                onChange={handleFileChange}
+              />
+            ) : (
+              <div className="file-input file-input-bordered w-full flex items-center justify-between dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <span className="text-sm truncate px-3">{selectedFile.name}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedFile(null)}
+                  className="btn btn-xs text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md dark:bg-red-200"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+
+            {errors.attachment && (
+              <p className="text-error text-sm mt-1">{errors.attachment.message}</p>
+            )}
+          </div>
+
+          {/* Expense Date Field */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-calendar-day text-sm"></i>
+                Expense Date <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="date"
+              className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              {...register("expense_date", {
+                required: "Expense Date is required",
+              })}
+            />
+            {errors.expense_date && (
+              <p className="text-error text-sm mt-1">{errors.expense_date.message}</p>
+            )}
+          </div>
+
+          {/* Payment method */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-credit-card text-sm"></i>
+                Payment Method <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              {...register("payment_method", {
+                required: "Payment method is required",
+              })}
+            >
+              <option value="">Select Payment Mode</option>
+              {paymentModes?.map((modes, idx) => modes && (
+                <option key={idx} value={modes}>
+                  {modes}
+                </option>
+              ))}
+            </select>
+            {errors.payment_method && (
+              <p className="text-error text-sm mt-1">{errors.payment_method.message}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Description Field */}
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-align-left text-sm"></i>
+                Description
+              </span>
+            </label>
+            <textarea
+              placeholder="Enter your category description"
+              className="textarea textarea-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              rows={5}
+              {...register("description")}
+            />
+            {errors.description && (
+              <p className="text-error text-sm mt-1">{errors.description.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
+          <button
+            type="submit"
+            className="btn bgTheme text-white w-full md:w-40"
+          >
+            {loading ? (
+              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+            ) : (
+              <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+            )}
+            {loading ? "" : "Create"}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {/* Modal Components */}
+    <SuccessModal
+      ref={modalRef}
+      navigateTo={handleNavigation}
+      buttonText="Continue"
+      message="Successfully paid the salary!"
+    />
+
+    {showModal && (
+      <dialog className="modal modal-open">
+        <div className="modal-box bg-white text-black dark:bg-gray-800 dark:text-white">
+          <h3 className="font-bold text-lg">Expenses Submission</h3>
+          <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+          <div className="modal-action">
+            <button
+              className="btn bgTheme text-white w-32"
+              onClick={() => setShowModal(false)}
+            >
+              OK
             </button>
           </div>
-        </form>
-      </div>
-      <SuccessModal
-        ref={modalRef}
-        navigateTo={handleNavigation}
-        buttonText="Continue"
-        message="Successfully paid the salary!"
-      />
-       {showModal && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Expenses Submission</h3>
-            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
-            <div className="modal-action">
-              <button
-                className="btn bgTheme text-white w-32"
-                onClick={() => setShowModal(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
-    </div>
-  );
+        </div>
+      </dialog>
+    )}
+  </div>
+);
+
 };

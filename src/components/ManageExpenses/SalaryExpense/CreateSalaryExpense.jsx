@@ -124,183 +124,183 @@ export const CreateSalaryExpense = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Create Salary
-          <i className="fa-solid fa-percentage ml-2"></i>
-        </h1>
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-lg">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
+        Create Salary
+        <i className="fa-solid fa-percentage ml-2"></i>
+      </h1>
 
-        {apiError && (
-          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white">
-            <div className="flex items-center text-error">
-              <i className="fa-solid fa-circle-exclamation mr-2"></i>
-              <span className="font-medium">{apiError}</span>
-            </div>
+      {apiError && (
+        <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white dark:bg-red-900">
+          <div className="flex items-center text-error dark:text-red-400">
+            <i className="fa-solid fa-circle-exclamation mr-2"></i>
+            <span className="font-medium">{apiError}</span>
           </div>
-        )}
+        </div>
+      )}
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Role */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
-                  Role <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                {...register("role", { required: "Role is required" })}
-              >
-                <option value="">Select Role</option>
-                {filteredRoles?.map(
-                  (role) =>
-                    role && (
-                      <option key={role.id} value={role.id}>
-                        {role.name}
-                      </option>
-                    )
-                )}
-              </select>
-              {errors.role && (
-                <p className="text-error text-sm mt-1">{errors.role.message}</p>
-              )}
-            </div>
-
-            {/* Employee */}
-            <div className="form-control relative">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user text-sm"></i>
-                  Employee <span className="text-error">*</span>
-                </span>
-              </label>
-
-              <div
-                className="input input-bordered w-full flex items-center justify-between cursor-pointer"
-                onClick={() => setShowDropdown(!showDropdown)}
-              >
-                {selectedEmployeeName || "Select Employee"}
-                <i
-                  className={`fa-solid fa-chevron-${
-                    showDropdown ? "up" : "down"
-                  } ml-2`}
-                ></i>
-              </div>
-
-              {showDropdown && (
-                <div className="absolute z-10 bg-white rounded w-full mt-1 shadow-lg dark:bg-gray-900">
-                  <div className="p-2 sticky top-0 shadow-sm">
-                    <input
-                      type="text"
-                      placeholder="Search Employee..."
-                      className="input input-bordered w-full focus:outline-none"
-                      value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="max-h-40 overflow-y-auto">
-                    {filteredEmployees.length > 0 ? (
-                      filteredEmployees.map(
-                        (employee) =>
-                          employee && (
-                            <p
-                              key={employee.id}
-                              className="p-2 hover:bg-gray-200 cursor-pointer"
-                              onClick={() => {
-                                setValue("employee", employee.id.toString(), {
-                                  shouldValidate: true,
-                                });
-                                setSelectedEmployeeName(getFullName(employee));
-                                setSearchInput("");
-                                setShowDropdown(false);
-                              }}
-                            >
-                              {getFullName(employee)}
-                            </p>
-                          )
-                      )
-                    ) : (
-                      <p className="p-2 text-gray-500">No employees found</p>
-                    )}
-                  </div>
-                </div>
-              )}
-              {errors.employee && (
-                <p className="text-error text-sm mt-1">
-                  {errors.employee.message}
-                </p>
-              )}
-            </div>
-
-            {/* Joining Date */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  Joining Date <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="date"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("joiningDate", {
-                  required: "Joining date is required",
-                })}
-              />
-              {errors.joiningDate && (
-                <p className="text-error text-sm mt-1">
-                  {errors.joiningDate.message}
-                </p>
-              )}
-            </div>
-
-            {/* Base Salary */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-sack-dollar text-sm"></i>
-                  Base Salary <span className="text-error">*</span>
-                </span>
-              </label>
-              <input
-                type="number"
-                min={0}
-                placeholder="Enter Base Salary e.g: 15000"
-                className="input input-bordered w-full focus:outline-none"
-                {...register("baseSalary", {
-                  required: "Base salary is required",
-                  min: { value: 0, message: "Salary must be positive" },
-                })}
-              />
-              {errors.baseSalary && (
-                <p className="text-error text-sm mt-1">
-                  {errors.baseSalary.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
-            <button
-              type="submit"
-              className="btn bgTheme text-white w-full md:w-40"
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Role */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                <i className="fa-solid fa-school text-sm"></i>
+                Role <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              {...register("role", { required: "Role is required" })}
             >
-              {loading ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              ) : (
-                <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+              <option value="">Select Role</option>
+              {filteredRoles?.map(
+                (role) =>
+                  role && (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  )
               )}
-              {loading ? "" : "Create"}
-            </button>
+            </select>
+            {errors.role && (
+              <p className="text-error text-sm mt-1">{errors.role.message}</p>
+            )}
           </div>
-        </form>
-      </div>
+
+          {/* Employee */}
+          <div className="form-control relative">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                <i className="fa-solid fa-user text-sm"></i>
+                Employee <span className="text-error">*</span>
+              </span>
+            </label>
+
+            <div
+              className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              {selectedEmployeeName || "Select Employee"}
+              <i
+                className={`fa-solid fa-chevron-${
+                  showDropdown ? "up" : "down"
+                } ml-2`}
+              ></i>
+            </div>
+
+            {showDropdown && (
+              <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                  <input
+                    type="text"
+                    placeholder="Search Employee..."
+                    className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </div>
+
+                <div className="max-h-40 overflow-y-auto">
+                  {filteredEmployees.length > 0 ? (
+                    filteredEmployees.map(
+                      (employee) =>
+                        employee && (
+                          <p
+                            key={employee.id}
+                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                            onClick={() => {
+                              setValue("employee", employee.id.toString(), {
+                                shouldValidate: true,
+                              });
+                              setSelectedEmployeeName(getFullName(employee));
+                              setSearchInput("");
+                              setShowDropdown(false);
+                            }}
+                          >
+                            {getFullName(employee)}
+                          </p>
+                        )
+                    )
+                  ) : (
+                    <p className="p-2 text-gray-500 dark:text-gray-400">
+                      No employees found
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            {errors.employee && (
+              <p className="text-error text-sm mt-1">{errors.employee.message}</p>
+            )}
+          </div>
+
+          {/* Joining Date */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                <i className="fa-solid fa-calendar-days text-sm"></i>
+                Joining Date <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="date"
+              className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              {...register("joiningDate", {
+                required: "Joining date is required",
+              })}
+            />
+            {errors.joiningDate && (
+              <p className="text-error text-sm mt-1">
+                {errors.joiningDate.message}
+              </p>
+            )}
+          </div>
+
+          {/* Base Salary */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                <i className="fa-solid fa-sack-dollar text-sm"></i>
+                Base Salary <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="number"
+              min={0}
+              placeholder="Enter Base Salary e.g: 15000"
+              className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              {...register("baseSalary", {
+                required: "Base salary is required",
+                min: { value: 0, message: "Salary must be positive" },
+              })}
+            />
+            {errors.baseSalary && (
+              <p className="text-error text-sm mt-1">{errors.baseSalary.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
+          <button
+            type="submit"
+            className="btn bgTheme text-white w-full md:w-40"
+          >
+            {loading ? (
+              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+            ) : (
+              <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+            )}
+            {loading ? "" : "Create"}
+          </button>
+        </div>
+      </form>
+
       <SuccessModal ref={modalRef} />
     </div>
-  );
+  </div>
+);
+
 };

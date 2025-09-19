@@ -60,72 +60,78 @@ const AllStudentsPerClass = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="bg-white max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center ">
-            <i className="fa-solid fa-graduation-cap mr-2"></i> Students in {levelName}
-          </h1>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b pb-2">
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
       
-         
+      {/* Header */}
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+          <i className="fa-solid fa-graduation-cap mr-2" />
+          Students in {levelName}
+        </h1>
+      </div>
 
-          {error && (
-            <div className="text-red-600 text-center mb-4 font-medium">
-              {error}
-            </div>
-          )}
+      {/* Search & Error */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+        <input
+          type="text"
+          placeholder="Search Student Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded w-full sm:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
+        {error && (
+          <div className="text-red-600 font-medium text-sm text-center sm:text-right w-full sm:w-auto">
+            {error}
+          </div>
+        )}
+      </div>
 
-          <input
-            type="text"
-            placeholder="Search Student Name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border px-3 py-2 rounded w-full sm:w-64"
-          />
-
-        </div>
-
-        <div className="overflow-x-auto max-h-[70vh]">
-          <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-            <thead className="bgTheme text-white text-center z-2 sticky top-0">
+      {/* Table */}
+      <div className="overflow-x-auto max-h-[70vh] border border-gray-200 dark:border-gray-700 rounded-lg">
+        <table className="min-w-full table-auto">
+          <thead className="bgTheme text-white sticky top-0 z-10 text-sm">
+            <tr>
+              <th scope="col" className="px-4 py-3 text-center">S.NO</th>
+              <th scope="col" className="px-4 py-3 text-center">Student Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredStudents.length === 0 ? (
               <tr>
-                <th scope="col" className="px-4 py-3">S.NO</th>
-                <th scope="col" className="px-4 py-3">Student Name</th>
+                <td colSpan="2" className="text-center py-6 text-red-500 dark:text-red-400">
+                  No students found.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {filteredStudents.length === 0 ? (
-                <tr>
-                  <td colSpan="2" className="text-center py-6 text-red-500">
-                    No students found.
+            ) : (
+              filteredStudents.map((record, index) => (
+                <tr
+                  key={record.id || index}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+                >
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                    {index + 1}.
+                  </td>
+                  <td className="px-4 py-3 capitalize">
+                    <Link
+                      to={`/Studentdetails/${record.student_id}`}
+                      className="textTheme hover:underline"
+                    >
+                      {record.student_name || "Unnamed"}
+                    </Link>
                   </td>
                 </tr>
-              ) : (
-                filteredStudents.map((record, index) => (
-                  <tr key={record.id || index} className="hover:bg-gray-50 textTheme text-center">
-                    <td className="px-4 py-3 text-gray-700">{index + 1}.</td>
-                    <td className="px-4 py-3 capitalize">
-                      <Link
-                        to={`/Studentdetails/${record.student_id}`}
-                        className="textTheme hover:underline"
-                      >
-                        {record.student_name || "Unnamed"}
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
+);
 
-  );
 };
 
 export default AllStudentsPerClass;
