@@ -195,9 +195,9 @@ const TeacherAttendanceRecord = () => {
               onChange={handleStatusChange}
               className="w-full border px-3 py-2 rounded mb-4"
             >
-              <option value="present">Present</option>
               <option value="absent">Absent</option>
               <option value="leave">Leave</option>
+              <option value="present">Present</option>
             </select>
             <div className="flex flex-col sm:flex-row justify-end gap-2">
               <button
