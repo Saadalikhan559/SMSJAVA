@@ -38,6 +38,7 @@ const AllStaff = () => {
       .toLowerCase()
       .includes(teacherSearch.toLowerCase())
   );
+console.log(filteredTeachers);
 
   const filteredOfficeStaff = officestaff.filter((staff) =>
     [staff.first_name, staff.middle_name, staff.last_name]
@@ -46,6 +47,8 @@ const AllStaff = () => {
       .toLowerCase()
       .includes(staffSearch.toLowerCase())
   );
+
+  
 
   if (loading) {
     return (
@@ -114,6 +117,8 @@ return (
                 <tr>
                   <th className="px-4 py-3">S.NO</th>
                   <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Joined Date</th>
+                  <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,6 +144,8 @@ return (
                           {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                         </Link>
                       </td>
+                       <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.joining_date}</td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active ===true ? "Active" : "InActive"} </td>
                     </tr>
                   ))
                 )}
@@ -169,6 +176,8 @@ return (
                 <tr>
                   <th className="px-4 py-3">S.NO</th>
                   <th className="px-4 py-3">Name</th>
+                   <th className="px-4 py-3">Joined Date</th>
+                  <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -194,6 +203,8 @@ return (
                           {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                         </Link>
                       </td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date_joined}.</td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active ===true ? "Active" : "InActive"} </td>
                     </tr>
                   ))
                 )}

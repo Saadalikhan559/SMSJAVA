@@ -16,6 +16,7 @@ export const ViewDocuments = () => {
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedClass, setSelectedClass] = useState("All");
   const [teacherClasses, setTeacherClasses] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
   const [viewOption, setViewOption] = useState("my"); // 'my' or 'assigned'
   const { axiosInstance } = useContext(AuthContext);
 
@@ -150,11 +151,18 @@ export const ViewDocuments = () => {
       );
     }
 
+
     // Director/Admin
     const roleMatch = selectedRole === "All" || person.role === selectedRole;
     const classMatch = selectedRole === "Student" ? selectedClass === "All" || person.yearLevel === selectedClass : true;
     return roleMatch && classMatch;
   });
+  const filterBysearch = filteredData.filter((detail) =>
+    detail.name
+      .toLowerCase()
+      .includes(searchInput.toLowerCase())
+  );
+
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
@@ -186,11 +194,10 @@ export const ViewDocuments = () => {
           userRole !== "guardian" &&
           userRole !== "teacher" &&
           userRole !== "officestaff" && (
-            <div className="mb-4 flex gap-4 border-b dark:border-gray-700 pb-2">
-              <div className="flex flex-col w-full sm:w-xs">
-                <label className="mr-2 text-sm text-gray-700 dark:text-gray-300">
-                  Select Role:
-                </label>
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b dark:border-gray-700 pb-4">
+              {/* Role Selector */}
+              <div className="flex flex-col w-full sm:w-1/4">
+                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">Select Role:</label>
                 <select
                   value={selectedRole}
                   onChange={(e) => {
@@ -206,11 +213,11 @@ export const ViewDocuments = () => {
                   <option value="Teacher">Teacher</option>
                 </select>
               </div>
+
+              {/* Class Selector (only for Students) */}
               {selectedRole === "Student" && (
-                <div className="flex flex-col">
-                  <label className="mr-2 text-sm text-gray-700 dark:text-gray-300">
-                    Select Class:
-                  </label>
+                <div className="flex flex-col w-full sm:w-1/4">
+                  <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">Select Class:</label>
                   <select
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
@@ -224,7 +231,20 @@ export const ViewDocuments = () => {
                   </select>
                 </div>
               )}
+
+              {/* Search Input */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">Search Name:</label>
+                <input
+                  type="text"
+                  placeholder="Search Name..."
+                  className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+              </div>
             </div>
+
           )}
 
         {/* Table */}
@@ -249,49 +269,55 @@ export const ViewDocuments = () => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                  {filteredData.map((person, idx) => (
-                    <tr
-                      key={idx}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-                    >
-                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                        {person.name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                        {person.role}
-                      </td>
-                      {userRole !== "student" && selectedRole === "Student" && (
+                <tbody className="divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                  {[...filterBysearch]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((person, idx) => (
+                      <tr
+                        key={idx}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                      >
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                          {person.yearLevel || "-"}
+                          {person.name}
                         </td>
-                      )}
-                      {allDocTypes.map((type) => (
-                        <td
-                          key={type}
-                          className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
-                        >
-                          {person.docs[type] && person.docs[type].length > 0 ? (
-                            person.docs[type].map((url, i) => (
-                              <div key={i}>
-                                <a
-                                  href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="underline textTheme hover:text-blue-800 dark:hover:text-blue-200"
-                                >
-                                  View
-                                </a>
-                              </div>
-                            ))
-                          ) : (
-                            "-"
-                          )}
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                          {person.role}
                         </td>
-                      ))}
-                    </tr>
-                  ))}
+
+                        {userRole !== "student" && selectedRole === "Student" && (
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                            {person.yearLevel || "-"}
+                          </td>
+                        )}
+
+                        {allDocTypes.map((type) => (
+                          <td
+                            key={type}
+                            className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
+                          >
+                            {person.docs[type] && person.docs[type].length > 0 ? (
+                              person.docs[type].map((url, i) => (
+                                <div key={i}>
+                                  <a
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline textTheme hover:text-blue-800 dark:hover:text-blue-200"
+                                  >
+                                    View
+                                  </a>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-sm text-gray-700 dark:text-gray-200 text-nowrap">Not</p>
+
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
                 </tbody>
+
               </table>
             </div>
           </div>
