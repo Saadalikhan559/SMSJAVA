@@ -134,7 +134,7 @@ export const AdmissionForm = () => {
       setYearLevel(yearLevels);
     } catch (err) {
       console.log("Failed to load year levels. Please try again.");
-    }
+    } 
   };
 
   const getSchoolYears = async () => {
@@ -243,8 +243,19 @@ export const AdmissionForm = () => {
         data.guardian_user_profile[0]
       );
     }
+    if (data.guardian_type) {
+     submitFormData.append("guardian_type", data.guardian_type);
+
+    }
 
     try {
+    const debugPayload = {};
+for (let [key, value] of submitFormData.entries()) {
+  debugPayload[key] = value;
+}
+console.log("FormData Payload:", debugPayload);
+   
+      
       await handleAdmissionForm(submitFormData);
       // Show success modal after successful submission
       setShowAdmissionSuccessModal(true);
@@ -252,9 +263,6 @@ export const AdmissionForm = () => {
       setSelectedGuardianType("");
       setIsRTE(false);
     } catch (error) {
-      console.log(error);
-
-      console.error("Submission error:", error.response?.data || error.message);
       alert(
         `Failed to submit the form: ${error.response?.data?.message || error.message
         }`

@@ -134,149 +134,196 @@ const UpdateIncome = ({ onClose, refreshData }) => {
   }
 
 
-  return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Update School Income <i className="fa-solid fa-sack-dollar ml-2"></i>
-        </h1>
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 dark:text-white rounded-box my-5 shadow-lg">
+      <h1 className="text-3xl font-bold text-center mb-8">
+        Update School Income <i className="fa-solid fa-sack-dollar ml-2"></i>
+      </h1>
 
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Month */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Month <span className="text-error">*</span></span>
-              </label>
-              <select {...register("month", { required: "Month is required" })}
-                className="select select-bordered w-full focus:outline-none">
-                <option value="">Select Month</option>
-                {months.map((m, idx) => <option key={idx} value={m}>{m}</option>)}
-              </select>
-            </div>
-
-            {/* Amount */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Amount <span className="text-error">*</span></span>
-              </label>
-              <input type="number" {...register("amount", { required: "Amount is required", min: 1 })}
-                className="input input-bordered w-full focus:outline-none"
-                readOnly={parseInt(selectedCategory) === 1} />
-            </div>
-
-            {/* Income Date */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Income Date <span className="text-error">*</span></span>
-              </label>
-              <input type="date" {...register("income_date", { required: "Income Date is required" })}
-                className="input input-bordered w-full focus:outline-none" />
-            </div>
-
-            {/* Category */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Category <span className="text-error">*</span></span>
-              </label>
-              <select {...register("category", { required: "Category is required" })}
-                className="select select-bordered w-full focus:outline-none">
-                <option value="">Select Category</option>
-                {Object.entries(categoryMap).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-              </select>
-            </div>
-
-            {/* Description */}
-            <div className="form-control">
-  <label className="label">
-    <span className="label-text">Description</span>
-  </label>
-  <input
-    type="text"
-    {...register("description")}
-    placeholder="Enter description"
-    className="input input-bordered w-full focus:outline-none"
-  />
-</div>
-
-            {/* School Year */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">School Year <span className="text-error">*</span></span>
-              </label>
-              <select {...register("school_year", { required: "School Year is required" })}
-                className="select select-bordered w-full focus:outline-none">
-                <option value="">Select School Year</option>
-                {schoolYears?.map(y => <option key={y.id} value={y.id}>{y.year_name}</option>)}
-              </select>
-            </div>
-
-            {/* Payment Method */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Payment Method <span className="text-error">*</span></span>
-              </label>
-              <select {...register("payment_method", { required: "Payment Method is required" })}
-                className="select select-bordered w-full focus:outline-none">
-                <option value="cash">Cash</option>
-                <option value="bank">Bank</option>
-                <option value="online">Online</option>
-              </select>
-            </div>
-
-            {/* Status */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Status <span className="text-error">*</span></span>
-              </label>
-              <select {...register("status", { required: "Status is required" })}
-                className="select select-bordered w-full focus:outline-none">
-                <option value="confirmed">Confirmed</option>
-                <option value="pending">Pending</option>
-              </select>
-            </div>
-
-            {/* Attachment */}
-             <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-paperclip text-sm"></i>
-                  Attachment
-                </span>
-              </label>
-              <input
-                type="file"
-                accept=".jpg,.jpeg,.png,.pdf"
-                {...register("attachment")}
-                className="file-input file-input-bordered w-full focus:outline-none"
-              />
-            </div>
+      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Month */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Month <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              {...register("month", { required: "Month is required" })}
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="">Select Month</option>
+              {months.map((m, idx) => (
+                <option key={idx} value={m}>{m}</option>
+              ))}
+            </select>
           </div>
 
-          <div className="flex justify-center mt-8">
-            <button type="submit" className="btn bgTheme text-white w-52" disabled={submitLoading}>
-              {submitLoading ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> :
-                <><i className="fa-solid fa-floppy-disk mr-2"></i>Update Income</>}
-            </button>
+          {/* Amount */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Amount <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="number"
+              {...register("amount", { required: "Amount is required", min: 1 })}
+              className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              readOnly={parseInt(selectedCategory) === 1}
+            />
           </div>
-        </form>
 
-        {modalOpen && (
-          <dialog className="modal modal-open">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">Success</h3>
-              <p className="py-4">
-                Income record has been successfully updated.
-              </p>
-              <div className="modal-action">
-                <button className="btn bgTheme text-white w-25" onClick={closeModal}>OK</button>
-              </div>
+          {/* Income Date */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Income Date <span className="text-error">*</span>
+              </span>
+            </label>
+            <input
+              type="date"
+              {...register("income_date", { required: "Income Date is required" })}
+              className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+
+          {/* Category */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Category <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              {...register("category", { required: "Category is required" })}
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="">Select Category</option>
+              {Object.entries(categoryMap).map(([id, name]) => (
+                <option key={id} value={id}>{name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Description */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">Description</span>
+            </label>
+            <input
+              type="text"
+              {...register("description")}
+              placeholder="Enter description"
+              className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+
+          {/* School Year */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                School Year <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              {...register("school_year", { required: "School Year is required" })}
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="">Select School Year</option>
+              {schoolYears?.map(y => (
+                <option key={y.id} value={y.id}>{y.year_name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Payment Method */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Payment Method <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              {...register("payment_method", { required: "Payment Method is required" })}
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="cash">Cash</option>
+              <option value="bank">Bank</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+
+          {/* Status */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text dark:text-gray-200">
+                Status <span className="text-error">*</span>
+              </span>
+            </label>
+            <select
+              {...register("status", { required: "Status is required" })}
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+
+          {/* Attachment */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1 dark:text-gray-200">
+                <i className="fa-solid fa-paperclip text-sm"></i>
+                Attachment
+              </span>
+            </label>
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              {...register("attachment")}
+              className="file-input file-input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <button
+            type="submit"
+            className="btn bgTheme text-white w-52"
+            disabled={submitLoading}
+          >
+            {submitLoading ? (
+              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+            ) : (
+              <>
+                <i className="fa-solid fa-floppy-disk mr-2"></i>
+                Update Income
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+
+      {modalOpen && (
+        <dialog className="modal modal-open">
+          <div className="modal-box bg-white text-black dark:bg-gray-800 dark:text-white">
+            <h3 className="font-bold text-lg">Success</h3>
+            <p className="py-4">Income record has been successfully updated.</p>
+            <div className="modal-action">
+              <button className="btn bgTheme text-white w-25" onClick={closeModal}>
+                OK
+              </button>
             </div>
-          </dialog>
-        )}
-      </div>
+          </div>
+        </dialog>
+      )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default UpdateIncome;

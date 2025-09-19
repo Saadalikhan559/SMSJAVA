@@ -110,157 +110,163 @@ export const SchoolIncome = () => {
   if (loading) return <Loader />;
   if (error) return <Error />;
 
-  return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
-            <i className="fa-solid fa-money-bill-wave mr-2"></i> School Income Records
-          </h1>
-        </div>
-        {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-6 border-b pb-2 items-end">
-          {/* School Year Filter */}
-          <div className="form-control w-48">
-            <label className="label">
-              <span className="label-text">Select School Year</span>
-            </label>
-            <select
-              value={selectedSchoolYear}
-              onChange={(e) => setSelectedSchoolYear(e.target.value)}
-              className="select select-bordered w-full focus:outline-none"
-            >
-              <option value="">Select School Year</option>
-              {schoolYears.map((year) => (
-                <option key={year.id} value={year.id}>
-                  {year.year_name}
-                </option>
-              ))}
-            </select>
-          </div>
+return (
+  <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
+          <i className="fa-solid fa-money-bill-wave mr-2"></i> School Income Records
+        </h1>
+      </div>
 
-          {/* Category Filter */}
-          <div className="form-control w-48">
-            <label className="label">
-              <span className="label-text">Select Category</span>
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="select select-bordered w-full focus:outline-none"
-            >
-              <option value="">Category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Reset Filter Button */}
-          <div className="form-control mt-6 md:mt-0">
-            <button
-              onClick={() => {
-                setSelectedSchoolYear("");
-                setSelectedCategory("");
-              }}
-              className="btn bgTheme text-white"
-            >
-              Reset Filter
-            </button>
-          </div>
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 mb-6 border-b border-gray-300 dark:border-gray-700 pb-2 items-end">
+        {/* School Year Filter */}
+        <div className="form-control w-48">
+          <label className="label">
+            <span className="label-text text-gray-700 dark:text-gray-300">
+              Select School Year
+            </span>
+          </label>
+          <select
+            value={selectedSchoolYear}
+            onChange={(e) => setSelectedSchoolYear(e.target.value)}
+            className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+          >
+            <option value="">Select School Year</option>
+            {schoolYears.map((year) => (
+              <option key={year.id} value={year.id}>
+                {year.year_name}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* Category Filter */}
+        <div className="form-control w-48">
+          <label className="label">
+            <span className="label-text text-gray-700 dark:text-gray-300">Select Category</span>
+          </label>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+          >
+            <option value="">Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        {/* Table */}
-        <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bgTheme text-white z-2 sticky top-0">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {incomeDetails.length > 0 ? (
-                incomeDetails.map((income) => (
-                  <tr key={income.id}>
-                    <td className="px-4 py-3 text-sm text-gray-700">{income.month}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">₹{income.amount}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{income.income_date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{income.category_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{income.description}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{income.school_year_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 capitalize">{income.payment_method}</td>
-                    <td className="px-4 py-3 text-sm text-blue-600">
-                      {income.attachment ? (
-                        <a
-                          href={`${constants.baseUrl}${income.attachment.replace(/^http:\/\/localhost:8000/, "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          View
-                        </a>
-                      ) : "-"}
-                    </td>
-                    <td>
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${income.status === "confirmed"
+        {/* Reset Filter Button */}
+        <div className="form-control mt-6 md:mt-0">
+          <button
+            onClick={() => {
+              setSelectedSchoolYear("");
+              setSelectedCategory("");
+            }}
+            className="btn bgTheme text-white"
+          >
+            Reset Filter
+          </button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
+        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+          <thead className="bgTheme text-white sticky top-0 z-10">
+            <tr>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+            {incomeDetails.length > 0 ? (
+              incomeDetails.map((income) => (
+                <tr key={income.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.month}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">₹{income.amount}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.income_date}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.category_name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.description}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.school_year_name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">{income.payment_method}</td>
+                  <td className="px-4 py-3 text-sm text-blue-600">
+                    {income.attachment ? (
+                      <a
+                        href={`${constants.baseUrl}${income.attachment.replace(/^http:\/\/localhost:8000/, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        View
+                      </a>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td>
+                    <span
+                     className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${income.status === "confirmed"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-600"
                           }`}
-                      >
-                        {income.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 flex gap-2">
-                      <Link
-                        to={allRouterLink.editIncom.replace(":id", income.id)}
-                        className="px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setDeleteId(income.id);
-                          confirmModalRef.current.show();
-                        }}
-                        className="px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="10" className="px-4 py-12 text-center text-gray-500">
-                    <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
-                    <p>No income records found for the selected criteria</p>
+                    >
+                      {income.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 flex gap-2">
+                    <Link
+                      to={allRouterLink.editIncom.replace(":id", income.id)}
+                     className="px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setDeleteId(income.id);
+                        confirmModalRef.current.show();
+                      }}
+                      className="px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Confirmation Modal */}
-        <ConfirmationModal
-          ref={confirmModalRef}
-          onConfirm={() => handleDeleteIncome(deleteId)}
-          onCancel={() => setDeleteId(null)}
-        />
-        <SuccessModal ref={modalRef} />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400 dark:text-gray-600"></i>
+                  <p>No income records found for the selected criteria</p>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        ref={confirmModalRef}
+        onConfirm={() => handleDeleteIncome(deleteId)}
+        onCancel={() => setDeleteId(null)}
+      />
+      <SuccessModal ref={modalRef} />
     </div>
-  );
+  </div>
+);
+
 };
