@@ -335,7 +335,7 @@ console.log("fee",availableFees);
         setPaymentStatus(response.data);
         setShowPaymentDialog1(true);
       }
-    } catch (error) {
+    } catch (err) {
       setPaymentStatus("Payment failed. Please try again.");
     }
   };
