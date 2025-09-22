@@ -175,7 +175,7 @@ export const Sidebar = () => {
                          transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-clipboard-list w-5"></i>{" "}
-                        Admission Details
+                        Student Details
                       </Link>
                     </li>
                   </ul>
@@ -292,7 +292,7 @@ export const Sidebar = () => {
                          hover:bg-blue-100 dark:hover:bg-gray-700 
                          transition text-gray-800 dark:text-gray-200"
                           >
-                            <i className="fa-solid fa-table-list w-5"></i> Time
+                            <i className="fa-solid fa-table-list w-5"></i> Examination Time
                             Table
                           </Link>
                         </li>
