@@ -245,6 +245,11 @@ export const AdmissionForm = () => {
     }
 
     try {
+      const debugPayload = {};
+      for (let [key, value] of submitFormData.entries()) {
+        debugPayload[key] = value;
+      }
+      console.log("FormData Payload:", debugPayload);
       await handleAdmissionForm(submitFormData);
       // Show success modal after successful submission
       setShowAdmissionSuccessModal(true);
@@ -306,7 +311,7 @@ export const AdmissionForm = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
-          Fill your Details <i className="fa-solid fa-graduation-cap ml-2"></i>
+          Admission Form<i className="fa-solid fa-graduation-cap ml-2"></i>
         </h1>
 
         {/* Student Information Section */}
@@ -486,8 +491,17 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="date"
+                max={new Date().toISOString().split("T")[0]}
                 {...register("student.date_of_birth", {
                   required: "Date of birth is required",
+                  validate: (value) => {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    if (selectedDate > today) {
+                      return "Future dates are not allowed";
+                    }
+                    return true;
+                  },
                 })}
                 className={`input input-bordered w-full focus:outline-none ${errors.student?.date_of_birth ? "input-error" : ""
                   }`}
@@ -498,6 +512,7 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -730,35 +745,37 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-id-card text-sm"></i>
-                  RTE Number
-                </span>
-              </label>
-              <input
-                type="text"
-                {...register("rte_number", {
-                  required: isRTE
-                    ? "RTE number is required for RTE students"
-                    : false,
-                  maxLength: {
-                    value: 50,
-                    message: "RTE number cannot exceed 50 characters",
-                  },
-                })}
-                placeholder="RTE Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.rte_number ? "input-error" : ""
-                  }`}
-                disabled={!isRTE}
-              />
-              {errors.rte_number && (
-                <span className="text-error text-sm">
-                  {errors.rte_number.message}
-                </span>
-              )}
-            </div>
+
+            {/*RTE number field Render only when isRTE is true */}
+            {isRTE && (
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text flex items-center gap-2">
+                    <i className="fa-solid fa-id-card text-sm"></i>
+                    RTE Number <span className="text-error">*</span>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  {...register("rte_number", {
+                    required: "RTE number is required for RTE students",
+                    maxLength: {
+                      value: 50,
+                      message: "RTE number cannot exceed 50 characters",
+                    },
+                  })}
+                  placeholder="RTE Number"
+                  className={`input input-bordered w-full focus:outline-none ${errors.rte_number ? "input-error" : ""
+                    }`}
+                />
+                {errors.rte_number && (
+                  <span className="text-error text-sm">
+                    {errors.rte_number.message}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -950,11 +967,12 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="tel"
+
                 {...register("guardian.phone_no", {
                   required: "Phone number is required",
                   pattern: {
-                    value: /^\+?\d{10,15}$/,
-                    message: "Invalid phone number format",
+                    value: /^\d{10}$/,
+                    message: "Phone number must be exactly 10 digits",
                   },
                   maxLength: {
                     value: 50,
@@ -1219,10 +1237,26 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="date"
-                {...register("admission_date")}
-                className="input input-bordered w-full focus:outline-none"
+                max={new Date().toISOString().split("T")[0]} // 👈 Prevent future dates
+                {...register("admission_date", {
+                  required: "Admission date is required",
+                  validate: (value) => {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    if (selectedDate > today) {
+                      return "Future dates are not allowed";
+                    }
+                    return true;
+                  },
+                })}
+                className={`input input-bordered w-full focus:outline-none ${errors.admission_date ? "input-error" : ""
+                  }`}
               />
+              {errors.admission_date && (
+                <span className="text-error text-sm">{errors.admission_date.message}</span>
+              )}
             </div>
+
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1262,8 +1296,8 @@ export const AdmissionForm = () => {
                 {...register("emergency_contact_no", {
                   required: "Emergency contact is required",
                   pattern: {
-                    value: /^\+?\d{10,15}$/,
-                    message: "Invalid phone number format",
+                    value: /^\d{10}$/,
+                    message: "Emergency contact must be exactly 10 digits",
                   },
                   maxLength: {
                     value: 100,
@@ -1359,11 +1393,10 @@ export const AdmissionForm = () => {
             </div>
           </div>
         </div>
-
-        {/* Address Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Residential Address</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {/* House Number */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1388,11 +1421,13 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
+
+            {/* Habitation */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-map-location text-sm"></i>
-                  Habitation <span className="text-error">*</span>
+                  Habitation
                 </span>
               </label>
               <input
@@ -1414,46 +1449,8 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-map text-sm"></i>
-                  Ward Number
-                </span>
-              </label>
-              <input
-                type="number"
-                placeholder="Ward Number"
-                min={0}
-                className="input input-bordered w-full focus:outline-none"
-                {...register("address_input.ward_no")}
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
-                }}
-                onWheel={(e) => e.target.blur()}
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-2">
-                  <i className="fa-solid fa-map-pin text-sm"></i>
-                  Zone
-                </span>
-              </label>
-              <input
-                type="number"
-                placeholder="Zone"
-                min={0} // prevents down arrow from going negative
-                className="input input-bordered w-full focus:outline-none"
-                {...register("address_input.zone_no")}
-                onKeyDown={(e) => {
-                  if (e.key === "-" || e.key === "e") e.preventDefault();
-                }}
-                onWheel={(e) => e.target.blur()}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+
+            {/* Block */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1480,6 +1477,52 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
+
+            {/* Ward Number */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map text-sm"></i>
+                  Ward Number
+                </span>
+              </label>
+              <input
+                type="number"
+                placeholder="Ward Number"
+                min={0}
+                className="input input-bordered w-full focus:outline-none"
+                {...register("address_input.ward_no")}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                }}
+                onWheel={(e) => e.target.blur()}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+            {/* Zone */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  <i className="fa-solid fa-map-pin text-sm"></i>
+                  Zone
+                </span>
+              </label>
+              <input
+                type="number"
+                placeholder="Zone"
+                min={0}
+                className="input input-bordered w-full focus:outline-none"
+                {...register("address_input.zone_no")}
+                onKeyDown={(e) => {
+                  if (e.key === "-" || e.key === "e") e.preventDefault();
+                }}
+                onWheel={(e) => e.target.blur()}
+              />
+            </div>
+
+            {/* District */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1492,7 +1535,7 @@ export const AdmissionForm = () => {
                 {...register("address_input.district", {
                   required: "District is required",
                   maxLength: {
-                    value: 100,
+                    value: 50,
                     message: "District cannot exceed 100 characters",
                   },
                 })}
@@ -1506,11 +1549,13 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
+
+            {/* City */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-city text-sm"></i>
-                  City <span className="text-error">*</span>
+                  City
                 </span>
               </label>
               <select
@@ -1533,6 +1578,8 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
+
+            {/* Division */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1545,7 +1592,7 @@ export const AdmissionForm = () => {
                 {...register("address_input.division", {
                   required: "Division is required",
                   maxLength: {
-                    value: 100,
+                    value: 10,
                     message: "Division cannot exceed 100 characters",
                   },
                 })}
@@ -1560,12 +1607,14 @@ export const AdmissionForm = () => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {/* State */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-flag text-sm"></i>
-                  State <span className="text-error">*</span>
+                  State
                 </span>
               </label>
               <select
@@ -1588,11 +1637,13 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
+
+            {/* Country */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-globe text-sm"></i>
-                  Country <span className="text-error">*</span>
+                  Country
                 </span>
               </label>
               <select
@@ -1615,13 +1666,13 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="form-control">
+
+            {/* Pincode */}
+            <div className="form-control ">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-mailbox text-sm"></i>
-                  Pin Code <span className="text-error">*</span>
+                  Pin Code
                 </span>
               </label>
               <input
@@ -1651,6 +1702,7 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <textarea
+                maxLength={250}
                 {...register("address_input.address_line", {
                   required: "Address line is required",
                   maxLength: {
@@ -1670,7 +1722,6 @@ export const AdmissionForm = () => {
             </div>
           </div>
         </div>
-
         {/* Bank Details Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Bank Account Details</h2>

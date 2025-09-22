@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchAdmissionDetails, fetchYearLevels } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
-import { Loader } from "../../global/Loader";
+
 
 export const AdmissionDetails = () => {
   const [details, setDetails] = useState(null);
@@ -10,6 +10,7 @@ export const AdmissionDetails = () => {
   const [selectedClass, setSelectedClass] = useState("");
   const [yearLevels, setYearLevels] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [error, setError] = useState(false);
 
   const getAdmissionDetails = async () => {
@@ -70,59 +71,115 @@ export const AdmissionDetails = () => {
   }
   console.log(details);
 
-
-  const filterData = details.filter((detail) =>
-    detail.year_level.toLowerCase().includes(selectedClass.toLowerCase())
-  );
-  const filterBysearch = filterData.filter((detail) =>
-    detail.student_input.first_name
+  const filterData = details.filter((detail) => {
+    const matchesClass = detail.year_level
       .toLowerCase()
-      .includes(searchInput.toLowerCase())
-  );
+      .includes(selectedClass.toLowerCase());
+
+    const matchesDate = selectedDate
+      ? detail.admission_date === selectedDate
+      : true;
+
+    return matchesClass && matchesDate;
+  });
+
+
+  const filterBysearch = filterData.filter((detail) => {
+    const search = searchInput.toLowerCase();
+    const studentName = `${detail.student_input.first_name} ${detail.student_input.last_name}`.toLowerCase();
+    const guardianName = `${detail.guardian_input.first_name} ${detail.guardian_input.last_name}`.toLowerCase();
+    return studentName.includes(search) || guardianName.includes(search);
+  });
+
+  const resetFilters = () => {
+    setSelectedMonth("");
+    setSelectedClass("");
+    setSearchTerm("");
+  };
+
+  const sortedData = [...filterBysearch].sort((a, b) => {
+    const nameA = `${a.student_input.first_name} ${a.student_input.last_name}`.toLowerCase();
+    const nameB = `${b.student_input.first_name} ${b.student_input.last_name}`.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4  border-gray-200 dark:border-gray-700">
-            <i className="fa-solid fa-clipboard-list w-5"></i> Admission Details
+            <i className="fa-solid fa-clipboard-list w-5"></i> Student Details
           </h1>
         </div>
-
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4 border-gray-200 dark:border-gray-700">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
 
-            {/* Class Filter */}
-            <div className="flex flex-col w-full sm:w-xs">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Select Class:
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-              >
-                <option value="">All Classes</option>
-                {yearLevels.map((level) => (
-                  <option key={level.id} value={level.level_name}>
-                    {level.level_name}
-                  </option>
-                ))}
-              </select>
+            {/* Left Side: Filters */}
+            <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
+              {/* Class Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Search By Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.level_name}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Date Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Search By Date:
+                </label>
+                <input
+                  type="date"
+                  className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </div>
+
+              {/* Reset Button */}
+              <div className="mt-1 w-full sm:w-auto">
+                <button
+                  onClick={() => {
+                    setSelectedClass("");
+                    setSelectedDate("");
+                    setSearchInput("");
+                  }}
+                  className="btn bgTheme text-white"
+                >
+                  Reset Filters
+                </button>
+              </div>
             </div>
 
-            {/* Search Input */}
-            <div className="flex flex-col w-full sm:w-auto">
-              <input
-                type="text"
-                placeholder="Search Student Name..."
-                className="input input-bordered w-full sm:max-w-xs focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
+            {/* Right Side: Search */}
+            <div className="flex items-end gap-2 w-full sm:w-auto justify-end">
+              <div className="flex flex-col w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Student Name or Guardian Name"
+                  className="input input-bordered w-full sm:w-64 focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+              </div>
             </div>
+
           </div>
         </div>
+
+
 
         {filterData.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400">No admission records found.</p>
@@ -138,12 +195,13 @@ export const AdmissionDetails = () => {
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Date of Birth</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Gender</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Class</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">RTE</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Date</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                    {filterBysearch.map((detail) => (
+                    {sortedData.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                           {detail.student_input.first_name} {detail.student_input.last_name}
@@ -161,7 +219,12 @@ export const AdmissionDetails = () => {
                           {detail.year_level}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                          {detail.admission_date}
+                          {detail.is_rte ? "Yes" : "No"}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          {new Date(detail.admission_date)
+                            .toLocaleDateString("en-GB")
+                            .replaceAll("/", "-")}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm">
                           <div className="flex space-x-2">
@@ -174,7 +237,7 @@ export const AdmissionDetails = () => {
                             <Link
                               to={allRouterLink.addmissionDetailsById.replace(":id", detail.id)}
                               className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1]">
-                              More
+                              View
                             </Link>
                           </div>
                         </td>

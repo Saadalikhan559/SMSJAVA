@@ -454,7 +454,7 @@ export const EditAddmissionDetails = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
-          Edit Admission Details{" "}
+          Edit Student Details{" "}
           <i className="fa-solid fa-pen-to-square ml-2"></i>
         </h1>
 

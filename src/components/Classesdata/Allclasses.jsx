@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchYearLevels } from "../../services/api/Api";
+import { fetchYearLevels, fetchStudentYearLevelByClass } from "../../services/api/Api";
 import { Link } from "react-router-dom";
-import { Loader } from "../../global/Loader";
 
 const Allclasses = () => {
     const [yearLevels, setYearLevels] = useState([]);
@@ -10,10 +9,21 @@ const Allclasses = () => {
 
     const getYearLevels = async () => {
         setLoading(true);
+
         try {
             const data = await fetchYearLevels();
-            console.log("Fetched year levels:", data);
-            setYearLevels(data);
+            const withCounts = await Promise.all(
+                data.map(async (level) => {
+                    const students = await fetchStudentYearLevelByClass(level.id).catch(() => []);
+                    return {
+                        ...level,
+                        student_count: students.length,
+                    };
+                })
+            );
+
+            setYearLevels(withCounts);
+
         } catch (err) {
             console.error("Error fetching year levels:", err);
             setError("Failed to fetch year levels. Please try again later.");
@@ -22,11 +32,12 @@ const Allclasses = () => {
         }
     };
 
+
+
     useEffect(() => {
         getYearLevels();
     }, []);
 
-    
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen">
@@ -40,10 +51,8 @@ const Allclasses = () => {
         );
     }
 
- 
     if (error) {
         return (
-
             <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
                 <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
                 <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
@@ -53,23 +62,24 @@ const Allclasses = () => {
 
     return (
         <div className="min-h-screen p-5 bg-gray-50">
-            <div className="bg-white p-6 max-w-7xl rounded-lg shadow-lg  mx-auto">
+            <div className="bg-white p-6 max-w-7xl rounded-lg shadow-lg mx-auto">
                 <h1 className="text-3xl font-bold text-center mb-4 text-gray-800 border-b pb-4">
                     <i className="fa-solid fa-graduation-cap mr-2"></i> All Year Levels
                 </h1>
 
                 <div className="overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
-                    <table className="min-w-full table-auto rounded-lg ">
-                        <thead className="bgTheme text-white text-center z-2 sticky top-0">
+                    <table className="min-w-full table-auto rounded-lg text-center">
+                        <thead className="bgTheme text-white text-center sticky top-0">
                             <tr>
                                 <th scope="col" className="px-4 py-3">S.NO</th>
                                 <th scope="col" className="px-4 py-3">Year Level</th>
+                                <th scope="col" className="px-4 py-3">Number Of Students</th>
                             </tr>
                         </thead>
                         <tbody>
                             {yearLevels.length === 0 ? (
                                 <tr>
-                                    <td colSpan="2" className="text-center py-6 text-gray-500">
+                                    <td colSpan="3" className="text-center py-6 text-gray-500">
                                         No data found.
                                     </td>
                                 </tr>
@@ -86,6 +96,7 @@ const Allclasses = () => {
                                                 {record.level_name}
                                             </Link>
                                         </td>
+                                        <td className="px-4 py-3 text-center">{record.student_count}</td>
                                     </tr>
                                 ))
                             )}

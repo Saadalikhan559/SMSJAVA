@@ -545,7 +545,7 @@ export const DocumentUpload = () => {
                   ) : (
                     <button
                       type="button"
-                      className="btn btn-error w-full"
+                      className="btn w-full inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                       onClick={() =>
                         setUploadFields(uploadFields.filter((_, i) => i !== index))
                       }
@@ -685,8 +685,8 @@ export const DocumentUpload = () => {
                 type="button"
                 onClick={next}
                 className={`btn bgTheme text-white w-40 ${role.length === 0 || (role === constants.roles.student && !formData.year_level)
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-purple-700"
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-purple-700"
                   }`}
                 disabled={
                   role.length === 0 ||
