@@ -21,7 +21,6 @@ const PeriodAssignment = () => {
       try {
         const data = await fetchPeriodsByYearLevel(year_level_id);
         if (!data.assigned_periods || data.assigned_periods.length === 0) {
-          setError("No periods assigned for this year level.");
           setAssignedPeriods([]);
         } else {
           setAssignedPeriods(data.assigned_periods);
@@ -91,7 +90,7 @@ const PeriodAssignment = () => {
               {assignedPeriods.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-6 text-gray-500 dark:text-gray-400">
-                    No periods assigned yet.
+                    No Periods Assigned Yet.
                   </td>
                 </tr>
               ) : (

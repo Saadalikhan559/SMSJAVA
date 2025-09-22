@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchYearLevels } from "../../services/api/Api";
+import { fetchYearLevels, fetchStudentYearLevelByClass } from "../../services/api/Api";
 import { Link } from "react-router-dom";
-import { Loader } from "../../global/Loader";
 
 const Allclasses = () => {
     const [yearLevels, setYearLevels] = useState([]);
@@ -10,10 +9,21 @@ const Allclasses = () => {
 
     const getYearLevels = async () => {
         setLoading(true);
+
         try {
             const data = await fetchYearLevels();
-            console.log("Fetched year levels:", data);
-            setYearLevels(data);
+            const withCounts = await Promise.all(
+                data.map(async (level) => {
+                    const students = await fetchStudentYearLevelByClass(level.id).catch(() => []);
+                    return {
+                        ...level,
+                        student_count: students.length,
+                    };
+                })
+            );
+
+            setYearLevels(withCounts);
+
         } catch (err) {
             console.error("Error fetching year levels:", err);
             setError("Failed to fetch year levels. Please try again later.");
@@ -22,11 +32,12 @@ const Allclasses = () => {
         }
     };
 
+
+
     useEffect(() => {
         getYearLevels();
     }, []);
 
-    
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen">
@@ -40,10 +51,8 @@ const Allclasses = () => {
         );
     }
 
- 
     if (error) {
         return (
-
             <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
                 <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
                 <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
@@ -65,6 +74,7 @@ const Allclasses = () => {
             <tr>
               <th scope="col" className="px-4 py-3 text-center">S.NO</th>
               <th scope="col" className="px-4 py-3 text-center">Year Level</th>
+              <th scope="col" className="px-4 py-3">Number Of Students</th>
             </tr>
           </thead>
           <tbody>
@@ -95,6 +105,7 @@ const Allclasses = () => {
                       {record.level_name}
                     </Link>
                   </td>
+                  <td className="px-4 py-3 text-center">{record.student_count}</td>
                 </tr>
               ))
             )}

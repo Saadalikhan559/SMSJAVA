@@ -149,38 +149,17 @@ export const SingleAdmissionDetails = () => {
               </div>
               <div>
                 <p className="font-medium">Scholar Number:</p>
-                <p>{getValue(details.student_input, "scholar_number", "Not Assigned")}</p>
+                <p>{details.student_input.scholar_number && details.student_input.scholar_number !== "null"
+                  ? details.student_input.scholar_number
+                  : "N/A"}
+                </p>
               </div>
               <div>
                 <p className="font-medium">Has RTE?</p>
                 {details.is_rte ? (
-                  <svg
-                    className="w-6 h-6 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <p>YES</p>
                 ) : (
-                  <svg
-                    className="w-6 h-6 text-red-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <p>NO</p>
                 )}
               </div>
               <div>

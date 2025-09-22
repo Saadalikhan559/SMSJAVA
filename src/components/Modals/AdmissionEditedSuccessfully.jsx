@@ -20,11 +20,6 @@ const AdmissionEditedSuccessfully = ({
                     Admission Details Updated Successfully!
                 </h3>
                 
-                {/* Message */}
-                <p className="mb-6 text-gray-600">
-                    Your admission details have been updated successfully.
-                </p>
-                
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-3 justify-center px-4 md:flex-row md:items-center">
                     <button
