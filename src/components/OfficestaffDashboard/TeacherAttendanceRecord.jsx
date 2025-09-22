@@ -183,41 +183,41 @@ return (
       </div>
     </div>
 
-    {/* Modal */}
-    {modalOpen && selectedRecord && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black opacity-50" onClick={closeModal} />
-        <div className="relative bg-white dark:bg-gray-800 dark:text-white rounded-lg p-6 w-11/12 sm:w-96 z-10">
-          <h3 className="text-lg font-semibold mb-4">Edit Attendance</h3>
-          <p className="mb-2 font-medium capitalize">{selectedRecord.teacher_name}</p>
-          <p className="mb-4 text-gray-500 dark:text-gray-400">{selectedRecord.date}</p>
-          <select
-            value={selectedRecord.status}
-            onChange={handleStatusChange}
-            className="w-full border px-3 py-2 rounded mb-4 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-          >
-            <option value="present">Present</option>
-            <option value="absent">Absent</option>
-            <option value="leave">Leave</option>
-          </select>
-          <div className="flex flex-col sm:flex-row justify-end gap-2">
-            <button
-              onClick={closeModal}
-              className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded w-full sm:w-auto dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+      {/* Modal */}
+      {modalOpen && selectedRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black opacity-50" onClick={closeModal} />
+          <div className="relative bg-white rounded-lg p-6 w-11/12 sm:w-96 z-10">
+            <h3 className="text-lg font-semibold mb-4">Edit Attendance</h3>
+            <p className="mb-2 font-medium capitalize">{selectedRecord.teacher_name}</p>
+            <p className="mb-4 text-gray-500">{selectedRecord.date}</p>
+            <select
+              value={selectedRecord.status}
+              onChange={handleStatusChange}
+              className="w-full border px-3 py-2 rounded mb-4"
             >
-              Cancel
-            </button>
-            <button
-              onClick={updateStatus}
-              className="btn bgTheme text-white w-28"
-            >
-              {updating ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : null}
-              {updating ? ' ' : 'Update'}
-            </button>
+              <option value="absent">Absent</option>
+              <option value="leave">Leave</option>
+              <option value="present">Present</option>
+            </select>
+            <div className="flex flex-col sm:flex-row justify-end gap-2">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 w-full sm:w-auto"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={updateStatus}
+                className="btn bgTheme text-white w-28"
+              >
+                {updating ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : null}
+                {updating ? " " : "Update"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
     {showAlert && (
       <dialog className="modal modal-open">

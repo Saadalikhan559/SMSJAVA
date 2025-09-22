@@ -910,7 +910,7 @@ export const updateDiscount = async (accessToken, id, payload) => {
 };
 
 // teacher attendances
-export const saveAllTeacherAttendance = async (teachers, attendance) => {
+export const saveTeacherAttendance = async (teachers, attendance) => {
   try {
     for (const teacher of teachers) {
       const data = {
@@ -925,12 +925,16 @@ export const saveAllTeacherAttendance = async (teachers, attendance) => {
     return true;
   } catch (error) {
     console.error(
-      "Error saving all attendance:",
+      "Error saving teacher attendance:",
       error.response?.data || error
     );
     throw error;
   }
 };
+
+export const saveAllTeacherAttendance = saveTeacherAttendance;
+
+
 //  Techer attendance records
 export const fetchTeacherAttendanceRecords = async () => {
   try {

@@ -82,7 +82,7 @@ if (error) {
                 <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{index + 1}.</td>
                 <td className="px-4 py-3">
                   <Link
-                    to={`/periodAssignment/${record.id}`}  // year_level_id
+                    to={`/periodAssignment/${record.id}`}
                     state={{ level_name: record.level_name }}
                     className="textTheme hover:underline"
                   >
