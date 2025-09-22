@@ -97,7 +97,9 @@ return (
           </thead>
           <tbody>
             {filteredClasses.length > 0 ? (
-              filteredClasses.map((classItem, index) => (
+              [...filteredClasses]
+                    .sort((a, b) => a.teacher_name.localeCompare(b.teacher_name))
+                    .map((classItem, index) => (
                 <tr
                   key={classItem.id || index}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700"

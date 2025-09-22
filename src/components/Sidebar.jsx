@@ -23,7 +23,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className="drawer z-50">
+    <div className="drawer z-50 ">
       <input
         ref={drawerRef}
         id="my-drawer"
@@ -35,12 +35,12 @@ export const Sidebar = () => {
       <div className="drawer-side">
         <label htmlFor="my-drawer" className="drawer-overlay"></label>
 
-        <div className="min-h-full w-72 bg-white shadow-lg p-4 border-r">
+        <div className="min-h-full w-72 bg-white dark:bg-gray-900 shadow-lg p-4 border-r border-gray-200 dark:border-gray-700">
           <nav className="space-y-6">
             {/* Dashboard / Home */}
             {isAuthenticated && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
+                <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
                   Home
                 </h3>
                 <ul className="space-y-1">
@@ -62,7 +62,9 @@ export const Sidebar = () => {
                         }
                         handleNavigation(e, dashboardPath);
                       }}
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                       className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                     >
                       <i className="fa-solid fa-house w-5"></i> Dashboard
                     </Link>
@@ -76,7 +78,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.allClasses)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-graduation-cap w-5"></i>{" "}
                             All Classes
@@ -87,7 +91,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.allStaffMembers)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-id-card-clip w-5"></i>
                             Staff Members
@@ -103,7 +109,9 @@ export const Sidebar = () => {
                                   allRouterLink.teacherAttendance
                                 )
                               }
-                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                               className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                             >
                               <i className="fa-solid fa-clipboard-user w-5"></i>
                               Teacher Attendance
@@ -119,7 +127,9 @@ export const Sidebar = () => {
                                   allRouterLink.TeacherSubstitute
                                 )
                               }
-                              className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                               className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                             >
                               <i className="fa-solid fa-person-chalkboard w-5"></i>
                               Teacher Substitute
@@ -147,7 +157,9 @@ export const Sidebar = () => {
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.admissionForm)
                         }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                         className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-user-graduate w-5"></i>{" "}
                         Admission Form
@@ -158,7 +170,9 @@ export const Sidebar = () => {
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.addmissionDetails)
                         }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                         className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-clipboard-list w-5"></i>{" "}
                         Admission Details
@@ -185,7 +199,9 @@ export const Sidebar = () => {
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.documentUpload)
                         }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                         className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-file-arrow-up w-5"></i> Upload
                         Documents
@@ -196,7 +212,9 @@ export const Sidebar = () => {
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.viewDocuments)
                         }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                         className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-file-circle-check w-5"></i>{" "}
                         View Documents
@@ -228,7 +246,9 @@ export const Sidebar = () => {
                                 allRouterLink.subjectAssignment
                               )
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-tasks w-5"></i> Assign
                             Subjects
@@ -242,7 +262,9 @@ export const Sidebar = () => {
                                 allRouterLink.directorMarkHolidays
                               )
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-calendar-day w-5"></i>{" "}
                             Assign Holidays
@@ -253,7 +275,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.periodsByClass)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-clock w-5"></i> Assigned
                             Periods
@@ -264,7 +288,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.TimeTable)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-table-list w-5"></i> Time
                             Table
@@ -275,7 +301,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.UploadExamPaper)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-file-upload w-5"></i>{" "}
                             Upload Exam Paper
@@ -286,7 +314,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.ViewExamPaper)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-eye w-5"></i> View Exam
                             Paper
@@ -297,7 +327,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.MarksheetsTable)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                            className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-file-alt w-5"></i> View
                             Marksheets
@@ -312,7 +344,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.ExamSchedule)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-calendar-days w-5"></i>{" "}
                             Exam Schedule
@@ -323,7 +357,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.TimeTable)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-table-list w-5"></i> Time
                             Table
@@ -334,7 +370,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.UploadExamPaper)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-file-upload w-5"></i>{" "}
                             Upload Exam Paper
@@ -345,7 +383,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.ViewExamPaper)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-eye w-5"></i> View Exam
                             Paper
@@ -360,7 +400,9 @@ export const Sidebar = () => {
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.TimeTable)
                             }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                             className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                           >
                             <i className="fa-solid fa-table-list w-5"></i> Time
                             Table
@@ -384,7 +426,9 @@ export const Sidebar = () => {
                       onClick={(e) =>
                         handleNavigation(e, allRouterLink.attendance)
                       }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                      className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                     >
                       <i className="fa-solid fa-clipboard-user w-5"></i>{" "}
                       Attendance
@@ -416,7 +460,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.admissionFees)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
                           Fee Submission
@@ -440,7 +486,9 @@ export const Sidebar = () => {
                                 : allRouterLink.studentFeeCard
                             )
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-envelope w-5"></i> Student
                           Fee Card
@@ -455,7 +503,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.guardianChildren)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-envelope w-5"></i> Student
                           Fee Card
@@ -471,7 +521,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.feeSummary)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-receipt w-5"></i> Fee Record
                         </Link>
@@ -487,7 +539,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.overdueAccounts)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                           className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-file-invoice w-5"></i>{" "}
                           Overdue Accounts
@@ -502,7 +556,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.createDiscount)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                           className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-tag"></i>
                            Create
@@ -520,7 +576,9 @@ export const Sidebar = () => {
                               allRouterLink.discountedStudents
                             )
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                          <i className="fa-solid fa-percentage w-5"></i> {" "}
                           Discounted Students
@@ -548,7 +606,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.viewAllExpenses)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                           className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                          <i className="fa-solid fa-money-check-dollar"></i>{" "}
                           View Total Expenses
@@ -562,7 +622,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.createExpenses)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
                           Create Expenses
@@ -589,7 +651,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.schoolIncome)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-money-bills"></i>{" "}
                           View Total Income
@@ -603,7 +667,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.createIncome)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-money-check-dollar"></i>{" "}
                           Create Income
@@ -632,7 +698,9 @@ export const Sidebar = () => {
                               allRouterLink.createSalaryExpense
                             )
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-vault"></i>
                           Create Salary
@@ -648,7 +716,9 @@ export const Sidebar = () => {
                               allRouterLink.viewSalaryExpense
                             )
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
                           View Salary
@@ -675,7 +745,9 @@ export const Sidebar = () => {
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.attendanceRecord)
                         }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                         className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
                         Attendance Record
@@ -686,7 +758,9 @@ export const Sidebar = () => {
                         onClick={(e) =>
                           handleNavigation(e, allRouterLink.HolidayCalendar)
                         }
-                        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                        className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-calendar-days w-5"></i>{" "}
                         Holiday Calendar
@@ -699,7 +773,9 @@ export const Sidebar = () => {
                           onClick={(e) =>
                             handleNavigation(e, allRouterLink.StudentMarksFill)
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                           className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-fill-drip w-5"></i> Student
                           Marks Fill
@@ -715,10 +791,12 @@ export const Sidebar = () => {
                               allRouterLink.ClassTeacherAssign
                             )
                           }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                           className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                         >
                           <i className="fa-solid fa-chalkboard-teacher w-5"></i>{" "}
-                          Allocate Class
+                        View  Allocate Class
                         </Link>
                       </li>
                     )}
@@ -741,7 +819,9 @@ export const Sidebar = () => {
                           allRouterLink.guardianAttendanceRecord
                         )
                       }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                       className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                     >
                       <i className="fa-solid fa-square-poll-vertical w-5"></i>{" "}
                       Attendance Record
@@ -752,7 +832,9 @@ export const Sidebar = () => {
                       onClick={(e) =>
                         handleNavigation(e, allRouterLink.HolidayCalendar)
                       }
-                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
+                       className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
                     >
                       <i className="fa-solid fa-calendar-days w-5"></i> Holiday
                       Calendar
