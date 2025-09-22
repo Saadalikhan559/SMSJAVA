@@ -591,17 +591,11 @@ export const DocumentUpload = () => {
                   ) : (
                     <button
                       type="button"
-<<<<<<< HEAD
-                      className="btn w-full inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                      onClick={() =>
-                        setUploadFields(uploadFields.filter((_, i) => i !== index))
-=======
                       className="btn btn-error w-full"
                       onClick={() => {
                         setUploadFields(uploadFields.filter((_, i) => i !== index)), setAddField(AddField - 1)
                       }
 
->>>>>>> 21d541450a99cd4af491e35ef981da42745df69f
                       }
                     >
                       <i className="fa-solid fa-trash mr-1"></i> Remove
