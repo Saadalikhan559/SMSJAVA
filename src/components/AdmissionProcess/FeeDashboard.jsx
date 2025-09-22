@@ -39,7 +39,6 @@ const FeeDashboard = () => {
 
   useEffect(() => {
     loadDashboardData();
-    console.log(dashboardData);
 
   }, [loadDashboardData]);
 

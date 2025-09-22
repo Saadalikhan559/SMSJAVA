@@ -190,145 +190,146 @@ const ClassTeacherAssign = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen p-5 bg-gray-50">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md my-8">
-        <div className="mb-6">
-          <button
-            onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
-            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
+      <div className="mb-6">
+        <button
+          onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
+          className="flex items-center textTheme hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-1"
+            viewBox="0 0 20 20"
+            fill="currentColor"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            View Allocated Class
-          </button>
+            <path
+              fillRule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+          View Allocated Class
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            Class Allocation to Teachers{" "}
+            <i className="fa-solid fa-square-poll-vertical w-5"></i>
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300">
+            Select Teacher and Class To Assign
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">
-              Class Allocation to Teachers{" "}
-              <i className="fa-solid fa-square-poll-vertical w-5"></i>
-            </h1>
-            <p className="text-gray-600">Select Teacher and Class To Assign</p>
+        {errors.api && (
+          <div className="p-3 bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-md text-center">
+            {errors.api.message}
           </div>
+        )}
 
-          {errors.api && (
-            <div className="p-3 bg-red-50 text-red-600 rounded-md text-center">
-              {errors.api.message}
-            </div>
-          )}
-
-          <div className="flex space-x-4">
-
-            <div className="w-1/2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Teacher *
-              </label>
-              <select
-                {...register("teacher_id", { required: "Teacher is required" })}
-                className="select select-bordered w-full focus:outline-none"
-                onFocus={loadTeachers}
-                onChange={() => clearErrors(["teacher_id", "api"])}
-              >
-                <option value="">
-                  {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
-
-                </option>
-                {teachers.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.first_name} {teacher.last_name}
-                  </option>
-                ))}
-              </select>
-              {errors.teacher_id && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.teacher_id.message}
-                </p>
-              )}
-            </div>
-
-            <div className="w-1/2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Year Level *
-              </label>
-              <select
-                {...register("yearlevel_id", {
-                  required: "Year level is required",
-                })}
-                className="select select-bordered w-full focus:outline-none"
-                onFocus={loadYearLevels}
-                onChange={() => clearErrors(["yearlevel_id", "api"])}
-              >
-                <option value="">
-                  {loadingYearLevels
-                    ? "Loading year levels..."
-                    : "Select Year Level"}
-
-                </option>
-                {yearLevels.map((level) => (
-                  <option key={level.id} value={level.id}>
-                    {level.level_name}
-                  </option>
-                ))}
-              </select>
-              {errors.yearlevel_id && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.yearlevel_id.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-10">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-                }`}
-
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Teacher *
+            </label>
+            <select
+              {...register("teacher_id", { required: "Teacher is required" })}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              onFocus={loadTeachers}
+              onChange={() => clearErrors(["teacher_id", "api"])}
             >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center w-30">
+              <option value="">
+                {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
+              </option>
+              {teachers.map((teacher) => (
+                <option key={teacher.id} value={teacher.id}>
+                  {teacher.first_name} {teacher.last_name}
+                </option>
+              ))}
+            </select>
+            {errors.teacher_id && (
+              <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+                {errors.teacher_id.message}
+              </p>
+            )}
+          </div>
 
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                </span>
-              ) : (
-                "Assign Class Teacher"
-              )}
-            </button>
+          <div className="w-1/2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Year Level *
+            </label>
+            <select
+              {...register("yearlevel_id", {
+                required: "Year level is required",
+              })}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              onFocus={loadYearLevels}
+              onChange={() => clearErrors(["yearlevel_id", "api"])}
+            >
+              <option value="">
+                {loadingYearLevels
+                  ? "Loading year levels..."
+                  : "Select Year Level"}
+              </option>
+              {yearLevels.map((level) => (
+                <option key={level.id} value={level.id}>
+                  {level.level_name}
+                </option>
+              ))}
+            </select>
+            {errors.yearlevel_id && (
+              <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+                {errors.yearlevel_id.message}
+              </p>
+            )}
           </div>
-        </form>
-      </div>
-      {/* Modal */}
-      {showAlert && (
-        <dialog open className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Class Allocation to Teachers</h3>
-            <p className="py-4">{alertMessage}</p>
-            <div className="modal-action">
-              <button
-                className="btn bgTheme text-white w-30"
-                onClick={() => setShowAlert(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
+        </div>
+
+        <div className="flex justify-center mt-10">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
+              isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+            }`}
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center w-30">
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              </span>
+            ) : (
+              "Assign Class Teacher"
+            )}
+          </button>
+        </div>
+      </form>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default ClassTeacherAssign;

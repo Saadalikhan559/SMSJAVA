@@ -145,132 +145,135 @@ const TeacherAttendance = () => {
     );
   }
 
-  return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
-         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
-           <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
-          </h1>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+return (
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
+      <div className="mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-2">
+          <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
+        </h1>
+      </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-300 dark:border-gray-700 pb-2">
 
-          <div className="flex gap-3">
-           
-            <Link
-              to={allRouterLink.teacherAttendanceRecord}
-              className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-42"
-            >
-              Attendance Record
-            </Link>
-          </div> <input
-              type="text"
-              placeholder="Search by name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border px-3 py-2 rounded w-full sm:w-64"
-            />
+        <div className="flex gap-3">
+          <Link
+            to={allRouterLink.teacherAttendanceRecord}
+            className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-42"
+          >
+            Attendance Record
+          </Link>
         </div>
+        
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+        />
+      </div>
 
-        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
-            <thead className="bgTheme text-white z-2 sticky top-0">
-              <tr>
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Marked
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Teacher Name
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Email
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Date
-                </th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className=" divide-gray-200 bg-white">
-              {filteredTeachers.length > 0 ? (
-                filteredTeachers.map((teacher) => (
-                  <tr key={teacher.id} className="hover:bg-gray-50 text-center">
-                    <td className="px-4 py-3">
-                      <input
-                        type="checkbox"
-                        checked={attendance[teacher.id]?.marked || false}
-                        readOnly
-                      />
-                    </td>
-                    <td className="px-4 py-3 font-bold capitalize text-gray-700 text-nowrap">
-                      {teacher.first_name} {teacher.last_name}
-                    </td>
-                    <td className="px-4 py-3 text-gray-700 text-no">
-                      {teacher.email}
-                    </td>
-                    <td className="px-4 py-3">
-                      <input
-                        type="date"
-                        value={attendance[teacher.id]?.date || ""}
-                        onChange={(e) =>
-                          handleChange(teacher.id, "date", e.target.value)
-                        }
-                        className="border p-1 rounded text-center"
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <select
-                        value={attendance[teacher.id]?.status || ""}
-                        onChange={(e) =>
-                          handleChange(teacher.id, "status", e.target.value)
-                        }
-                        className="select select-bordered w-full focus:outline-none text-nowrap"
-                      >
-                        <option value="">-- Select Status --</option>
-                        <option value="present">Present</option>
-                        <option value="absent">Absent</option>
-                        <option value="leave">Leave</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="px-4 py-6 text-center text-sm text-gray-500"
-                  >
-                    No teachers found
+      <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
+        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
+          <thead className="bgTheme text-white z-2 sticky top-0">
+            <tr>
+              <th className="px-4 py-3 text-center text-sm font-semibold">
+                Marked
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold">
+                Teacher Name
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold">
+                Email
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold">
+                Date
+              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+            {filteredTeachers.length > 0 ? (
+              filteredTeachers.map((teacher) => (
+                <tr
+                  key={teacher.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 text-center text-gray-700 dark:text-gray-300"
+                >
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={attendance[teacher.id]?.marked || false}
+                      readOnly
+                      className="accent-blue-600 dark:accent-blue-400"
+                    />
+                  </td>
+                  <td className="px-4 py-3 font-bold capitalize text-nowrap">
+                    {teacher.first_name} {teacher.last_name}
+                  </td>
+                  <td className="px-4 py-3 text-nowrap">
+                    {teacher.email}
+                  </td>
+                  <td className="px-4 py-3">
+                    <input
+                      type="date"
+                      value={attendance[teacher.id]?.date || ""}
+                      onChange={(e) =>
+                        handleChange(teacher.id, "date", e.target.value)
+                      }
+                      className="border border-gray-300 dark:border-gray-600 p-1 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={attendance[teacher.id]?.status || ""}
+                      onChange={(e) =>
+                        handleChange(teacher.id, "status", e.target.value)
+                      }
+                      className="select select-bordered w-full focus:outline-none text-nowrap bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 border border-gray-300 dark:border-gray-600"
+                    >
+                      <option value="">-- Select Status --</option>
+                      <option value="present">Present</option>
+                      <option value="absent">Absent</option>
+                      <option value="leave">Leave</option>
+                    </select>
                   </td>
                 </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                >
+                  No teachers found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <br />
+        <div className="flex w-full justify-center ">
+          <div className="flex w-full justify-center">
+            <button
+              onClick={handleSaveAll}
+              className="btn bgTheme text-white w-40"
+            >
+              {savingAll ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+              ) : (
+                ""
               )}
-            </tbody>
-          </table>
-
-          <br />
-          <div className="flex w-full justify-center ">
-            <div className="flex w-full justify-center">
-              <button
-                onClick={handleSaveAll}
-                className="btn bgTheme text-white w-40"
-              >
-                {savingAll ? (
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-                ) : (
-                  ""
-                )}
-                {savingAll ? " " : "Save All"}
-              </button>
-            </div>
-
+              {savingAll ? " " : "Save All"}
+            </button>
           </div>
         </div>
       </div>
       {/* Modal */}
       {showAlert && (
-        <dialog className="modal modal-open">
+        <dialog className="modal modal-open bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
           <div className="modal-box">
             <h3 className="font-bold text-lg">Teacher Attendance</h3>
             <p className="py-4 capitalize">
@@ -292,10 +295,10 @@ const TeacherAttendance = () => {
           </div>
         </dialog>
       )}
-
     </div>
+  </div>
+);
 
-  );
 };
 
 export default TeacherAttendance;
