@@ -28,6 +28,21 @@ export const DocumentUpload = () => {
   const [yearLevelID, setYearLevelID] = useState("");
 
   const [loadingRoles, setLoadingRoles] = useState(false);
+  const [Disable, setDisable] = useState(true);
+  const [AddField, setAddField] = useState(0);
+  const [selectedTeacherName, setSelectedTeacherName] = useState("");
+  const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+  const [searchTeacherInput, setSearchTeacherInput] = useState("");
+  const [showGuardianDropdown, setShowGuardianDropdown] = useState(false);
+  const [selectedGuardianName, setSelectedGuardianName] = useState("");
+  const [searchGuardianInput, setSearchGuardianInput] = useState("");
+  const [showOfficeStaffDropdown, setShowOfficeStaffDropdown] = useState(false);
+  const [selectedOfficeStaffName, setSelectedOfficeStaffName] = useState("");
+  const [searchOfficeStaffInput, setSearchOfficeStaffInput] = useState("");
+  const [showStudentDropdown, setShowStudentDropdown] = useState(false);
+  const [selectedStudentName, setSelectedStudentName] = useState("");
+  const [searchStudentInput, setSearchStudentInput] = useState("");
+
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(false);
   const [loadingTeachers, setLoadingTeachers] = useState(false);
   const [loadingGuardians, setLoadingGuardians] = useState(false);
@@ -39,6 +54,7 @@ export const DocumentUpload = () => {
   const [docTypeErrors, setDocTypeErrors] = useState([]);
 
 
+
   const [role, setRole] = useState("");
 
   const [formData, setFormData] = useState({
@@ -48,6 +64,26 @@ export const DocumentUpload = () => {
     office_staff: "",
     year_level: "",
   });
+  const filteredTeachers = teachers.filter((teacher) =>
+    `${teacher.first_name} ${teacher.last_name}`
+      .toLowerCase()
+      .includes(searchTeacherInput.toLowerCase())
+  );
+  const filteredGuardians = guardians.filter((guardian) =>
+    `${guardian.first_name} ${guardian.last_name}`
+      .toLowerCase()
+      .includes(searchGuardianInput.toLowerCase())
+  );
+  const filteredOfficeStaff = officeStaff.filter((staff) =>
+    `${staff.first_name} ${staff.last_name}`
+      .toLowerCase()
+      .includes(searchOfficeStaffInput.toLowerCase())
+  );
+  const filteredStudents = students.filter((studentObj) =>
+    studentObj.student_name.toLowerCase().includes(searchStudentInput.toLowerCase())
+  );
+
+
 
   // Dynamic fields for document uploads
   const [uploadFields, setUploadFields] = useState([
@@ -230,16 +266,22 @@ export const DocumentUpload = () => {
     });
   };
 
+  console.log(formData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "year_level") {
       setFormData((prev) => ({ ...prev, [name]: value, student: "" }));
+
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+
+
   const handleAddField = () => {
+    setAddField(AddField + 1)
     setUploadFields([...uploadFields, { files: null, document_types: "", identities: "" }]);
     setIdentityErrors([...identityErrors, ""]);
   };
@@ -537,17 +579,29 @@ export const DocumentUpload = () => {
                   {index === 0 ? (
                     <button
                       type="button"
-                      className="btn bgTheme text-white w-full"
+                      className={`btn bgTheme text-white w-40 ${AddField === 3
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-purple-700"
+                        }`}
                       onClick={handleAddField}
+                      disabled={AddField === 3}
                     >
                       <i className="fa-solid fa-plus mr-1"></i> Add
                     </button>
                   ) : (
                     <button
                       type="button"
+<<<<<<< HEAD
                       className="btn w-full inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                       onClick={() =>
                         setUploadFields(uploadFields.filter((_, i) => i !== index))
+=======
+                      className="btn btn-error w-full"
+                      onClick={() => {
+                        setUploadFields(uploadFields.filter((_, i) => i !== index)), setAddField(AddField - 1)
+                      }
+
+>>>>>>> 21d541450a99cd4af491e35ef981da42745df69f
                       }
                     >
                       <i className="fa-solid fa-trash mr-1"></i> Remove
@@ -560,125 +614,276 @@ export const DocumentUpload = () => {
             {/* Role-based dropdowns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.student && (
-                <div className="form-control">
+                <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-graduate text-sm"></i> Student
                     </span>
                   </label>
-                  <select
-                    name="student"
-                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
-                    value={formData.student}
-                    onChange={handleChange}
+
+                  <div
+                    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                    onClick={() => setShowStudentDropdown(!showStudentDropdown)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") setShowStudentDropdown(!showStudentDropdown);
+                    }}
                   >
-                    <option value="">
-                      {loadingStudents ? "Loading students..." : "Select Student"}
-                    </option>
-                    {!loadingStudents &&
-                      students.map((studentObj) => (
-                        <option key={studentObj.student_id} value={studentObj.student_id}>
-                          {studentObj.student_name}
-                        </option>
-                      ))}
-                  </select>
+                    {selectedStudentName || (loadingStudents ? "Loading students..." : "Select Student")}
+                    <i
+                      className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}
+                    ></i>
+                  </div>
+
+                  {showStudentDropdown && (
+                    <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                      <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                        <input
+                          type="text"
+                          placeholder="Search Student..."
+                          className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                          value={searchStudentInput}
+                          onChange={(e) => setSearchStudentInput(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="max-h-40 overflow-y-auto">
+                        {!loadingStudents && filteredStudents.length > 0 ? (
+                          filteredStudents.map((studentObj) => (
+                            <p
+                              key={studentObj.student_id}
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              onClick={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  student: studentObj.student_id.toString(),
+                                }));
+                                setSelectedStudentName(studentObj.student_name);
+                                setSearchStudentInput("");
+                                setShowStudentDropdown(false);
+                                setDisable(false);
+                              }}
+                            >
+                              {studentObj.student_name}
+                            </p>
+                          ))
+                        ) : (
+                          <p className="p-2 text-gray-500 dark:text-gray-400">
+                            {loadingStudents ? "Loading students..." : "No students found."}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {role === constants.roles.teacher && (
-                <div className="form-control">
+                <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-chalkboard-teacher text-sm"></i> Teacher
                     </span>
                   </label>
-                  <select
-                    name="teacher"
-                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
-                    value={formData.teacher}
-                    onChange={handleChange}
+
+                  <div
+                    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                    onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
                   >
-                    <option value="">
-                      {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
-                    </option>
-                    {!loadingTeachers &&
-                      teachers.map((teacher) => (
-                        <option key={teacher.id} value={teacher.id}>
-                          {teacher.first_name} {teacher.last_name}
-                        </option>
-                      ))}
-                  </select>
+                    {selectedTeacherName || "Select Teacher"}
+                    <i
+                      className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"
+                        } ml-2`}
+                    ></i>
+                  </div>
+
+                  {showTeacherDropdown && (
+                    <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                      <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                        <input
+                          type="text"
+                          placeholder="Search Teacher..."
+                          className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                          value={searchTeacherInput}
+                          onChange={(e) => setSearchTeacherInput(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="max-h-40 overflow-y-auto">
+                        {!loadingTeachers &&
+                          filteredTeachers.map((teacher) => (
+                            <p
+                              key={teacher.id}
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              onClick={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  teacher: teacher.id.toString(),
+                                }));
+                                setSelectedTeacherName(
+                                  `${teacher.first_name} ${teacher.last_name}`
+                                );
+                                setSearchTeacherInput("");
+                                setShowTeacherDropdown(false);
+                                setDisable(false);
+                              }}
+                            >
+                              {teacher.first_name} {teacher.last_name}
+                            </p>
+                          ))}
+
+                        {filteredTeachers.length === 0 && (
+                          <p className="p-2 text-gray-500 dark:text-gray-400">
+                            No teachers found.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.guardian && (
-                <div className="form-control">
+                <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-shield text-sm"></i> Guardian
                     </span>
                   </label>
-                  <select
-                    name="guardian"
-                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
-                    value={formData.guardian}
-                    onChange={handleChange}
+
+                  <div
+                    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                    onClick={() => setShowGuardianDropdown(!showGuardianDropdown)}
                   >
-                    <option value="">
-                      {loadingGuardians ? "Loading guardians..." : "Select Guardian"}
-                    </option>
-                    {!loadingGuardians &&
-                      guardians.map((guardian) => (
-                        <option key={guardian.id} value={guardian.id}>
-                          {guardian.first_name} {guardian.last_name}
-                        </option>
-                      ))}
-                  </select>
+                    {selectedGuardianName || "Select Guardian"}
+                    <i
+                      className={`fa-solid fa-chevron-${showGuardianDropdown ? "up" : "down"
+                        } ml-2`}
+                    ></i>
+                  </div>
+
+                  {showGuardianDropdown && (
+                    <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                      <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                        <input
+                          type="text"
+                          placeholder="Search Guardian..."
+                          className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                          value={searchGuardianInput}
+                          onChange={(e) => setSearchGuardianInput(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="max-h-40 overflow-y-auto">
+                        {!loadingGuardians &&
+                          filteredGuardians.map((guardian) => (
+                            <p
+                              key={guardian.id}
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              onClick={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  guardian: guardian.id.toString(),
+                                }));
+                                setSelectedGuardianName(
+                                  `${guardian.first_name} ${guardian.last_name}`
+                                );
+                                setSearchGuardianInput("");
+                                setShowGuardianDropdown(false);
+                                setDisable(false);
+                              }}
+                            >
+                              {guardian.first_name} {guardian.last_name}
+                            </p>
+                          ))}
+
+                        {filteredGuardians.length === 0 && (
+                          <p className="p-2 text-gray-500 dark:text-gray-400">
+                            No guardians found.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {role === constants.roles.officeStaff && (
-                <div className="form-control">
+                <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-briefcase text-sm"></i> Office Staff
                     </span>
                   </label>
-                  <select
-                    name="office_staff"
-                    className="select select-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer"
-                    value={formData.office_staff}
-                    onChange={handleChange}
+
+                  <div
+                    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                    onClick={() => setShowOfficeStaffDropdown(!showOfficeStaffDropdown)}
                   >
-                    <option value="">
-                      {loadingOfficeStaff ? "Loading office staff..." : "Select Office Staff"}
-                    </option>
-                    {!loadingOfficeStaff &&
-                      officeStaff.map((staff) => (
-                        <option key={staff.id} value={staff.id}>
-                          {staff.first_name} {staff.last_name}
-                        </option>
-                      ))}
-                  </select>
+                    {selectedOfficeStaffName || "Select Office Staff"}
+                    <i
+                      className={`fa-solid fa-chevron-${showOfficeStaffDropdown ? "up" : "down"
+                        } ml-2`}
+                    ></i>
+                  </div>
+
+                  {showOfficeStaffDropdown && (
+                    <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                      <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                        <input
+                          type="text"
+                          placeholder="Search Office Staff..."
+                          className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                          value={searchOfficeStaffInput}
+                          onChange={(e) => setSearchOfficeStaffInput(e.target.value)}
+                        />
+                      </div>
+
+                      <div className="max-h-40 overflow-y-auto">
+                        {!loadingOfficeStaff &&
+                          filteredOfficeStaff.map((staff) => (
+                            <p
+                              key={staff.id}
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              onClick={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  office_staff: staff.id.toString(),
+                                }));
+                                setSelectedOfficeStaffName(
+                                  `${staff.first_name} ${staff.last_name}`
+                                );
+                                setSearchOfficeStaffInput("");
+                                setShowOfficeStaffDropdown(false);
+                                setDisable(false);
+                              }}
+                            >
+                              {staff.first_name} {staff.last_name}
+                            </p>
+                          ))}
+
+                        {filteredOfficeStaff.length === 0 && (
+                          <p className="p-2 text-gray-500 dark:text-gray-400">
+                            No office staff found.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+
             </div>
           </div>
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex flex-col md:flex-row items-center md:items-stretch gap-4 p-6">
-          {step > 0 && (
-            <button
-              type="button"
-              onClick={prev}
-              className="btn bgTheme text-white w-40 hover:bg-purple-700 flex items-center justify-center"
-            >
-              <i className="fa-solid fa-arrow-left mr-2"></i> Back
-            </button>
-          )}
+        <div className="flex flex-col ju md:flex-row items-center md:items-stretch gap-4 p-6">
+         
           {step === 0 && (
             <div className="flex-1 flex justify-end">
               <button
@@ -697,21 +902,36 @@ export const DocumentUpload = () => {
               </button>
             </div>
           )}
-          {step === 1 && (
-            <div className="flex-1 flex justify-end md:justify-end">
-              <button type="submit" className="btn bgTheme text-white w-40">
-                {loading ? (
-                  <>
-                    <i className="fa-solid fa-spinner fa-spin mr-2"></i> Uploading...
-                  </>
-                ) : (
-                  <>
-                    <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Upload
-                  </>
-                )}
-              </button>
-            </div>
-          )}
+   {step === 1 && (
+  <div className="flex-1 flex justify-end gap-4">
+    <button
+      type="button"
+      onClick={prev}
+      className="btn bgTheme text-white w-40 hover:bg-purple-700 flex items-center justify-center"
+    >
+      <i className="fa-solid fa-arrow-left mr-2"></i> Back
+    </button>
+
+    <button
+      type="submit"
+      className={`btn bgTheme text-white w-40 ${
+        Disable ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"
+      }`}
+      disabled={Disable}
+    >
+      {loading ? (
+        <>
+          <i className="fa-solid fa-spinner fa-spin mr-2"></i> 
+        </>
+      ) : (
+        <>
+          <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Upload
+        </>
+      )}
+    </button>
+  </div>
+)}
+
         </div>
       </form>
 

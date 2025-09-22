@@ -219,241 +219,261 @@ const StudentFeeAndUnpaidSummary = () => {
         );
     }
 
-    return (
-        <div className="min-h-screen p-5 bg-gray-50">
-            <div className="bg-white shadow-lg rounded-lg p-6 w-full">
-                <div >
-                    <button
-                        onClick={() => setActiveTab("fee")}
-                        className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "fee"
-                            ? "border-b-2 border-textTheme textTheme"
-                            : "text-gray-600  hover:text-[#5E35B1]"
-                            }`}
-                    >
-                        Fee Report Card
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("unpaid")}
-                        className={`px-6 py-3 font-semibold text-sm md:text-base ${activeTab === "unpaid"
-                            ? "border-b-2 border--[#5E35B1] text-[#5E35B1]"
-                            : "text-gray-600 hover:text-[#5E35B1]"
-                            }`}
-                    >
-                        Unpaid Accounts Summary
-                    </button>
-                </div>
-                {activeTab === "fee" && (<div className="pt-4">
+return (
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full">
+      <div>
+        <button
+          onClick={() => setActiveTab("fee")}
+          className={`px-6 py-3 font-semibold text-sm md:text-base ${
+            activeTab === "fee"
+              ? "border-b-2 border-textTheme textTheme"
+              : "text-gray-600 dark:text-gray-300 hover:text-[#5E35B1]"
+          }`}
+        >
+          Fee Report Card
+        </button>
+        <button
+          onClick={() => setActiveTab("unpaid")}
+          className={`px-6 py-3 font-semibold text-sm md:text-base ${
+            activeTab === "unpaid"
+              ? "border-b-2 border-[#5E35B1] text-[#5E35B1]"
+              : "text-gray-600 dark:text-gray-300 hover:text-[#5E35B1]"
+          }`}
+        >
+          Unpaid Accounts Summary
+        </button>
+      </div>
 
-                    <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
-                        <i className="fa-solid fa-money-check-alt mr-2"></i>{" "}
-                        {details?.student_name ? `${details.student_name}'s Fee Report Card` : "Fee Report Card"}
-                    </h1>
-                    <div className="w-full max-w-7xl mx-auto">
-                        <div className="flex flex-wrap justify-start items-end gap-4 mb-6">
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Search by Month:</label>
-                                <select
-                                    value={selectedMonthFee}
-                                    onChange={(e) => setSelectedMonthFee(e.target.value)}
-                                    className="border rounded px-3 py-2 text-sm"
-                                >
-                                    <option value="">All Months</option>
-                                    {details?.monthly_summary &&
-                                        [...new Set(details.monthly_summary.map((item) => item.month))].map((month, idx) => (
-                                            <option key={idx} value={month}>
-                                                {month}
-                                            </option>
-                                        ))}
-                                </select>
-                            </div>
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Search By Academic Year:</label>
-                                <select
-                                    value={selectedYearFee}
-                                    onChange={(e) => setSelectedYearFee(e.target.value)}
-                                    className="border rounded px-3 py-2 text-sm"
-                                >
-                                    <option value="">All Years</option>
-                                    {details?.monthly_summary &&
-                                        [...new Set(details.monthly_summary.map((item) => item.year).filter(Boolean))].map(
-                                            (year, idx) => (
-                                                <option key={idx} value={year}>
-                                                    {year}
-                                                </option>
-                                            )
-                                        )}
-                                </select>
-                            </div>
-                            {filteredSummary.length > 0 && (
-                                <div className="mt-1">
-                                    <button
-                                        onClick={exportPDF}
-                                        className="btn bgTheme text-white"
-                                    >
-                                        <i className="fa-solid fa-download mr-2" /> Download Report
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+      {activeTab === "fee" && (
+        <div className="pt-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">
+            <i className="fa-solid fa-money-check-alt mr-2" />
+            {details?.student_name
+              ? `${details.student_name}'s Fee Report Card`
+              : "Fee Report Card"}
+          </h1>
 
-                    {!details?.monthly_summary || filteredSummary.length === 0 ? (
-                        <div className="text-center py-6 text-red-600 font-semibold">
-                            Fees Not Found
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-                                <thead className="bgTheme text-white">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Month</th>
-                                        {allFeeTypes.map((type, i) => (
-                                            <th key={i} className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">
-                                                {type}
-                                            </th>
-                                        ))}
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Total</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Dues</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {filteredSummary.map((item, index) => (
-                                        <tr key={index} className="hover:bg-blue-50">
-                                            <td className="px-4 py-3 text-sm text-gray-900">{item.month}</td>
-                                            {allFeeTypes.map((type, i) => {
-                                                const amount = item.fee_type.find((f) => f.type === type)?.amount || 0;
-                                                return (
-                                                    <td key={i} className="px-4 py-3 text-sm text-gray-500">
-                                                        ₹{amount.toFixed(2)}
-                                                    </td>
-                                                );
-                                            })}
-                                            <td className="px-4 py-3 text-sm text-gray-500">
-                                                ₹{item.total_amount.toFixed(2)}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-red-600 font-medium">
-                                                ₹{item.due_amount.toFixed(2)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+          <div className="w-full max-w-7xl mx-auto">
+            <div className="flex flex-wrap justify-start items-end gap-4 mb-6">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Search by Month:
+                </label>
+                <select
+                  value={selectedMonthFee}
+                  onChange={(e) => setSelectedMonthFee(e.target.value)}
+                  className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-2 text-sm"
+                >
+                  <option value="">All Months</option>
+                  {details?.monthly_summary &&
+                    [...new Set(details.monthly_summary.map((item) => item.month))].map(
+                      (month, idx) => (
+                        <option key={idx} value={month}>
+                          {month}
+                        </option>
+                      )
                     )}
-                </div>)}
+                </select>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Search By Academic Year:
+                </label>
+                <select
+                  value={selectedYearFee}
+                  onChange={(e) => setSelectedYearFee(e.target.value)}
+                  className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-2 text-sm"
+                >
+                  <option value="">All Years</option>
+                  {details?.monthly_summary &&
+                    [...new Set(details.monthly_summary.map((item) => item.year).filter(Boolean))].map(
+                      (year, idx) => (
+                        <option key={idx} value={year}>
+                          {year}
+                        </option>
+                      )
+                    )}
+                </select>
+              </div>
+
+              {filteredSummary.length > 0 && (
+                <div className="mt-1">
+                  <button onClick={exportPDF} className="btn bgTheme text-white">
+                    <i className="fa-solid fa-download mr-2" /> Download Report
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {!details?.monthly_summary || filteredSummary.length === 0 ? (
+            <div className="text-center py-6 text-red-600 dark:text-red-400 font-semibold">
+              Fees Not Found
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+                <thead className="bgTheme text-white">
+                  <tr>
+                    <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Month</th>
+                    {allFeeTypes.map((type, i) => (
+                      <th key={i} className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">
+                        {type}
+                      </th>
+                    ))}
+                    <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Total</th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Dues</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+                  {filteredSummary.map((item, index) => (
+                    <tr key={index} className="hover:bg-blue-50 dark:hover:bg-gray-700">
+                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{item.month}</td>
+                      {allFeeTypes.map((type, i) => {
+                        const amount = item.fee_type.find((f) => f.type === type)?.amount || 0;
+                        return (
+                          <td key={i} className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                            ₹{amount.toFixed(2)}
+                          </td>
+                        );
+                      })}
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                        ₹{item.total_amount.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 font-medium">
+                        ₹{item.due_amount.toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+
+    {/* UNPAID TAB */}
+    {activeTab === "unpaid" && (
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-4">
+            <i className="fa-solid fa-graduation-cap mr-2" /> Unpaid Accounts Summary
+          </h1>
+        </div>
+
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="flex flex-wrap justify-start items-end gap-4 mb-6">
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search by Month:</label>
+              <select
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-2 text-sm"
+                value={selectedMonthUnpaid}
+                onChange={(e) => setSelectedMonthUnpaid(e.target.value)}
+              >
+                <option value="">All Months</option>
+                {[
+                  "January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"
+                ].map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {activeTab === "unpaid" && (
-                <div className="bg-white shadow-lg rounded-lg p-6 w-full">
-                    <div className="mb-6">
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
-                            <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
-                        </h1>
-                    </div>
-                    <div className="w-full max-w-7xl mx-auto">
-                        <div className="flex flex-wrap justify-start items-end gap-4 mb-6">
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Search by Month:</label>
-                                <select
-                                    className="border rounded px-3 py-2 text-sm"
-                                    value={selectedMonthUnpaid}
-                                    onChange={(e) => setSelectedMonthUnpaid(e.target.value)}
-                                >
-                                    <option value="">All Months</option>
-                                    {[
-                                        "January", "February", "March", "April", "May", "June",
-                                        "July", "August", "September", "October", "November", "December"
-                                    ].map((month) => (
-                                        <option key={month} value={month}>
-                                            {month}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
-                                <div className="flex flex-col">
-                                    <label className="text-sm font-medium text-gray-700 mb-1">Search by Class:</label>
-                                    <select
-                                        className="border rounded px-3 py-2 text-sm"
-                                        value={selectedClass}
-                                        onChange={(e) => setSelectedClass(e.target.value)}
-                                    >
-                                        <option value="">All Classes</option>
-                                        {yearLevels.map((level) => (
-                                            <option key={level.id} value={level.id}>
-                                                {level.level_name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            )}
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-gray-700 mb-1">Search Student by Name:</label>
-                                <input
-                                    type="text"
-                                    placeholder="Enter student name"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="border rounded px-3 py-2 text-sm w-64"
-                                />
-                            </div>
-                            <div className="mt-1">
-                                <button
-                                    onClick={resetFilters}
-                                    className="btn bgTheme text-white"
-                                >
-                                    Reset Filters
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {filteredFees.length === 0 ? (
-                        <div className="text-center py-6 text-red-600 font-semibold">
-                            Unpaid Summary Not Found
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-                                <thead className="bgTheme text-white">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">S.No</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Student Name</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Class</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Month</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Fee Type</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Total Amount</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Paid Amount</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Due Amount</th>
-                                        <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Payment Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredFees.map((item, index) =>
-                                        item.year_level_fees_grouped?.map((group) =>
-                                            group.fees?.map((fee) => (
-                                                <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-blue-50">
-                                                    <td className="px-4 py-3 text-sm text-gray-500">{index + 1}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500">{item.student?.name}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500">{group.year_level}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500">{item.month}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500 text-nowrap">{fee.fee_type}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500">₹{fee.amount}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500">₹{item.paid_amount}</td>
-                                                    <td className="px-4 py-3 text-sm text-red-600 font-medium">₹{item.due_amount}</td>
-                                                    <td className="px-4 py-3 text-sm text-gray-500">{item.payment_status}</td>
-                                                </tr>
-                                            ))
-                                        )
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
+            {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search by Class:</label>
+                <select
+                  className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-2 text-sm"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
+
+            <div className="flex flex-col">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Search Student by Name:
+              </label>
+              <input
+                type="text"
+                placeholder="Enter student name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded px-3 py-2 text-sm w-64"
+              />
+            </div>
+
+            <div className="mt-1">
+              <button onClick={resetFilters} className="btn bgTheme text-white">
+                Reset Filters
+              </button>
+            </div>
+          </div>
         </div>
-    );
+
+        {filteredFees.length === 0 ? (
+          <div className="text-center py-6 text-red-600 dark:text-red-400 font-semibold">
+            Unpaid Summary Not Found
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+              <thead className="bgTheme text-white">
+                <tr>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">S.No</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Student Name</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Class</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Month</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Fee Type</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Total Amount</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Paid Amount</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Due Amount</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Payment Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredFees.map((item, index) =>
+                  item.year_level_fees_grouped?.map((group) =>
+                    group.fees?.map((fee) => (
+                      <tr
+                        key={`${item.id}-${group.year_level}-${fee.id}`}
+                        className="hover:bg-blue-50 dark:hover:bg-gray-700"
+                      >
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{index + 1}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{item.student?.name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{group.year_level}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{item.month}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{fee.fee_type}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">₹{fee.amount}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">₹{item.paid_amount}</td>
+                        <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 font-medium">₹{item.due_amount}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{item.payment_status}</td>
+                      </tr>
+                    ))
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+);
+
 };
 
 export default StudentFeeAndUnpaidSummary;
