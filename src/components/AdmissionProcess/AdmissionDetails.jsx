@@ -175,12 +175,8 @@ export const AdmissionDetails = () => {
                 />
               </div>
             </div>
-
           </div>
         </div>
-
-
-
         {filterData.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400">No admission records found.</p>
         ) : (
