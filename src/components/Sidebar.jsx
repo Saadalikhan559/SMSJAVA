@@ -266,8 +266,7 @@ export const Sidebar = () => {
                             }
                             className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-100 transition text-gray-800"
                           >
-                            <i className="fa-solid fa-table-list w-5"></i> Examination Time
-                            Table
+                            <i className="fa-solid fa-table-list w-5"></i> Examination Schedule
                           </Link>
                         </li>
                         <li>

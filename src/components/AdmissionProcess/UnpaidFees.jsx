@@ -182,7 +182,7 @@ const UnpaidFeesList = () => {
               <div className="mt-1 w-full sm:w-auto">
                 <button
                   onClick={resetFilters}
-                  className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto"
+                  className="btn bgTheme text-white"
                 >
                   Reset Filters
                 </button>
@@ -202,7 +202,7 @@ const UnpaidFeesList = () => {
               </div>
               <button
                 onClick={handleSendNotifications}
-                className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 min-w-[120px] flex items-center justify-center"
+                className="btn bgTheme text-white"
               >
                 {loder ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
