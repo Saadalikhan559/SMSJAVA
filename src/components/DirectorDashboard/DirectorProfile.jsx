@@ -247,37 +247,163 @@ return (
 
       {/* Dialog */}
       {isDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transition-all duration-300">
-            <div className="p-6">
-              <h2 className="text-xl font-bold textTheme mb-4">
-                Update Director Profile
-              </h2>
+  <div className="fixed inset-0 bg-black bg-opacity-30 dark:bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+          Update Director Profile
+        </h2>
 
-              {/* Your Form Code Goes Here (already done in your version) */}
-              {/* Be sure to wrap all inputs in dark mode classes like: dark:bg-gray-700, dark:border-gray-600, dark:text-white */}
-              {/* You can copy/paste the rest of your dialog JSX here as-is and just apply those dark styles */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* Buttons */}
-              <div className="flex justify-end gap-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsDialogOpen(false);
-                    setImagePreview(null);
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600"
+            {/* Column 1 - Profile Image */}
+            <div className="space-y-4">
+              <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 border-b pb-2 border-gray-200 dark:border-gray-700">
+                Profile Image
+              </h3>
+
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative group">
+                  <div className="h-32 w-32 rounded-full bg-gray-100 dark:bg-gray-600 overflow-hidden shadow-md border-2 border-gray-300 dark:border-gray-500 hover:border-blue-400 transition-all duration-200">
+                    {imagePreview ? (
+                      typeof imagePreview === "string" ? (
+                        <img src={imagePreview} alt="Profile Preview" className="h-full w-full object-cover" />
+                      ) : (
+                        <img src={URL.createObjectURL(imagePreview)} alt="Profile Preview" className="h-full w-full object-cover" />
+                      )
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+                        <FontAwesomeIcon icon={faUser} size="3x" className="opacity-70" />
+                      </div>
+                    )}
+                  </div>
+
+                  <label className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+                    <div className="bg-black bg-opacity-50 rounded-full p-2">
+                      <FontAwesomeIcon icon={faCamera} className="text-white text-lg" />
+                    </div>
+                    <input
+                      className="hidden"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setImagePreview(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex gap-2">
+                  <label className="btn bgTheme text-white">
+                    <FontAwesomeIcon icon={faCamera} className="mr-2" />
+                    Change
+                    <input
+                      className="hidden"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setImagePreview(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </label>
+
+                  {imagePreview && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900 hover:bg-red-100 dark:hover:bg-red-800"
+                    >
+                      <span className="mr-2">X</span>Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Column 2 - Form Fields */}
+            <div className="space-y-4">
+              <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 border-b pb-2 border-gray-200 dark:border-gray-700">
+                Personal Information
+              </h3>
+
+              {/* Input fields */}
+              {[
+                { name: 'first_name', label: 'First Name', required: true },
+                { name: 'middle_name', label: 'Middle Name' },
+                { name: 'last_name', label: 'Last Name', required: true },
+                { name: 'email', label: 'Email', type: 'email', required: true },
+                { name: 'phone_no', label: 'Phone Number', type: 'tel', required: true },
+              ].map((field) => (
+                <div key={field.name} className="flex flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type || "text"}
+                    {...register(field.name, field.required ? { required: `${field.label} is required` } : {})}
+                    className="input input-bordered w-full text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
+                  />
+                  {errors[field.name] && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors[field.name]?.message}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                  Gender
+                </label>
+                <select
+                  {...register("gender", { required: "Gender is required" })}
+                  className="select select-bordered w-full text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
                 >
-                  Cancel
-                </button>
-                <button type="submit" className="btn bgTheme text-white">
-                  Save Changes
-                </button>
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+                {errors.gender && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.gender.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
-        </div>
-      )}
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-4 mt-6">
+            <button
+              type="button"
+              onClick={() => {
+                setIsDialogOpen(false);
+                setImagePreview(null);
+              }}
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn bgTheme text-white"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   </div>
 );

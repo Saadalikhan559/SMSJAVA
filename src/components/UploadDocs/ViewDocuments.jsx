@@ -157,6 +157,8 @@ export const ViewDocuments = () => {
     const classMatch = selectedRole === "Student" ? selectedClass === "All" || person.yearLevel === selectedClass : true;
     return roleMatch && classMatch;
   });
+  console.log(filteredData);
+  
   const filterBysearch = filteredData.filter((detail) =>
     detail.name
       .toLowerCase()
