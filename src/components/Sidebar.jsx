@@ -763,7 +763,7 @@ export const Sidebar = () => {
                          transition text-gray-800 dark:text-gray-200"
                       >
                         <i className="fa-solid fa-calendar-days w-5"></i>{" "}
-                        Holiday Calendar
+                        Academic Calendar
                       </Link>
                     </li>
                     {(role === constants.roles.director ||

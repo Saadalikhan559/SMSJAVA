@@ -185,8 +185,8 @@ return (
           <div className="space-y-6">
             {[
               { label: 'First Name', icon: faUser, value: profileData.first_name },
-              { label: 'Middle Name', icon: faSignature, value: profileData.middle_name },
               { label: 'Last Name', icon: faSignature, value: profileData.last_name },
+              { label: 'Phone Number', icon: faPhone, value: profileData.phone_no },
             ].map(({ label, icon, value }, idx) => (
               <div key={idx} className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
@@ -206,8 +206,8 @@ return (
           {/* Column 2 */}
           <div className="space-y-6">
             {[
+              { label: 'Middle Name', icon: faSignature, value: profileData.middle_name },
               { label: 'Email', icon: faEnvelope, value: profileData.email },
-              { label: 'Phone Number', icon: faPhone, value: profileData.phone_no },
               { label: 'Gender', icon: faVenusMars, value: profileData.gender },
               { label: 'Date Joined', icon: faCalendarDay, value: profileData.date_joined },
             ].map(

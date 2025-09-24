@@ -150,16 +150,16 @@ const TeacherAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
             <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
           </h1>
         </div>
 
         {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
           <div className="flex gap-3">
             <Link
               to={allRouterLink.teacherAttendanceRecord}
@@ -173,13 +173,13 @@ const TeacherAttendance = () => {
             placeholder="Search by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="border px-3 py-2 rounded w-full sm:w-64"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 px-3 py-2 rounded w-full sm:w-64 focus:outline-none"
           />
         </div>
 
         {/* Table */}
         <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
+          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-center text-sm font-semibold">S.NO</th>
@@ -190,29 +190,32 @@ const TeacherAttendance = () => {
                 <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredTeachers.length > 0 ? (
                 filteredTeachers.map((teacher, index) => (
-                  <tr key={teacher.id} className="hover:bg-gray-50 text-center">
-                    <td className="px-4 py-3">{index + 1}</td>
+                  <tr
+                    key={teacher.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
+                  >
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
 
-                    <td className="px-4 py-3 font-bold capitalize text-gray-700 text-nowrap">
+                    <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
                       {teacher.first_name} {teacher.last_name}
                     </td>
-                    <td className="px-4 py-3 text-gray-700 text-no">{teacher.email}</td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{teacher.email}</td>
                     <td className="px-4 py-3">
                       <input
                         type="date"
                         value={attendance[teacher.id]?.date || ""}
                         onChange={(e) => handleChange(teacher.id, "date", e.target.value)}
-                        className="border p-1 rounded text-center"
+                        className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 p-1 rounded text-center"
                       />
                     </td>
                     <td className="px-4 py-3">
                       <select
                         value={attendance[teacher.id]?.status || ""}
                         onChange={(e) => handleChange(teacher.id, "status", e.target.value)}
-                        className="select select-bordered w-full focus:outline-none text-nowrap"
+                        className="select select-bordered w-full focus:outline-none text-nowrap border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
                       >
                         <option value="">-- Select Status --</option>
                         <option value="absent">Absent</option>
@@ -225,18 +228,22 @@ const TeacherAttendance = () => {
                         onClick={() => handleSave(teacher)}
                         disabled={attendance[teacher.id]?.marked}
                         className={`btn w-28 ${attendance[teacher.id]?.marked
-                            ? "bg-gray-400 textTheme cursor-not-allowed"
-                            : "bgTheme text-white"
+                          ? "bg-gray-400 textTheme cursor-not-allowed"
+                          : "bgTheme text-white"
                           }`}
                       >
                         {attendance[teacher.id]?.marked ? "Marked" : "Save"}
                       </button>
                     </td>
+
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="px-4 py-6 text-center text-sm text-gray-500">
+                  <td
+                    colSpan="7"
+                    className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                  >
                     No teachers found
                   </td>
                 </tr>
@@ -263,7 +270,7 @@ const TeacherAttendance = () => {
       {/* Alert Modal */}
       {showAlert && (
         <dialog className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             <h3 className="font-bold text-lg">Teacher Attendance</h3>
             <p className="py-4 capitalize">
               {alertMessage.split("\n").map((line, idx) => (
@@ -274,7 +281,10 @@ const TeacherAttendance = () => {
               ))}
             </p>
             <div className="modal-action">
-              <button className="btn bgTheme text-white w-30" onClick={() => setShowAlert(false)}>
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
                 OK
               </button>
             </div>
