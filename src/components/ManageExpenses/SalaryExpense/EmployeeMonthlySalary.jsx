@@ -18,9 +18,9 @@ export const EmployeeMonthlySalary = () => {
   const [searchName, setSearchName] = useState("");
   const { id } = useParams();
 
-    const Status = ["approved", "pending", "rejected"];
+  const Status = ["approved", "pending", "rejected"];
 
-    
+
   const getEmployee = async () => {
     try {
       const response = await axios.get(
@@ -80,7 +80,7 @@ export const EmployeeMonthlySalary = () => {
         <div className="mb-6 pb-4 border-b">
           {/* Employee Name */}
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-6">
-            {employeeName}
+            {employeeName} Salary Record
           </h1>
 
           {/* Month Selector */}
@@ -130,6 +130,9 @@ export const EmployeeMonthlySalary = () => {
                   Payment Method
                 </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                  Payment Date
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                   Status
                 </th>
                 <th
@@ -157,17 +160,19 @@ export const EmployeeMonthlySalary = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {detail ? detail.net_amount : ""}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                    <td className="px-10 py-3 text-sm text-gray-700 text-nowrap capitalize">
                       {detail ? detail.payment_method : ""}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
+                      {detail ? detail.payment_date : ""}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 text-nowrap">
                       {detail ? (
                         <span
-                          className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${
-                            detail.status === "pending"
+                          className={`px-2 py-1 text-sm font-medium rounded-md capitalize shadow-sm border ${detail.status === "pending"
                               ? "text-yellow-700 bg-yellow-50 border-yellow-300"
                               : "text-green-700 bg-green-50 border-green-300"
-                          }`}
+                            }`}
                         >
                           {detail.status}
                         </span>

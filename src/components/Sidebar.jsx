@@ -702,7 +702,7 @@ export const Sidebar = () => {
                          hover:bg-blue-100 dark:hover:bg-gray-700 
                          transition text-gray-800 dark:text-gray-200"
                         >
-                          <i className="fa-solid fa-vault"></i>
+                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
                           Create Salary
                         </Link>
                       </li>
@@ -720,7 +720,7 @@ export const Sidebar = () => {
                          hover:bg-blue-100 dark:hover:bg-gray-700 
                          transition text-gray-800 dark:text-gray-200"
                         >
-                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
+                          <i class="fa-solid fa-wallet"></i>
                           View Salary
                         </Link>
                       </li>

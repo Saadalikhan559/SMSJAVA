@@ -158,7 +158,7 @@ export const ViewDocuments = () => {
     return roleMatch && classMatch;
   });
   console.log(filteredData);
-  
+
   const filterBysearch = filteredData.filter((detail) =>
     detail.name
       .toLowerCase()
@@ -311,7 +311,7 @@ export const ViewDocuments = () => {
                                 </div>
                               ))
                             ) : (
-                              <p className="text-sm text-gray-700 dark:text-gray-200 text-nowrap">Not</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-200 text-nowrap">Not Available</p>
 
                             )}
                           </td>

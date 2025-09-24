@@ -17,8 +17,9 @@ export const ViewSalaryExpense = () => {
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [selectedId, setSelectedId] = useState(null); 
+  const [selectedId, setSelectedId] = useState(null);
   const [searchName, setSearchName] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
   const modalRef = useRef();
 
   const getSchoolExpense = async () => {
@@ -73,134 +74,155 @@ export const ViewSalaryExpense = () => {
     return <Error />;
   }
 
-  //  filter  by name
-  const filteredExpenses = schoolExpense.filter((expense) =>
-    expense.name.toLowerCase().includes(searchName.toLowerCase())
-  );
+  //  filter 
+  const filteredExpenses = schoolExpense
+    .filter((expense) => {
+      const matchesName = expense.name
+        .toLowerCase()
+        .includes(searchName.toLowerCase());
 
-return (
-  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
-    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
-      <div className="mb-4 border-b border-gray-300 dark:border-gray-700">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
-          <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
-        </h1>
-        <div className="flex justify-end w-full sm:w-auto py-2">
-          <input
-            type="text"
-            placeholder="Search Student Name..."
-            className="input input-bordered w-full sm:max-w-xs focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-          />
-        </div>
-      </div>
+      const matchesRole = roleFilter
+        ? typeof expense.role === "string"
+          ? expense.role.toLowerCase() === roleFilter.toLowerCase()
+          : expense.role.includes(roleFilter)
+        : true;
 
-      {/* Display API error message */}
-      {apiError && (
-        <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white dark:bg-red-900">
-          <div className="flex items-center text-error dark:text-red-400">
-            <i className="fa-solid fa-circle-exclamation mr-2"></i>
-            <span className="font-medium">{apiError}</span>
+      return matchesName && matchesRole;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return (
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+        <div className="mb-4 border-b border-gray-300 dark:border-gray-700">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
+            <i class="fa-solid fa-wallet mr-2"></i> Salary
+          </h1>
+          <div className="flex flex-col sm:flex-row gap-2 sm:justify-between py-2">
+            <select
+              className="select select-bordered w-full sm:max-w-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+            >
+              <option value="">All Roles</option>
+              <option value="OfficeStaff">Office Staff</option>
+              <option value="Teacher">Teacher</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Search Employee Name..."
+              className="input input-bordered w-full sm:max-w-xs focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+            />
+
+
           </div>
         </div>
-      )}
 
-      {/* Table */}
-      <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
-        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-          <thead className="bgTheme text-white z-2 sticky top-0">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
-                Name
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
-                Role
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
-                Joining Date
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
-                Base Salary
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap" width={10}>
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-            {filteredExpenses.length > 0 ? (
-              filteredExpenses.map((expense) => (
-                <tr key={expense.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                    {expense.name}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                    {(typeof expense.role === "string"
-                      ? [expense.role]
-                      : expense.role
-                    )
-                      .map((r) => r)
-                      .join(", ")}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                    {expense.joining_date}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                    {expense.base_salary}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
-                    <div className="flex space-x-2">
-                      {constants.roles.director === userRole && (
-                        <>
-                          <Link
-                            to={allRouterLink.editSalaryExpense.replace(":id", expense.id)}
-        className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                          >
-                            Edit
-                          </Link>
+        {/* Display API error message */}
+        {apiError && (
+          <div className="border border-error/50 rounded-lg p-4 mb-6 bg-white dark:bg-red-900">
+            <div className="flex items-center text-error dark:text-red-400">
+              <i className="fa-solid fa-circle-exclamation mr-2"></i>
+              <span className="font-medium">{apiError}</span>
+            </div>
+          </div>
+        )}
 
-                          <button
-                            onClick={() => handleDeleteClick(expense.id)}
-        className="inline-flex items-center px-3 py-1 shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
-                          >
-                            Delete
-                          </button>
+        {/* Table */}
+        <div className="w-full overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
+          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+            <thead className="bgTheme text-white z-2 sticky top-0">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                  Name
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                  Role
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                  Joining Date
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                  Base Salary
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap" width={10}>
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+              {filteredExpenses.length > 0 ? (
+                filteredExpenses.map((expense) => (
+                  <tr key={expense.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                      {expense.name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                      {(typeof expense.role === "string"
+                        ? [expense.role]
+                        : expense.role
+                      )
+                        .map((r) => r)
+                        .join(", ")}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                      {expense.joining_date}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                      {expense.base_salary}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
+                      <div className="flex space-x-2">
+                        {constants.roles.director === userRole && (
+                          <>
+                            <Link
+                              to={allRouterLink.editSalaryExpense.replace(":id", expense.id)}
+                              className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                            >
+                              Edit
+                            </Link>
 
-                          <Link
-                            to={allRouterLink.employeeMonthySalary.replace(":id", expense.id)}
-                           className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100"
-                          >
-                            Details
-                          </Link>
-                        </>
-                      )}
+                            <button
+                              onClick={() => handleDeleteClick(expense.id)}
+                              className="inline-flex items-center px-3 py-1 shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+                            >
+                              Delete
+                            </button>
+
+                            <Link
+                              to={allRouterLink.employeeMonthySalary.replace(":id", expense.id)}
+                              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100"
+                            >
+                              Details
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                    <div className="flex flex-col items-center justify-center">
+                      <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400 dark:text-gray-600"></i>
+                      <p>No Salary Found</p>
                     </div>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="10" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
-                  <div className="flex flex-col items-center justify-center">
-                    <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400 dark:text-gray-600"></i>
-                    <p>No Salary Found</p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <ConfirmationModal
+          ref={modalRef}
+          onConfirm={confirmDelete}
+          onCancel={() => setSelectedId(null)}
+        />
       </div>
-
-      <ConfirmationModal
-        ref={modalRef}
-        onConfirm={confirmDelete}
-        onCancel={() => setSelectedId(null)}
-      />
     </div>
-  </div>
-);
-
-
+  );
 };
