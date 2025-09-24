@@ -13,6 +13,7 @@ export const Navbar = () => {
   const [profileImageError, setProfileImageError] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+
   const logoutDialogRef = useRef(null);
 
   const defaultProfileImage =
