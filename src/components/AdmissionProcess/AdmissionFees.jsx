@@ -130,14 +130,14 @@ export const AdmissionFees = () => {
 
   try {
     setIsLoadingFees(true);
-    setApiError(""); // ✅ clear any old errors
+    setApiError(""); 
 
     const response = await axiosInstance.get(
       `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
       { headers: { "Content-Type": "application/json" } }
     );
 
-    // ✅ Normalize whatever the API gives back
+    
     let data = response.data;
     if (!Array.isArray(data)) {
       if (data?.month && data?.fees) data = [data];
@@ -149,7 +149,7 @@ export const AdmissionFees = () => {
     return data;
   } catch (error) {
     console.error("API error", error.response || error.message || error);
-    setApiError("Failed to load fees");  // ✅ only set inside catch
+    setApiError("Failed to load fees");  
     setAvailableFees([]);
     return [];
   } finally {
@@ -217,7 +217,7 @@ export const AdmissionFees = () => {
     if (selectedStudentId) {
       const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
       setSelectedStudent(student);
-      fetchAvailableFees(selectedStudentId);  // ✅ no month now
+      fetchAvailableFees(selectedStudentId); 
     } else {
       setSelectedStudent(null);
       setAvailableFees([]);
@@ -384,7 +384,7 @@ export const AdmissionFees = () => {
 
     const payload = {
       student_id: parseInt(data.student_id),
-      selected_fees,   // ✅ new format
+      selected_fees, 
       paid_amount: parseFloat(data.paid_amount).toFixed(2),
       payment_mode: data.payment_mode,
       remarks: data.remarks,
@@ -437,7 +437,7 @@ export const AdmissionFees = () => {
   //   };
   // };
 
-  // ✅ define once here
+  
 
   const calculateTotalAmount = () => {
     let baseTotal = 0;
@@ -450,7 +450,7 @@ export const AdmissionFees = () => {
     }
 
     availableFees.forEach((monthData) => {
-      // also guard here if API returns wrong shape
+    
       if (!monthData?.fees) return;
 
       monthData.fees.forEach((fee) => {
@@ -1057,12 +1057,12 @@ export const AdmissionFees = () => {
                   required: "Amount is required",
                   min: { value: 0, message: "Amount must be positive" },
                   max: {
-                    value: totalAmount.totalAmount, // ensure cannot exceed total
+                    value: totalAmount.totalAmount,
                     message: `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
                   },
                 })}
-                value={watch("paid_amount")}   // ✅ always bind with watched form state
-                onChange={(e) => setValue("paid_amount", e.target.value)} // ✅ manual updates allowed
+                value={watch("paid_amount")}  
+                onChange={(e) => setValue("paid_amount", e.target.value)} 
                 step="1"
               />
               {errors.paid_amount && (
