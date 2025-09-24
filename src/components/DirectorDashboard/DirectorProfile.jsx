@@ -185,8 +185,8 @@ return (
           <div className="space-y-6">
             {[
               { label: 'First Name', icon: faUser, value: profileData.first_name },
-              { label: 'Middle Name', icon: faSignature, value: profileData.middle_name },
               { label: 'Last Name', icon: faSignature, value: profileData.last_name },
+              { label: 'Phone Number', icon: faPhone, value: profileData.phone_no },
             ].map(({ label, icon, value }, idx) => (
               <div key={idx} className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
@@ -206,8 +206,8 @@ return (
           {/* Column 2 */}
           <div className="space-y-6">
             {[
+              { label: 'Middle Name', icon: faSignature, value: profileData.middle_name },
               { label: 'Email', icon: faEnvelope, value: profileData.email },
-              { label: 'Phone Number', icon: faPhone, value: profileData.phone_no },
               { label: 'Gender', icon: faVenusMars, value: profileData.gender },
               { label: 'Date Joined', icon: faCalendarDay, value: profileData.date_joined },
             ].map(
@@ -247,7 +247,7 @@ return (
 
       {/* Dialog */}
       {isDialogOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-30 dark:bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div className="fixed inset-0  bg-opacity-30 dark:bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
       <div className="p-6">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
