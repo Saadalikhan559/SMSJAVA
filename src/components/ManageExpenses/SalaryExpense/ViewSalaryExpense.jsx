@@ -88,7 +88,7 @@ return (
         <div className="flex justify-end w-full sm:w-auto py-2">
           <input
             type="text"
-            placeholder="Search Student Name..."
+            placeholder="Search Staff or Teacher Name"
             className="input input-bordered w-full sm:max-w-xs focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}

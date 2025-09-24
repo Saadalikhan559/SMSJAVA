@@ -81,17 +81,24 @@ const FeeSummaryTable = () => {
     setSearchTerm("");
   };
 
-  const filteredStudents = students.filter((student) => {
-    const matchName = student.student_name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
+  const filteredStudents = students
+    .filter((student) => {
+      const matchName = student.student_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-    const matchYear =
-      !selectedSchoolYear ||
-      student.school_year?.toLowerCase() === selectedSchoolYear.toLowerCase();
+      const matchYear =
+        !selectedSchoolYear ||
+        student.school_year?.toLowerCase() === selectedSchoolYear.toLowerCase();
 
-    return matchName && matchYear;
-  });
+      return matchName && matchYear;
+    })
+    .sort((a, b) => {
+      if (!a.student_name) return 1;
+      if (!b.student_name) return -1;
+      return a.student_name.localeCompare(b.student_name);
+    });
+
 
   if (loading) {
     return (
@@ -130,6 +137,20 @@ const FeeSummaryTable = () => {
 
             {/* Left Side: Filters + Reset */}
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
+              {/* Class Filter */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Class:</label>
+                <select
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.id}>{level.level_name}</option>
+                  ))}
+                </select>
+              </div>
 
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
@@ -145,21 +166,6 @@ const FeeSummaryTable = () => {
                     "August", "September", "October", "November", "December",
                   ].map((month) => (
                     <option key={month} value={month}>{month}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Class Filter */}
-              <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Class:</label>
-                <select
-                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option value="">All Classes</option>
-                  {yearLevels.map((level) => (
-                    <option key={level.id} value={level.id}>{level.level_name}</option>
                   ))}
                 </select>
               </div>
@@ -197,7 +203,7 @@ const FeeSummaryTable = () => {
                   type="text"
                   placeholder="Enter student name"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value.trim())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none"
                 />
               </div>
