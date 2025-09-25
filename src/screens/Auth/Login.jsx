@@ -68,17 +68,21 @@ export const Login = () => {
             redirectPath = allRouterLink.login; // fallback
         }
 
-        navigate(redirectPath, { replace:true,state: { showSuccess: true } });
+        navigate(redirectPath, { replace: true, state: { showSuccess: true } });
       } else {
-        setFormError("Invalid email or password");
+        setFormError(response?.Message || "Invalid email or password");
       }
     } catch (err) {
-      setFormError("Something went wrong. Please try again later.");
+      setFormError(
+        err.response?.data?.Message ||
+        err.response?.data?.message ||
+        "Something went wrong. Please try again later."
+      );
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <>
@@ -90,9 +94,6 @@ export const Login = () => {
         <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-4">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
-
-            {formError && <div className="text-red-500 text-center font-medium">{formError}</div>}
-
             {/* Email */}
             <div className="form-control w-full">
               <label className="label">
@@ -133,6 +134,8 @@ export const Login = () => {
               </button>
               {errors.password && <span className="text-red-500 text-sm mt-1">{errors.password.message}</span>}
             </div>
+
+            {formError && <div className="text-red-500 text-center font-medium">{formError}</div>}
 
             {/* Submit Button */}
             <div className="form-control w-full mt-6">

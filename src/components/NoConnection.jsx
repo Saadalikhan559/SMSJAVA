@@ -12,7 +12,7 @@ const Noconnection = () => {
             <p className="py-6">
               Try checking your internet or wifi connection
             </p>
-            <button className="btn btn-primary" onClick={reloadpage}>Retry</button>
+            <button className="btn bgTheme text-white w-24" onClick={reloadpage}>Retry</button>
           </div>
         </div>
       </div>

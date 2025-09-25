@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
-import { fetchTeachers } from "../../services/api/Api";
-import { saveAllTeacherAttendance } from "../../services/api/Api";
-import { fetchTeacherAttendanceRecords } from "../../services/api/Api";
+import { fetchTeachers, saveTeacherAttendance, fetchTeacherAttendanceRecords } from "../../services/api/Api";
 
 const TeacherAttendance = () => {
   const [teachers, setTeachers] = useState([]);
@@ -14,7 +12,6 @@ const TeacherAttendance = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [savingAll, setSavingAll] = useState(false);
-
 
   useEffect(() => {
     const getData = async () => {
@@ -59,27 +56,25 @@ const TeacherAttendance = () => {
     }));
   };
 
+  // single teacher attendance
   const handleSave = async (teacher) => {
     if (!attendance[teacher.id]?.status) {
-      setAlertMessage("Please select status before saving!");
+      setAlertMessage("Please select status before marking Attendance!");
       setShowAlert(true);
       return;
     }
 
-    const data = {
-      date: attendance[teacher.id].date,
-      status: attendance[teacher.id].status,
-      teacher_id: teacher.id,
-      teacher_name: `${teacher.first_name} ${teacher.last_name}`,
-    };
-
     try {
-      await saveTeacherAttendance(data);
+      await saveTeacherAttendance([teacher], attendance);
+
       setAttendance((prev) => ({
         ...prev,
         [teacher.id]: { ...prev[teacher.id], marked: true },
       }));
-      setAlertMessage(`Attendance Marked Successfully ${data.teacher_name}`);
+
+      setAlertMessage(
+        `Attendance Marked Successfully for ${teacher.first_name} ${teacher.last_name}`
+      );
       setShowAlert(true);
     } catch {
       setAlertMessage("Failed to mark Attendance");
@@ -87,39 +82,50 @@ const TeacherAttendance = () => {
     }
   };
 
+  // Multiple teacher attendance
   const handleSaveAll = async () => {
-    const invalid = Object.values(attendance).some((a) => !a.status);
-    if (invalid) {
-      setAlertMessage("Please select status for all teachers before saving!");
+    const unsavedTeachers = teachers.filter(
+      (t) => !attendance[t.id]?.marked && attendance[t.id]?.status
+    );
+
+    if (unsavedTeachers.length === 0) {
+      setAlertMessage("Please select status before marking Attendance!");
       setShowAlert(true);
       return;
     }
+
     setSavingAll(true);
     try {
-      await saveAllTeacherAttendance(teachers, attendance);
+      await saveTeacherAttendance(unsavedTeachers, attendance);
 
-      const updated = {};
-      Object.keys(attendance).forEach((id) => {
-        updated[id] = { ...attendance[id], marked: true };
+      const updated = { ...attendance };
+      unsavedTeachers.forEach((t) => {
+        updated[t.id] = { ...updated[t.id], marked: true };
       });
       setAttendance(updated);
 
-      setAlertMessage("Attendance Marked Successfully for all teachers!");
+      setAlertMessage("Attendance Marked Successfully for Selected Teachers!");
       setShowAlert(true);
     } catch {
-      setAlertMessage("Failed to mark all attendance");
+      setAlertMessage("Failed to Mark Attendance");
       setShowAlert(true);
     } finally {
       setSavingAll(false);
     }
-
   };
 
-  const filteredTeachers = teachers.filter((t) =>
-    `${t.first_name} ${t.last_name}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+  const filteredTeachers = teachers
+    .filter((t) =>
+      `${t.first_name} ${t.last_name}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) =>
+      `${a.first_name} ${a.last_name}`.localeCompare(
+        `${b.first_name} ${b.last_name}`
+      )
+    );
+
 
   if (loading) {
     return (
@@ -138,143 +144,133 @@ const TeacherAttendance = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">
-          Failed to load data, Try Again
-        </p>
+        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
       </div>
     );
   }
 
-return (
-  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
-    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
-      <div className="mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-2">
-          <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
-        </h1>
-      </div>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-300 dark:border-gray-700 pb-2">
-
-        <div className="flex gap-3">
-          <Link
-            to={allRouterLink.teacherAttendanceRecord}
-            className="bgTheme text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-42"
-          >
-            Attendance Record
-          </Link>
+  return (
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
+        <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
+            <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
+          </h1>
         </div>
-        
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-        />
-      </div>
 
-      <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
-        <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
-          <thead className="bgTheme text-white z-2 sticky top-0">
-            <tr>
-              <th className="px-4 py-3 text-center text-sm font-semibold">
-                Marked
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold">
-                Teacher Name
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold">
-                Email
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold">
-                Date
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
-            {filteredTeachers.length > 0 ? (
-              filteredTeachers.map((teacher) => (
-                <tr
-                  key={teacher.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800 text-center text-gray-700 dark:text-gray-300"
-                >
-                  <td className="px-4 py-3">
-                    <input
-                      type="checkbox"
-                      checked={attendance[teacher.id]?.marked || false}
-                      readOnly
-                      className="accent-blue-600 dark:accent-blue-400"
-                    />
-                  </td>
-                  <td className="px-4 py-3 font-bold capitalize text-nowrap">
-                    {teacher.first_name} {teacher.last_name}
-                  </td>
-                  <td className="px-4 py-3 text-nowrap">
-                    {teacher.email}
-                  </td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="date"
-                      value={attendance[teacher.id]?.date || ""}
-                      onChange={(e) =>
-                        handleChange(teacher.id, "date", e.target.value)
-                      }
-                      className="border border-gray-300 dark:border-gray-600 p-1 rounded text-center bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <select
-                      value={attendance[teacher.id]?.status || ""}
-                      onChange={(e) =>
-                        handleChange(teacher.id, "status", e.target.value)
-                      }
-                      className="select select-bordered w-full focus:outline-none text-nowrap bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 border border-gray-300 dark:border-gray-600"
-                    >
-                      <option value="">-- Select Status --</option>
-                      <option value="present">Present</option>
-                      <option value="absent">Absent</option>
-                      <option value="leave">Leave</option>
-                    </select>
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+          <div className="flex gap-3">
+            <Link
+              to={allRouterLink.teacherAttendanceRecord}
+              className="btn bgTheme text-white "
+            >
+              <i className="fa-solid fa-clipboard-list w-5"></i>Attendance Record
+            </Link>
+          </div>
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 px-3 py-2 rounded w-full sm:w-64 focus:outline-none"
+          />
+        </div>
+
+        {/* Table */}
+        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
+            <thead className="bgTheme text-white z-2 sticky top-0">
+              <tr>
+                <th className="px-4 py-3 text-center text-sm font-semibold">S.NO</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold">Teacher Name</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold">Email</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold">Date</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold">Status</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+              {filteredTeachers.length > 0 ? (
+                filteredTeachers.map((teacher, index) => (
+                  <tr
+                    key={teacher.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
+                  >
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
+
+                    <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
+                      {teacher.first_name} {teacher.last_name}
+                    </td>
+                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{teacher.email}</td>
+                    <td className="px-4 py-3">
+                      <input
+                        type="date"
+                        value={attendance[teacher.id]?.date || ""}
+                        onChange={(e) => handleChange(teacher.id, "date", e.target.value)}
+                        className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 p-1 rounded text-center"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <select
+                        value={attendance[teacher.id]?.status || ""}
+                        onChange={(e) => handleChange(teacher.id, "status", e.target.value)}
+                        className="select select-bordered w-full focus:outline-none text-nowrap border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                      >
+                        <option value="">-- Select Status --</option>
+                        <option value="absent">Absent</option>
+                        <option value="leave">Leave</option>
+                        <option value="present">Present</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => handleSave(teacher)}
+                        disabled={attendance[teacher.id]?.marked}
+                        className={`btn w-28 ${attendance[teacher.id]?.marked
+                          ? "bg-gray-400 textTheme cursor-not-allowed"
+                          : "bgTheme text-white"
+                          }`}
+                      >
+                        {attendance[teacher.id]?.marked ? "Marked" : "Save"}
+                      </button>
+                    </td>
+
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                  >
+                    No teachers found
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
-                >
-                  No teachers found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-
-        <br />
-        <div className="flex w-full justify-center ">
-          <div className="flex w-full justify-center">
-            <button
-              onClick={handleSaveAll}
-              className="btn bgTheme text-white w-40"
-            >
-              {savingAll ? (
-                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              ) : (
-                ""
               )}
-              {savingAll ? " " : "Save All"}
-            </button>
-          </div>
+            </tbody>
+          </table>
+
+          {/* Save All */}
+          <br />
+          {filteredTeachers.length > 0 && (
+            <div className="flex w-full justify-center mt-4">
+              <button
+                onClick={handleSaveAll}
+                className="btn bgTheme text-white w-40"
+              >
+                {savingAll && <i className="fa-solid fa-spinner fa-spin mr-2"></i>}
+                {savingAll ? " " : "Save All"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      {/* Modal */}
+
+      {/* Alert Modal */}
       {showAlert && (
-        <dialog className="modal modal-open bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-          <div className="modal-box">
+        <dialog className="modal modal-open">
+          <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
             <h3 className="font-bold text-lg">Teacher Attendance</h3>
             <p className="py-4 capitalize">
               {alertMessage.split("\n").map((line, idx) => (
@@ -296,9 +292,8 @@ return (
         </dialog>
       )}
     </div>
-  </div>
-);
-
+  );
 };
 
 export default TeacherAttendance;
+

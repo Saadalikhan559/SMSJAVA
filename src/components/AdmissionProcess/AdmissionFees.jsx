@@ -24,7 +24,7 @@ export const AdmissionFees = () => {
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
 
-console.log("fee",availableFees);
+  console.log("fee", availableFees);
 
 
 
@@ -56,23 +56,6 @@ console.log("fee",availableFees);
   const selectedMonth = watch("month");
 
   // Custom Loader JSX
-  const Loader = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-        <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-      </div>
-      <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-    </div>
-  );
-
-  const ErrorUI = ({ message }) => (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-      <p className="text-lg text-red-400 font-medium">{message || "Failed to load data, Try Again"}</p>
-    </div>
-  );
 
   // Fetch all classes
   const getClasses = async () => {
@@ -90,51 +73,89 @@ console.log("fee",availableFees);
   };
 
   // Fetch available fees for a student with proper error handling
-  const fetchAvailableFees = async (studentId, month) => {
-    if (!studentId || !month) {
-      setAvailableFees([]);
-      return [];
+  // const fetchAvailableFees = async (studentId, month) => {
+  //   if (!studentId || !month) {
+  //     setAvailableFees([]);
+  //     return [];
+  //   }
+  // const fetchAvailableFees = async (studentId) => {
+  //   if (!studentId) {
+  //     setAvailableFees([]);
+  //     return [];
+  //   }
+
+  //   if (!accessToken) {
+  //     setApiError("Authentication required. Please login again.");
+  //     setAvailableFees([]);
+  //     return [];
+  //   }
+
+  //   try {
+  //     setIsLoadingFees(true);
+  //     setApiError("");
+  //     const response = await axiosInstance.get(
+  //       `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}&month=${month}`,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     setAvailableFees(response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     let errorMessage = "Failed to load fees";
+  //     if (error.response) {
+  //       if (error.response.status === 401) errorMessage = "Authentication failed. Please login again.";
+  //       else if (error.response.status === 404) errorMessage = "No fees found for selected student and month";
+  //       else if (error.response.status === 500) errorMessage = "Server error. Please try again later.";
+  //       else if (error.response.data?.detail) errorMessage = error.response.data.detail;
+  //     } else if (error.request) {
+  //       errorMessage = "Network error. Please check your connection.";
+  //     } else {
+  //       errorMessage = error.message;
+  //     }
+  //     setApiError(errorMessage);
+  //     setAvailableFees([]);
+  //     return [];
+  //   } finally {
+  //     setIsLoadingFees(false);
+  //   }
+  // };
+  const fetchAvailableFees = async (studentId) => {
+  if (!studentId) {
+    setAvailableFees([]);
+    return [];
+  }
+
+  try {
+    setIsLoadingFees(true);
+    setApiError(""); // ✅ clear any old errors
+
+    const response = await axiosInstance.get(
+      `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    // ✅ Normalize whatever the API gives back
+    let data = response.data;
+    if (!Array.isArray(data)) {
+      if (data?.month && data?.fees) data = [data];
+      else data = [];
     }
 
-    if (!accessToken) {
-      setApiError("Authentication required. Please login again.");
-      setAvailableFees([]);
-      return [];
-    }
-
-    try {
-      setIsLoadingFees(true);
-      setApiError("");
-      const response = await axiosInstance.get(
-        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}&month=${month}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setAvailableFees(response.data);
-      return response.data;
-    } catch (error) {
-      let errorMessage = "Failed to load fees";
-      if (error.response) {
-        if (error.response.status === 401) errorMessage = "Authentication failed. Please login again.";
-        else if (error.response.status === 404) errorMessage = "No fees found for selected student and month";
-        else if (error.response.status === 500) errorMessage = "Server error. Please try again later.";
-        else if (error.response.data?.detail) errorMessage = error.response.data.detail;
-      } else if (error.request) {
-        errorMessage = "Network error. Please check your connection.";
-      } else {
-        errorMessage = error.message;
-      }
-      setApiError(errorMessage);
-      setAvailableFees([]);
-      return [];
-    } finally {
-      setIsLoadingFees(false);
-    }
-  };
-
+    console.log("Fees response normalized:", data);
+    setAvailableFees(data);
+    return data;
+  } catch (error) {
+    console.error("API error", error.response || error.message || error);
+    setApiError("Failed to load fees");  // ✅ only set inside catch
+    setAvailableFees([]);
+    return [];
+  } finally {
+    setIsLoadingFees(false);
+  }
+};
   // Fetch students for selected class
   const getStudents = async (classId) => {
     try {
@@ -180,18 +201,29 @@ console.log("fee",availableFees);
     }
   }, [selectedClassId]);
 
+  // useEffect(() => {
+  //   if (selectedStudentId && selectedMonth) {
+  //     const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
+  //     setSelectedStudent(student);
+  //     fetchAvailableFees(selectedStudentId, selectedMonth);
+  //   } else {
+  //     setSelectedStudent(null);
+  //     setAvailableFees([]);
+  //     setSelectedFeeIds([]);
+  //     setAvailableMonths([]);
+  //   }
+  // }, [selectedStudentId, selectedMonth, students]);
   useEffect(() => {
-    if (selectedStudentId && selectedMonth) {
+    if (selectedStudentId) {
       const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
       setSelectedStudent(student);
-      fetchAvailableFees(selectedStudentId, selectedMonth);
+      fetchAvailableFees(selectedStudentId);  // ✅ no month now
     } else {
       setSelectedStudent(null);
       setAvailableFees([]);
       setSelectedFeeIds([]);
-      setAvailableMonths([]);
     }
-  }, [selectedStudentId, selectedMonth, students]);
+  }, [selectedStudentId, students]);
 
   useEffect(() => {
     if (selectedFeeIds.length > 0 && availableFees.length > 0) {
@@ -311,25 +343,62 @@ console.log("fee",availableFees);
   };
 
   const onSubmit = async (data) => {
+    //   if (selectedFeeIds.length === 0) {
+    //     alert("Please select at least one fee to pay");
+    //     return;
+    //   }
+
+    //   const payload = {
+    //     ...data,
+    //     student_id: parseInt(data.student_id),
+    //     paid_amount: parseFloat(data.paid_amount).toFixed(2),
+    //     year_level_fees: selectedFeeIds,
+    //     payment_mode: data.payment_mode,
+    //     is_cheque_cleared: data.payment_mode === "Cheque" ? false : true,
+    //   };
+    //   console.log(payload);
+
+    //   try {
+    //     if (payload.payment_mode === "Online") await displayRazorpay(payload);
+    //     else {
+    //       const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload, {
+    //         headers: { Authorization: `Bearer ${accessToken}` },
+    //       });
+    //       setPaymentStatus(response.data);
+    //       setShowPaymentDialog1(true);
+    //     }
+    //   } catch (err) {
+    //     setPaymentStatus("Payment failed. Please try again.");
+    //   }
+    // };
     if (selectedFeeIds.length === 0) {
       alert("Please select at least one fee to pay");
       return;
     }
 
+    // Transform selectedFeeIds into the correct object format
+    const selected_fees = selectedFeeIds.map((rowKey) => {
+      const [month, feeId] = rowKey.split("-");
+      return { month, fee_id: parseInt(feeId) };
+    });
+
     const payload = {
-      ...data,
       student_id: parseInt(data.student_id),
+      selected_fees,   // ✅ new format
       paid_amount: parseFloat(data.paid_amount).toFixed(2),
-      year_level_fees: selectedFeeIds,
       payment_mode: data.payment_mode,
+      remarks: data.remarks,
+      received_by: data.received_by,
       is_cheque_cleared: data.payment_mode === "Cheque" ? false : true,
     };
-    console.log(payload);
+
+    console.log("Payload:", payload);
 
     try {
-      if (payload.payment_mode === "Online") await displayRazorpay(payload);
-      else {
-        const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload, {
+      if (payload.payment_mode === "Online") {
+        await displayRazorpay(payload);
+      } else {
+        const response = await axios.post(`${BASE_URL}/d/fee-record/submit-multi-month-fees/`, payload, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
         setPaymentStatus(response.data);
@@ -340,39 +409,114 @@ console.log("fee",availableFees);
     }
   };
 
-  const handleFeeSelection = (feeId, isSelected) => {
-    if (isSelected) setSelectedFeeIds((prev) => [...prev, feeId]);
-    else setSelectedFeeIds((prev) => prev.filter((id) => id !== feeId));
-  };
+  // const calculateTotalAmount = () => {
+  //   let baseTotal = 0;
+  //   let lateTotal = 0;
+  //   let dueTotal = 0;
+
+  //   availableFees.forEach((monthData) => {
+  //     monthData.fees.forEach((fee) => {
+  //       const rowKey = `${monthData.month}-${fee.id}`;
+  //       if (selectedFeeIds.includes(rowKey)) {
+  //         const base = parseFloat(fee.base_amount) || 0;
+  //         const late = parseFloat(fee.late_fee) || 0;
+  //         const due = parseFloat(fee.due_amount) || 0;
+
+  //         baseTotal += base;
+  //         lateTotal += late;
+  //         dueTotal += due;
+  //       }
+  //     });
+  //   });
+
+  //   return {
+  //     baseAmount: baseTotal,
+  //     lateFee: lateTotal,
+  //     Due: dueTotal,
+  //     totalAmount: baseTotal + lateTotal + dueTotal,
+  //   };
+  // };
+
+  // ✅ define once here
 
   const calculateTotalAmount = () => {
-    let total = 0;
-    let lateFeeTotal = 0;
-    let dueFeeTotal = 0;
+    let baseTotal = 0;
+    let lateTotal = 0;
+    let dueTotal = 0;
 
-    availableFees.forEach((yearLevel) => {
-      yearLevel.fees.forEach((fee) => {
-        if (selectedFeeIds.includes(fee.id)) {
-          const finalAmount = parseFloat(fee.final_amount) || 0;
-          const lateFee = parseFloat(fee.late_fee) || 0;
-          const dueAmount = parseFloat(fee.due_amount) || 0;
+    // defensive check
+    if (!Array.isArray(availableFees)) {
+      return { baseAmount: 0, lateFee: 0, Due: 0, totalAmount: 0 };
+    }
 
-          total += finalAmount;
-          lateFeeTotal += lateFee;
-          dueFeeTotal += dueAmount;
+    availableFees.forEach((monthData) => {
+      // also guard here if API returns wrong shape
+      if (!monthData?.fees) return;
+
+      monthData.fees.forEach((fee) => {
+        const rowKey = `${monthData.month}-${fee.id}`;
+        if (selectedFeeIds.includes(rowKey)) {
+          const base = parseFloat(fee.base_amount) || 0;
+          const late = parseFloat(fee.late_fee) || 0;
+          const due = parseFloat(fee.due_amount) || 0;
+
+          baseTotal += base;
+          lateTotal += late;
+          dueTotal += due;
         }
       });
     });
 
     return {
-      baseAmount: total,
-      lateFee: lateFeeTotal,
-      Due: dueFeeTotal,
-      totalAmount: total + lateFeeTotal + dueFeeTotal,
+      baseAmount: baseTotal,
+      lateFee: lateTotal,
+      Due: dueTotal,
+      totalAmount: baseTotal + lateTotal + dueTotal,
     };
   };
 
   const totalAmount = calculateTotalAmount();
+  const handleFeeSelection = (feeId, isSelected) => {
+    if (isSelected) setSelectedFeeIds((prev) => [...prev, feeId]);
+    else setSelectedFeeIds((prev) => prev.filter((id) => id !== feeId));
+  };
+  useEffect(() => {
+    const totals = calculateTotalAmount();
+    // update form field when fees change
+    setValue("paid_amount", totals.totalAmount.toFixed(2), {
+      shouldValidate: true,
+      shouldDirty: true
+    });
+  }, [selectedFeeIds, availableFees, setValue]);
+
+  // const calculateTotalAmount = () => {
+  //   let total = 0;
+  //   let lateFeeTotal = 0;
+  //   let dueFeeTotal = 0;
+
+  //   availableFees.forEach((yearLevel) => {
+  //     yearLevel.fees.forEach((fee) => {
+  //       if (selectedFeeIds.includes(fee.id)) {
+  //         const finalAmount = parseFloat(fee.final_amount) || 0;
+  //         const lateFee = parseFloat(fee.late_fee) || 0;
+  //         const dueAmount = parseFloat(fee.due_amount) || 0;
+
+  //         total += finalAmount;
+  //         lateFeeTotal += lateFee;
+  //         dueFeeTotal += dueAmount;
+  //       }
+  //     });
+  //   });
+
+  //   return {
+  //     baseAmount: total,
+  //     lateFee: lateFeeTotal,
+  //     Due: dueFeeTotal,
+  //     totalAmount: total + lateFeeTotal + dueFeeTotal,
+  //   };
+  // };
+
+  // const totalAmount = calculateTotalAmount();
 
 
 
@@ -389,9 +533,14 @@ console.log("fee",availableFees);
 
   console.log(student);
 
+  // const handleRetry = () => {
+  //   if (selectedStudentId && selectedMonth) {
+  //     fetchAvailableFees(selectedStudentId, selectedMonth);
+  //   }
+  // };
   const handleRetry = () => {
-    if (selectedStudentId && selectedMonth) {
-      fetchAvailableFees(selectedStudentId, selectedMonth);
+    if (selectedStudentId) {
+      fetchAvailableFees(selectedStudentId);
     }
   };
 
@@ -490,18 +639,18 @@ console.log("fee",availableFees);
                 value={selectedClassId || ""}
               >
                 <option value="">Select Class</option>
-                {UserRole === "director"  ? classes?.map((classItem) => (
+                {UserRole === "director" ? classes?.map((classItem) => (
                   <option key={classItem.id} value={classItem.id}>
                     {classItem.level_name}
                   </option>
                 ))
-                :UserRole === "office staff"  ? classes?.map((classItem) => (
-                  <option key={classItem.id} value={classItem.id}>
-                    {classItem.level_name}
-                  </option>
-                ))
-                
-                :null}
+                  : UserRole === "office staff" ? classes?.map((classItem) => (
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.level_name}
+                    </option>
+                  ))
+
+                    : null}
                 {UserRole === "student" && (
                   <option key={stuYearlvlId} value={stuYearlvlId}>
                     {stuYearlvlName}
@@ -538,18 +687,18 @@ console.log("fee",availableFees);
                       {student.student_name} - {student.student_email}
                     </option>
                   ))
-                ) :UserRole === "office staff" ? (
+                ) : UserRole === "office staff" ? (
                   students?.map((student) => (
                     <option key={student.student_id} value={student.student_id}>
                       {student.student_name} - {student.student_email}
                     </option>
                   ))
                 )
-                : UserRole === "student" ? (
-                  <option key={student?.student_id} value={student?.student_id}>
-                    {student?.student_name} - {student?.student_email}
-                  </option>
-                ) : null}
+                  : UserRole === "student" ? (
+                    <option key={student?.student_id} value={student?.student_id}>
+                      {student?.student_name} - {student?.student_email}
+                    </option>
+                  ) : null}
 
               </select>
               {errors.student_id && (
@@ -562,7 +711,7 @@ console.log("fee",availableFees);
             </div>
 
             {/* Month Selection */}
-            <div className="form-control">
+            {/* <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-calendar text-sm"></i>
@@ -591,7 +740,7 @@ console.log("fee",availableFees);
                   </span>
                 </label>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Loading State */}
@@ -609,11 +758,9 @@ console.log("fee",availableFees);
           {/* Available Fees Display */}
           {availableFees.length > 0 && selectedStudent && (
             <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">
-                Available Fees for {selectedStudent.student_name}
-              </h2>
+           
 
-              {availableFees.map((yearLevel) => (
+              {/* {availableFees.map((yearLevel) => (
                 <div key={yearLevel.id} className="mb-6">
                   <h3 className="text-lg font-medium mb-3">
                     {yearLevel.year_level} Fees
@@ -671,7 +818,120 @@ console.log("fee",availableFees);
                     ))}
                   </div>
                 </div>
-              ))}
+              ))} */}
+
+              {availableFees.length > 0 && selectedStudent && (
+                <div className="mt-8">
+                  <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
+                    Fee Details for {selectedStudent.student_name}
+                  </h2>
+<div className="overflow-x-auto">
+  <div className="max-h-[500px] overflow-y-auto rounded-lg border">
+    <table className="table w-full">
+      <thead className="sticky top-0 bg-base-200 z-10">
+        <tr>
+          <th>Month</th>
+          <th>Fee Type</th>
+          <th>Amount</th>
+          <th>Late Fee</th>
+          <th>Status</th>
+          <th>Select</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Array.isArray(availableFees) && availableFees.map((monthData) =>
+          monthData.fees.map((fee, index) => {
+            const rowKey = `${monthData.month}-${fee.id}`;
+            const isSelectable = fee.status !== "Already Paid";
+            const isChecked = selectedFeeIds.includes(rowKey);
+
+            return (
+              <tr key={rowKey} className="hover">
+                {index === 0 && (
+                  <td
+                    rowSpan={monthData.fees.length}
+                    className="font-semibold bg-base-100 align-top"
+                  >
+                    {monthData.month}
+                  </td>
+                )}
+                <td>{fee.fee_type}</td>
+                <td>₹{fee.base_amount}</td>
+                <td className={fee.late_fee > 0 ? "text-warning" : ""}>
+                  ₹{fee.late_fee}
+                </td>
+                <td>
+                  {fee.status === "Already Paid" ? (
+                    <span className="badge badge-success">Paid</span>
+                  ) : fee.status.includes("Pending") ? (
+                    <span className="badge badge-error">Pending</span>
+                  ) : (
+                    <span className="badge badge-warning">{fee.status}</span>
+                  )}
+                </td>
+                <td>
+                  {isSelectable ? (
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-primary"
+                      checked={isChecked}
+                      onChange={(e) =>
+                        handleFeeSelection(rowKey, e.target.checked)
+                      }
+                    />
+                  ) : (
+                    <i className="fa-solid fa-check text-success"></i>
+                  )}
+                </td>
+              </tr>
+            );
+          })
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+               
+
+                  {/* Payment Summary */}
+                  {/* {selectedFeeIds.length > 0 && (
+                    <div className="bg-gray-100 dark:bg-gray-800 p-5 rounded-lg mt-6 shadow">
+                      <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+                        Payment Summary
+                      </h3>
+                      <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <div>Base Amount:</div>
+                        <div className="text-right">₹{totalAmount.baseAmount.toFixed(2)}</div>
+
+                        {totalAmount.lateFee > 0 && (
+                          <>
+                            <div>Late Fee:</div>
+                            <div className="text-right text-orange-600 dark:text-orange-400 font-semibold">
+                              ₹{totalAmount.lateFee.toFixed(2)}
+                            </div>
+                          </>
+                        )}
+
+                        {totalAmount.Due > 0 && (
+                          <>
+                            <div>Due Fee:</div>
+                            <div className="text-right text-orange-600 dark:text-orange-400 font-semibold">
+                              ₹{totalAmount.Due.toFixed(2)}
+                            </div>
+                          </>
+                        )}
+
+                        <div className="font-bold mt-2 border-t border-gray-300 dark:border-gray-600 pt-2">
+                          Total Amount:
+                        </div>
+                        <div className="text-right font-bold mt-2 border-t border-gray-300 dark:border-gray-600 pt-2 text-lg text-purple-600 dark:text-purple-400">
+                          ₹{totalAmount.totalAmount.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+                  )} */}
+                </div>
+              )}
 
               {/* Total Amount Summary */}
               {selectedFeeIds.length > 0 && (
@@ -718,8 +978,7 @@ console.log("fee",availableFees);
           {/* No Fees Message */}
           {!isLoadingFees &&
             availableFees.length === 0 &&
-            selectedStudentId &&
-            selectedMonth && (
+            selectedStudentId && (
               <div className="flex flex-col items-center justify-center min-h-screen">
                 <div className="flex space-x-2">
                   <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
@@ -771,7 +1030,7 @@ console.log("fee",availableFees);
                   Paid Amount <span className="text-error">*</span>
                 </span>
               </label>
-              <input
+              {/* <input
                 type="number"
                 className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
                   }`}
@@ -789,6 +1048,22 @@ console.log("fee",availableFees);
                 placeholder="Enter amount"
                 step="1"
                 disabled={selectedFeeIds.length === 0}
+              /> */}
+              <input
+                type="number"
+                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
+                  }`}
+                {...register("paid_amount", {
+                  required: "Amount is required",
+                  min: { value: 0, message: "Amount must be positive" },
+                  max: {
+                    value: totalAmount.totalAmount, // ensure cannot exceed total
+                    message: `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
+                  },
+                })}
+                value={watch("paid_amount")}   // ✅ always bind with watched form state
+                onChange={(e) => setValue("paid_amount", e.target.value)} // ✅ manual updates allowed
+                step="1"
               />
               {errors.paid_amount && (
                 <label className="label">

@@ -5,25 +5,21 @@ import {
   fetchSalaryExpense,
   fetchSalaryExpenseById,
 } from "../../../services/api/Api";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Loader } from "../../../global/Loader";
 import { Error } from "../../../global/Error";
 import { SuccessModal } from "../../Modals/SuccessModal";
 import { AuthContext } from "../../../context/AuthContext";
 
+
 export const EditSalaryExpense = () => {
   const { id } = useParams();
-
   const [apiError, setApiError] = useState("");
   const [schoolExpense, setSchoolExpense] = useState([]);
-  
-
-  const {authTokens} = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext);
   const access = authTokens.access;
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const modalRef = useRef();
 
   const {
@@ -47,6 +43,13 @@ export const EditSalaryExpense = () => {
       setLoading(false);
     }
   };
+
+  const navigate = useNavigate();
+
+  const handleNavigation = (id) => {
+    navigate(`/viewSalaryExpense`);
+  };
+
 
   useEffect(() => {
     getSchoolExpense();
@@ -79,7 +82,7 @@ export const EditSalaryExpense = () => {
         base_salary: data.baseSalary,
       };
       editSalary(access, payload, id);
-        modalRef.current.show();
+      modalRef.current.show();
     } catch (err) {
       if (err.response.data) {
         setApiError(err.response.data.error);
@@ -193,7 +196,11 @@ export const EditSalaryExpense = () => {
         </div>
       </form>
 
-      <SuccessModal ref={modalRef} />
+      <SuccessModal
+        ref={modalRef}
+        navigateTo={() => handleNavigation(id)}
+        buttonText="Continue"
+        message="Successfully Edit!" />
     </div>
   );
 };
