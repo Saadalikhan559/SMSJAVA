@@ -117,6 +117,25 @@ export const ViewSalaryExpense = () => {
             />
 
 
+return (
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+      <div className="mb-4 border-b border-gray-300 dark:border-gray-700">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
+          <i className="fa-solid fa-money-bill-wave mr-2"></i> Salary
+        </h1>
+        <div className="flex justify-end w-full sm:w-auto py-2">
+          <input
+            type="text"
+            placeholder="Search Staff or Teacher Name"
+            className="input input-bordered w-full sm:max-w-xs focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+          />
+        </div>
+      </div>
+
+
           </div>
         </div>
 

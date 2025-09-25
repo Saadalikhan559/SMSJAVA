@@ -159,11 +159,10 @@ export const ViewDocuments = () => {
   });
   console.log(filteredData);
 
+
   const filterBysearch = filteredData.filter((detail) =>
-    detail.name
-      .toLowerCase()
-      .includes(searchInput.toLowerCase())
-  );
+  (detail.name || "").toLowerCase().includes(searchInput.toLowerCase())
+);
 
 
   return (
