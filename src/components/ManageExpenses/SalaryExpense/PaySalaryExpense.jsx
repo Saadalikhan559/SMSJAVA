@@ -16,6 +16,7 @@ export const PaySalaryExpense = () => {
   const access = authTokens.access;
   const modalRef = useRef();
   const [apiError, setApiError] = useState("");
+  const [pageLoading, setPageLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [schoolYear, setSchoolYear] = useState([]);
@@ -48,7 +49,7 @@ export const PaySalaryExpense = () => {
 
   const fetchSingleSalaryData = async () => {
     try {
-      setLoading(true);
+      setPageLoading(true);
       const response = await axios.get(
         `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
         {
@@ -65,7 +66,7 @@ export const PaySalaryExpense = () => {
     } catch (error) {
       setError(error?.response?.message || "Failed to fetch salary data");
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
   };
 
@@ -190,7 +191,7 @@ export const PaySalaryExpense = () => {
     }
   };
 
-  if (loading) {
+  if (pageLoading) {
     return <Loader />;
   }
 

@@ -182,7 +182,7 @@ return (
             <tr>
               <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Income Date</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Income Date</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>

@@ -174,12 +174,11 @@ const ClassTeacherAssign = () => {
 
         <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white border-b border-gray-900 dark:border-gray-700 pb-4">
               Allocate Teachers{" "}
               <i className="fa-solid fa-square-poll-vertical w-5"></i>
             </h1>
-          
-          </div>
+          </div><br />
 
           {errors.api && (
             <div className="p-3 bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-md text-center">
@@ -301,9 +300,8 @@ const ClassTeacherAssign = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-              }`}
+              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                }`}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center w-30">
