@@ -248,7 +248,7 @@ export const EditExpenses = () => {
               <select
                 disabled={constants.roles.director !== userRole}
                 {...register("status")}
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none capitalize"
               >
                 <option value="">Select Status</option>
                 {Status?.map(
@@ -272,7 +272,7 @@ export const EditExpenses = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-paperclip text-sm"></i>
-                  Attachments <span className="text-error"></span>
+                  Attachments <span className="text-error">*</span>
                 </span>
               </label>
 
@@ -280,6 +280,17 @@ export const EditExpenses = () => {
                 <input
                   type="file"
                   className="file-input file-input-bordered w-full focus:outline-none"
+                  {...register("attachment", {
+                    required: "Attachment is required",
+                    validate: {
+                      fileType: (value) =>
+                        !value || ["image/jpeg", "image/png", "application/pdf"].includes(value[0]?.type) ||
+                        "Only JPG, PNG, or PDF files are allowed",
+                      fileSize: (value) =>
+                        !value || (value[0]?.size <= 2 * 1024 * 1024) ||
+                        "File size must be less than 2MB",
+                    },
+                  })}
                   onChange={handleFileChange}
                 />
               ) : (

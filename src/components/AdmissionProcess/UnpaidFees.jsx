@@ -107,6 +107,26 @@ const UnpaidFeesList = () => {
     item.student?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const sortedFees = [...filteredFees].sort((a, b) => {
+    const nameA = a.student?.name?.toLowerCase() || "";
+    const nameB = b.student?.name?.toLowerCase() || "";
+    return nameA.localeCompare(nameB);
+  });
+
+  const flattenedFees = sortedFees.flatMap((item) =>
+    item.year_level_fees_grouped?.flatMap((group) =>
+      group.fees.map((fee) => ({
+        ...fee,
+        studentName: item.student?.name,
+        month: item.month,
+        yearLevel: group.year_level,
+        paidAmount: item.paid_amount,
+        dueAmount: item.due_amount,
+      }))
+    )
+  );
+
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -135,7 +155,7 @@ const UnpaidFeesList = () => {
         {/* Title */}
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
-            <i className="fa-solid fa-graduation-cap mr-2"></i> Unpaid Accounts Summary
+            <i className="fa-solid fa-graduation-cap mr-2"></i> Overdue Accounts Summary
           </h1>
         </div>
 
@@ -182,7 +202,7 @@ const UnpaidFeesList = () => {
               <div className="mt-1 w-full sm:w-auto">
                 <button
                   onClick={resetFilters}
-                  className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 w-full sm:w-auto"
+                  className="btn bgTheme text-white"
                 >
                   Reset Filters
                 </button>
@@ -202,7 +222,7 @@ const UnpaidFeesList = () => {
               </div>
               <button
                 onClick={handleSendNotifications}
-                className="bgTheme text-white text-sm px-5 py-2 rounded font-semibold h-10 min-w-[120px] flex items-center justify-center"
+                className="btn bgTheme text-white"
               >
                 {loder ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
@@ -233,32 +253,34 @@ const UnpaidFeesList = () => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800">
-              {filteredFees.length === 0 ? (
+              {flattenedFees.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">No data found.</td>
+                  <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                    No data found.
+                  </td>
                 </tr>
               ) : (
-                filteredFees.map((item, index) =>
-                  item.year_level_fees_grouped?.map((group) =>
-                    group.fees?.map((fee) => (
-                      <tr key={`${item.id}-${group.year_level}-${fee.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-4 py-3">{index + 1}</td>
-                        <td className="px-4 py-3 text-nowrap">{item.student?.name}</td>
-                        <td className="px-4 py-3 text-nowrap">{group.year_level}</td>
-                        <td className="px-4 py-3">{item.month}</td>
-                        <td className="px-4 py-3 text-nowrap">{fee.fee_type}</td>
-                        <td className="px-4 py-3">₹{fee.amount}</td>
-                        <td className="px-4 py-3">₹{item.paid_amount}</td>
-                        <td className="px-4 py-3">₹{item.due_amount}</td>
-                        <td className="inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium bg-red-100 text-red-600 m-2">
-                          {item.payment_status}
-                        </td>
-                      </tr>
-                    ))
-                  )
-                )
+                flattenedFees.map((item, index) => (
+                  <tr key={`${item.id}-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td className="px-4 py-3">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap">{item.studentName}</td>
+                    <td className="px-4 py-3 text-nowrap">{item.yearLevel}</td>
+                    <td className="px-4 py-3">{item.month}</td>
+                    <td className="px-4 py-3 text-nowrap">{item.fee_type}</td>
+                    <td className="px-4 py-3">₹{item.amount}</td>
+                    <td className="px-4 py-3">₹{item.paidAmount}</td>
+                    <td className="px-4 py-3">₹{item.dueAmount}</td>
+                    <td className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium m-2 ${parseFloat(item.dueAmount) === 0
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
+                      }`}>
+                      {parseFloat(item.dueAmount) === 0 ? "Paid" : "Unpaid"}
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
+
           </table>
         </div>
       </div>

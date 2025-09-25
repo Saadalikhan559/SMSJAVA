@@ -292,8 +292,7 @@ export const Sidebar = () => {
                          hover:bg-blue-100 dark:hover:bg-gray-700 
                          transition text-gray-800 dark:text-gray-200"
                           >
-                            <i className="fa-solid fa-table-list w-5"></i> Examination Time
-                            Table
+                            <i className="fa-solid fa-table-list w-5"></i> Examination Schedule
                           </Link>
                         </li>
                         <li>

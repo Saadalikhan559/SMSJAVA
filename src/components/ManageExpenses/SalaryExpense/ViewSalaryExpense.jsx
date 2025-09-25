@@ -78,18 +78,22 @@ export const ViewSalaryExpense = () => {
   const filteredExpenses = schoolExpense
     .filter((expense) => {
       const matchesName = expense.name
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(searchName.toLowerCase());
 
       const matchesRole = roleFilter
-        ? typeof expense.role === "string"
-          ? expense.role.toLowerCase() === roleFilter.toLowerCase()
-          : expense.role.includes(roleFilter)
+        ? Array.isArray(expense.role)
+          ? expense.role.some(
+            (r) => r.toLowerCase() === roleFilter.toLowerCase()
+          )
+          : expense.role?.toLowerCase() === roleFilter.toLowerCase()
         : true;
+
 
       return matchesName && matchesRole;
     })
     .sort((a, b) => a.name.localeCompare(b.name));
+
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
@@ -101,13 +105,15 @@ export const ViewSalaryExpense = () => {
           <div className="flex flex-col sm:flex-row gap-2 sm:justify-between py-2">
             <select
               className="select select-bordered w-full sm:max-w-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
             >
               <option value="">All Roles</option>
-              <option value="OfficeStaff">Office Staff</option>
-              <option value="Teacher">Teacher</option>
+              <option value="teacher">Teacher</option>
+              <option value="office staff">Office Staff</option>
             </select>
+
             <input
               type="text"
               placeholder="Search Employee Name..."
@@ -115,8 +121,6 @@ export const ViewSalaryExpense = () => {
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
             />
-
-
           </div>
         </div>
 
@@ -147,7 +151,7 @@ export const ViewSalaryExpense = () => {
                 <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
                   Base Salary
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap" width={10}>
+                <th className="px-20 py-3 text-left text-sm font-semibold whitespace-nowrap" width={10}>
                   Actions
                 </th>
               </tr>
@@ -156,10 +160,10 @@ export const ViewSalaryExpense = () => {
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
                       {expense.name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
                       {(typeof expense.role === "string"
                         ? [expense.role]
                         : expense.role
@@ -171,7 +175,7 @@ export const ViewSalaryExpense = () => {
                       {expense.joining_date}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                      {expense.base_salary}
+                       ₹{expense.base_salary}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">
