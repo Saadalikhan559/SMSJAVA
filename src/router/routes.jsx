@@ -82,6 +82,7 @@ import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpen
 import UpdateIncome from "../components/Incomes/UpdateIncome";
 import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/UpdateSalaryExpense";
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
+import PrivacyPolicy from "../components/Privacy/Privacy";
 
 
 export const routes = [
@@ -598,6 +599,13 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director],
   },
+  {
+    path: allRouterLink.privacyPolicy,
+    element: <PrivacyPolicy/>,
+    protected: true,
+    allowedRoles: [constants.roles.director],
+  },
+
 
   // include all routes before this please
 

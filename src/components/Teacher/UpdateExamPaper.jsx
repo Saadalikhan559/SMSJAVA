@@ -143,7 +143,7 @@ return (
         className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
         onClick={handleNavigate}
       >
-        Create Exam Paper <span>&rarr;</span>
+        Upload Exam Paper <span>&rarr;</span>
       </button>
 
       <form onSubmit={handleSubmit(onSubmit)}>
