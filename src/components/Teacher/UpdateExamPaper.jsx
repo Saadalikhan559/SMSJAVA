@@ -139,12 +139,12 @@ const UpdateExamPaper = () => {
 return (
   <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
-      <button
+      {/* <button
         className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
         onClick={handleNavigate}
       >
         Create Exam Paper <span>&rarr;</span>
-      </button>
+      </button> */}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <h1 className="text-3xl font-bold text-center mb-8 dark:text-white">

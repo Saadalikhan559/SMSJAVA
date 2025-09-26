@@ -2,6 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { constants } from "../../global/constants";
 import { fetchYearLevels } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
+import { allRouterLink } from "../../router/AllRouterLinks";
 
 const ViewExamPaper = () => {
   const { axiosInstance } = useContext(AuthContext);
@@ -93,6 +95,13 @@ const ViewExamPaper = () => {
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
+         <Link
+         to={`${allRouterLink.UpdateExamPaper}`}
+        className="font-bold text-xl justify-end cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
+
+      >
+        Update Exam Paper <span>&rarr;</span>
+      </Link>
         {/* Title */}
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">

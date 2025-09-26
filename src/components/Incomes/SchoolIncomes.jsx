@@ -252,12 +252,12 @@ export const SchoolIncome = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.income_date}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 text-nowrap">{income.category_name}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 text-nowrap">{income.description}</td>
-                    <td className="px-10 py-3 text-sm text-gray-700 dark:text-gray-300">{income.school_year}</td>
+                    <td className="px-10 py-3 text-sm text-gray-700 dark:text-gray-300 text-nowrap">{income.school_year}</td>
                     <td className="px-10 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">{income.payment_method}</td>
                     <td className="px-4 py-3 text-sm text-blue-600">
                       {income.attachment ? (
                         <a
-                          href={`${constants.baseUrl}${income.attachment.replace(/^http:\/\/localhost:8000/, "")}`}
+                          href={income.attachment.startsWith("http") ? income.attachment : `${constants.baseUrl}${income.attachment}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:underline"
@@ -268,6 +268,7 @@ export const SchoolIncome = () => {
                         "-"
                       )}
                     </td>
+
                     <td>
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${income.status === "confirmed"
