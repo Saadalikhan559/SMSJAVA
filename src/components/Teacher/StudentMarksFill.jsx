@@ -19,10 +19,28 @@ const StudentMarksFill = () => {
   const [Students, setStudents] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [searchStudentInput, setSearchStudentInput] = useState("");
+  const [showStudentDropdown, setShowStudentDropdown] = useState(false);
+  const [selectedStudentName, setSelectedStudentName] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [loadingStudents, setLoadingStudents] = useState(false);
+
+  const [searchSubjectInput, setSearchSubjectInput] = useState("");
+  const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
+  const [selectedSubjectName, setSelectedSubjectName] = useState("");
+  const [selectedSubjectId, setSelectedSubjectId] = useState("");
+
+  const [searchTeacherInput, setSearchTeacherInput] = useState("");
+  const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+  const [selectedTeacherName, setSelectedTeacherName] = useState("");
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
+
+
 
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
     formState: { errors, isSubmitting },
   } = useForm();
@@ -142,6 +160,19 @@ const StudentMarksFill = () => {
       setShowAlert(true);
     }
   };
+  const filteredStudents = students.filter((studentObj) =>
+    studentObj.student_name.toLowerCase().includes(searchStudentInput.toLowerCase())
+  );
+  const filteredSubjects = subjects.filter((subjectObj) =>
+    subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
+  );
+
+  const filteredTeachers = teachers.filter((teacherObj) =>
+    `${teacherObj.first_name} ${teacherObj.last_name}`
+      .toLowerCase()
+      .includes(searchTeacherInput.toLowerCase())
+  );
+
 
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
@@ -225,73 +256,212 @@ const StudentMarksFill = () => {
             </div>
 
             {/* Subject */}
-            <div>
+            {/* Subject */}
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Subject *
               </label>
-              <select
+
+              <input
+                type="hidden"
                 {...register("subject", { required: "Subject is required" })}
-                className="select select-bordered w-full focus:outline-none"
-              >
-                <option value="">Select Subject</option>
-                {subjects?.map((subject) => (
-                  <option key={subject.id} value={subject.id}>
-                    {subject.subject_name}
-                  </option>
-                ))}
-              </select>
+                value={selectedSubjectName ? selectedSubjectId : ""}
+              />
+
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                placeholder="Search Subject..."
+                value={searchSubjectInput || selectedSubjectName}
+                onChange={(e) => {
+                  setSearchSubjectInput(e.target.value);
+                  setSelectedSubjectName("");
+                  setShowSubjectDropdown(true);
+                }}
+                onFocus={() => setShowSubjectDropdown(true)}
+                autoComplete="off"
+              />
+
+              {showSubjectDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Subject..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                      value={searchSubjectInput}
+                      onChange={(e) => setSearchSubjectInput(e.target.value)}
+                    />
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredSubjects?.length > 0 ? (
+                      filteredSubjects.map((subjectObj) => (
+                        <p
+                          key={subjectObj.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedSubjectId(subjectObj.id);
+                            setSelectedSubjectName(subjectObj.subject_name);
+                            setSearchSubjectInput(subjectObj.subject_name);
+                            setShowSubjectDropdown(false);
+                            setValue("subject", subjectObj.id);
+                          }}
+                        >
+                          {subjectObj.subject_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No subjects found.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {errors.subject && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.subject.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
               )}
             </div>
 
+
             {/* Teacher */}
-            <div>
+            {/* Teacher */}
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Teacher *
               </label>
-              <select
+
+              <input
+                type="hidden"
                 {...register("teacher", { required: "Teacher is required" })}
-                className="select select-bordered w-full focus:outline-none"
-              >
-                <option value="">Select Teacher</option>
-                {teachers?.map((teacher) => (
-                  <option key={teacher.id} value={teacher.id}>
-                    {teacher.first_name} {teacher.last_name}
-                  </option>
-                ))}
-              </select>
+                value={selectedTeacherName ? selectedTeacherId : ""}
+              />
+
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                placeholder="Search Teacher..."
+                value={searchTeacherInput || selectedTeacherName}
+                onChange={(e) => {
+                  setSearchTeacherInput(e.target.value);
+                  setSelectedTeacherName("");
+                  setShowTeacherDropdown(true);
+                }}
+                onFocus={() => setShowTeacherDropdown(true)}
+                autoComplete="off"
+              />
+
+              {showTeacherDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Teacher..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                      value={searchTeacherInput}
+                      onChange={(e) => setSearchTeacherInput(e.target.value)}
+                    />
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredTeachers?.length > 0 ? (
+                      filteredTeachers.map((teacherObj) => (
+                        <p
+                          key={teacherObj.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedTeacherId(teacherObj.id);
+                            setSelectedTeacherName(`${teacherObj.first_name} ${teacherObj.last_name}`);
+                            setSearchTeacherInput(`${teacherObj.first_name} ${teacherObj.last_name}`);
+                            setShowTeacherDropdown(false);
+                            setValue("teacher", teacherObj.id);
+                          }}
+                        >
+                          {teacherObj.first_name} {teacherObj.last_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No teachers found.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {errors.teacher && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.teacher.message}
-                </p>
+                <p className="text-red-500 text-sm mt-1">{errors.teacher.message}</p>
               )}
             </div>
 
+
+
             {/* Student */}
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Student *
               </label>
-              <select
+              {/* Hidden input to register student ID */}
+              <input
+                type="hidden"
                 {...register("student", { required: "Student is required" })}
-                className="select select-bordered w-full focus:outline-none"
-              >
-                <option value="">Select Student</option>
-                {students?.map((student) => (
-                  <option key={student.student_id} value={student.student_id}>
-                    {student.student_name}
-                  </option>
-                ))}
-              </select>
+                value={selectedStudentName ? selectedStudentId : ""}
+              />
+
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                placeholder="Search Student..."
+                value={searchStudentInput || selectedStudentName}
+                onChange={(e) => {
+                  setSearchStudentInput(e.target.value);
+                  setShowStudentDropdown(true);
+                  setSelectedStudentName(""); // clear selected when typing again
+                }}
+                onFocus={() => setShowStudentDropdown(true)}
+                autoComplete="off"
+              />
+
+              {showStudentDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Student..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchStudentInput}
+                      onChange={(e) => setSearchStudentInput(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="max-h-40 overflow-y-auto">
+                    {!loadingStudents && filteredStudents.length > 0 ? (
+                      filteredStudents.map((studentObj) => (
+                        <p
+                          key={studentObj.student_id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedStudentId(studentObj.student_id);
+                            setSelectedStudentName(studentObj.student_name);
+                            setSearchStudentInput(studentObj.student_name);
+                            setShowStudentDropdown(false);
+                            setValue("student", studentObj.student_id);
+                          }}
+                        >
+                          {studentObj.student_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">
+                        {loadingStudents ? "Loading students..." : "No students found."}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
               {errors.student && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.student.message}
                 </p>
               )}
             </div>
+
 
             {/* Marks */}
             <div>
