@@ -33,6 +33,8 @@ const ClassTeacherAssign = () => {
   const [selectedTeacherId, setSelectedTeacherId] = useState(null);
   const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
   const [searchTeacherInput, setSearchTeacherInput] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     const preloadData = async () => {
@@ -99,7 +101,8 @@ const ClassTeacherAssign = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Class teacher assigned successfully!");
+        setAlertMessage("Class teacher assigned successfully!");
+        setShowAlert(true);
         window.location.reload();
       }
     } catch (error) {
@@ -115,8 +118,8 @@ const ClassTeacherAssign = () => {
       } else if (typeof res === "object") {
         errorMessage = Object.values(res).flat().join(" | ");
       }
-
-      setError("api", { message: errorMessage });
+      setAlertMessage(errorMessage);
+      setShowAlert(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -174,18 +177,11 @@ const ClassTeacherAssign = () => {
 
         <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white border-b border-gray-900 dark:border-gray-700 pb-4">
               Allocate Teachers{" "}
               <i className="fa-solid fa-square-poll-vertical w-5"></i>
             </h1>
-          
-          </div>
-
-          {errors.api && (
-            <div className="p-3 bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-md text-center">
-              {errors.api.message}
-            </div>
-          )}
+          </div><br />
 
           <div className="flex space-x-4">
             {/* Teacher Dropdown */}
@@ -301,40 +297,38 @@ const ClassTeacherAssign = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`btn text-white bgTheme py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-              }`}
+              className={`btn text-white bgTheme w-30 py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                }`}
             >
               {isSubmitting ? (
-                <span className="flex items-center justify-center w-30">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                <span className="flex items-center justify-center">
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 </span>
               ) : (
                 "Assign"
               )}
             </button>
+
           </div>
         </form>
       </div>
+      {/* Modal */}
+      {showAlert && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+            <h3 className="font-bold text-lg">Allocated Teacher</h3>
+            <p className="py-4">{alertMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
