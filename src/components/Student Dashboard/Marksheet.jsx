@@ -315,7 +315,7 @@ const Marksheet = () => {
       <div className="text-center mb-2 md:mb-4">
         <button
           onClick={handlePrint}
-          className="bg-blue-600 text-white font-bold px-4 py-1 md:px-6 md:py-2 rounded hover:bg-blue-700 text-sm md:text-base"
+          className="btn bgTheme text-white"
         >
           Download Marksheet
         </button>

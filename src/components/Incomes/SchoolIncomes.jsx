@@ -201,7 +201,7 @@ return (
                   <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.income_date}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.category_name}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.description}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.school_year_name}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.school_year}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">{income.payment_method}</td>
                   <td className="px-4 py-3 text-sm text-blue-600">
                     {income.attachment ? (
