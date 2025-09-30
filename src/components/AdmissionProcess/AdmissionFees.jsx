@@ -20,7 +20,7 @@ export const AdmissionFees = () => {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFees, setIsLoadingFees] = useState(false);
-  const [availableMonths, setAvailableMonths] = useState([]);
+  const [ setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
 
@@ -53,7 +53,7 @@ export const AdmissionFees = () => {
   });
 
   const selectedStudentId = watch("student_id");
-  const selectedMonth = watch("month");
+  // const selectedMonth = watch("month");
 
   // Custom Loader JSX
 
@@ -66,6 +66,8 @@ export const AdmissionFees = () => {
       setClasses(response.data);
 
     } catch (err) {
+      console.log(err);
+      
       setApiError("Failed to load classes");
     } finally {
       setIsLoading(false);
@@ -164,6 +166,8 @@ export const AdmissionFees = () => {
       const Students = await fetchStudents1(classId);
       setStudents(Students);
     } catch (err) {
+      console.log(err);
+      
       setApiError("Failed to load students");
     } finally {
       setIsLoading(false);
@@ -267,10 +271,10 @@ export const AdmissionFees = () => {
     });
   };
 
-  const allMonths = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  // const allMonths = [
+  //   "January", "February", "March", "April", "May", "June",
+  //   "July", "August", "September", "October", "November", "December"
+  // ];
 
   const paymentModes =
     role === constants.roles.officeStaff || constants.roles.director
@@ -343,24 +347,18 @@ export const AdmissionFees = () => {
   //     setPaymentStatus("Payment failed. Please try again.");
   //   }
   // };
+// con
+
 const displayRazorpay = async (payload) => {
   try {
     const isScriptLoaded = await loadRazorpayScript();
     if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
 
-    // ✅ OPTION 2: First month ka name use karo
-    const firstMonth = payload.selected_fees && payload.selected_fees.length > 0 
-      ? payload.selected_fees[0].month 
-      : new Date().toLocaleString('default', { month: 'long' });
-
-    const Payload = {
-      ...payload,
-      month: firstMonth // Simple month name
-    };
+    console.log("🔄 INITIATING PAYMENT WITH:", payload);
 
     const orderResponse = await axiosInstance.post(
       `${BASE_URL}/d/fee-record/initiate-payment/`,
-      Payload,
+      payload,
       {
         headers: {
           "Content-Type": "application/json",
@@ -368,31 +366,38 @@ const displayRazorpay = async (payload) => {
       }
     );
 
+    console.log("ORDER RESPONSE:", orderResponse.data);
+
     const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
-    const { student_id, selected_fees, year_level_fees, received_by, payment_mode, paid_amount } = payload;
+    const { student_id, received_by, payment_mode, paid_amount, selected_fees } = payload;
 
     const options = {
       key: "rzp_test_4h2aRSAPbYw3f8",
       amount: orderAmount,
       currency: currency,
-      name: "Course Payment",
-      description: `receipt_number: ${receipt_number}`,
+      name: "School Fee Payment",
+      description: `Receipt: ${receipt_number}`,
       order_id: orderId,
       handler: async function (response) {
         try {
+          console.log(" RAZORPAY RESPONSE:", response);
+          
+          const verificationPayload = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            student_id: parseInt(student_id),
+            month: selected_fees, 
+            received_by: received_by,
+            payment_mode: payment_mode,
+            paid_amount: paid_amount,
+          };
+
+          console.log(" SENDING VERIFICATION:", verificationPayload);
+
           const verificationResponse = await axiosInstance.post(
             `${BASE_URL}/d/fee-record/confirm-payment/`,
-            {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              student_id: parseInt(student_id),
-              month: firstMonth, // Same month name
-              year_level_fees,
-              received_by,
-              payment_mode,
-              paid_amount,
-            },
+            verificationPayload,
             {
               headers: {
                 "Content-Type": "application/json",
@@ -400,22 +405,36 @@ const displayRazorpay = async (payload) => {
             }
           );
 
+          console.log(" VERIFICATION RESPONSE:", verificationResponse.data);
+
           if (verificationResponse.data) {
             setPaymentStatus(verificationResponse.data);
             setShowPaymentDialog(true);
-          } else setPaymentStatus("Payment verification failed");
+            console.log(" PAYMENT SUCCESS - STATUS:", verificationResponse.data.payment_status);
+          } else {
+            console.log(" No data in verification response");
+            setPaymentStatus("Payment verification failed - No data received");
+          }
         } catch (error) {
+          console.log(" VERIFICATION ERROR:", error.response?.data || error.message);
           setPaymentStatus("Payment verification failed");
         }
       },
-      prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
-      notes: { address: "Course Purchase" },
+      prefill: { 
+        name: selectedStudent?.student_name || "", 
+        email: selectedStudent?.email || "" 
+      },
+      notes: { 
+        student_id: student_id,
+        receipt_number: receipt_number
+      },
       theme: { color: "#5E35B1" },
     };
 
     const rzp = new window.Razorpay(options);
     rzp.open();
   } catch (error) {
+    console.log(" PAYMENT INITIATION ERROR:", error.response?.data || error.message);
     setPaymentStatus("Payment failed. Please try again.");
   }
 };
@@ -482,6 +501,8 @@ const displayRazorpay = async (payload) => {
         setShowPaymentDialog1(true);
       }
     } catch (err) {
+      console.log(err);
+      
       setPaymentStatus("Payment failed. Please try again.");
     }
   };

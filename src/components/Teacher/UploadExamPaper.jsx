@@ -47,10 +47,24 @@ const UploadExamPaper = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  const [searchSubjectInput, setSearchSubjectInput] = useState("");
+  const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
+  const [selectedSubjectName, setSelectedSubjectName] = useState("");
+  const [selectedSubjectId, setSelectedSubjectId] = useState("");
+
+
+
+  const [searchTeacherInput, setSearchTeacherInput] = useState("");
+  const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+  const [selectedTeacherName, setSelectedTeacherName] = useState("");
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
+
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -124,6 +138,15 @@ const UploadExamPaper = () => {
     navigate(allRouterLink.UpdateExamPaper);
   };
 
+  const filteredSubjects = subjects.filter((subjectObj) =>
+    subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
+  );
+  const filteredTeachers = teachers.filter((teacherObj) =>
+    `${teacherObj.first_name} ${teacherObj.last_name}`
+      .toLowerCase()
+      .includes(searchTeacherInput.toLowerCase())
+  );
+
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("exam_type", data.exam_type);
@@ -188,207 +211,321 @@ const UploadExamPaper = () => {
     );
   }
 
-return (
-  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
-    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
-      {/* <button
+  return (
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
+        {/* <button
         className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
         onClick={handleNavigate}
       >
         Update Exam Paper <span>&rarr;</span>
       </button> */}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="text-3xl font-bold text-center mb-8 dark:text-white">
-          Upload Exam Paper <i className="fa-solid fa-file-upload ml-2"></i>
-        </h1>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h1 className="text-3xl font-bold text-center mb-8 dark:text-white">
+            Upload Exam Paper <i className="fa-solid fa-file-upload ml-2"></i>
+          </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* Reusable field block */}
-          {[
-            {
-              label: "Exam Type",
-              name: "exam_type",
-              data: examType,
-              key: "name",
-              error: errors.exam_type,
-              requiredMsg: "Exam type is required",
-            },
-            {
-              label: "Year Level",
-              name: "year_level",
-              data: className1,
-              key: "level_name",
-              error: errors.year_level,
-              requiredMsg: "Year level is required",
-            },
-            {
-              label: "Term",
-              name: "term",
-              data: terms,
-              key: "year",
-              error: errors.term,
-              requiredMsg: "Term is required",
-            },
-            {
-              label: "Subject",
-              name: "subject",
-              data: subjects,
-              key: "subject_name",
-              error: errors.subject,
-              requiredMsg: "Subject is required",
-            },
-            {
-              label: "Teacher",
-              name: "teacher",
-              data: teachers,
-              key: "first_name", // Combine below
-              error: errors.teacher,
-              requiredMsg: "Teacher is required",
-              renderValue: (item) => `${item.first_name} ${item.last_name}`,
-            },
-          ].map(({ label, name, data, key, error, requiredMsg, renderValue = null }) => (
-            <div className="form-control" key={name}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Reusable field block */}
+            {[
+              {
+                label: "Exam Type",
+                name: "exam_type",
+                data: examType,
+                key: "name",
+                error: errors.exam_type,
+                requiredMsg: "Exam type is required",
+              },
+              {
+                label: "Year Level",
+                name: "year_level",
+                data: className1,
+                key: "level_name",
+                error: errors.year_level,
+                requiredMsg: "Year level is required",
+              },
+              {
+                label: "Term",
+                name: "term",
+                data: terms,
+                key: "year",
+                error: errors.term,
+                requiredMsg: "Term is required",
+              },
+             
+            ].map(({ label, name, data, key, error, requiredMsg, renderValue = null }) => (
+              <div className="form-control" key={name}>
+                <label className="label">
+                  <span className="label-text dark:text-gray-200">
+                    {label} <span className="text-error">*</span>
+                  </span>
+                </label>
+                <select
+                  className="select select-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  {...register(name, { required: requiredMsg })}
+                >
+                  <option value="">Select {label}</option>
+                  {data.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {renderValue ? renderValue(item) : item[key]}
+                    </option>
+                  ))}
+                </select>
+                {error && <p className="text-error text-sm mt-1">{error.message}</p>}
+              </div>
+            ))}
+            
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Teacher *
+              </label>
+
+              <input
+                type="hidden"
+                {...register("teacher", { required: "Teacher is required" })}
+                value={selectedTeacherName ? selectedTeacherId : ""}
+              />
+
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                placeholder="Search Teacher..."
+                value={searchTeacherInput || selectedTeacherName}
+                onChange={(e) => {
+                  setSearchTeacherInput(e.target.value);
+                  setSelectedTeacherName("");
+                  setShowTeacherDropdown(true);
+                }}
+                onFocus={() => setShowTeacherDropdown(true)}
+                autoComplete="off"
+              />
+
+              {showTeacherDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                    {/* <input
+                      type="text"
+                      placeholder="Search Teacher..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                      value={searchTeacherInput}
+                      onChange={(e) => setSearchTeacherInput(e.target.value)}
+                    /> */}
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredTeachers?.length > 0 ? (
+                      filteredTeachers.map((teacherObj) => (
+                        <p
+                          key={teacherObj.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedTeacherId(teacherObj.id);
+                            setSelectedTeacherName(`${teacherObj.first_name} ${teacherObj.last_name}`);
+                            setSearchTeacherInput(`${teacherObj.first_name} ${teacherObj.last_name}`);
+                            setShowTeacherDropdown(false);
+                            setValue("teacher", teacherObj.id);
+                          }}
+                        >
+                          {teacherObj.first_name} {teacherObj.last_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No teachers found.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {errors.teacher && (
+                <p className="text-red-500 text-sm mt-1">{errors.teacher.message}</p>
+              )}
+            </div>
+
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Subject *
+              </label>
+
+              <input
+                type="hidden"
+                {...register("subject", { required: "Subject is required" })}
+                value={selectedSubjectName ? selectedSubjectId : ""}
+              />
+
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                placeholder="Search Subject..."
+                value={searchSubjectInput || selectedSubjectName}
+                onChange={(e) => {
+                  setSearchSubjectInput(e.target.value);
+                  setSelectedSubjectName("");
+                  setShowSubjectDropdown(true);
+                }}
+                onFocus={() => setShowSubjectDropdown(true)}
+                autoComplete="off"
+              />
+
+              {showSubjectDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                    {/* <input
+                      type="text"
+                      placeholder="Search Subject..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                      value={searchSubjectInput}
+                      onChange={(e) => setSearchSubjectInput(e.target.value)}
+                    /> */}
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredSubjects?.length > 0 ? (
+                      filteredSubjects.map((subjectObj) => (
+                        <p
+                          key={subjectObj.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedSubjectId(subjectObj.id);
+                            setSelectedSubjectName(subjectObj.subject_name);
+                            setSearchSubjectInput(subjectObj.subject_name);
+                            setShowSubjectDropdown(false);
+                            setValue("subject", subjectObj.id);
+                          }}
+                        >
+                          {subjectObj.subject_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No subjects found.</p>
+                    )}
+                  </div>
+                </div>
+              )}  
+
+              {errors.subject && (
+                <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+              )}
+            </div>
+
+            {/* Total Marks */}
+            <div className="form-control">
               <label className="label">
                 <span className="label-text dark:text-gray-200">
-                  {label} <span className="text-error">*</span>
+                  Total Marks <span className="text-error">*</span>
                 </span>
               </label>
-              <select
-                className="select select-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                {...register(name, { required: requiredMsg })}
-              >
-                <option value="">Select {label}</option>
-                {data.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {renderValue ? renderValue(item) : item[key]}
-                  </option>
-                ))}
-              </select>
-              {error && <p className="text-error text-sm mt-1">{error.message}</p>}
+              <input
+                type="number"
+                className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                placeholder="Enter total marks"
+                {...register("total_marks", {
+                  required: "Total marks is required",
+                  min: { value: 1, message: "Marks must be positive" },
+                })}
+              />
+              {errors.total_marks && (
+                <p className="text-error text-sm mt-1">{errors.total_marks.message}</p>
+              )}
             </div>
-          ))}
 
-          {/* Total Marks */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text dark:text-gray-200">
-                Total Marks <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="number"
-              className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              placeholder="Enter total marks"
-              {...register("total_marks", {
-                required: "Total marks is required",
-                min: { value: 1, message: "Marks must be positive" },
-              })}
-            />
-            {errors.total_marks && (
-              <p className="text-error text-sm mt-1">{errors.total_marks.message}</p>
-            )}
+            {/* Paper Code */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">
+                  Paper Code <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                placeholder="Enter paper code"
+                {...register("paper_code", {
+                  required: "Paper code is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9-]+$/,
+                    message: "Only letters, numbers and hyphens allowed",
+                  },
+                })}
+              />
+              {errors.paper_code && (
+                <p className="text-error text-sm mt-1">{errors.paper_code.message}</p>
+              )}
+            </div>
+
+            {/* File Upload */}
+            <div className="form-control md:col-span-2">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">
+                  Exam Paper File <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="file"
+                className="file-input file-input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                accept=".pdf,.doc,.docx"
+                {...register("uploaded_file", {
+                  required: "File is required",
+                  validate: {
+                    fileSize: (files) =>
+                      files[0]?.size <= 5 * 1024 * 1024 || "File size must be less than 5MB",
+                    fileType: (files) =>
+                      [
+                        "application/pdf",
+                        "application/msword",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                      ].includes(files[0]?.type) || "Only PDF and Word documents are allowed",
+                  },
+                })}
+              />
+              {errors.uploaded_file && (
+                <p className="text-error text-sm mt-1">{errors.uploaded_file.message}</p>
+              )}
+            </div>
           </div>
 
-          {/* Paper Code */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text dark:text-gray-200">
-                Paper Code <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              placeholder="Enter paper code"
-              {...register("paper_code", {
-                required: "Paper code is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9-]+$/,
-                  message: "Only letters, numbers and hyphens allowed",
-                },
-              })}
-            />
-            {errors.paper_code && (
-              <p className="text-error text-sm mt-1">{errors.paper_code.message}</p>
-            )}
-          </div>
-
-          {/* File Upload */}
-          <div className="form-control md:col-span-2">
-            <label className="label">
-              <span className="label-text dark:text-gray-200">
-                Exam Paper File <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="file"
-              className="file-input file-input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              accept=".pdf,.doc,.docx"
-              {...register("uploaded_file", {
-                required: "File is required",
-                validate: {
-                  fileSize: (files) =>
-                    files[0]?.size <= 5 * 1024 * 1024 || "File size must be less than 5MB",
-                  fileType: (files) =>
-                    [
-                      "application/pdf",
-                      "application/msword",
-                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    ].includes(files[0]?.type) || "Only PDF and Word documents are allowed",
-                },
-              })}
-            />
-            {errors.uploaded_file && (
-              <p className="text-error text-sm mt-1">{errors.uploaded_file.message}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-center mt-10">
-          <button
-            type="submit"
-            className="btn bgTheme text-white w-52"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <i className="fa-solid fa-spinner fa-spin mr-2" />
-            ) : (
-              <i className="fa-solid fa-upload mr-2" />
-            )}
-            {isSubmitting ? " " : "Upload Paper"}
-          </button>
-        </div>
-      </form>
-    </div>
-
-    {/* Alert Modal */}
-    {showAlert && (
-      <dialog className="modal modal-open">
-        <div className="modal-box dark:bg-gray-800 dark:text-white">
-          <h3 className="font-bold text-lg">Upload Exam Paper</h3>
-          <p className="py-4">
-            {alertMessage.split("\n").map((line, idx) => (
-              <span key={idx}>
-                {line}
-                <br />
-              </span>
-            ))}
-          </p>
-          <div className="modal-action">
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
             <button
-              className="btn bgTheme text-white w-30"
-              onClick={() => setShowAlert(false)}
+              type="submit"
+              className="btn bgTheme text-white w-52"
+              disabled={isSubmitting}
             >
-              OK
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2" />
+              ) : (
+                <i className="fa-solid fa-upload mr-2" />
+              )}
+              {isSubmitting ? " " : "Upload Paper"}
             </button>
           </div>
-        </div>
-      </dialog>
-    )}
-  </div>
-);
+        </form>
+      </div>
+
+      {/* Alert Modal */}
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box dark:bg-gray-800 dark:text-white">
+            <h3 className="font-bold text-lg">Upload Exam Paper</h3>
+            <p className="py-4">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+    </div>
+  );
 
 };
 
