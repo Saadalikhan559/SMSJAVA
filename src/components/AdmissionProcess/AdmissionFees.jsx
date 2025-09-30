@@ -762,6 +762,11 @@ const displayRazorpay = async (payload) => {
                       {classItem.level_name}
                     </option>
                   ))
+                  : UserRole === "guardian" ? classes?.map((classItem) => (
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.level_name}
+                    </option>
+                  ))
 
                     : null}
                 {UserRole === "student" && (
@@ -801,6 +806,12 @@ const displayRazorpay = async (payload) => {
                     </option>
                   ))
                 ) : UserRole === "office staff" ? (
+                  students?.map((student) => (
+                    <option key={student.student_id} value={student.student_id}>
+                      {student.student_name} - {student.student_email}
+                    </option>
+                  ))
+                ) : UserRole === "guardian" ? (
                   students?.map((student) => (
                     <option key={student.student_id} value={student.student_id}>
                       {student.student_name} - {student.student_email}
