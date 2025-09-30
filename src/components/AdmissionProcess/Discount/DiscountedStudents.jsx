@@ -160,7 +160,7 @@ const DiscountedStudents = () => {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee Discount</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee</th>
                 <th className="px-4 py-3 text-center text-sm font-semibold text-nowrap">Reason</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold pl-22 text-nowrap">Actions</th>
+                <th className="px-18 py-3 text-center text-sm font-semibold pl-22 text-nowrap">Actions</th>
               </tr>
             </thead>
 
@@ -175,7 +175,6 @@ const DiscountedStudents = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.discount_reason || "-"}</td>
                     <td className="px-13 py-3 text-sm text-gray-500 dark:text-gray-300 flex gap-3">
                       <Link

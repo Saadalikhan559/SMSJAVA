@@ -82,10 +82,7 @@ import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpen
 import UpdateIncome from "../components/Incomes/UpdateIncome";
 import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/UpdateSalaryExpense";
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
-<<<<<<< HEAD
-=======
 import PrivacyPolicy from "../components/Privacy/Privacy";
->>>>>>> 39c3c15671a156089f7277dbfcd88873567fc7d3
 // import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
 
 

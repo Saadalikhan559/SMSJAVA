@@ -137,7 +137,7 @@ return (
               <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {filteredRecords.length > 0 ? (
               filteredRecords.map((record) => (
                 <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
@@ -187,7 +187,7 @@ return (
       {modalOpen && selectedRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black opacity-50" onClick={closeModal} />
-          <div className="relative bg-white rounded-lg p-6 w-11/12 sm:w-96 z-10">
+          <div className="relative bg-white rounded-lg p-6 w-11/12 sm:w-96 z-10 dark:bg-gray-900">
             <h3 className="text-lg font-semibold mb-4">Edit Attendance</h3>
             <p className="mb-2 font-medium capitalize">{selectedRecord.teacher_name}</p>
             <p className="mb-4 text-gray-500">{selectedRecord.date}</p>
@@ -196,14 +196,14 @@ return (
               onChange={handleStatusChange}
               className="w-full border px-3 py-2 rounded mb-4"
             >
-              <option value="absent">Absent</option>
-              <option value="leave">Leave</option>
-              <option value="present">Present</option>
+              <option value="absent" className="dark:text-black">Absent</option>
+              <option value="leave" className="dark:text-black">Leave</option>
+              <option value="present" className="dark:text-black">Present</option>
             </select>
             <div className="flex flex-col sm:flex-row justify-end gap-2">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 w-full sm:w-auto"
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 w-full sm:w-auto dark:text-black"
               >
                 Cancel
               </button>

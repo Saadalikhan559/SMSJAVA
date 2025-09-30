@@ -283,7 +283,7 @@ export const AllTeacherAssignments = () => {
             ) : filteredSubs.length === 0 ? (
               <ErrorMessage text="No substitute assignments found for this date" />
             ) : (
-              <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 dark:border-gray-600">
+              <div className="overflow-x-auto shadow-lg rounded-lg ">
                 <table className="min-w-full table-fixed text-sm text-left text-gray-700 dark:text-gray-200">
                   <thead className="bgTheme text-white text-sm uppercase tracking-wide">
                     <tr>
@@ -294,7 +294,7 @@ export const AllTeacherAssignments = () => {
                       <th className="px-6 py-3 w-[20%] text-nowrap">Substitute Teacher</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-700">
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                     {filteredSubs.map((a) => (
                       <tr
                         key={a.id}

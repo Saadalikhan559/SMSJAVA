@@ -66,7 +66,7 @@ if (error) {
             <th scope="col" className="px-4 py-3">Year Level</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
           {yearLevels.length === 0 ? (
             <tr>
               <td colSpan="2" className="text-center py-6 text-gray-500 dark:text-gray-400">

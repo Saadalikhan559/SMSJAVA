@@ -18,6 +18,8 @@ const ViewExamPaper = () => {
   const [selectedYear, setSelectedYear] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
+  const [fileErrorModal, setFileErrorModal] = useState(false);
+
   // Fetch year levels
   const getYearLevels = async () => {
     try {
@@ -70,6 +72,23 @@ const ViewExamPaper = () => {
     )
     .sort((a, b) => a.subject_name.localeCompare(b.subject_name));
 
+  // Handle View Paper click
+  const handleViewPaper = async (filePath) => {
+    if (!filePath) {
+      setFileErrorModal(true);
+      return;
+    }
+
+    const url = filePath.replace("http://localhost:8000", constants.baseUrl);
+
+    try {
+      await axiosInstance.get(url, { responseType: "blob" });
+      window.open(url, "_blank")
+    } catch (err) {
+      setFileErrorModal(true);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -95,13 +114,13 @@ const ViewExamPaper = () => {
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
-         <Link
-         to={`${allRouterLink.UpdateExamPaper}`}
-        className="font-bold text-xl justify-end cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
+        <Link
+          to={`${allRouterLink.UpdateExamPaper}`}
+          className="font-bold text-xl justify-end cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
+        >
+          Update Exam Paper <span>&rarr;</span>
+        </Link>
 
-      >
-        Update Exam Paper <span>&rarr;</span>
-      </Link>
         {/* Title */}
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">
@@ -201,7 +220,7 @@ const ViewExamPaper = () => {
                 <th className="px-4 py-3 text-left whitespace-nowrap">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredData.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center py-6 text-gray-500 dark:text-gray-400">No Examination Papers found.</td>
@@ -217,14 +236,12 @@ const ViewExamPaper = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{paper.paper_code}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{paper.year}</td>
                     <td className="px-4 py-3 text-sm">
-                      <a
-                        href={paper.uploaded_file.replace("http://localhost:8000", constants.baseUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
                         className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 hover:underline"
+                        onClick={() => handleViewPaper(paper.uploaded_file)}
                       >
                         View Paper
-                      </a>
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -233,10 +250,25 @@ const ViewExamPaper = () => {
           </table>
         </div>
       </div>
+
+      {/*  Modal */}
+      {fileErrorModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded shadow-lg text-center">
+            <h2 className="text-lg font-bold mb-4">File Not Found</h2>
+            <p className="mb-4">Sorry, this exam paper is not available.</p>
+            <button
+              className="btn bgTheme text-white"
+              onClick={() => setFileErrorModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default ViewExamPaper;
-
 

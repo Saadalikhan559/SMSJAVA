@@ -69,7 +69,7 @@ const PeriodAssignment = () => {
           </h1>
           <button
             onClick={() => navigate(-1)}
-            className="px-4 py-2 rounded shadow-sm bgTheme text-white hover:brightness-110"
+            className="px-4 py-2 rounded shadow-sm bgTheme text-white hover:brightness-110 w-40"
           >
             ← Back
           </button>
@@ -86,7 +86,7 @@ const PeriodAssignment = () => {
                 <th className="px-4 py-3">End Time</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {assignedPeriods.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="text-center py-6 text-gray-500 dark:text-gray-400">
