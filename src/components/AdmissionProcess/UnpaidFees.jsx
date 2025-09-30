@@ -216,7 +216,7 @@ const UnpaidFeesList = () => {
                   type="text"
                   placeholder="Enter student name"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value.trimStart())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ringTheme focus:outline-none"
                 />
               </div>

@@ -1,3 +1,5 @@
+import PrivacyPolicy from "../components/Privacy/Privacy";
+
 export const allRouterLink = {
     homeScreen: "/",
     registerUser: "/register",
@@ -78,6 +80,7 @@ export const allRouterLink = {
     schoolIncome: "/schoolIncome",
     createIncome: "/createIncome",
     editIncom:"/editIncom/:id",
+    privacyPolicy:"/privacyPolicy",
 
     // all routes before this
     unAuthorized: '/unauthorized',

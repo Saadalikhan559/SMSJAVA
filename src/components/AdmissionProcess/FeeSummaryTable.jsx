@@ -203,7 +203,7 @@ const FeeSummaryTable = () => {
                   type="text"
                   placeholder="Enter student name"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value.trim())}
+                  onChange={(e) => setSearchTerm(e.target.value.trimStart())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none"
                 />
               </div>
