@@ -449,23 +449,6 @@ export const Sidebar = () => {
                     Fees
                   </h3>
                   <ul className="space-y-1">
-                    {/* Assign Fees By Classes */}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.classesFeesAssign)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md 
-                         hover:bg-blue-100 dark:hover:bg-gray-700 
-                         transition text-gray-800 dark:text-gray-200"
-                        >
-                          <i class="fa-solid fa-money-bill-trend-up"></i>Classes Fees Assign
-                        </Link>
-                      </li>
-                    )}
-
                     {/* Fee Submission: director, office staff, student */}
                     {(role === constants.roles.director ||
                       role === constants.roles.officeStaff ||
@@ -644,6 +627,22 @@ export const Sidebar = () => {
                         >
                           <i className="fa-solid fa-file-invoice-dollar w-5"></i>{" "}
                           Create Expenses
+                        </Link>
+                      </li>
+                    )}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.managecategory)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
+                        >
+                         <i className="fa-solid fa-list-check"></i>{" "}
+                          Manage Category
                         </Link>
                       </li>
                     )}

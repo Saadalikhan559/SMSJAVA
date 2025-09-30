@@ -171,7 +171,7 @@ export const AdmissionDetails = () => {
                   placeholder="Student Name or Guardian Name"
                   className="input input-bordered w-full sm:w-64 focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  onChange={(e) => setSearchInput(e.target.value.trimStart())}
                 />
               </div>
             </div>

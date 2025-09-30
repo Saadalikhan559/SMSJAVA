@@ -82,8 +82,7 @@ import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpen
 import UpdateIncome from "../components/Incomes/UpdateIncome";
 import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/UpdateSalaryExpense";
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
-import ClassesFeesAssign from "../components/AdmissionProcess/ClassesFeesAssign";
-import ViewClassesFees from "../components/AdmissionProcess/ViewClassesFees";
+// import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
 
 
 export const routes = [
@@ -139,18 +138,6 @@ export const routes = [
   {
     path: allRouterLink.editAddmisionDetails,
     element: <EditAddmissionDetails />,
-    protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  },
-  {
-    path: allRouterLink.classesFeesAssign,
-    element: <ClassesFeesAssign />,
-    protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  },
-  {
-    path: allRouterLink.viewClassesFees,
-    element: <ViewClassesFees />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
@@ -625,4 +612,9 @@ export const routes = [
     element: <NotFound />,
     protected: false,
   },
+  // {
+  //   path: allRouterLink.managecategory,
+  //   element: <CreateCategory/>,
+  //   protected: true,
+  // },
 ];

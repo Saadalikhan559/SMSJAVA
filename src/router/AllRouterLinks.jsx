@@ -78,10 +78,9 @@ export const allRouterLink = {
     schoolIncome: "/schoolIncome",
     createIncome: "/createIncome",
     editIncom:"/editIncom/:id",
-    classesFeesAssign:"/classesFeesAssign",
-    viewClassesFees:"/viewClassesFees",
 
     // all routes before this
     unAuthorized: '/unauthorized',
+    managecategory:"/managecategory",
     notFound: "*"
 }
