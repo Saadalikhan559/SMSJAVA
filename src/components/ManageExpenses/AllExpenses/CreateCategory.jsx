@@ -117,7 +117,7 @@ const handleDelete = async (e) => {
 
     return (
         <div className="min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <h1 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
                     Manage Categories <i className="fa-solid fa-list-check"></i>
                 </h1>
