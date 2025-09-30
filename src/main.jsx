@@ -41,7 +41,7 @@ async function initializeSentry() {
 // ==== PRODUCTION ERROR SUPPRESSION ====
 function setupProductionErrorHandling(Sentry) {
   if (import.meta.env.MODE === 'production') {
-    // Store original console methods for Sentry to use
+    
     const originalConsole = { ...console };
 
     // Override console methods after Sentry is initialized
@@ -74,7 +74,7 @@ function setupProductionErrorHandling(Sentry) {
 
         return response;
       } catch (error) {
-        // Network errors
+      
         if (Sentry) {
           Sentry.captureException(error, {
             tags: {
