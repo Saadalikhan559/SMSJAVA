@@ -277,73 +277,148 @@ export const AdmissionFees = () => {
       ? ["Cash", "Cheque", "Online"]
       : ["Online"];
 
-  const displayRazorpay = async (payload) => {
-    try {
-      const isScriptLoaded = await loadRazorpayScript();
-      if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
+  // const displayRazorpay = async (payload) => {
+  //   try {
+  //     const isScriptLoaded = await loadRazorpayScript();
+  //     if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
+  // const Payload = {...payload,month:payload.selected_fees}
+  //     const orderResponse = await axiosInstance.post(
+  //       `${BASE_URL}/d/fee-record/initiate-payment/`,
+  //       Payload,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      const orderResponse = await axiosInstance.post(
-        `${BASE_URL}/d/fee-record/initiate-payment/`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  //     const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
+  //     const { student_id, selected_fees, year_level_fees, received_by, payment_mode, paid_amount } = payload;
 
-      const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
-      const { student_id, selected_fees, year_level_fees, received_by, payment_mode, paid_amount } = payload;
+  //     const options = {
+  //       key: "rzp_test_4h2aRSAPbYw3f8",
+  //       amount: orderAmount,
+  //       currency: currency,
+  //       name: "Course Payment",
+  //       description: `receipt_number: ${receipt_number}`,
+  //       order_id: orderId,
+  //       handler: async function (response) {
+  //         try {
+  //           const verificationResponse = await axiosInstance.post(
+  //             `${BASE_URL}/d/fee-record/confirm-payment/`,
+  //             {
+  //               razorpay_order_id: response.razorpay_order_id,
+  //               razorpay_payment_id: response.razorpay_payment_id,
+  //               razorpay_signature: response.razorpay_signature,
+  //               student_id: parseInt(student_id),
+  //               month:selected_fees,
+  //               year_level_fees,
+  //               received_by,
+  //               payment_mode,
+  //               paid_amount,
+  //             },
+  //             {
+  //               headers: {
+  //                 "Content-Type": "application/json",
+  //               },
+  //             }
+  //           );
 
-      const options = {
-        key: "rzp_test_4h2aRSAPbYw3f8",
-        amount: orderAmount,
-        currency: currency,
-        name: "Course Payment",
-        description: `receipt_number: ${receipt_number}`,
-        order_id: orderId,
-        handler: async function (response) {
-          try {
-            const verificationResponse = await axiosInstance.post(
-              `${BASE_URL}/d/fee-record/confirm-payment/`,
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                student_id: parseInt(student_id),
-                month:selected_fees,
-                year_level_fees,
-                received_by,
-                payment_mode,
-                paid_amount,
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            );
+  //           if (verificationResponse.data) {
+  //             setPaymentStatus(verificationResponse.data);
+  //             setShowPaymentDialog(true);
+  //           } else setPaymentStatus("Payment verification failed");
+  //         } catch (error) {
+  //           setPaymentStatus("Payment verification failed");
+  //         }
+  //       },
+  //       prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
+  //       notes: { address: "Course Purchase" },
+  //       theme: { color: "#5E35B1" },
+  //     };
 
-            if (verificationResponse.data) {
-              setPaymentStatus(verificationResponse.data);
-              setShowPaymentDialog(true);
-            } else setPaymentStatus("Payment verification failed");
-          } catch (error) {
-            setPaymentStatus("Payment verification failed");
-          }
+  //     const rzp = new window.Razorpay(options);
+  //     rzp.open();
+  //   } catch (error) {
+  //     setPaymentStatus("Payment failed. Please try again.");
+  //   }
+  // };
+const displayRazorpay = async (payload) => {
+  try {
+    const isScriptLoaded = await loadRazorpayScript();
+    if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
+
+    // ✅ OPTION 2: First month ka name use karo
+    const firstMonth = payload.selected_fees && payload.selected_fees.length > 0 
+      ? payload.selected_fees[0].month 
+      : new Date().toLocaleString('default', { month: 'long' });
+
+    const Payload = {
+      ...payload,
+      month: firstMonth // Simple month name
+    };
+
+    const orderResponse = await axiosInstance.post(
+      `${BASE_URL}/d/fee-record/initiate-payment/`,
+      Payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
         },
-        prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
-        notes: { address: "Course Purchase" },
-        theme: { color: "#5E35B1" },
-      };
+      }
+    );
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      setPaymentStatus("Payment failed. Please try again.");
-    }
-  };
+    const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
+    const { student_id, selected_fees, year_level_fees, received_by, payment_mode, paid_amount } = payload;
 
+    const options = {
+      key: "rzp_test_4h2aRSAPbYw3f8",
+      amount: orderAmount,
+      currency: currency,
+      name: "Course Payment",
+      description: `receipt_number: ${receipt_number}`,
+      order_id: orderId,
+      handler: async function (response) {
+        try {
+          const verificationResponse = await axiosInstance.post(
+            `${BASE_URL}/d/fee-record/confirm-payment/`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              student_id: parseInt(student_id),
+              month: firstMonth, // Same month name
+              year_level_fees,
+              received_by,
+              payment_mode,
+              paid_amount,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (verificationResponse.data) {
+            setPaymentStatus(verificationResponse.data);
+            setShowPaymentDialog(true);
+          } else setPaymentStatus("Payment verification failed");
+        } catch (error) {
+          setPaymentStatus("Payment verification failed");
+        }
+      },
+      prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
+      notes: { address: "Course Purchase" },
+      theme: { color: "#5E35B1" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    setPaymentStatus("Payment failed. Please try again.");
+  }
+};
   const onSubmit = async (data) => {
     //   if (selectedFeeIds.length === 0) {
     //     alert("Please select at least one fee to pay");
@@ -861,7 +936,10 @@ export const AdmissionFees = () => {
                               const rowKey = `${monthData.month}-${fee.id}`;
                               const isSelectable = fee.status !== "Already Paid";
                               const isChecked = selectedFeeIds.includes(rowKey);
-                              const Due =  (Number(fee.base_amount ) - Number( fee.paid_amount) + Number( fee.late_fee)) >0 ||0
+                              let Due =  (Number(fee.base_amount ) - Number( fee.paid_amount) + Number( fee.late_fee))  || 0
+                              if(Due < 0) Due = 0
+                            
+                              
                               return (
                                 <tr key={rowKey} className="hover">
                                   {index === 0 && (

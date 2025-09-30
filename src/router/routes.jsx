@@ -82,7 +82,7 @@ import { EditExpenses } from "../components/ManageExpenses/AllExpenses/EditExpen
 import UpdateIncome from "../components/Incomes/UpdateIncome";
 import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/UpdateSalaryExpense";
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
-import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
+// import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
 
 
 export const routes = [
@@ -612,9 +612,9 @@ export const routes = [
     element: <NotFound />,
     protected: false,
   },
-  {
-    path: allRouterLink.managecategory,
-    element: <CreateCategory/>,
-    protected: true,
-  },
+  // {
+  //   path: allRouterLink.managecategory,
+  //   element: <CreateCategory/>,
+  //   protected: true,
+  // },
 ];

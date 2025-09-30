@@ -83,75 +83,6 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;            
 }
-<<<<<<< HEAD
-
-
- .dark .react-calendar {
-    background: #1f2937;
-    color: white;
-  }
-  .dark .react-calendar__navigation button {
-    color: white;
-    background: #1f2937;
-  }
-  .dark .react-calendar__tile {
-    color: white;
-  }
-  .dark .react-calendar__tile:enabled:hover {
-    background: #374151; }
-
-    /* React Calendar Dark Mode Fix */
-.react-calendar {
-  background: white;
-  border: 0 !important;
-  font-family: inherit;
-}
-
-.react-calendar__navigation button {
-  color: #1f2937;
-  background: none;
-  border: 0;
-}
-
-.react-calendar__tile {
-  color: #1f2937;
-  background: none;
-  border: 0;
-}
-
-/* Dark Mode */
-.dark .react-calendar {
-  background: #1f2937;
-  color: white;
-}
-
-.dark .react-calendar__navigation button {
-  color: white;
-  background: #1f2937;
-}
-
-.dark .react-calendar__navigation button:hover {
-  background: #374151 !important;
-}
-
-.dark .react-calendar__tile {
-  color: white;
-  background: #1f2937;
-}
-
-.dark .react-calendar__tile:hover {
-  background: #374151 !important;
-}
-
-.dark .react-calendar__tile--active {
-  background: #5E35B1 !important;
-  color: white !important;
-}
-
-.dark .react-calendar__tile--now {
-  background: #6b46c1 !important;
-  color: white !important;
-=======
 @media (prefers-color-scheme: dark) {
   .react-calendar {
     background: #1f2937 !important; /* gray-800 */
@@ -192,5 +123,4 @@
   .react-calendar__navigation button {
     color: #f3f4f6 !important;
   }
->>>>>>> a06473b63a09061485da10696dfe2093aa748e7b
 }
