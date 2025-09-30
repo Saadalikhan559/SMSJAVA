@@ -143,7 +143,7 @@ const DiscountedStudents = () => {
             type="text"
             placeholder="Search Student"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value.trimStart())}
             className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
@@ -169,7 +169,7 @@ const DiscountedStudents = () => {
                 filteredBysearch.map((s) => (
                   <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.student_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.scholar_no}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 capitalize text-nowrap">{s.scholar_no}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.year_level}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee_discount}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee}</td>

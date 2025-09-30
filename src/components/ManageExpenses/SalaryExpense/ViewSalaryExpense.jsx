@@ -228,8 +228,5 @@ export const ViewSalaryExpense = () => {
         />
       </div>
     </div>
-            </div>
-    </div>
-
   );
 };
