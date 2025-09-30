@@ -13,7 +13,7 @@ async function initializeSentry() {
       const { browserTracingIntegration, replayIntegration } = Sentry;
 
       Sentry.init({
-        dsn: "https://d670a94e0b509fb2d4b685eedefc7fd6@o4510033571086336.ingest.us.sentry.io/4510033572331520",
+        dsn: "https://3b06f915a2001e746af89a3490e3421f@o4510108172812288.ingest.us.sentry.io/4510108174843904",
         integrations: [
           browserTracingIntegration(),
           replayIntegration(),
@@ -41,7 +41,7 @@ async function initializeSentry() {
 // ==== PRODUCTION ERROR SUPPRESSION ====
 function setupProductionErrorHandling(Sentry) {
   if (import.meta.env.MODE === 'production') {
-    // Store original console methods for Sentry to use
+    
     const originalConsole = { ...console };
 
     // Override console methods after Sentry is initialized
@@ -74,7 +74,7 @@ function setupProductionErrorHandling(Sentry) {
 
         return response;
       } catch (error) {
-        // Network errors
+      
         if (Sentry) {
           Sentry.captureException(error, {
             tags: {

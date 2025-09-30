@@ -252,7 +252,7 @@ const UnpaidFeesList = () => {
                 <th className="px-4 py-3 text-left whitespace-nowrap">Payment Status</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {flattenedFees.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">

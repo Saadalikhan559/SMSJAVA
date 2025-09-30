@@ -79,7 +79,7 @@ return (
           placeholder="Search Student Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded w-full sm:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded w-full sm:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-black-500"
         />
 
         {error && (
@@ -90,7 +90,7 @@ return (
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto max-h-[70vh] border border-gray-200 dark:border-gray-700 rounded-lg">
+      <div className="overflow-x-auto max-h-[70vh] rounded-lg">
         <table className="min-w-full table-auto">
           <thead className="bgTheme text-white sticky top-0 z-10 text-sm">
             <tr>
@@ -98,7 +98,7 @@ return (
               <th scope="col" className="px-4 py-3 text-center">Student Name</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {filteredStudents.length === 0 ? (
               <tr>
                 <td colSpan="2" className="text-center py-6 text-red-500 dark:text-red-400">

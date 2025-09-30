@@ -156,7 +156,7 @@ export const ViewSalaryExpense = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className=" divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
