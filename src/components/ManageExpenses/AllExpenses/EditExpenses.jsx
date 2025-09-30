@@ -178,11 +178,12 @@ export const EditExpenses = () => {
                   (cat) =>
                     cat && (
                       <option key={cat.id} value={cat.id}>
-                        {cat.name}
+                        {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
                       </option>
                     )
                 )}
               </select>
+
               {errors.category && (
                 <p className="text-error text-sm mt-1">
                   {errors.category.message}
@@ -255,11 +256,12 @@ export const EditExpenses = () => {
                   (sta, idx) =>
                     sta && (
                       <option key={idx} value={sta}>
-                        {sta}
+                        {sta.charAt(0).toUpperCase() + sta.slice(1)}
                       </option>
                     )
                 )}
               </select>
+
               {errors.expense_date && (
                 <p className="text-error text-sm mt-1">
                   {errors.expense_date.message}
