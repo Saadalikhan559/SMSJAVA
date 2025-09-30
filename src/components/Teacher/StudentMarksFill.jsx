@@ -255,7 +255,7 @@ const StudentMarksFill = () => {
               )}
             </div>
 
-            {/* Subject */}
+           
             {/* Subject */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -285,13 +285,13 @@ const StudentMarksFill = () => {
               {showSubjectDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
                   <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
-                    <input
+                    {/* <input
                       type="text"
                       placeholder="Search Subject..."
                       className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
                       value={searchSubjectInput}
                       onChange={(e) => setSearchSubjectInput(e.target.value)}
-                    />
+                    /> */}
                   </div>
                   <div className="max-h-40 overflow-y-auto">
                     {filteredSubjects?.length > 0 ? (
@@ -353,13 +353,13 @@ const StudentMarksFill = () => {
               {showTeacherDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
                   <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
-                    <input
+                    {/* <input
                       type="text"
                       placeholder="Search Teacher..."
                       className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
                       value={searchTeacherInput}
                       onChange={(e) => setSearchTeacherInput(e.target.value)}
-                    />
+                    /> */}
                   </div>
                   <div className="max-h-40 overflow-y-auto">
                     {filteredTeachers?.length > 0 ? (
@@ -421,13 +421,13 @@ const StudentMarksFill = () => {
               {showStudentDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
                   <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
-                    <input
+                    {/* <input
                       type="text"
                       placeholder="Search Student..."
                       className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
                       value={searchStudentInput}
                       onChange={(e) => setSearchStudentInput(e.target.value)}
-                    />
+                    /> */}
                   </div>
 
                   <div className="max-h-40 overflow-y-auto">

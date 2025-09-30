@@ -20,7 +20,7 @@ export const AdmissionFees = () => {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFees, setIsLoadingFees] = useState(false);
-  const [availableMonths, setAvailableMonths] = useState([]);
+  const [ setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
 
@@ -53,7 +53,7 @@ export const AdmissionFees = () => {
   });
 
   const selectedStudentId = watch("student_id");
-  const selectedMonth = watch("month");
+  // const selectedMonth = watch("month");
 
   // Custom Loader JSX
 
@@ -66,6 +66,8 @@ export const AdmissionFees = () => {
       setClasses(response.data);
 
     } catch (err) {
+      console.log(err);
+      
       setApiError("Failed to load classes");
     } finally {
       setIsLoading(false);
@@ -123,39 +125,39 @@ export const AdmissionFees = () => {
   //   }
   // };
   const fetchAvailableFees = async (studentId) => {
-  if (!studentId) {
-    setAvailableFees([]);
-    return [];
-  }
-
-  try {
-    setIsLoadingFees(true);
-    setApiError(""); // ✅ clear any old errors
-
-    const response = await axiosInstance.get(
-      `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    // ✅ Normalize whatever the API gives back
-    let data = response.data;
-    if (!Array.isArray(data)) {
-      if (data?.month && data?.fees) data = [data];
-      else data = [];
+    if (!studentId) {
+      setAvailableFees([]);
+      return [];
     }
 
-    console.log("Fees response normalized:", data);
-    setAvailableFees(data);
-    return data;
-  } catch (error) {
-    console.error("API error", error.response || error.message || error);
-    setApiError("Failed to load fees");  // ✅ only set inside catch
-    setAvailableFees([]);
-    return [];
-  } finally {
-    setIsLoadingFees(false);
-  }
-};
+    try {
+      setIsLoadingFees(true);
+      setApiError("");
+
+      const response = await axiosInstance.get(
+        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+
+      let data = response.data;
+      if (!Array.isArray(data)) {
+        if (data?.month && data?.fees) data = [data];
+        else data = [];
+      }
+
+      console.log("Fees response normalized:", data);
+      setAvailableFees(data);
+      return data;
+    } catch (error) {
+      console.error("API error", error.response || error.message || error);
+      setApiError("Failed to load fees");
+      setAvailableFees([]);
+      return [];
+    } finally {
+      setIsLoadingFees(false);
+    }
+  };
   // Fetch students for selected class
   const getStudents = async (classId) => {
     try {
@@ -164,6 +166,8 @@ export const AdmissionFees = () => {
       const Students = await fetchStudents1(classId);
       setStudents(Students);
     } catch (err) {
+      console.log(err);
+      
       setApiError("Failed to load students");
     } finally {
       setIsLoading(false);
@@ -217,7 +221,7 @@ export const AdmissionFees = () => {
     if (selectedStudentId) {
       const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
       setSelectedStudent(student);
-      fetchAvailableFees(selectedStudentId);  // ✅ no month now
+      fetchAvailableFees(selectedStudentId);
     } else {
       setSelectedStudent(null);
       setAvailableFees([]);
@@ -241,6 +245,8 @@ export const AdmissionFees = () => {
             totalAmount += finalAmount;
             lateFeeAmount += lateFee;
             totalPending += dueAmount;
+            console.log(totalAmount);
+
           }
         });
       });
@@ -265,83 +271,173 @@ export const AdmissionFees = () => {
     });
   };
 
-  const allMonths = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  // const allMonths = [
+  //   "January", "February", "March", "April", "May", "June",
+  //   "July", "August", "September", "October", "November", "December"
+  // ];
 
   const paymentModes =
     role === constants.roles.officeStaff || constants.roles.director
       ? ["Cash", "Cheque", "Online"]
       : ["Online"];
 
-  const displayRazorpay = async (payload) => {
-    try {
-      const isScriptLoaded = await loadRazorpayScript();
-      if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
+  // const displayRazorpay = async (payload) => {
+  //   try {
+  //     const isScriptLoaded = await loadRazorpayScript();
+  //     if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
+  // const Payload = {...payload,month:payload.selected_fees}
+  //     const orderResponse = await axiosInstance.post(
+  //       `${BASE_URL}/d/fee-record/initiate-payment/`,
+  //       Payload,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      const orderResponse = await axiosInstance.post(
-        `${BASE_URL}/d/fee-record/initiate-payment/`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  //     const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
+  //     const { student_id, selected_fees, year_level_fees, received_by, payment_mode, paid_amount } = payload;
 
-      const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
-      const { student_id, month, year_level_fees, received_by, payment_mode, paid_amount } = payload;
+  //     const options = {
+  //       key: "rzp_test_4h2aRSAPbYw3f8",
+  //       amount: orderAmount,
+  //       currency: currency,
+  //       name: "Course Payment",
+  //       description: `receipt_number: ${receipt_number}`,
+  //       order_id: orderId,
+  //       handler: async function (response) {
+  //         try {
+  //           const verificationResponse = await axiosInstance.post(
+  //             `${BASE_URL}/d/fee-record/confirm-payment/`,
+  //             {
+  //               razorpay_order_id: response.razorpay_order_id,
+  //               razorpay_payment_id: response.razorpay_payment_id,
+  //               razorpay_signature: response.razorpay_signature,
+  //               student_id: parseInt(student_id),
+  //               month:selected_fees,
+  //               year_level_fees,
+  //               received_by,
+  //               payment_mode,
+  //               paid_amount,
+  //             },
+  //             {
+  //               headers: {
+  //                 "Content-Type": "application/json",
+  //               },
+  //             }
+  //           );
 
-      const options = {
-        key: "rzp_test_4h2aRSAPbYw3f8",
-        amount: orderAmount,
-        currency: currency,
-        name: "Course Payment",
-        description: `receipt_number: ${receipt_number}`,
-        order_id: orderId,
-        handler: async function (response) {
-          try {
-            const verificationResponse = await axiosInstance.post(
-              `${BASE_URL}/d/fee-record/confirm-payment/`,
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature_id: response.razorpay_signature,
-                student_id: parseInt(student_id),
-                month,
-                year_level_fees,
-                received_by,
-                payment_mode,
-                paid_amount,
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            );
+  //           if (verificationResponse.data) {
+  //             setPaymentStatus(verificationResponse.data);
+  //             setShowPaymentDialog(true);
+  //           } else setPaymentStatus("Payment verification failed");
+  //         } catch (error) {
+  //           setPaymentStatus("Payment verification failed");
+  //         }
+  //       },
+  //       prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
+  //       notes: { address: "Course Purchase" },
+  //       theme: { color: "#5E35B1" },
+  //     };
 
-            if (verificationResponse.data) {
-              setPaymentStatus(verificationResponse.data);
-              setShowPaymentDialog(true);
-            } else setPaymentStatus("Payment verification failed");
-          } catch (error) {
-            setPaymentStatus("Payment verification failed");
-          }
+  //     const rzp = new window.Razorpay(options);
+  //     rzp.open();
+  //   } catch (error) {
+  //     setPaymentStatus("Payment failed. Please try again.");
+  //   }
+  // };
+// con
+
+const displayRazorpay = async (payload) => {
+  try {
+    const isScriptLoaded = await loadRazorpayScript();
+    if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
+
+    console.log("🔄 INITIATING PAYMENT WITH:", payload);
+
+    const orderResponse = await axiosInstance.post(
+      `${BASE_URL}/d/fee-record/initiate-payment/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
         },
-        prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
-        notes: { address: "Course Purchase" },
-        theme: { color: "#5E35B1" },
-      };
+      }
+    );
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      setPaymentStatus("Payment failed. Please try again.");
-    }
-  };
+    console.log("ORDER RESPONSE:", orderResponse.data);
 
+    const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
+    const { student_id, received_by, payment_mode, paid_amount, selected_fees } = payload;
+
+    const options = {
+      key: "rzp_test_4h2aRSAPbYw3f8",
+      amount: orderAmount,
+      currency: currency,
+      name: "School Fee Payment",
+      description: `Receipt: ${receipt_number}`,
+      order_id: orderId,
+      handler: async function (response) {
+        try {
+          console.log(" RAZORPAY RESPONSE:", response);
+          
+          const verificationPayload = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            student_id: parseInt(student_id),
+            month: selected_fees, 
+            received_by: received_by,
+            payment_mode: payment_mode,
+            paid_amount: paid_amount,
+          };
+
+          console.log(" SENDING VERIFICATION:", verificationPayload);
+
+          const verificationResponse = await axiosInstance.post(
+            `${BASE_URL}/d/fee-record/confirm-payment/`,
+            verificationPayload,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          console.log(" VERIFICATION RESPONSE:", verificationResponse.data);
+
+          if (verificationResponse.data) {
+            setPaymentStatus(verificationResponse.data);
+            setShowPaymentDialog(true);
+            console.log(" PAYMENT SUCCESS - STATUS:", verificationResponse.data.payment_status);
+          } else {
+            console.log(" No data in verification response");
+            setPaymentStatus("Payment verification failed - No data received");
+          }
+        } catch (error) {
+          console.log(" VERIFICATION ERROR:", error.response?.data || error.message);
+          setPaymentStatus("Payment verification failed");
+        }
+      },
+      prefill: { 
+        name: selectedStudent?.student_name || "", 
+        email: selectedStudent?.email || "" 
+      },
+      notes: { 
+        student_id: student_id,
+        receipt_number: receipt_number
+      },
+      theme: { color: "#5E35B1" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    console.log(" PAYMENT INITIATION ERROR:", error.response?.data || error.message);
+    setPaymentStatus("Payment failed. Please try again.");
+  }
+};
   const onSubmit = async (data) => {
     //   if (selectedFeeIds.length === 0) {
     //     alert("Please select at least one fee to pay");
@@ -384,7 +480,7 @@ export const AdmissionFees = () => {
 
     const payload = {
       student_id: parseInt(data.student_id),
-      selected_fees,   // ✅ new format
+      selected_fees,
       paid_amount: parseFloat(data.paid_amount).toFixed(2),
       payment_mode: data.payment_mode,
       remarks: data.remarks,
@@ -405,6 +501,8 @@ export const AdmissionFees = () => {
         setShowPaymentDialog1(true);
       }
     } catch (err) {
+      console.log(err);
+      
       setPaymentStatus("Payment failed. Please try again.");
     }
   };
@@ -437,43 +535,58 @@ export const AdmissionFees = () => {
   //   };
   // };
 
-  // ✅ define once here
+
 
   const calculateTotalAmount = () => {
     let baseTotal = 0;
     let lateTotal = 0;
     let dueTotal = 0;
+    let totalAmount = 0;
 
-    // defensive check
     if (!Array.isArray(availableFees)) {
-      return { baseAmount: 0, lateFee: 0, Due: 0, totalAmount: 0 };
+      return { baseAmount: 0, lateFee: 0, due: 0, totalAmount: 0 };
     }
 
     availableFees.forEach((monthData) => {
-      // also guard here if API returns wrong shape
-      if (!monthData?.fees) return;
+      if (!Array.isArray(monthData?.fees)) return;
 
       monthData.fees.forEach((fee) => {
         const rowKey = `${monthData.month}-${fee.id}`;
         if (selectedFeeIds.includes(rowKey)) {
           const base = parseFloat(fee.base_amount) || 0;
+          const paid = parseFloat(fee.paid_amount) || 0;
           const late = parseFloat(fee.late_fee) || 0;
-          const due = parseFloat(fee.due_amount) || 0;
 
-          baseTotal += base;
+          let feeAmount = 0;
+
+          if (paid > 0 && paid < base) {
+            // Partially paid — pay due
+            feeAmount = base - paid;
+            dueTotal += feeAmount;
+          } else if (paid === 0) {
+            // Not paid at all — pay full base
+            feeAmount = base;
+            baseTotal += feeAmount;
+          }
+
+          // Add late fee in both cases (if exists)
           lateTotal += late;
-          dueTotal += due;
+
+          // Add to final total
+          totalAmount += feeAmount + late;
         }
       });
     });
 
     return {
-      baseAmount: baseTotal,
+      baseAmount: baseTotal,  // Fully unpaid amounts
       lateFee: lateTotal,
-      Due: dueTotal,
-      totalAmount: baseTotal + lateTotal + dueTotal,
+      due: dueTotal,          // Partially paid remaining amounts
+      totalAmount: totalAmount,
     };
   };
+
+
 
   const totalAmount = calculateTotalAmount();
   const handleFeeSelection = (feeId, isSelected) => {
@@ -758,7 +871,7 @@ export const AdmissionFees = () => {
           {/* Available Fees Display */}
           {availableFees.length > 0 && selectedStudent && (
             <div className="mt-8">
-           
+
 
               {/* {availableFees.map((yearLevel) => (
                 <div key={yearLevel.id} className="mb-6">
@@ -825,73 +938,76 @@ export const AdmissionFees = () => {
                   <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
                     Fee Details for {selectedStudent.student_name}
                   </h2>
-<div className="overflow-x-auto">
-  <div className="max-h-[500px] overflow-y-auto rounded-lg border">
-    <table className="table w-full">
-      <thead className="sticky top-0 bg-base-200 z-10">
-        <tr>
-          <th>Month</th>
-          <th>Fee Type</th>
-          <th>Amount</th>
-          <th>Late Fee</th>
-          <th>Status</th>
-          <th>Select</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Array.isArray(availableFees) && availableFees.map((monthData) =>
-          monthData.fees.map((fee, index) => {
-            const rowKey = `${monthData.month}-${fee.id}`;
-            const isSelectable = fee.status !== "Already Paid";
-            const isChecked = selectedFeeIds.includes(rowKey);
+                  <div className="overflow-x-auto">
+                    <div className="max-h-[500px] overflow-y-auto rounded-lg border">
+                      <table className="table w-full">
+                        <thead className="sticky top-0 bg-base-200 z-10">
+                          <tr>
+                            <th>Month</th>
+                            <th>Fee Type</th>
+                            <th>Amount</th>
+                            <th>Late Fee</th>
+                            <th>Status</th>
+                            <th>Select</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.isArray(availableFees) && availableFees.map((monthData) =>
+                            monthData.fees.map((fee, index) => {
+                              const rowKey = `${monthData.month}-${fee.id}`;
+                              const isSelectable = fee.status !== "Already Paid";
+                              const isChecked = selectedFeeIds.includes(rowKey);
+                              let Due =  (Number(fee.base_amount ) - Number( fee.paid_amount) + Number( fee.late_fee))  || 0
+                              if(Due < 0) Due = 0
+                            
+                              
+                              return (
+                                <tr key={rowKey} className="hover">
+                                  {index === 0 && (
+                                    <td
+                                      rowSpan={monthData.fees.length}
+                                      className="font-semibold bg-base-100 align-top"
+                                    >
+                                      {monthData.month}
+                                    </td>
+                                  )}
+                                  <td>{fee.fee_type}</td>
+                                  <td>₹{fee.paid_amount ? Due : fee.base_amount}</td>
+                                  <td className={fee.late_fee > 0 ? "text-warning" : ""}>
+                                    ₹{fee.paid_amount ? 0: fee.late_fee}
+                                  </td>
+                                  <td>
+                                    {fee.status === "Already Paid" ? (
+                                      <span className="badge badge-success">Paid</span>
+                                    ) : fee.status.includes("Pending") ? (
+                                      <span className="badge badge-error">Pending</span>
+                                    ) : (
+                                      <span className="badge badge-warning">{fee.status}</span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    {isSelectable ? (
+                                      <input
+                                        type="checkbox"
+                                        className="checkbox checkbox-primary"
+                                        checked={isChecked}
+                                        onChange={(e) =>
+                                          handleFeeSelection(rowKey, e.target.checked)
+                                        }
+                                      />
+                                    ) : (
+                                      <i className="fa-solid fa-check text-success"></i>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
-            return (
-              <tr key={rowKey} className="hover">
-                {index === 0 && (
-                  <td
-                    rowSpan={monthData.fees.length}
-                    className="font-semibold bg-base-100 align-top"
-                  >
-                    {monthData.month}
-                  </td>
-                )}
-                <td>{fee.fee_type}</td>
-                <td>₹{fee.base_amount || fee.due_amount}</td>
-                <td className={fee.late_fee > 0 ? "text-warning" : ""}>
-                  ₹{fee.late_fee}
-                </td>
-                <td>
-                  {fee.status === "Already Paid" ? (
-                    <span className="badge badge-success">Paid</span>
-                  ) : fee.status.includes("Pending") ? (
-                    <span className="badge badge-error">Pending</span>
-                  ) : (
-                    <span className="badge badge-warning">{fee.status}</span>
-                  )}
-                </td>
-                <td>
-                  {isSelectable ? (
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-primary"
-                      checked={isChecked}
-                      onChange={(e) =>
-                        handleFeeSelection(rowKey, e.target.checked)
-                      }
-                    />
-                  ) : (
-                    <i className="fa-solid fa-check text-success"></i>
-                  )}
-                </td>
-              </tr>
-            );
-          })
-        )}
-      </tbody>
-    </table>
-  </div>
-</div>
-               
 
                   {/* Payment Summary */}
                   {/* {selectedFeeIds.length > 0 && (
@@ -932,46 +1048,51 @@ export const AdmissionFees = () => {
                   )} */}
                 </div>
               )}
+ 
 
               {/* Total Amount Summary */}
               {selectedFeeIds.length > 0 && (
                 <div className="bg-base-300 p-4 rounded-lg mt-6">
                   <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
                   <div className="grid grid-cols-2 gap-2">
-                    <div>Base Amount:</div>
-                    <div className="text-right">
-                      ₹{totalAmount.baseAmount.toFixed(2)}
-                    </div>
 
-                    {totalAmount.lateFee > 0 &&
-                      (
-                        <>
-                          <div>Late Fee:</div>
-                          <div className="text-right text-warning">
-                            ₹{totalAmount.lateFee.toFixed(2)}
-                          </div>
-                        </>
-                      )}
-
-                    {totalAmount.Due > 0 && (
+                    {parseFloat(totalAmount.baseAmount) > 0 && (
                       <>
-                        <div>Due Fee:</div>
-                        <div className="text-right text-warning">
-                          ₹{totalAmount.Due.toFixed(2)}
+                        <div>Base Amount:</div>
+                        <div className="text-right">
+                          ₹{parseFloat(totalAmount.baseAmount).toFixed(2)}
                         </div>
                       </>
                     )}
 
+                    {parseFloat(totalAmount.lateFee) > 0 && !totalAmount.due && (
+                      <>
+                        <div>Late Fee:</div>
+                        <div className="text-right text-warning">
+                          ₹{parseFloat(totalAmount.lateFee).toFixed(2)}
+                        </div>
+                      </>
+                    )}
+
+                    {parseFloat(totalAmount.due) > 0 && (
+                      <>
+                        <div>Due Fee:</div>
+                        <div className="text-right text-warning">
+                          ₹{parseFloat(totalAmount.due +totalAmount.lateFee).toFixed(2)}
+                        </div>
+                      </>
+                    )}
 
                     <div className="font-bold mt-2 border-t pt-2">
                       Total Amount:
                     </div>
                     <div className="text-right font-bold mt-2 border-t pt-2">
-                      ₹{totalAmount.totalAmount.toFixed(2)}
+                      ₹{parseFloat(totalAmount.totalAmount).toFixed(2)}
                     </div>
                   </div>
                 </div>
               )}
+
             </div>
           )}
 
@@ -1057,12 +1178,12 @@ export const AdmissionFees = () => {
                   required: "Amount is required",
                   min: { value: 0, message: "Amount must be positive" },
                   max: {
-                    value: totalAmount.totalAmount, // ensure cannot exceed total
+                    value: totalAmount.totalAmount,
                     message: `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
                   },
                 })}
-                value={watch("paid_amount")}   // ✅ always bind with watched form state
-                onChange={(e) => setValue("paid_amount", e.target.value)} // ✅ manual updates allowed
+                value={watch("paid_amount")}
+                onChange={(e) => setValue("paid_amount", e.target.value)}
                 step="1"
               />
               {errors.paid_amount && (
