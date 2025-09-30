@@ -630,6 +630,22 @@ export const Sidebar = () => {
                         </Link>
                       </li>
                     )}
+                    {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
+                      <li>
+                        <Link
+                          onClick={(e) =>
+                            handleNavigation(e, allRouterLink.managecategory)
+                          }
+                          className="flex items-center gap-2 px-3 py-2 rounded-md 
+                         hover:bg-blue-100 dark:hover:bg-gray-700 
+                         transition text-gray-800 dark:text-gray-200"
+                        >
+                         <i className="fa-solid fa-list-check"></i>{" "}
+                          Manage Category
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}

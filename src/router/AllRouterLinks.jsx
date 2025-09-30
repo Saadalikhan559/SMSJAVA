@@ -84,5 +84,6 @@ export const allRouterLink = {
 
     // all routes before this
     unAuthorized: '/unauthorized',
+    managecategory:"/managecategory",
     notFound: "*"
 }

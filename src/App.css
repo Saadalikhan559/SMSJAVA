@@ -83,3 +83,44 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;             /* Chrome, Safari, Opera */
 }
+@media (prefers-color-scheme: dark) {
+  .react-calendar {
+    background: #1f2937 !important; /* gray-800 */
+    color: #f3f4f6 !important; /* gray-100 */
+    border: none !important;
+  }
+
+  .react-calendar__navigation button:enabled:hover,
+  .react-calendar__navigation button:enabled:focus {
+    background-color: #374151 !important; /* gray-700 */
+    color: #f3f4f6 !important;
+  }
+
+  .react-calendar__month-view__weekdays {
+    background-color: #374151 !important; /* gray-700 */
+  }
+
+  .react-calendar__month-view__weekdays__weekday abbr {
+    color: #d1d5db !important; /* gray-300 */
+    text-decoration: none !important;
+  }
+
+  .react-calendar__tile:enabled:hover,
+  .react-calendar__tile:enabled:focus {
+    background-color: #374151 !important; /* gray-700 */
+    color: #f3f4f6 !important;
+  }
+
+  .react-calendar__tile--now {
+    background-color: #374151 !important;
+    color: #60a5fa !important; /* blue-400 */
+  }
+
+  .react-calendar__navigation__label__labelText {
+    color: #f3f4f6 !important;
+  }
+
+  .react-calendar__navigation button {
+    color: #f3f4f6 !important;
+  }
+}
