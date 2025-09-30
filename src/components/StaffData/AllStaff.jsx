@@ -108,11 +108,11 @@ return (
               placeholder="Search Teacher Name"
               value={teacherSearch}
               onChange={(e) => setTeacherSearch(e.target.value)}
-              className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#5E35B1] focus:border-[#5E35B1]"
+              className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0b0b0c] focus:border-[#0f0f10]"
             />
           </div>
           <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
-            <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg">
+            <table className="min-w-full table-auto  rounded-lg">
               <thead className="bgTheme text-white text-center sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-3">S.NO</th>
@@ -121,7 +121,7 @@ return (
                   <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {filteredTeachers.length === 0 ? (
                   <tr>
                     <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
@@ -167,11 +167,11 @@ return (
               placeholder="Search Staff Member Name"
               value={staffSearch}
               onChange={(e) => setStaffSearch(e.target.value)}
-              className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#5E35B1] focus:border-[#5E35B1]"
+              className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#211f23] focus:border-[#252426]"
             />
           </div>
           <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
-            <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg">
+            <table className="min-w-full table-auto  rounded-lg">
               <thead className="bgTheme text-white text-center sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-3">S.NO</th>
@@ -180,7 +180,7 @@ return (
                   <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {filteredOfficeStaff.length === 0 ? (
                   <tr>
                     <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
