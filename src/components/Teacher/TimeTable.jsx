@@ -109,7 +109,7 @@ const TimeTable = () => {
               placeholder="Enter subject name"
               className="input input-bordered w-full sm:w-64 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
               value={searchSubject}
-              onChange={(e) => setSearchSubject(e.target.value)}
+              onChange={(e) => setSearchSubject(e.target.value.trimStart())}
             />
           </div>
         </div>

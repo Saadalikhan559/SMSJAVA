@@ -137,8 +137,8 @@ const CreateDiscount = () => {
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
   <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
     <h1 className="text-3xl font-bold text-center mb-8">
-     <i className="fa-solid fa-percentage ml-2"></i> Create Discount
-      
+    Create Discount
+    <i class="fa-solid fa-indian-rupee-sign ml-2"></i>
     </h1>
 
     <form className="space-y-6" onSubmit={handleSubmit}>
