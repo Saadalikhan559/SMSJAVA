@@ -60,7 +60,7 @@ const DirectorMarkHolidays = () => {
         end_date: formData.end_date || formData.start_date,
       };
 
-      const response = await axiosInstance.post("/a/attendance/mark-holidays/",   payload);
+      const response = await axiosInstance.post("/a/holidays/",   payload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Failed to mark holiday");
