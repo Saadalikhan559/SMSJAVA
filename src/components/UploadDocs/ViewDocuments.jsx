@@ -159,7 +159,6 @@ export const ViewDocuments = () => {
   });
   console.log(filteredData);
 
-
   const filterBysearch = filteredData.filter((detail) =>
   (detail.name || "").toLowerCase().includes(searchInput.toLowerCase())
 );
@@ -270,7 +269,7 @@ export const ViewDocuments = () => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {[...filterBysearch]
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map((person, idx) => (

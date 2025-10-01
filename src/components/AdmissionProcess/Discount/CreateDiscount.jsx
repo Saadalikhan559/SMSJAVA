@@ -16,10 +16,10 @@ const CreateDiscount = () => {
   const [error, setError] = useState(false);
 
   const [formData, setFormData] = useState({
-    student_id: "",
     admission_fee_discount: "",
     tuition_fee_discount: "",
     discount_reason: "",
+    student_id: "",
     is_allowed: true,
   });
 
@@ -27,6 +27,11 @@ const CreateDiscount = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [searchStudentInput, setSearchStudentInput] = useState("");
+  const [showStudentDropdown, setShowStudentDropdown] = useState(false);
+  const [selectedStudentName, setSelectedStudentName] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState("");
 
   useEffect(() => {
     setTimeout(() => setPageLoading(false), 800);
@@ -65,15 +70,23 @@ const CreateDiscount = () => {
 
   useEffect(() => {
     if (classId) loadStudents();
-    setFormData((prev) => ({ ...prev, student_id: "" }));
+    setSelectedStudentId("");
+    setSelectedStudentName("");
+    setSearchStudentInput("");
   }, [classId]);
 
+  // Sync selected student to formData
   useEffect(() => {
-    const hasFeeValue =
-      formData.admission_fee_discount.trim() !== "" ||
-      formData.tuition_fee_discount.trim() !== "";
-    const allRequiredFields = hasFeeValue && formData.student_id;
-    setBtnDisabled(!allRequiredFields);
+    setFormData((prev) => ({ ...prev, student_id: selectedStudentId }));
+  }, [selectedStudentId]);
+
+  useEffect(() => {
+    const hasValidDiscount =
+      parseFloat(formData.admission_fee_discount) > 0 ||
+      parseFloat(formData.tuition_fee_discount) > 0;
+
+    const isValid = formData.student_id && hasValidDiscount;
+    setBtnDisabled(!isValid);
   }, [formData]);
 
   const handleChange = (name, value) => {
@@ -91,15 +104,19 @@ const CreateDiscount = () => {
       setAlertMessage("Discount created successfully!");
       setShowAlert(true);
 
+      // Reset all fields
       setFormData({
-        student_id: "",
         admission_fee_discount: "",
         tuition_fee_discount: "",
         discount_reason: "",
+        student_id: "",
         is_allowed: true,
       });
-      setStudents([]);
+      setSelectedStudentId("");
+      setSelectedStudentName("");
+      setSearchStudentInput("");
       setClassId("");
+      setStudents([]);
     } catch (err) {
       setAlertTitle("Error");
       setAlertMessage("Failed to create discount. Try again!");
@@ -108,6 +125,12 @@ const CreateDiscount = () => {
       setIsSubmitting(false);
     }
   };
+
+  const filteredStudents = students.filter((studentObj) =>
+    studentObj.student_name
+      .toLowerCase()
+      .includes(searchStudentInput.toLowerCase())
+  );
 
   if (pageLoading) {
     return (
@@ -135,164 +158,199 @@ const CreateDiscount = () => {
 
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-  <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
-    <h1 className="text-3xl font-bold text-center mb-8">
-     <i className="fa-solid fa-percentage ml-2"></i> Create Discount
-      
-    </h1>
+      <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Create Discount
+          <i className="fa-solid fa-indian-rupee-sign ml-2"></i>
+        </h1>
 
-    <form className="space-y-6" onSubmit={handleSubmit}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Class */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text flex items-center gap-1">
-              <i className="fa-solid fa-school text-sm"></i>
-              Class <span className="text-error">*</span>
-            </span>
-          </label>
-          <select
-            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            value={classId}
-            onFocus={loadClasses}
-            onChange={(e) => setClassId(e.target.value)}
-          >
-            <option value="">
-              {loadingClasses ? "Loading classes..." : "Select Class"}
-            </option>
-            {classes.map((cls) => (
-              <option key={cls.id} value={cls.id}>
-                {cls.level_name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Class Dropdown */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-school text-sm"></i>
+                  Class <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                value={classId}
+                onFocus={loadClasses}
+                onChange={(e) => setClassId(e.target.value)}
+              >
+                <option value="">
+                  {loadingClasses ? "Loading classes..." : "Select Class"}
+                </option>
+                {classes.map((cls) => (
+                  <option key={cls.id} value={cls.id}>
+                    {cls.level_name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Student */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text flex items-center gap-1">
-              <i className="fa-solid fa-user-graduate text-sm"></i>
-              Student <span className="text-error">*</span>
-            </span>
-          </label>
-          <select
-            className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            value={formData.student_id}
-            onChange={(e) => handleChange("student_id", e.target.value)}
-            disabled={!classId}
-          >
-            <option value="">
-              {loadingStudents
-                ? "Loading students..."
-                : !classId
-                  ? "Select a class first"
-                  : "Select Student"}
-            </option>
-            {students.map((std) => (
-              <option key={std.student_id} value={std.student_id}>
-                {std.student_name} - {std.student_email}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+            {/* Student Dropdown/Search */}
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Student *
+              </label>
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none"
+                placeholder="Search Student..."
+                value={searchStudentInput || selectedStudentName}
+                onChange={(e) => {
+                  setSearchStudentInput(e.target.value);
+                  setShowStudentDropdown(true);
+                  setSelectedStudentName("");
+                }}
+                onFocus={() => setShowStudentDropdown(true)}
+                autoComplete="off"
+              />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Admission Fee Discount */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text flex items-center gap-1">
-              <i className="fa-solid fa-tag text-sm"></i>
-              Admission Fee Discount (₹)
-            </span>
-          </label>
-          <input
-            type="number"
-            className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            placeholder="e.g. 100"
-            value={formData.admission_fee_discount}
-            onChange={(e) =>
-              handleChange("admission_fee_discount", e.target.value)
-            }
-          />
-        </div>
+              {showStudentDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    {/* <input
+                      type="text"
+                      placeholder="Search Student..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchStudentInput}
+                      onChange={(e) => setSearchStudentInput(e.target.value)}
+                    /> */}
+                  </div>
 
-        {/* Tuition Fee Discount */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text flex items-center gap-1">
-              <i className="fa-solid fa-tags text-sm"></i>
-              Tuition Fee Discount (₹)
-            </span>
-          </label>
-          <input
-            type="number"
-            className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-            placeholder="e.g. 500"
-            value={formData.tuition_fee_discount}
-            onChange={(e) =>
-              handleChange("tuition_fee_discount", e.target.value)
-            }
-          />
-        </div>
-      </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {!loadingStudents && filteredStudents.length > 0 ? (
+                      filteredStudents.map((studentObj) => (
+                        <p
+                          key={studentObj.student_id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedStudentId(studentObj.student_id);
+                            setSelectedStudentName(studentObj.student_name);
+                            setSearchStudentInput(studentObj.student_name);
+                            setShowStudentDropdown(false);
+                          }}
+                        >
+                          {studentObj.student_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">
+                        {loadingStudents
+                          ? "Loading students..."
+                          : "No students found."}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-      {/* Reason */}
-      <div className="form-control mt-6">
-        <label className="label">
-          <span className="label-text flex items-center gap-1">
-            <i className="fa-solid fa-comment-dots text-sm"></i>
-            Discount Reason
-          </span>
-        </label>
-        <textarea
-          className="textarea textarea-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-          placeholder="e.g. Sibling concession"
-          rows={3}
-          value={formData.discount_reason}
-          onChange={(e) => handleChange("discount_reason", e.target.value)}
-        ></textarea>
-      </div>
+          {/* Fee Discounts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-tag text-sm"></i>
+                  Admission Fee Discount (₹)
+                </span>
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                placeholder="e.g. 100"
+                value={formData.admission_fee_discount}
+                onChange={(e) =>
+                  handleChange("admission_fee_discount", e.target.value)
+                }
+              />
+            </div>
 
-      {/* Submit */}
-      <div className="flex justify-center pt-6">
-        <button
-          type="submit"
-          className="btn btn-primary w-full md:w-52 bgTheme text-white"
-          disabled={btnDisabled}
-        >
-          {isSubmitting ? (
-            <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-          ) : (
-            <>
-              <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-              Create
-            </>
-          )}
-        </button>
-      </div>
-    </form>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-1">
+                  <i className="fa-solid fa-tags text-sm"></i>
+                  Tuition Fee Discount (₹)
+                </span>
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                placeholder="e.g. 500"
+                value={formData.tuition_fee_discount}
+                onChange={(e) =>
+                  handleChange("tuition_fee_discount", e.target.value)
+                }
+              />
+            </div>
+          </div>
 
-    {/* Modal */}
-    {showAlert && (
-      <dialog open className="modal modal-open">
-        <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
-          <h3 className="font-bold text-lg">{alertTitle}</h3>
-          <p className="py-4">{alertMessage}</p>
-          <div className="modal-action">
+          {/* Discount Reason */}
+          <div className="form-control mt-6">
+            <label className="label">
+              <span className="label-text flex items-center gap-1">
+                <i className="fa-solid fa-comment-dots text-sm"></i>
+                Discount Reason
+              </span>
+            </label>
+            <textarea
+              className="textarea textarea-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              placeholder="e.g. Sibling concession"
+              rows={3}
+              value={formData.discount_reason}
+              onChange={(e) =>
+                handleChange("discount_reason", e.target.value)
+              }
+            ></textarea>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center pt-6">
             <button
-              className="btn bgTheme text-white w-30"
-              onClick={() => setShowAlert(false)}
+              type="submit"
+              className="btn btn-primary w-full md:w-52 bgTheme text-white"
+              disabled={btnDisabled || isSubmitting}
             >
-              OK
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+              ) : (
+                <>
+                  <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                  Create
+                </>
+              )}
             </button>
           </div>
-        </div>
-      </dialog>
-    )}
-  </div>
-</div>
+        </form>
+
+        {/* Modal */}
+        {showAlert && (
+          <dialog open className="modal modal-open">
+            <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+              <h3 className="font-bold text-lg">{alertTitle}</h3>
+              <p className="py-4">{alertMessage}</p>
+              <div className="modal-action">
+                <button
+                  className="btn bgTheme text-white w-30"
+                  onClick={() => setShowAlert(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </dialog>
+        )}
+      </div>
+    </div>
   );
 };
 

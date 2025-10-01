@@ -115,7 +115,7 @@ const DiscountedStudents = () => {
     <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
       <div className="mb-1">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-1">
-          <i className="fa-solid fa-percentage ml-2"></i> Discounted Students
+        Discounted Students
         </h1>
       </div>
 
@@ -141,9 +141,9 @@ const DiscountedStudents = () => {
 
           <input
             type="text"
-            placeholder="Search by name..."
+            placeholder="Search Student"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value.trimStart())}
             className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
@@ -153,13 +153,14 @@ const DiscountedStudents = () => {
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Scholar No</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Year Level</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Fee Discount</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee Discount</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Fee</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee Discount</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Reason</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold pl-22 text-nowrap">Actions</th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-nowrap">Reason</th>
+                <th className="px-18 py-3 text-center text-sm font-semibold pl-22 text-nowrap">Actions</th>
               </tr>
             </thead>
 
@@ -168,13 +169,14 @@ const DiscountedStudents = () => {
                 filteredBysearch.map((s) => (
                   <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.student_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 capitalize text-nowrap">{s.scholar_no}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.year_level}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee_discount}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.discount_reason || "-"}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-300 flex gap-3">
+                    <td className="px-13 py-3 text-sm text-gray-500 dark:text-gray-300 flex gap-3">
                       <Link
                         to={`${allRouterLink.editStudentDiscount}/${s.id}`}
                         className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"

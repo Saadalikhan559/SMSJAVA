@@ -177,8 +177,8 @@ const CreateIncome = () => {
                 placeholder="Description"
                 {...register("description", {
                   maxLength: {
-                    value: 150,
-                    message: "Description cannot exceed 150 characters",
+                    value:50,
+                    message: "Description cannot exceed 50 characters",
                   },
                 })}
                 className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"

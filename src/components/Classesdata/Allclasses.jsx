@@ -68,16 +68,16 @@ const Allclasses = () => {
         All Year Levels
       </h1>
 
-      <div className="overflow-x-auto no-scrollbar rounded-lg max-h-[70vh] border border-gray-200 dark:border-gray-700">
+      <div className="overflow-x-auto no-scrollbar rounded-lg max-h-[70vh]">
         <table className="min-w-full table-auto">
-          <thead className="bgTheme text-white sticky top-0 z-10 text-sm">
+          <thead className="bgTheme text-white sticky top-0 z--1 text-sm">
             <tr>
               <th scope="col" className="px-4 py-3 text-center">S.NO</th>
               <th scope="col" className="px-4 py-3 text-center">Year Level</th>
-              <th scope="col" className="px-4 py-3">Number Of Students</th>
+              <th scope="col" className="px-4 py-3 text-center">Number Of Students</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {yearLevels.length === 0 ? (
               <tr>
                 <td

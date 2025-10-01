@@ -203,7 +203,7 @@ const FeeSummaryTable = () => {
                   type="text"
                   placeholder="Enter student name"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value.trim())}
+                  onChange={(e) => setSearchTerm(e.target.value.trimStart())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none"
                 />
               </div>
@@ -232,7 +232,7 @@ const FeeSummaryTable = () => {
                 <th className="px-4 py-3 text-left whitespace-nowrap">Due Amount</th>
               </tr>
             </thead>
-            <tbody className=" divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredStudents.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center py-6 text-gray-500 dark:text-gray-400">

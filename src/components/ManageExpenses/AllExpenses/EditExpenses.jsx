@@ -142,7 +142,7 @@ export const EditExpenses = () => {
   };
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">
           Edit Expense
@@ -178,11 +178,12 @@ export const EditExpenses = () => {
                   (cat) =>
                     cat && (
                       <option key={cat.id} value={cat.id}>
-                        {cat.name}
+                        {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
                       </option>
                     )
                 )}
               </select>
+
               {errors.category && (
                 <p className="text-error text-sm mt-1">
                   {errors.category.message}
@@ -255,11 +256,12 @@ export const EditExpenses = () => {
                   (sta, idx) =>
                     sta && (
                       <option key={idx} value={sta}>
-                        {sta}
+                        {sta.charAt(0).toUpperCase() + sta.slice(1)}
                       </option>
                     )
                 )}
               </select>
+
               {errors.expense_date && (
                 <p className="text-error text-sm mt-1">
                   {errors.expense_date.message}

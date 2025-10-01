@@ -152,6 +152,14 @@ const TeacherAttendance = () => {
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
+         <div className=" flex justify-end">
+          <Link
+          to={allRouterLink.teacherAttendanceRecord}
+            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+          >
+            Attendance Record <span>&rarr;</span>
+          </Link>
+        </div>
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
             <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
@@ -159,15 +167,7 @@ const TeacherAttendance = () => {
         </div>
 
         {/* Top Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
-          <div className="flex gap-3">
-            <Link
-              to={allRouterLink.teacherAttendanceRecord}
-              className="btn bgTheme text-white "
-            >
-              <i className="fa-solid fa-clipboard-list w-5"></i>Attendance Record
-            </Link>
-          </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
           <input
             type="text"
             placeholder="Search by name..."
