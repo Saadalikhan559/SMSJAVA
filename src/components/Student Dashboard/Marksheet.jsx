@@ -110,7 +110,7 @@ const Marksheet = () => {
           {/* Header */}
           <div className="border-2 border-black">
             <div className="flex items-center justify-start bg-yellow-400 border-b-2 border-black px-2 md:px-4 py-1 md:py-2 relative">
-              <div className="absolute -left-2 md:-left-3 top-1/2 transform -translate-y-1/2 rotate-45 w-8 h-8 md:w-12 md:h-12 bg-red-700 flex items-center justify-center border border-black z-10 ml-4 md:ml-8">
+              <div className="absolute -left-2 md:-left-3 top-1/2 transform -translate-y-1/2 rotate-45 w-8 h-8 md:w-12 md:h-12 bg-red-700 flex items-center justify-center border border-black z--1 ml-4 md:ml-8">
                 <span className="rotate-[315deg] text-yellow-300 font-extrabold text-xl md:text-4xl">
                   4S
                 </span>

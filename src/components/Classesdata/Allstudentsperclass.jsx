@@ -92,7 +92,7 @@ return (
       {/* Table */}
       <div className="overflow-x-auto max-h-[70vh] rounded-lg">
         <table className="min-w-full table-auto">
-          <thead className="bgTheme text-white sticky top-0 z-10 text-sm">
+          <thead className="bgTheme text-white sticky top-0 z--10 text-sm">
             <tr>
               <th scope="col" className="px-4 py-3 text-center">S.NO</th>
               <th scope="col" className="px-4 py-3 text-center">Student Name</th>
