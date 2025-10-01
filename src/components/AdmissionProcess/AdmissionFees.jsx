@@ -74,56 +74,7 @@ export const AdmissionFees = () => {
     }
   };
 
-  // Fetch available fees for a student with proper error handling
-  // const fetchAvailableFees = async (studentId, month) => {
-  //   if (!studentId || !month) {
-  //     setAvailableFees([]);
-  //     return [];
-  //   }
-  // const fetchAvailableFees = async (studentId) => {
-  //   if (!studentId) {
-  //     setAvailableFees([]);
-  //     return [];
-  //   }
 
-  //   if (!accessToken) {
-  //     setApiError("Authentication required. Please login again.");
-  //     setAvailableFees([]);
-  //     return [];
-  //   }
-
-  //   try {
-  //     setIsLoadingFees(true);
-  //     setApiError("");
-  //     const response = await axiosInstance.get(
-  //       `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}&month=${month}`,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     setAvailableFees(response.data);
-  //     return response.data;
-  //   } catch (error) {
-  //     let errorMessage = "Failed to load fees";
-  //     if (error.response) {
-  //       if (error.response.status === 401) errorMessage = "Authentication failed. Please login again.";
-  //       else if (error.response.status === 404) errorMessage = "No fees found for selected student and month";
-  //       else if (error.response.status === 500) errorMessage = "Server error. Please try again later.";
-  //       else if (error.response.data?.detail) errorMessage = error.response.data.detail;
-  //     } else if (error.request) {
-  //       errorMessage = "Network error. Please check your connection.";
-  //     } else {
-  //       errorMessage = error.message;
-  //     }
-  //     setApiError(errorMessage);
-  //     setAvailableFees([]);
-  //     return [];
-  //   } finally {
-  //     setIsLoadingFees(false);
-  //   }
-  // };
   const fetchAvailableFees = async (studentId) => {
     if (!studentId) {
       setAvailableFees([]);
@@ -205,18 +156,6 @@ export const AdmissionFees = () => {
     }
   }, [selectedClassId]);
 
-  // useEffect(() => {
-  //   if (selectedStudentId && selectedMonth) {
-  //     const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
-  //     setSelectedStudent(student);
-  //     fetchAvailableFees(selectedStudentId, selectedMonth);
-  //   } else {
-  //     setSelectedStudent(null);
-  //     setAvailableFees([]);
-  //     setSelectedFeeIds([]);
-  //     setAvailableMonths([]);
-  //   }
-  // }, [selectedStudentId, selectedMonth, students]);
   useEffect(() => {
     if (selectedStudentId) {
       const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
@@ -281,80 +220,13 @@ export const AdmissionFees = () => {
       ? ["Cash", "Cheque", "Online"]
       : ["Online"];
 
-  // const displayRazorpay = async (payload) => {
-  //   try {
-  //     const isScriptLoaded = await loadRazorpayScript();
-  //     if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
-  // const Payload = {...payload,month:payload.selected_fees}
-  //     const orderResponse = await axiosInstance.post(
-  //       `${BASE_URL}/d/fee-record/initiate-payment/`,
-  //       Payload,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
-  //     const { student_id, selected_fees, year_level_fees, received_by, payment_mode, paid_amount } = payload;
-
-  //     const options = {
-  //       key: "rzp_test_4h2aRSAPbYw3f8",
-  //       amount: orderAmount,
-  //       currency: currency,
-  //       name: "Course Payment",
-  //       description: `receipt_number: ${receipt_number}`,
-  //       order_id: orderId,
-  //       handler: async function (response) {
-  //         try {
-  //           const verificationResponse = await axiosInstance.post(
-  //             `${BASE_URL}/d/fee-record/confirm-payment/`,
-  //             {
-  //               razorpay_order_id: response.razorpay_order_id,
-  //               razorpay_payment_id: response.razorpay_payment_id,
-  //               razorpay_signature: response.razorpay_signature,
-  //               student_id: parseInt(student_id),
-  //               month:selected_fees,
-  //               year_level_fees,
-  //               received_by,
-  //               payment_mode,
-  //               paid_amount,
-  //             },
-  //             {
-  //               headers: {
-  //                 "Content-Type": "application/json",
-  //               },
-  //             }
-  //           );
-
-  //           if (verificationResponse.data) {
-  //             setPaymentStatus(verificationResponse.data);
-  //             setShowPaymentDialog(true);
-  //           } else setPaymentStatus("Payment verification failed");
-  //         } catch (error) {
-  //           setPaymentStatus("Payment verification failed");
-  //         }
-  //       },
-  //       prefill: { name: selectedStudent?.student_name || "", email: selectedStudent?.email || "" },
-  //       notes: { address: "Course Purchase" },
-  //       theme: { color: "#5E35B1" },
-  //     };
-
-  //     const rzp = new window.Razorpay(options);
-  //     rzp.open();
-  //   } catch (error) {
-  //     setPaymentStatus("Payment failed. Please try again.");
-  //   }
-  // };
-// con
 
 const displayRazorpay = async (payload) => {
   try {
     const isScriptLoaded = await loadRazorpayScript();
     if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
 
-    console.log("🔄 INITIATING PAYMENT WITH:", payload);
+   
 
     const orderResponse = await axiosInstance.post(
       `${BASE_URL}/d/fee-record/initiate-payment/`,
@@ -366,7 +238,7 @@ const displayRazorpay = async (payload) => {
       }
     );
 
-    console.log("ORDER RESPONSE:", orderResponse.data);
+
 
     const { razorpay_order_id: orderId, currency, receipt_number, paid_amount: orderAmount } = orderResponse.data;
     const { student_id, received_by, payment_mode, paid_amount, selected_fees } = payload;
@@ -439,34 +311,7 @@ const displayRazorpay = async (payload) => {
   }
 };
   const onSubmit = async (data) => {
-    //   if (selectedFeeIds.length === 0) {
-    //     alert("Please select at least one fee to pay");
-    //     return;
-    //   }
-
-    //   const payload = {
-    //     ...data,
-    //     student_id: parseInt(data.student_id),
-    //     paid_amount: parseFloat(data.paid_amount).toFixed(2),
-    //     year_level_fees: selectedFeeIds,
-    //     payment_mode: data.payment_mode,
-    //     is_cheque_cleared: data.payment_mode === "Cheque" ? false : true,
-    //   };
-    //   console.log(payload);
-
-    //   try {
-    //     if (payload.payment_mode === "Online") await displayRazorpay(payload);
-    //     else {
-    //       const response = await axios.post(`${BASE_URL}/d/fee-record/`, payload, {
-    //         headers: { Authorization: `Bearer ${accessToken}` },
-    //       });
-    //       setPaymentStatus(response.data);
-    //       setShowPaymentDialog1(true);
-    //     }
-    //   } catch (err) {
-    //     setPaymentStatus("Payment failed. Please try again.");
-    //   }
-    // };
+   
     if (selectedFeeIds.length === 0) {
       alert("Please select at least one fee to pay");
       return;
@@ -560,28 +405,22 @@ const displayRazorpay = async (payload) => {
           let feeAmount = 0;
 
           if (paid > 0 && paid < base) {
-            // Partially paid — pay due
             feeAmount = base - paid;
             dueTotal += feeAmount;
           } else if (paid === 0) {
-            // Not paid at all — pay full base
             feeAmount = base;
             baseTotal += feeAmount;
           }
-
-          // Add late fee in both cases (if exists)
           lateTotal += late;
-
-          // Add to final total
           totalAmount += feeAmount + late;
         }
       });
     });
 
     return {
-      baseAmount: baseTotal,  // Fully unpaid amounts
+      baseAmount: baseTotal,  
       lateFee: lateTotal,
-      due: dueTotal,          // Partially paid remaining amounts
+      due: dueTotal,         
       totalAmount: totalAmount,
     };
   };
