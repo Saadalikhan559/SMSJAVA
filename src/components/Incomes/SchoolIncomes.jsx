@@ -299,7 +299,6 @@ export const SchoolIncome = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 

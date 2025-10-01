@@ -27,8 +27,6 @@ export const ViewAllExpenses = () => {
   const [addCategory, setAddCategory] = useState("");
   const [apiError, setApiError] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-
-
   const [activeTab, setActiveTab] = useState("Add");
   const [editCategoryId, setEditCategoryId] = useState("");
   const [editCategoryName, setEditCategoryName] = useState("");
@@ -36,8 +34,8 @@ export const ViewAllExpenses = () => {
   const modalRef = useRef();
   const confirmModalRef = useRef();
   const [deleteId, setDeleteId] = useState(null);
-
   const [currentSchoolYearId, setCurrentSchoolYearId] = useState(null);
+  const [fileErrorModal, setFileErrorModal] = useState(false);
 
   const getSchoolYear = async () => {
     try {
@@ -90,7 +88,6 @@ export const ViewAllExpenses = () => {
     setLoading(true);
     try {
       setError("");
-
       const response = await axiosInstance.get(
         `/d/School-Expense/?school_year=${selectedSchoolYear}&category=${selectedCategory}`
       );
@@ -116,7 +113,6 @@ export const ViewAllExpenses = () => {
     if (!selectedStatus) return true;
     return expense.status.toLowerCase() === selectedStatus.toLowerCase();
   });
-
 
   const handleAddCategoryClick = (e) => {
     e.preventDefault();
@@ -168,14 +164,40 @@ export const ViewAllExpenses = () => {
     } catch (error) {
       setApiError(
         error?.response?.data?.detail ||
-        error?.message ||
-        "Error deleting expense"
+          error?.message ||
+          "Error deleting expense"
       );
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Attachment handler
+  const handleViewAttachment = async (filePath) => {
+    if (!filePath) {
+      setFileErrorModal(true);
+      return;
+    }
+
+    try {
+      const fullPath = filePath.replace(
+        "http://localhost:8000",
+        constants.baseUrl
+      );
+
+      // Try direct open
+      const newWindow = window.open(fullPath, "_blank");
+      if (newWindow) return;
+
+      // Fallback with auth
+      const response = await axiosInstance.get(fullPath, { responseType: "blob" });
+      const fileURL = URL.createObjectURL(response.data);
+      window.open(fileURL, "_blank");
+    } catch (error) {
+      console.error("File fetch error:", error);
+      setFileErrorModal(true);
+    }
+  };
 
   if (loading) {
     return <Loader />;
@@ -259,7 +281,6 @@ export const ViewAllExpenses = () => {
               <option value="rejected">Rejected</option>
             </select>
           </div>
-
         </div>
 
         {/* Table */}
@@ -293,37 +314,40 @@ export const ViewAllExpenses = () => {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
-
                   <tr key={expense.id}>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.category_name}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.amount}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 truncate max-w-xs" title={expense.description}>
+                    <td
+                      className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 truncate max-w-xs"
+                      title={expense.description}
+                    >
                       {expense.description}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.expense_date}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.payment_method}</td>
                     <td className="px-4 py-3 text-sm truncate max-w-xs">
                       {expense.attachment ? (
-                        <a
-                          href={`${constants.baseUrl}${expense.attachment.replace(/^http:\/\/localhost:8000/, "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="textTheme font-bold"
+                        <button
+                          onClick={() => handleViewAttachment(expense.attachment)}
+                          className="textTheme font-bold underline"
                         >
                           Open Attachment
-                        </a>
+                        </button>
                       ) : (
-                        <span className="text-gray-500 dark:text-gray-400">Upload Attachment</span>
+                        <span className="text-gray-500 dark:text-gray-400">
+                          Upload Attachment
+                        </span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span
-                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${expense.status === "pending"
+                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${
+                          expense.status === "pending"
                             ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:bg-yellow-100"
                             : expense.status === "rejected"
-                              ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
-                              : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
-                          }`}
+                            ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
+                            : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
+                        }`}
                       >
                         {expense.status}
                       </span>
@@ -373,7 +397,10 @@ export const ViewAllExpenses = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="11" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td
+                    colSpan="11"
+                    className="px-4 py-12 text-center text-gray-500 dark:text-gray-400"
+                  >
                     <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400"></i>
                     <p>No expenses found for the selected criteria</p>
                   </td>
@@ -384,14 +411,28 @@ export const ViewAllExpenses = () => {
         </div>
       </div>
 
-
       <SuccessModal ref={modalRef} />
       <ConfirmationModal
         ref={confirmModalRef}
         onConfirm={() => handleDeleteExpense(deleteId)}
         onCancel={() => setDeleteId(null)}
       />
+
+      {/* Error Modal */}
+      {fileErrorModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded shadow-lg text-center">
+            <h2 className="text-lg font-bold mb-4">File Not Found</h2>
+            <p className="mb-4">Sorry, this attachment is not available.</p>
+            <button
+              className="btn bgTheme text-white"
+              onClick={() => setFileErrorModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-
 };
