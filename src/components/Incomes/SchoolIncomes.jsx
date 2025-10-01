@@ -17,8 +17,6 @@ export const SchoolIncome = () => {
   const [categories, setCategories] = useState([]);
   const [selectedSchoolYear, setSelectedSchoolYear] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("");
   const [error, setError] = useState("");
   const [apiError, setApiError] = useState("");
 
@@ -26,6 +24,8 @@ export const SchoolIncome = () => {
   const confirmModalRef = useRef();
   const [deleteId, setDeleteId] = useState(null);
   const [currentSchoolYearId, setCurrentSchoolYearId] = useState(null);
+  const [fileErrorModal, setFileErrorModal] = useState(false);
+
 
   // External API
   const getSchoolYear = async () => {
@@ -57,6 +57,23 @@ export const SchoolIncome = () => {
     }
   };
 
+  const handleViewAttachment = async (filePath) => {
+    if (!filePath) {
+      setFileErrorModal(true);
+      return;
+    }
+
+    const url = filePath.replace(/^http:\/\/localhost:8000/, constants.baseUrl);
+
+    try {
+      await axiosInstance.get(url, { responseType: "blob" });
+      window.open(url, "_blank");
+    } catch (err) {
+      setFileErrorModal(true);
+    }
+  };
+
+
   // Internal API using axiosInstance
   const getCategories = async () => {
     try {
@@ -74,7 +91,6 @@ export const SchoolIncome = () => {
       const params = {};
       if (selectedSchoolYear) params.school_year = selectedSchoolYear;
       if (selectedCategory) params.category = selectedCategory;
-      if (selectedStatus) params.status = selectedStatus;
 
       const res = await axiosInstance.get("/d/school-income/", { params });
       setIncomeDetails(res.data);
@@ -93,7 +109,7 @@ export const SchoolIncome = () => {
 
   useEffect(() => {
     getIncomeDetails();
-  }, [selectedSchoolYear, selectedCategory, selectedStatus]);
+  }, [selectedSchoolYear, selectedCategory]);
 
   const handleDeleteIncome = async (id) => {
     try {
@@ -109,14 +125,6 @@ export const SchoolIncome = () => {
       setLoading(false);
     }
   };
-
-  // Filtered data before rendering
-  const filteredIncome = incomeDetails
-    .filter((income) => !selectedStatus || income.status === selectedStatus)
-    .filter((income) => !selectedCategory || income.category == selectedCategory)
-    .filter((income) => !selectedSchoolYear || income.school_year == selectedSchoolYear)
-    .filter((income) => !selectedMonth || income.month === selectedMonth);
-
 
   if (loading) return <Loader />;
   if (error) return <Error />;
@@ -171,53 +179,13 @@ export const SchoolIncome = () => {
               ))}
             </select>
           </div>
-          {/*  Status Filter */}
-          <div className="form-control w-48">
-            <label className="label">
-              <span className="label-text text-gray-700 dark:text-gray-300">
-                Select Status
-              </span>
-            </label>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            >
-              <option value="">All</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="pending">Pending</option>
-            </select>
-          </div>
-          {/* Month Filter */}
-          <div className="form-control w-48">
-            <label className="label">
-              <span className="label-text text-gray-700 dark:text-gray-300">
-                Select Month
-              </span>
-            </label>
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            >
-              <option value="">All</option>
-              {[
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-              ].map((month) => (
-                <option key={month} value={month}>{month}</option>
-              ))}
-            </select>
-          </div>
+
           {/* Reset Filter Button */}
           <div className="form-control mt-6 md:mt-0">
             <button
               onClick={() => {
                 setSelectedSchoolYear("");
                 setSelectedCategory("");
-                setSelectedStatus("");
-                setSelectedMonth("");
-
               }}
               className="btn bgTheme text-white"
             >
@@ -236,34 +204,33 @@ export const SchoolIncome = () => {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Income Date</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">School Year</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Payment Method</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
-              {filteredIncome.length > 0 ? (
-                filteredIncome.map((income) => (
+              {incomeDetails.length > 0 ? (
+                incomeDetails.map((income) => (
                   <tr key={income.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.month}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">₹{income.amount}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.income_date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 text-nowrap">{income.category_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 text-nowrap">{income.description}</td>
-                    <td className="px-10 py-3 text-sm text-gray-700 dark:text-gray-300 text-nowrap">{income.school_year}</td>
-                    <td className="px-10 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">{income.payment_method}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.category_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.description}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.school_year}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">{income.payment_method}</td>
+
                     <td className="px-4 py-3 text-sm text-blue-600">
                       {income.attachment ? (
-                        <a
-                          href={income.attachment.startsWith("http") ? income.attachment : `${constants.baseUrl}${income.attachment}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => handleViewAttachment(income.attachment)}
                           className="hover:underline"
                         >
                           View
-                        </a>
+                        </button>
                       ) : (
                         "-"
                       )}
@@ -318,6 +285,21 @@ export const SchoolIncome = () => {
         />
         <SuccessModal ref={modalRef} />
       </div>
+      {fileErrorModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 z-50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded shadow-lg text-center">
+            <h2 className="text-lg font-bold mb-4">File Not Found</h2>
+            <p className="mb-4">Sorry, this attachment is not available.</p>
+            <button
+              className="btn bgTheme text-white"
+              onClick={() => setFileErrorModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
+
 };

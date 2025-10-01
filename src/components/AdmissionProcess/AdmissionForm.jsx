@@ -1589,8 +1589,8 @@ export const AdmissionForm = () => {
                 {...register("address_input.division", {
                   required: "Division is required",
                   maxLength: {
-                    value: 10,
-                    message: "Division cannot exceed 100 characters",
+                    value: 20,
+                    message: "Division cannot exceed 20 characters",
                   },
                 })}
                 placeholder="Division"
