@@ -119,6 +119,8 @@ const CreateDiscount = () => {
       setStudents([]);
     } catch (err) {
       setAlertTitle("Error");
+      console.log('error', err.response.data);
+      
       setAlertMessage("Failed to create discount. Try again!");
       setShowAlert(true);
     } finally {
