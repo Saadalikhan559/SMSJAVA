@@ -1849,7 +1849,7 @@ export const EditAddmissionDetails = () => {
                   validate: (value) => {
                     const trimmed = value.trim().toUpperCase();
                     if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(trimmed))
-                      return "Enter a valid IFSC code (e.g., SBIN0001234)";
+                      
                     return true;
                   },
                 })}
