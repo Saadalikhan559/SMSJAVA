@@ -94,7 +94,7 @@ const CreateIncome = () => {
             {/* Month */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Month *
+                Month <span className="text-error">*</span>
               </label>
               <select
                 {...register("month", { required: "Month is required" })}
@@ -115,7 +115,7 @@ const CreateIncome = () => {
             {/* Amount */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Amount *
+                Amount <span className="text-error">*</span>
               </label>
               <input
                 type="number"
@@ -134,7 +134,7 @@ const CreateIncome = () => {
             {/* Income Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Income Date *
+                Income Date <span className="text-error">*</span>
               </label>
               <input
                 type="date"
@@ -149,7 +149,7 @@ const CreateIncome = () => {
             {/* Category */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Category *
+                Category <span className="text-error">*</span>
               </label>
               <select
                 {...register("category", { required: "Category is required" })}
@@ -213,7 +213,7 @@ const CreateIncome = () => {
             {/* Payment Method */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Payment Method *
+                Payment Method <span className="text-error">*</span>
               </label>
               <select
                 {...register("payment_method", { required: "Payment method is required" })}
@@ -232,7 +232,7 @@ const CreateIncome = () => {
             {/* Status */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Status *
+                Status <span className="text-error">*</span>
               </label>
               <select
                 {...register("status", { required: "Status is required" })}
