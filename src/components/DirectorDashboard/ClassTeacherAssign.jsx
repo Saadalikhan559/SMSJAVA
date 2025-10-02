@@ -187,7 +187,7 @@ const ClassTeacherAssign = () => {
             {/* Teacher Dropdown */}
             <div className="w-1/2 relative">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Teacher <span className="text-error">*</span>
+                Teacher *
               </label>
 
               <div
@@ -266,7 +266,7 @@ const ClassTeacherAssign = () => {
             {/* Year Level */}
             <div className="w-1/2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Year Level <span className="text-error">*</span>
+                Year Level *
               </label>
               <select
                 {...register("yearlevel_id", {

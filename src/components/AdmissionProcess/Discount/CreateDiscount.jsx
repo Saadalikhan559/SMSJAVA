@@ -193,7 +193,7 @@ const CreateDiscount = () => {
 
             {/* Student Dropdown/Search */}
             <div className="relative">
-              <label className="label-text flex items-center gap-1  text-gray-700 dark:text-gray-300">
+              <label className="label-text flex items-center gap-1">
                 Student <span className="text-error">*</span>
               </label>
               <input

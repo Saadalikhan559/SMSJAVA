@@ -192,7 +192,7 @@ const CreateIncome = () => {
             {/* School Year */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                School Year <span className="text-error">*</span>
+                School Year *
               </label>
               <select
                 {...register("school_year", { required: "School year is required" })}
