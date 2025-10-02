@@ -277,8 +277,8 @@ const UploadExamPaper = () => {
             ))}
             
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Teacher *
+              <label lassName="label-text dark:text-gray-200">
+                Teacher <span className="text-error">*</span>
               </label>
 
               <input
@@ -289,7 +289,7 @@ const UploadExamPaper = () => {
 
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Search Teacher..."
                 value={searchTeacherInput || selectedTeacherName}
                 onChange={(e) => {
@@ -342,8 +342,8 @@ const UploadExamPaper = () => {
             </div>
 
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Subject *
+              <label lassName="label-text dark:text-gray-200">
+                Subject <span className="text-error">*</span>
               </label>
 
               <input
@@ -354,7 +354,7 @@ const UploadExamPaper = () => {
 
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Search Subject..."
                 value={searchSubjectInput || selectedSubjectName}
                 onChange={(e) => {
