@@ -807,7 +807,7 @@ const displayRazorpay = async (payload) => {
                               const rowKey = `${monthData.month}-${fee.id}`;
                               const isSelectable = fee.status !== "Already Paid";
                               const isChecked = selectedFeeIds.includes(rowKey);
-                              let Due =  (Number(fee.base_amount ) - Number( fee.paid_amount) + Number( fee.late_fee))  || 0
+                              let Due =  (Number(fee.base_amount ) - Number( fee.paid_amount) +Number( fee.late_fee) )  || 0
                               if(Due < 0) Due = 0
                             
                               
@@ -828,11 +828,11 @@ const displayRazorpay = async (payload) => {
                                   </td>
                                   <td>
                                     {fee.status === "Already Paid" ? (
-                                      <span className="badge badge-success">Paid</span>
+                                      <span className="badge badge-success text-gray-900 dark:text-white">Paid</span>
                                     ) : fee.status.includes("Pending") ? (
-                                      <span className="badge badge-error">Pending</span>
+                                      <span className="badge badge-error text-gray-900 dark:text-white">Pending</span>
                                     ) : (
-                                      <span className="badge badge-warning">{fee.status}</span>
+                                      <span className="badge badge-warning text-nowrap text-gray-900 dark:text-white">{fee.status}</span>
                                     )}
                                   </td>
                                   <td>
@@ -857,45 +857,6 @@ const displayRazorpay = async (payload) => {
                       </table>
                     </div>
                   </div>
-
-
-                  {/* Payment Summary */}
-                  {/* {selectedFeeIds.length > 0 && (
-                    <div className="bg-gray-100 dark:bg-gray-800 p-5 rounded-lg mt-6 shadow">
-                      <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
-                        Payment Summary
-                      </h3>
-                      <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 dark:text-gray-300">
-                        <div>Base Amount:</div>
-                        <div className="text-right">₹{totalAmount.baseAmount.toFixed(2)}</div>
-
-                        {totalAmount.lateFee > 0 && (
-                          <>
-                            <div>Late Fee:</div>
-                            <div className="text-right text-orange-600 dark:text-orange-400 font-semibold">
-                              ₹{totalAmount.lateFee.toFixed(2)}
-                            </div>
-                          </>
-                        )}
-
-                        {totalAmount.Due > 0 && (
-                          <>
-                            <div>Due Fee:</div>
-                            <div className="text-right text-orange-600 dark:text-orange-400 font-semibold">
-                              ₹{totalAmount.Due.toFixed(2)}
-                            </div>
-                          </>
-                        )}
-
-                        <div className="font-bold mt-2 border-t border-gray-300 dark:border-gray-600 pt-2">
-                          Total Amount:
-                        </div>
-                        <div className="text-right font-bold mt-2 border-t border-gray-300 dark:border-gray-600 pt-2 text-lg text-purple-600 dark:text-purple-400">
-                          ₹{totalAmount.totalAmount.toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-                  )} */}
                 </div>
               )}
  
