@@ -13,7 +13,6 @@ export const constants = {
   // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
   //  baseUrl:"https://2lw4clk2-8000.inc1.devtunnels.ms", //shahbaz
 
-
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,   
       

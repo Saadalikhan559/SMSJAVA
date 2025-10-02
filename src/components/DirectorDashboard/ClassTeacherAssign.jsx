@@ -225,7 +225,7 @@ const ClassTeacherAssign = () => {
                       filteredTeachers.map((teacher) => (
                         <p
                           key={teacher.id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             const fullName = `${teacher.first_name} ${teacher.last_name}`;
                             setSelectedTeacherName(fullName);
