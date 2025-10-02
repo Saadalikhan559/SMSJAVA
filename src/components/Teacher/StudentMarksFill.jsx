@@ -175,8 +175,8 @@ const StudentMarksFill = () => {
 
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+    <div className="min-h-screen p-5  bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-box my-5 shadow-sm dark:shadow-gray-700">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-center mb-8">
             Fill Student Marks <i className="fa-solid fa-file-pen ml-2"></i>
@@ -184,14 +184,14 @@ const StudentMarksFill = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* School Year */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                School Year *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                School Year <span className="text-error">*</span>
               </label>
               <select
                 {...register("school_year", {
                   required: "School year is required",
                 })}
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
               >
                 <option value="">Select School Year</option>
                 {schoolYears?.map((year) => (
@@ -209,14 +209,14 @@ const StudentMarksFill = () => {
 
             {/* Year Level */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Year Level *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Year Level <span className="text-error">*</span>
               </label>
               <select
                 {...register("year_level", {
                   required: "Year level is required",
                 })}
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
               >
                 <option value="">Select Year Level</option>
                 {className1?.map((level) => (
@@ -234,12 +234,12 @@ const StudentMarksFill = () => {
 
             {/* Exam Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Exam Type *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Exam Type <span className="text-error">*</span>
               </label>
               <select
                 {...register("exam_type", { required: "Exam type is required" })}
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
               >
                 <option value="">Select Exam Type</option>
                 {examType?.map((type) => (
@@ -258,8 +258,8 @@ const StudentMarksFill = () => {
            
             {/* Subject */}
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Subject *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Subject <span className="text-error">*</span>
               </label>
 
               <input
@@ -270,7 +270,7 @@ const StudentMarksFill = () => {
 
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Search Subject..."
                 value={searchSubjectInput || selectedSubjectName}
                 onChange={(e) => {
@@ -326,8 +326,8 @@ const StudentMarksFill = () => {
             {/* Teacher */}
             {/* Teacher */}
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Teacher *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Teacher <span className="text-error">*</span>
               </label>
 
               <input
@@ -338,7 +338,7 @@ const StudentMarksFill = () => {
 
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Search Teacher..."
                 value={searchTeacherInput || selectedTeacherName}
                 onChange={(e) => {
@@ -394,8 +394,8 @@ const StudentMarksFill = () => {
 
             {/* Student */}
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Student *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Student <span className="text-error">*</span>
               </label>
               {/* Hidden input to register student ID */}
               <input
@@ -406,7 +406,7 @@ const StudentMarksFill = () => {
 
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Search Student..."
                 value={searchStudentInput || selectedStudentName}
                 onChange={(e) => {
@@ -465,8 +465,8 @@ const StudentMarksFill = () => {
 
             {/* Marks */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Marks *
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Marks <span className="text-error">*</span>
               </label>
               <input
                 type="number"
@@ -476,7 +476,7 @@ const StudentMarksFill = () => {
                   min: { value: 0, message: "Marks cannot be negative" },
                   max: { value: 100, message: "Marks cannot exceed 100" },
                 })}
-                className="select select-bordered w-full focus:outline-none"
+                className="select select-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
               />
               {errors.marks && (
                 <p className="text-red-500 text-sm mt-1">
