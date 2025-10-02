@@ -159,9 +159,10 @@ const ClassTeacherAssign = () => {
             onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
             className="flex items-center textTheme hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
           >
+            View Allocated Class
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-5 w-5 mr-1 transform rotate-180"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -171,7 +172,6 @@ const ClassTeacherAssign = () => {
                 clipRule="evenodd"
               />
             </svg>
-            View Allocated Class
           </button>
         </div>
 
