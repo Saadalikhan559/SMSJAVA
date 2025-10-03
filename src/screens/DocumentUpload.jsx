@@ -100,7 +100,7 @@ export const DocumentUpload = () => {
     const name = selectedDoc.name.trim().toLowerCase();
 
     // Aadhaar
-    if (name === "aadhaar") {
+    if (name === "adharcard") {
       const aadhaarRegex = /^\d{12}$/;
       return aadhaarRegex.test(identity)
         ? ""
@@ -146,6 +146,32 @@ export const DocumentUpload = () => {
         ? ""
         : "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)";
     }
+    else if (name === "migration certificate") {
+      const migrationRegex = /^[A-Z]{2,10}\/\d{4}\/\d{3,6}$/;
+      return migrationRegex.test(identity)
+        ? ""
+        : "Migration Certificate format: BOARDCODE/YYYY/SERIAL (e.g. CBSE/2020/123456)";
+    }
+    const normalized = name.trim().toLowerCase();
+
+    if (normalized === "date of birth certificate") {
+      const dobCertRegex = /^[A-Z\-\/]{2,10}[\-\/]?\d{4}[\-\/]?\d{3,6}$/;
+      return dobCertRegex.test(identity)
+        ? ""
+        : "DOB Certificate format: CODE/YYYY/SERIAL (e.g. MC/2020/123456)";
+    } else if (normalized === "income certificate") {
+      const incomeCertRegex = /^[A-Z\/\-]{2,10}[\-\/]?\d{4}[\-\/]?\d{3,6}$/;
+      return incomeCertRegex.test(identity)
+        ? ""
+        : "Income Certificate format: CODE/YYYY/SERIAL (e.g. IC/2021/123456)";
+    } else if (normalized === "domicile certificate") {
+      const domicileCertRegex = /^[A-Z\/\-]{2,10}[\-\/]?\d{4}[\-\/]?\d{3,6}$/;
+      return domicileCertRegex.test(identity)
+        ? ""
+        : "Domicile Certificate format: CODE/YYYY/SERIAL (e.g. DC/2022/000123)";
+    }
+
+
 
     // Driving License
     else if (name === "driving license") {
@@ -292,13 +318,17 @@ export const DocumentUpload = () => {
 
   const handleUploadChange = (e, index) => {
     const { name, value } = e.target;
+
+    // Update the field value
     const newFields = [...uploadFields];
     newFields[index][name] = value;
     setUploadFields(newFields);
 
+    // Clone errors arrays
     const newErrors = [...identityErrors];
     const newDocErrors = [...docTypeErrors];
 
+    // Validate document type
     if (name === "document_types") {
       if (!value) {
         newDocErrors[index] = "Please select a document type";
@@ -307,16 +337,22 @@ export const DocumentUpload = () => {
       }
     }
 
+    // Validate identity fields only if both fields exist
+    const currentIdentities = newFields[index]?.identities || "";
+    const currentDocType = newFields[index]?.document_types || "";
+
     if (name === "document_types" || name === "identities") {
-      newErrors[index] = validateIdentity(
-        newFields[index].identities,
-        newFields[index].document_types
-      );
+      const validationError = validateIdentity(currentIdentities, currentDocType);
+      newErrors[index] = validationError || ""; // Ensure it's a string
     }
 
-    setIdentityErrors(newErrors);
-    setDocTypeErrors(newDocErrors);
+    // Update state
+    setIdentityErrors([...newErrors]);
+    setDocTypeErrors([...newDocErrors]); // Ensure a new array to trigger re-render
+    console.log("Document Type Error at index", index, ":", newDocErrors[index]);
+
   };
+
 
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
@@ -327,65 +363,93 @@ export const DocumentUpload = () => {
     );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      for (const [index, field] of uploadFields.entries()) {
-        if (!field.files || !field.document_types) {
-          setAlertMessage(
-            "Please select file and document type for all fields"
-          );
-          setShowAlert(true);
-          setLoading(false);
-          return;
-        }
-        if (identityErrors[index]) {
-          setAlertMessage("Please fix identity errors before uploading");
-          setShowAlert(true);
-          setLoading(false);
-          return;
-        }
+  const newDocErrors = [...docTypeErrors];
+  const newIdentityErrors = [...identityErrors];
+  let hasError = false;
 
-        const formDataToSend = new FormData();
-        formDataToSend.append("files", field.files);
-        formDataToSend.append("document_types", field.document_types);
-        if (formData.student)
-          formDataToSend.append("student", formData.student);
-        if (formData.teacher)
-          formDataToSend.append("teacher", formData.teacher);
-        if (formData.guardian)
-          formDataToSend.append("guardian", formData.guardian);
-        if (formData.office_staff)
-          formDataToSend.append("office_staff", formData.office_staff);
-        if (field.identities)
-          formDataToSend.append("identities", field.identities);
-
-        await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+  try {
+    
+    for (const [index, field] of uploadFields.entries()) {
+      // Validate document type
+      if (!field.document_types) {
+        newDocErrors[index] = "Please select a document type";
+        hasError = true;
+      } else {
+        newDocErrors[index] = "";
       }
 
-      setAlertMessage("Documents uploaded successfully!");
-      setShowAlert(true);
-      setUploadFields([{ files: null, document_types: "", identities: "" }]);
-      setFormData({
-        student: "",
-        teacher: "",
-        guardian: "",
-        office_staff: "",
-        year_level: "",
+      // Validate file
+      if (!field.files) {
+        newDocErrors[index] = "Please upload a file";
+        hasError = true;
+      }
+
+      // Validate identities
+      const identityError = validateIdentity(field.identities, field.document_types);
+      if (identityError) {
+        newIdentityErrors[index] = identityError;
+        hasError = true;
+      } else {
+        newIdentityErrors[index] = "";
+      }
+
+
+      console.log(`Validation result for index ${index}:`, {
+        docError: newDocErrors[index],
+        identityError: newIdentityErrors[index],
       });
-      setRole("");
-      setStep(0);
-    } catch {
-      setAlertMessage("Upload failed");
-      setShowAlert(true);
-    } finally {
-      setLoading(false);
     }
-  };
+
+    setDocTypeErrors([...newDocErrors]);
+    setIdentityErrors([...newIdentityErrors]);
+
+    if (hasError) {
+      setLoading(false);
+      return;
+    }
+
+    for (const field of uploadFields) {
+      const formDataToSend = new FormData();
+      formDataToSend.append("files", field.files);
+      formDataToSend.append("document_types", field.document_types);
+
+      if (formData.student) formDataToSend.append("student", formData.student);
+      if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
+      if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
+      if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
+      if (field.identities) formDataToSend.append("identities", field.identities);
+
+      await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    }
+
+    setAlertMessage("Documents uploaded successfully!");
+    setShowAlert(true);
+    setUploadFields([{ files: null, document_types: "", identities: "" }]);
+    setFormData({
+      student: "",
+      teacher: "",
+      guardian: "",
+      office_staff: "",
+      year_level: "",
+    });
+    setRole("");
+    setStep(0);
+  } catch (err) {
+    console.error("Upload failed:", err);
+    setAlertMessage("Upload failed");
+    setShowAlert(true);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   // --- SIDE EFFECTS ---
   useEffect(() => {
@@ -420,17 +484,11 @@ export const DocumentUpload = () => {
 
   // --- RENDER ---
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-5"
       >
-         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
-            <i className="fa-solid fa-file-arrow-up w-5"></i> Upload Documents
-          </h1>
-        </div>
-
         {/* Steps */}
         <ul className="steps mb-6 w-full">
           <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>
@@ -458,11 +516,11 @@ export const DocumentUpload = () => {
         </style>
 
         {/* STEP 0 */}
-        {/* STEP 0 */}
         {step === 0 && (
           <div className="w-full max-w-6xl mx-auto p-6">
             <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
-              Select Role For Upload Documents<i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+              Upload Documents<i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+              <p className="text-2xl m-1"> Select Your Role</p>
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {/* Role */}
@@ -553,6 +611,7 @@ export const DocumentUpload = () => {
                   />
                 </div>
 
+
                 {/* Document Type */}
                 <div className="form-control w-full">
                   <label className="label">
@@ -579,6 +638,7 @@ export const DocumentUpload = () => {
                       {docTypeErrors[index] || ""}
                     </span>
                   </div>
+
                 </div>
 
                 {/* Identity */}
@@ -601,18 +661,18 @@ export const DocumentUpload = () => {
                       {identityErrors[index] || ""}
                     </span>
                   </div>
+
                 </div>
 
                 {/* Add/Remove */}
-                <div className="form-control w-full flex items-end pt-6">
+                <div className="form-control w-full flex items-end pt-7">
                   {index === 0 ? (
                     <button
                       type="button"
-                      className={`btn bgTheme text-white w-full md:w-32 ${
-                        AddField === 3
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-purple-700"
-                      }`}
+                      className={`btn bgTheme text-white w-full md:w-32 ${AddField === 3
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-purple-700"
+                        }`}
                       onClick={handleAddField}
                       disabled={AddField === 3}
                     >
@@ -662,9 +722,8 @@ export const DocumentUpload = () => {
                         ? "Loading students..."
                         : "Select Student")}
                     <i
-                      className={`fa-solid fa-chevron-${
-                        showStudentDropdown ? "up" : "down"
-                      } ml-2`}
+                      className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"
+                        } ml-2`}
                     ></i>
                   </div>
 
@@ -730,9 +789,8 @@ export const DocumentUpload = () => {
                   >
                     {selectedTeacherName || "Select Teacher"}
                     <i
-                      className={`fa-solid fa-chevron-${
-                        showTeacherDropdown ? "up" : "down"
-                      } ml-2`}
+                      className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"
+                        } ml-2`}
                     ></i>
                   </div>
 
@@ -803,9 +861,8 @@ export const DocumentUpload = () => {
                   >
                     {selectedGuardianName || "Select Guardian"}
                     <i
-                      className={`fa-solid fa-chevron-${
-                        showGuardianDropdown ? "up" : "down"
-                      } ml-2`}
+                      className={`fa-solid fa-chevron-${showGuardianDropdown ? "up" : "down"
+                        } ml-2`}
                     ></i>
                   </div>
 
@@ -874,9 +931,8 @@ export const DocumentUpload = () => {
                   >
                     {selectedOfficeStaffName || "Select Office Staff"}
                     <i
-                      className={`fa-solid fa-chevron-${
-                        showOfficeStaffDropdown ? "up" : "down"
-                      } ml-2`}
+                      className={`fa-solid fa-chevron-${showOfficeStaffDropdown ? "up" : "down"
+                        } ml-2`}
                     ></i>
                   </div>
 
@@ -938,12 +994,11 @@ export const DocumentUpload = () => {
               <button
                 type="button"
                 onClick={next}
-                className={`btn bgTheme text-white w-40 ${
-                  role.length === 0 ||
+                className={`btn bgTheme text-white w-40 ${role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-purple-700"
-                }`}
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-purple-700"
+                  }`}
                 disabled={
                   role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
@@ -958,18 +1013,17 @@ export const DocumentUpload = () => {
               <button
                 type="button"
                 onClick={prev}
-                className="btn bgTheme w-auto md:w-32 text-white  hover:bg-purple-700 flex items-center justify-center"
+                className="btn bgTheme w-auto md:w-34 text-white  hover:bg-purple-700 flex items-center justify-center"
               >
                 <i className="fa-solid fa-arrow-left mr-2"></i> Back
               </button>
 
               <button
                 type="submit"
-                className={`btn bgTheme text-white w-auto md:w-36  ${
-                  Disable
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-purple-700"
-                }`}
+                className={`btn bgTheme text-white w-auto md:w-36  ${Disable
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-purple-700"
+                  }`}
                 disabled={Disable}
               >
                 {loading ? (

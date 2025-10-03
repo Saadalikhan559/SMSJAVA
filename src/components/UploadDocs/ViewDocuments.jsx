@@ -46,6 +46,7 @@ export const ViewDocuments = () => {
       try {
         const docs = await fetchViewDocuments();
         setDetails(docs);
+console.log(docs);
 
         if (userRole === "teacher") {
           const classes = await fetchTeacherYearLevel(teacherId);
@@ -62,6 +63,7 @@ export const ViewDocuments = () => {
 
     fetchData();
   }, [teacherId, userRole]);
+
 
   if (loading) {
     return (
@@ -122,41 +124,72 @@ export const ViewDocuments = () => {
   const allClasses = ["All", ...new Set(details.filter(d => d.student_id && d.year_level).map(d => d.year_level))];
 
   // Filter data
-  const filteredData = Object.values(grouped).filter(person => {
+const filteredData = Object.values(grouped)
+  .map(person => {
+    let match;
+
     if (userRole === "student") {
-      return person.role === "Student" && details.some(d =>
-        d.student_id && d.student_id.toString() === studentId && (d.student_name === person.name)
+      match = details.find(d =>
+        d.student_id && d.student_id.toString() === studentId &&
+        d.student_name === person.name
       );
+      if (person.role === "Student" && match) {
+        return { ...person, scholar_number: match.scholar_number };
+      }
     }
 
     if (userRole === "guardian") {
-      return person.role === "Guardian" && details.some(d =>
-        d.guardian_id && d.guardian_id.toString() === guardianId && (d.guardian_name === person.name)
+      match = details.find(d =>
+        d.guardian_id && d.guardian_id.toString() === guardianId &&
+        d.guardian_name === person.name
       );
+      if (person.role === "Guardian" && match) {
+        return { ...person, scholar_number: match.scholar_number };
+      }
     }
 
     if (userRole === "teacher") {
       if (viewOption === "my") {
-        return person.role === "Teacher" && details.some(d =>
-          d.teacher_id && d.teacher_id.toString() === teacherId && (d.teacher_name === person.name)
+        match = details.find(d =>
+          d.teacher_id && d.teacher_id.toString() === teacherId &&
+          d.teacher_name === person.name
         );
+        if (person.role === "Teacher" && match) {
+          return { ...person };
+        }
       } else if (viewOption === "assigned") {
-        return person.role === "Student" && teacherClasses.includes(person.yearLevel);
+        if (person.role === "Student" && teacherClasses.includes(person.yearLevel)) {
+          match = details.find(d => d.student_name === person.name);
+          return { ...person, scholar_number: match?.scholar_number };
+        }
       }
     }
 
     if (userRole === "officestaff") {
-      return person.role === "Office Staff" && details.some(d =>
-        d.office_staff_id && d.office_staff_id.toString() === officeStaffId && (d.office_staff_name === person.name)
+      match = details.find(d =>
+        d.office_staff_id && d.office_staff_id.toString() === officeStaffId &&
+        d.office_staff_name === person.name
       );
+      if (person.role === "Office Staff" && match) {
+        return { ...person };
+      }
     }
-
 
     // Director/Admin
     const roleMatch = selectedRole === "All" || person.role === selectedRole;
-    const classMatch = selectedRole === "Student" ? selectedClass === "All" || person.yearLevel === selectedClass : true;
-    return roleMatch && classMatch;
-  });
+    const classMatch = selectedRole === "Student"
+      ? selectedClass === "All" || person.yearLevel === selectedClass
+      : true;
+
+    if (roleMatch && classMatch) {
+      match = details.find(d => d.student_name === person.name);
+      return { ...person, scholar_number: match?.scholar_number };
+    }
+
+    return null;
+  })
+  .filter(Boolean); // removes null entries
+
   console.log(filteredData);
 
   const filterBysearch = filteredData.filter((detail) =>
@@ -165,7 +198,7 @@ export const ViewDocuments = () => {
 
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
@@ -254,15 +287,16 @@ export const ViewDocuments = () => {
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
                 <thead className="bgTheme text-white sticky top-0 z-2">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Role</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Scholar No.</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Role</th>
                     {userRole !== "student" && selectedRole === "Student" && (
                       <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>
                     )}
                     {allDocTypes.map((type) => (
                       <th
                         key={type}
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize"
+                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize "
                       >
                         {type}
                       </th>
@@ -272,11 +306,15 @@ export const ViewDocuments = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {[...filterBysearch]
                     .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((person, idx) => (
+                    .map((person, idx) => 
+                    (
                       <tr
                         key={idx}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition text-nowrap"
                       >
+                        <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                          {person.scholar_number}
+                        </td>
                         <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
                           {person.name}
                         </td>
