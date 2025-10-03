@@ -16,7 +16,7 @@ const AdmissionEditedSuccessfully = ({
                 </div>
                 
                 {/* Title */}
-                <h3 className="font-bold text-2xl mb-3 text-gray-800">
+                <h3 className="font-bold text-2xl mb-3 text-gray-800 dark:text-amber-50">
                     Admission Details Updated Successfully!
                 </h3>
                 

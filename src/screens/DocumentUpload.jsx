@@ -90,8 +90,6 @@ export const DocumentUpload = () => {
     { files: null, document_types: "", identities: "" },
   ]);
   const [identityErrors, setIdentityErrors] = useState([]);
-
-  //  validation
   //  validation
   const validateIdentity = (identity, docTypeId) => {
     if (!docTypeId || !identity) return "";

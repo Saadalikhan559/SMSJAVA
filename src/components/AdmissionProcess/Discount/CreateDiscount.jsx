@@ -119,6 +119,8 @@ const CreateDiscount = () => {
       setStudents([]);
     } catch (err) {
       setAlertTitle("Error");
+      console.log('error', err.response.data);
+      
       setAlertMessage("Failed to create discount. Try again!");
       setShowAlert(true);
     } finally {
@@ -193,12 +195,12 @@ const CreateDiscount = () => {
 
             {/* Student Dropdown/Search */}
             <div className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Student *
+              <label className="label-text flex items-center gap-1">
+                Student <span className="text-error">*</span>
               </label>
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Search Student..."
                 value={searchStudentInput || selectedStudentName}
                 onChange={(e) => {
