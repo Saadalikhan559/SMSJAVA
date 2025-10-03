@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { fetchViewDocuments } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
-import { Loader } from "../../global/Loader";
-import { useContext } from "react";
+// import { Loader } from "../../global/Loader"; // not used
 import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
-const BASE_URL = constants.baseUrl;
 
 export const ViewDocuments = () => {
   const [details, setDetails] = useState(null);
@@ -26,8 +23,9 @@ export const ViewDocuments = () => {
   const officeStaffId = localStorage.getItem("officeStaffId");
   const userRole = localStorage.getItem("userRole");
 
-  const fetchTeacherYearLevel = async (teacherId) => {
+  const fetchTeacherYearLevel = async () => {
     try {
+      // teacherId is not needed if the endpoint uses auth context
       const response = await axiosInstance.get("/t/teacheryearlevel/");
       return response.data;
     } catch (error) {
@@ -41,11 +39,10 @@ export const ViewDocuments = () => {
       try {
         const docs = await fetchViewDocuments();
         setDetails(docs);
-console.log(docs);
 
         if (userRole === "teacher") {
           const classes = await fetchTeacherYearLevel(teacherId);
-          setTeacherClasses(classes.map((c) => c.year_level_name));
+          setTeacherClasses((classes || []).map((c) => c.year_level_name));
         }
 
         setLoading(false);
@@ -57,8 +54,7 @@ console.log(docs);
     };
 
     fetchData();
-  }, [teacherId, userRole]);
-
+  }, [teacherId, userRole, axiosInstance]);
 
   if (loading) {
     return (
@@ -91,10 +87,10 @@ console.log(docs);
   const allDocTypes = [
     ...new Set(
       details.flatMap((d) =>
-        d.document_types_read.map((dt) => dt.name.toLowerCase())
+        (d?.document_types_read || []).map((dt) => (dt?.name || "").toLowerCase())
       )
     ),
-  ];
+  ].filter(Boolean);
 
   const getRole = (doc) => {
     if (doc.student_id) return "Student";
@@ -104,6 +100,7 @@ console.log(docs);
     return "Unknown";
   };
 
+  // Group by person and accumulate docs by doc type
   const grouped = {};
   details.forEach((doc) => {
     const role = getRole(doc);
@@ -117,10 +114,18 @@ console.log(docs);
 
     if (!grouped[key]) grouped[key] = { name, role, yearLevel, docs: {} };
 
-    doc.document_types_read.forEach((dt) => {
-      const type = dt.name.toLowerCase();
-      grouped[key].docs[type] = doc.files.map((file) =>
-        file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
+    const fileUrls = (doc.files || []).map((file) =>
+      (file?.file || "").replace("http://localhost:8000", `${constants.baseUrl}`)
+    );
+
+    (doc?.document_types_read || []).forEach((dt) => {
+      const type = (dt?.name || "").toLowerCase();
+      if (!type) return;
+
+      if (!grouped[key].docs[type]) grouped[key].docs[type] = [];
+      // Accumulate + dedupe
+      grouped[key].docs[type] = Array.from(
+        new Set([...grouped[key].docs[type], ...fileUrls])
       );
     });
   });
@@ -134,78 +139,102 @@ console.log(docs);
     ),
   ];
 
-  // Filter data
-const filteredData = Object.values(grouped)
-  .map(person => {
-    let match;
+  // Filter data according to user role/view
+  const filteredData = Object.values(grouped)
+    .map((person) => {
+      let match;
 
-    if (userRole === "student") {
-      match = details.find(d =>
-        d.student_id && d.student_id.toString() === studentId &&
-        d.student_name === person.name
-      );
-      if (person.role === "Student" && match) {
-        return { ...person, scholar_number: match.scholar_number };
-      }
-    }
-
-    if (userRole === "guardian") {
-      match = details.find(d =>
-        d.guardian_id && d.guardian_id.toString() === guardianId &&
-        d.guardian_name === person.name
-      );
-      if (person.role === "Guardian" && match) {
-        return { ...person, scholar_number: match.scholar_number };
-      }
-    }
-
-    if (userRole === "teacher") {
-      if (viewOption === "my") {
-        match = details.find(d =>
-          d.teacher_id && d.teacher_id.toString() === teacherId &&
-          d.teacher_name === person.name
+      if (userRole === "student") {
+        match = details.find(
+          (d) =>
+            d.student_id &&
+            d.student_id.toString() === studentId &&
+            d.student_name === person.name
         );
-        if (person.role === "Teacher" && match) {
+        if (person.role === "Student" && match) {
+          return { ...person, scholar_number: match.scholar_number };
+        }
+        return null;
+      }
+
+      if (userRole === "guardian") {
+        match = details.find(
+          (d) =>
+            d.guardian_id &&
+            d.guardian_id.toString() === guardianId &&
+            d.guardian_name === person.name
+        );
+        if (person.role === "Guardian" && match) {
+          return { ...person, scholar_number: match.scholar_number };
+        }
+        return null;
+      }
+
+      if (userRole === "teacher") {
+        if (viewOption === "my") {
+          match = details.find(
+            (d) =>
+              d.teacher_id &&
+              d.teacher_id.toString() === teacherId &&
+              d.teacher_name === person.name
+          );
+          if (person.role === "Teacher" && match) {
+            return { ...person };
+          }
+          return null;
+        } else if (viewOption === "assigned") {
+          if (
+            person.role === "Student" &&
+            teacherClasses.includes(person.yearLevel)
+          ) {
+            match = details.find((d) => d.student_name === person.name);
+            return { ...person, scholar_number: match?.scholar_number };
+          }
+          return null;
+        }
+      }
+
+      if (userRole === "officestaff") {
+        match = details.find(
+          (d) =>
+            d.office_staff_id &&
+            d.office_staff_id.toString() === officeStaffId &&
+            d.office_staff_name === person.name
+        );
+        if (person.role === "Office Staff" && match) {
           return { ...person };
         }
-      } else if (viewOption === "assigned") {
-        if (person.role === "Student" && teacherClasses.includes(person.yearLevel)) {
-          match = details.find(d => d.student_name === person.name);
+        return null;
+      }
+
+      // Director/Admin or other privileged roles
+      const roleMatch = selectedRole === "All" || person.role === selectedRole;
+      const classMatch =
+        selectedRole === "Student"
+          ? selectedClass === "All" || person.yearLevel === selectedClass
+          : true;
+
+      if (roleMatch && classMatch) {
+        // Try to attach scholar number if it's a student
+        if (person.role === "Student") {
+          match = details.find((d) => d.student_name === person.name);
           return { ...person, scholar_number: match?.scholar_number };
         }
-      }
-    }
-
-    if (userRole === "officestaff") {
-      match = details.find(d =>
-        d.office_staff_id && d.office_staff_id.toString() === officeStaffId &&
-        d.office_staff_name === person.name
-      );
-      if (person.role === "Office Staff" && match) {
         return { ...person };
       }
-    }
 
-    // Director/Admin
-    const roleMatch = selectedRole === "All" || person.role === selectedRole;
-    const classMatch = selectedRole === "Student"
-      ? selectedClass === "All" || person.yearLevel === selectedClass
-      : true;
-
-    if (roleMatch && classMatch) {
-      match = details.find(d => d.student_name === person.name);
-      return { ...person, scholar_number: match?.scholar_number };
-    }
-
-    return null;
-  })
-  .filter(Boolean); // removes null entries
-
-  console.log(filteredData);
+      return null;
+    })
+    .filter(Boolean);
 
   const filterBysearch = filteredData.filter((detail) =>
     (detail.name || "").toLowerCase().includes(searchInput.toLowerCase())
   );
+
+  const showClassColumn =
+    userRole !== "student" && selectedRole === "Student";
+  const baseCols = 3; // Scholar No., Name, Role
+  const colSpan = allDocTypes.length + baseCols + (showClassColumn ? 1 : 0);
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
@@ -300,12 +329,18 @@ const filteredData = Object.values(grouped)
           <div className="inline-block min-w-full align-middle">
             <div className="shadow-sm rounded-lg">
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                <thead className="bgTheme text-white sticky top-0 z-2">
+                <thead className="bgTheme text-white sticky top-0 z-10">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Scholar No.</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Role</th>
-                    {userRole !== "student" && selectedRole === "Student" && (
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                      Scholar No.
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                      Name
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                      Role
+                    </th>
+                    {showClassColumn && (
                       <th className="px-4 py-3 text-left text-sm font-semibold">
                         Class
                       </th>
@@ -313,7 +348,7 @@ const filteredData = Object.values(grouped)
                     {allDocTypes.map((type) => (
                       <th
                         key={type}
-                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize "
+                        className="px-4 py-3 text-left text-sm font-semibold text-nowrap capitalize"
                       >
                         {type}
                       </th>
@@ -321,38 +356,36 @@ const filteredData = Object.values(grouped)
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                  {[...filterBysearch]
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((person, idx) => 
-                    (
-                      <tr
-                        key={idx}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition text-nowrap"
-                      >
-                        <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                          {person.scholar_number}
-                        </td>
-                        <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                          {person.name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                          {person.role}
-                        </td>
+                  {filterBysearch.length > 0 ? (
+                    [...filterBysearch]
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((person) => (
+                        <tr
+                          key={`${person.role}-${person.name}-${person.yearLevel}`}
+                          className="hover:bg-gray-50 dark:hover:bg-gray-700 transition text-nowrap"
+                        >
+                          <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                            {person.scholar_number || "-"}
+                          </td>
+                          <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                            {person.name}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                            {person.role}
+                          </td>
 
-                          {userRole !== "student" &&
-                            selectedRole === "Student" && (
-                              <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                                {person.yearLevel || "-"}
-                              </td>
-                            )}
+                          {showClassColumn && (
+                            <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                              {person.yearLevel || "-"}
+                            </td>
+                          )}
 
                           {allDocTypes.map((type) => (
                             <td
                               key={type}
                               className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
                             >
-                              {person.docs[type] &&
-                              person.docs[type].length > 0 ? (
+                              {person.docs[type] && person.docs[type].length > 0 ? (
                                 person.docs[type].map((url, i) => (
                                   <div key={i}>
                                     <a
@@ -377,12 +410,7 @@ const filteredData = Object.values(grouped)
                   ) : (
                     <tr>
                       <td
-                        colSpan={
-                          allDocTypes.length +
-                          (userRole !== "student" && selectedRole === "Student"
-                            ? 3
-                            : 2)
-                        }
+                        colSpan={colSpan}
                         className="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
                       >
                         <div className="flex flex-col items-center justify-center">
