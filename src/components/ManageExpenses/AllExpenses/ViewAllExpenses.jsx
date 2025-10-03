@@ -353,8 +353,8 @@ export const ViewAllExpenses = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.created_at}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.created_by_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.approved_by_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.created_by_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.approved_by_name}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">
                         {expense.school_year === currentSchoolYearId ? (
