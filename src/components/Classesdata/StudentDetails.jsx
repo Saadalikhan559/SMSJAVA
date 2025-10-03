@@ -156,7 +156,7 @@ const StudentDetails = () => {
               </Link>
 
               <Link
-                to={`/admissionFees`}
+                to={`/studentAdmissionFees/${student.id}`}
                 state={{
                   studentName: `${student.first_name} ${student.middle_name} ${student.last_name}`
                     .replace(/\s+/g, " ")
