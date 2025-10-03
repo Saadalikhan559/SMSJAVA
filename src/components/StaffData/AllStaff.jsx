@@ -11,6 +11,19 @@ const AllStaff = () => {
   const [staffSearch, setStaffSearch] = useState("");
   const [activeTab, setActiveTab] = useState("teachers");
 
+  // Helper function to get full name for sorting
+  const getFullName = (record) => {
+    return [record.first_name, record.middle_name, record.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  };
+
+  // Helper function to sort alphabetically by name
+  const sortByName = (a, b) => {
+    return getFullName(a).localeCompare(getFullName(b));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -19,19 +32,10 @@ const AllStaff = () => {
           fetchTeachers(),
           fetchOfficeStaff(),
         ]);
-        const sortedTeachers = teacherData.sort((a, b) =>
-          [a.first_name, a.middle_name, a.last_name].filter(Boolean).join(" ")
-            .localeCompare(
-              [b.first_name, b.middle_name, b.last_name].filter(Boolean).join(" ")
-            )
-        );
-
-        const sortedOfficeStaff = officeData.sort((a, b) =>
-          [a.first_name, a.middle_name, a.last_name].filter(Boolean).join(" ")
-            .localeCompare(
-              [b.first_name, b.middle_name, b.last_name].filter(Boolean).join(" ")
-            )
-        );
+        
+        // Sort both arrays alphabetically by name
+        const sortedTeachers = teacherData.sort(sortByName);
+        const sortedOfficeStaff = officeData.sort(sortByName);
 
         setteachers(sortedTeachers);
         setofficestaff(sortedOfficeStaff);
@@ -45,25 +49,13 @@ const AllStaff = () => {
     fetchData();
   }, []);
 
-
   const filteredTeachers = teachers.filter((teacher) =>
-    [teacher.first_name, teacher.middle_name, teacher.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
-      .includes(teacherSearch.toLowerCase())
+    getFullName(teacher).includes(teacherSearch.toLowerCase())
   );
-  console.log(filteredTeachers);
 
   const filteredOfficeStaff = officestaff.filter((staff) =>
-    [staff.first_name, staff.middle_name, staff.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
-      .includes(staffSearch.toLowerCase())
+    getFullName(staff).includes(staffSearch.toLowerCase())
   );
-
-
 
   if (loading) {
     return (
@@ -137,7 +129,7 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredTeachers.length === 0 ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-red-400">
                         No data found.
                       </td>
                     </tr>
@@ -147,7 +139,7 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}.</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
                         <td className="px-4 py-3 capitalize dark:text-gray-100">
                           <Link
                             to={`/staffDetail/teacher/${record.id}`}
@@ -196,7 +188,7 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-red-400">
                         No data found.
                       </td>
                     </tr>
@@ -206,7 +198,7 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}.</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
                         <td className="px-4 py-3 capitalize dark:text-gray-100 ">
                           <Link
                             to={`/staffDetail/office/${record.id}`}
@@ -216,7 +208,7 @@ const AllStaff = () => {
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date_joined}.</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date_joined}</td>
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active === true ? "Active" : "InActive"} </td>
                       </tr>
                     ))
@@ -229,8 +221,6 @@ const AllStaff = () => {
       </div>
     </div>
   );
-
-
 };
 
 export default AllStaff;
