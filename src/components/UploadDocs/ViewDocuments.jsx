@@ -17,7 +17,7 @@ export const ViewDocuments = () => {
   const [selectedClass, setSelectedClass] = useState("All");
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [searchInput, setSearchInput] = useState("");
-  const [viewOption, setViewOption] = useState("my"); // 'my' or 'assigned'
+  const [viewOption, setViewOption] = useState("my");
   const { axiosInstance } = useContext(AuthContext);
 
 
