@@ -198,7 +198,7 @@ export const AdmissionDetails = () => {
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                     {sortedData.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                        <td className="whitespace-nowrap font-bold px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                           {detail.student_input.first_name} {detail.student_input.last_name}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">

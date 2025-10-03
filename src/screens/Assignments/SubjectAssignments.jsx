@@ -30,6 +30,8 @@ export const SubjectAssignments = () => {
   const [subject_ids, setSubjectIds] = useState([]);
   const [period_ids, setPeriodIds] = useState([]);
 
+  const [subjectSearch, setSubjectSearch] = useState("");
+
   const [isSubjectOpen, setIsSubjectOpen] = useState(false);
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
   const subjectRef = useRef(null);
@@ -47,6 +49,34 @@ export const SubjectAssignments = () => {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  // Filtering functions
+const filterTeachers = () => {
+  return teachers.filter((t) =>
+    `${t.first_name} ${t.middle_name || ""} ${t.last_name}`
+      .toLowerCase()
+      .includes(teacherSearch.toLowerCase())
+  );
+};
+
+const filterYearLevels = () => {
+  return yearLevels.filter((y) =>
+    y.level_name.toLowerCase().includes(yearLevelSearch.toLowerCase())
+  );
+};
+
+const filterSubjects = () => {
+  return subjects.filter((s) =>
+    s.subject_name.toLowerCase().includes(subjectSearch.toLowerCase())
+  );
+};
+
+const filterPeriods = () => {
+  return periods.filter((p) =>
+    p.name.toLowerCase().includes(periodSearch.toLowerCase())
+  );
+};
+
 
   useEffect(() => {
     const preloadData = async () => {
@@ -91,8 +121,7 @@ export const SubjectAssignments = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleMultiSelect = (name, id) => {
@@ -111,7 +140,9 @@ export const SubjectAssignments = () => {
 
   const handleSubmitForm = async (data) => {
     if (subject_ids.length === 0) {
-      setError("subject_ids", { message: "Please select at least one subject." });
+      setError("subject_ids", {
+        message: "Please select at least one subject.",
+      });
       return;
     }
 
@@ -186,7 +217,7 @@ export const SubjectAssignments = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
         <div className=" flex justify-end">
           <button
@@ -201,11 +232,6 @@ export const SubjectAssignments = () => {
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
             Assign Subjects <i className="fa-solid fa-book ml-2" />
           </h1>
-
-          {/* {errors.api && (
-        <p className="text-red-600 text-center mb-4 font-medium">{errors.api.message}</p>
-      )} */}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             {/* Teacher Dropdown */}
             <div className="form-control">
@@ -227,7 +253,9 @@ export const SubjectAssignments = () => {
                   </option>
                 ))}
               </select>
-              {errors.teacher_id && <p className="text-red-500">{errors.teacher_id.message}</p>}
+              {errors.teacher_id && (
+                <p className="text-red-500">{errors.teacher_id.message}</p>
+              )}
             </div>
 
             {/* Year Level Dropdown */}
@@ -238,17 +266,25 @@ export const SubjectAssignments = () => {
                 </span>
               </label>
               <select
-                {...register("yearlevel_id", { required: "Year level is required" })}
+                {...register("yearlevel_id", {
+                  required: "Year level is required",
+                })}
                 className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               >
                 <option value="">
-                  {loadingYearLevels ? "Loading year levels..." : "Select Year Level"}
+                  {loadingYearLevels
+                    ? "Loading year levels..."
+                    : "Select Year Level"}
                 </option>
                 {yearLevels.map((y) => (
-                  <option key={y.id} value={y.id}>{y.level_name}</option>
+                  <option key={y.id} value={y.id}>
+                    {y.level_name}
+                  </option>
                 ))}
               </select>
-              {errors.yearlevel_id && <p className="text-red-500">{errors.yearlevel_id.message}</p>}
+              {errors.yearlevel_id && (
+                <p className="text-red-500">{errors.yearlevel_id.message}</p>
+              )}
             </div>
           </div>
 
@@ -268,26 +304,64 @@ export const SubjectAssignments = () => {
                   {subject_ids.length > 0
                     ? `${subject_ids.length} selected`
                     : loadingSubjects
-                      ? "Loading subjects..."
-                      : "Select Subjects"}
+                    ? "Loading subjects..."
+                    : "Select Subjects"}
                 </div>
                 {isSubjectOpen && (
                   <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
-                    {subjects.map((s) => (
-                      <label key={s.id} className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600">
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-primary mr-2"
-                          checked={subject_ids.includes(s.id)}
-                          onChange={() => handleMultiSelect("subject_ids", s.id)}
-                        />
-                        {s.subject_name} ({s.department})
-                      </label>
-                    ))}
+                    {/* Search Bar */}
+                    <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                      <input
+                        type="text"
+                        value={subjectSearch}
+                        onChange={(e) => setSubjectSearch(e.target.value)}
+                        placeholder="Search subjects..."
+                        className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                      />
+                    </div>
+
+                    {/* Filtered Subjects */}
+                    {subjects
+                      .filter((s) =>
+                        s.subject_name
+                          .toLowerCase()
+                          .includes(subjectSearch.toLowerCase())
+                      )
+                      .map((s) => (
+                        <label
+                          key={s.id}
+                          className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600"
+                        >
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-primary mr-2"
+                            checked={subject_ids.includes(s.id)}
+                            onChange={() =>
+                              handleMultiSelect("subject_ids", s.id)
+                            }
+                          />
+                          {s.subject_name} ({s.department})
+                        </label>
+                      ))}
+
+                    {/* No results */}
+                    {subjects.filter((s) =>
+                      s.subject_name
+                        .toLowerCase()
+                        .includes(subjectSearch.toLowerCase())
+                    ).length === 0 && (
+                      <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                        No subjects found
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
-              {errors.subject_ids && <p className="text-red-500 mt-1">{errors.subject_ids.message}</p>}
+              {errors.subject_ids && (
+                <p className="text-red-500 mt-1">
+                  {errors.subject_ids.message}
+                </p>
+              )}
             </div>
 
             {/* Periods Dropdown */}
@@ -305,13 +379,16 @@ export const SubjectAssignments = () => {
                   {period_ids.length > 0
                     ? `${period_ids.length} selected`
                     : loadingPeriods
-                      ? "Loading periods..."
-                      : "Select Periods"}
+                    ? "Loading periods..."
+                    : "Select Periods"}
                 </div>
                 {isPeriodOpen && (
                   <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
                     {periods.map((p) => (
-                      <label key={p.id} className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+                      <label
+                        key={p.id}
+                        className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      >
                         <input
                           type="checkbox"
                           className="checkbox checkbox-primary mr-2"
@@ -324,13 +401,23 @@ export const SubjectAssignments = () => {
                   </div>
                 )}
               </div>
-              {errors.period_ids && <p className="text-red-500 mt-1">{errors.period_ids.message}</p>}
+              {errors.period_ids && (
+                <p className="text-red-500 mt-1">{errors.period_ids.message}</p>
+              )}
             </div>
           </div>
 
           <div className="flex justify-center mt-10">
-            <button type="submit" className="btn text-white bgTheme w-52" disabled={isSubmitting}>
-              {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2" /> : <i className="fa-solid fa-book ml-2" />}
+            <button
+              type="submit"
+              className="btn text-white bgTheme w-52"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2" />
+              ) : (
+                <i className="fa-solid fa-book ml-2" />
+              )}
               {isSubmitting ? "" : "Assign"}
             </button>
           </div>
@@ -339,7 +426,9 @@ export const SubjectAssignments = () => {
         {showAlert && (
           <dialog className="modal modal-open">
             <div className="modal-box bg-white dark:bg-gray-800">
-              <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">Subject Assignment</h3>
+              <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">
+                Subject Assignment
+              </h3>
               <p className="py-4 text-gray-700 dark:text-gray-200">
                 {alertMessage.split("\n").map((line, idx) => (
                   <span key={idx}>

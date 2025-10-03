@@ -282,9 +282,9 @@ export const ViewDocuments = () => {
                 <input
                   type="text"
                   placeholder="Search Name..."
-                  className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  onChange={(e) => setSearchInput(e.target.value.trimStart())}
                 />
               </div>
             </div>
