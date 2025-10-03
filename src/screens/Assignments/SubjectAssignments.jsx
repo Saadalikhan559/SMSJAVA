@@ -17,6 +17,8 @@ export const SubjectAssignments = () => {
     handleSubmit,
     setError,
     clearErrors,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -31,11 +33,25 @@ export const SubjectAssignments = () => {
   const [period_ids, setPeriodIds] = useState([]);
 
   const [subjectSearch, setSubjectSearch] = useState("");
+  const [teacherSearch, setTeacherSearch] = useState("");
+  const [yearLevelSearch, setYearLevelSearch] = useState("");
+  const [periodSearch, setPeriodSearch] = useState("");
+
+  // States for filtered data
+  const [filteredTeachers, setFilteredTeachers] = useState([]);
+  const [filteredYearLevels, setFilteredYearLevels] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
+  const [filteredPeriods, setFilteredPeriods] = useState([]);
 
   const [isSubjectOpen, setIsSubjectOpen] = useState(false);
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
+  const [isTeacherOpen, setIsTeacherOpen] = useState(false);
+  const [isYearLevelOpen, setIsYearLevelOpen] = useState(false);
+
   const subjectRef = useRef(null);
   const periodRef = useRef(null);
+  const teacherRef = useRef(null);
+  const yearLevelRef = useRef(null);
 
   // Loader states
   const [loadingTeachers, setLoadingTeachers] = useState(false);
@@ -50,33 +66,89 @@ export const SubjectAssignments = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
-  // Filtering functions
-const filterTeachers = () => {
-  return teachers.filter((t) =>
-    `${t.first_name} ${t.middle_name || ""} ${t.last_name}`
-      .toLowerCase()
-      .includes(teacherSearch.toLowerCase())
+  // Watch form values to display selected options
+  const selectedTeacherId = watch("teacher_id");
+  const selectedYearLevelId = watch("yearlevel_id");
+
+  // Get selected teacher name
+  const getSelectedTeacherName = () => {
+    if (!selectedTeacherId) return "Select Teacher";
+    const teacher = teachers.find((t) => t.id === parseInt(selectedTeacherId));
+    return teacher
+      ? `${teacher.first_name} ${teacher.middle_name || ""} ${
+          teacher.last_name
+        }`.trim()
+      : "Select Teacher";
+  };
+
+  // Get selected year level name
+  const getSelectedYearLevelName = () => {
+    if (!selectedYearLevelId) return "Select Year Level";
+    const yearLevel = yearLevels.find(
+      (y) => y.id === parseInt(selectedYearLevelId)
+    );
+    return yearLevel ? yearLevel.level_name : "Select Year Level";
+  };
+
+  // Filtering functions with sorting
+  const filterTeachersData = (teachersData, searchTerm) => {
+    const filtered = teachersData.filter((t) =>
+      `${t.first_name} ${t.middle_name || ""} ${t.last_name}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+
+    // Sort teachers alphabetically by first name + last name
+    return filtered.sort((a, b) => {
+      const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+      const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  };
+
+  const filterYearLevelsData = (yearLevelsData, searchTerm) => {
+    const filtered = yearLevelsData.filter((y) =>
+      y.level_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Sort year levels by name
+    return filtered.sort((a, b) => a.level_name.localeCompare(b.level_name));
+  };
+
+  const filterSubjectsData = (subjectsData, searchTerm) => {
+    const filtered = subjectsData.filter((s) =>
+      s.subject_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Sort subjects by name
+    return filtered.sort((a, b) =>
+      a.subject_name.localeCompare(b.subject_name)
+    );
+  };
+
+const filterPeriodsData = (periodsData, searchTerm) => {
+  return periodsData.filter((p) =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 };
 
-const filterYearLevels = () => {
-  return yearLevels.filter((y) =>
-    y.level_name.toLowerCase().includes(yearLevelSearch.toLowerCase())
-  );
-};
 
-const filterSubjects = () => {
-  return subjects.filter((s) =>
-    s.subject_name.toLowerCase().includes(subjectSearch.toLowerCase())
-  );
-};
+  // Update filtered data when search terms or original data change
+  useEffect(() => {
+    setFilteredTeachers(filterTeachersData(teachers, teacherSearch));
+  }, [teachers, teacherSearch]);
 
-const filterPeriods = () => {
-  return periods.filter((p) =>
-    p.name.toLowerCase().includes(periodSearch.toLowerCase())
-  );
-};
+  useEffect(() => {
+    setFilteredYearLevels(filterYearLevelsData(yearLevels, yearLevelSearch));
+  }, [yearLevels, yearLevelSearch]);
 
+  useEffect(() => {
+    setFilteredSubjects(filterSubjectsData(subjects, subjectSearch));
+  }, [subjects, subjectSearch]);
+
+  useEffect(() => {
+    setFilteredPeriods(filterPeriodsData(periods, periodSearch));
+  }, [periods, periodSearch]);
 
   useEffect(() => {
     const preloadData = async () => {
@@ -98,6 +170,12 @@ const filterPeriods = () => {
         setYearLevels(yearLevelsData);
         setSubjects(subjectsData);
         setPeriods(periodsData);
+
+        // Initialize filtered data with sorted data
+        setFilteredTeachers(filterTeachersData(teachersData, ""));
+        setFilteredYearLevels(filterYearLevelsData(yearLevelsData, ""));
+        setFilteredSubjects(filterSubjectsData(subjectsData, ""));
+        setFilteredPeriods(filterPeriodsData(periodsData, ""));
       } catch (err) {
         setPageError(true);
       } finally {
@@ -119,6 +197,15 @@ const filterPeriods = () => {
       if (periodRef.current && !periodRef.current.contains(event.target)) {
         setIsPeriodOpen(false);
       }
+      if (teacherRef.current && !teacherRef.current.contains(event.target)) {
+        setIsTeacherOpen(false);
+      }
+      if (
+        yearLevelRef.current &&
+        !yearLevelRef.current.contains(event.target)
+      ) {
+        setIsYearLevelOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -138,58 +225,108 @@ const filterPeriods = () => {
     clearErrors("api");
   };
 
-  const handleSubmitForm = async (data) => {
-    if (subject_ids.length === 0) {
-      setError("subject_ids", {
-        message: "Please select at least one subject.",
-      });
-      return;
+  const handleTeacherSelect = (teacherId, teacherName) => {
+    setValue("teacher_id", teacherId);
+    clearErrors("teacher_id");
+    setIsTeacherOpen(false);
+    setTeacherSearch(""); // Clear search when teacher is selected
+  };
+
+  const handleYearLevelSelect = (yearLevelId, yearLevelName) => {
+    setValue("yearlevel_id", yearLevelId);
+    clearErrors("yearlevel_id");
+    setIsYearLevelOpen(false);
+    setYearLevelSearch(""); // Clear search when year level is selected
+  };
+
+const handleSubmitForm = async (data) => {
+  // Validate required fields
+  if (!data.teacher_id) {
+    setError("teacher_id", { message: "Teacher is required" });
+    return;
+  }
+
+  if (!data.yearlevel_id) {
+    setError("yearlevel_id", { message: "Year level is required" });
+    return;
+  }
+
+  if (subject_ids.length === 0) {
+    setError("subject_ids", { message: "Please select at least one subject." });
+    return;
+  }
+
+  if (period_ids.length === 0) {
+    setError("period_ids", { message: "Please select at least one period." });
+    return;
+  }
+
+  const finalPayload = {
+    ...data,
+    subject_ids,
+    period_ids,
+  };
+
+  setIsSubmitting(true);
+
+  try {
+    const response = await axiosInstance.post(
+      `/t/teacher/assign-teacher-details/`,
+      finalPayload
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      setAlertMessage("Subjects assigned successfully!");
+      setShowAlert(true);
     }
+  } catch (error) {
+    let errMsg = "Something went wrong. Try again.";
 
-    if (period_ids.length === 0) {
-      setError("period_ids", { message: "Please select at least one period." });
-      return;
-    }
+    // If response exists
+    const res = error.response?.data;
 
-    const finalPayload = {
-      ...data,
-      subject_ids,
-      period_ids,
-    };
-
-    setIsSubmitting(true);
-    try {
-      const response = await axiosInstance.post(
-        `/t/teacher/assign-teacher-details/`,
-        finalPayload
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        setAlertMessage("Subjects assigned successfully!");
-        setShowAlert(true);
-      }
-    } catch (error) {
-      const res = error.response?.data;
-      let errMsg = "Something went wrong. Try again.";
-
-      if (res?.error) errMsg = res.error;
-      else if (res?.detail) errMsg = res.detail;
-      else if (res && typeof res === "object") {
+    if (res) {
+      if (res.error) {
+        // Customize known error messages
+        if (res.error.includes("already assigned")) {
+          errMsg = "Teacher is already assigned in this period.";
+        } else {
+          errMsg = res.error;
+        }
+      } else if (res.detail) {
+        // Shorten the detail message by removing parentheses
+        errMsg = res.detail.replace(/\(.*?\)/g, "");
+      } else if (typeof res === "object") {
+        // Loop through object errors
         Object.keys(res).forEach((key) => {
           const val = res[key];
-          if (Array.isArray(val)) errMsg = val[0];
-          else if (typeof val === "string") errMsg = val;
+          if (Array.isArray(val)) errMsg = val[0].replace(/\(.*?\)/g, "");
+          else if (typeof val === "string") errMsg = val.replace(/\(.*?\)/g, "");
         });
       }
-      setAlertMessage(errMsg);
-      setShowAlert(true);
-    } finally {
-      setIsSubmitting(false);
+    } else if (error.message) {
+      errMsg = error.message;
     }
-  };
+
+    setAlertMessage(errMsg);
+    setShowAlert(true);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const handleNavigate = () => {
     navigate(allRouterLink.allTeacherAssignment);
+  };
+
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .filter(Boolean) // remove extra spaces
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
   if (pageLoading) {
@@ -221,11 +358,12 @@ const filterPeriods = () => {
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
         <div className=" flex justify-end">
           <button
-            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            className="btn text-white bgTheme"
             onClick={handleNavigate}
           >
             Teacher Assignments <span>&rarr;</span>
           </button>
+
         </div>
 
         <form onSubmit={handleSubmit(handleSubmitForm)}>
@@ -233,55 +371,160 @@ const filterPeriods = () => {
             Assign Subjects <i className="fa-solid fa-book ml-2" />
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {/* Teacher Dropdown */}
-            <div className="form-control">
+            {/* Teacher Dropdown with Search */}
+            <div className="form-control relative" ref={teacherRef}>
               <label className="label">
                 <span className="label-text text-gray-700 dark:text-gray-200">
                   Teacher <span className="text-error">*</span>
                 </span>
               </label>
-              <select
-                {...register("teacher_id", { required: "Teacher is required" })}
-                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              >
-                <option value="">
-                  {loadingTeachers ? "Loading teachers..." : "Select Teacher"}
-                </option>
-                {teachers.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.first_name} {t.middle_name} {t.last_name}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <div
+                  className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 flex items-center justify-between"
+                  onClick={() => setIsTeacherOpen(!isTeacherOpen)}
+                >
+                  <span>
+                    {loadingTeachers
+                      ? "Loading teachers..."
+                      : getSelectedTeacherName()}
+                  </span>
+                </div>
+                {isTeacherOpen && (
+                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                    {/* Search Bar for Teachers */}
+                    <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
+                      <input
+                        type="text"
+                        value={teacherSearch}
+                        onChange={(e) => setTeacherSearch(e.target.value)}
+                        placeholder="Search teachers..."
+                        className="input input-bordered w-full focus:outline-none dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500"
+                      />
+                    </div>
+
+                    {/* Filtered Teachers */}
+                    <div className="">
+                      {filteredTeachers.map((t) => {
+                        const fullName = `${t.first_name} ${
+                          t.middle_name || ""
+                        } ${t.last_name}`.trim();
+                        return (
+                          <div
+                            key={t.id}
+                            className={`p-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer flex items-center ${
+                              selectedTeacherId === t.id.toString()
+                                ? "bg-blue-50 dark:bg-blue-900"
+                                : ""
+                            }`}
+                            onClick={() => handleTeacherSelect(t.id, fullName)}
+                          >
+                            <input
+                              type="radio"
+                              {...register("teacher_id", {
+                                required: "Teacher is required",
+                              })}
+                              value={t.id}
+                              className="hidden"
+                              id={`teacher-${t.id}`}
+                            />
+                            <label
+                              htmlFor={`teacher-${t.id}`}
+                              className="flex items-center cursor-pointer w-full"
+                            >
+                              <span>{capitalizeWords(fullName)}</span>
+                            </label>
+                          </div>
+                        );
+                      })}
+
+                      {/* No results */}
+                      {filteredTeachers.length === 0 && (
+                        <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                          No teachers found
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
               {errors.teacher_id && (
-                <p className="text-red-500">{errors.teacher_id.message}</p>
+                <p className="text-red-500 mt-1">{errors.teacher_id.message}</p>
               )}
             </div>
 
-            {/* Year Level Dropdown */}
-            <div className="form-control">
+            {/* Year Level Dropdown with Search */}
+            <div className="form-control relative" ref={yearLevelRef}>
               <label className="label">
                 <span className="label-text text-gray-700 dark:text-gray-200">
                   Year Level <span className="text-error">*</span>
                 </span>
               </label>
-              <select
-                {...register("yearlevel_id", {
-                  required: "Year level is required",
-                })}
-                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              >
-                <option value="">
-                  {loadingYearLevels
-                    ? "Loading year levels..."
-                    : "Select Year Level"}
-                </option>
-                {yearLevels.map((y) => (
-                  <option key={y.id} value={y.id}>
-                    {y.level_name}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <div
+                  className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 flex items-center justify-between"
+                  onClick={() => setIsYearLevelOpen(!isYearLevelOpen)}
+                >
+                  <span>
+                    {loadingYearLevels
+                      ? "Loading year levels..."
+                      : getSelectedYearLevelName()}
+                  </span>
+                </div>
+                {isYearLevelOpen && (
+                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                    {/* Search Bar for Year Levels */}
+                    <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
+                      <input
+                        type="text"
+                        value={yearLevelSearch}
+                        onChange={(e) => setYearLevelSearch(e.target.value)}
+                        placeholder="Search year levels..."
+                        className="input input-bordered w-full focus:outline-none dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500"
+                      />
+                    </div>
+
+                    {/* Filtered Year Levels */}
+                    <div className="">
+                      {filteredYearLevels.map((y) => (
+                        <div
+                          key={y.id}
+                          className={`p-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer flex items-center ${
+                            selectedYearLevelId === y.id.toString()
+                              ? "bg-blue-50 dark:bg-blue-900"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleYearLevelSelect(y.id, y.level_name)
+                          }
+                        >
+                          <input
+                            type="text"
+                            {...register("yearlevel_id", {
+                              required: "Year level is required",
+                            })}
+                            value={y.id}
+                            className="hidden"
+                            id={`yearlevel-${y.id}`}
+                          />
+                          <label
+                            htmlFor={`yearlevel-${y.id}`}
+                            className="flex items-center cursor-pointer w-full"
+                          >
+                            <span>{y.level_name}</span>
+                          </label>
+                        </div>
+                      ))}
+
+                      {/* No results */}
+                      {filteredYearLevels.length === 0 && (
+                        <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                          No year levels found
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
               {errors.yearlevel_id && (
                 <p className="text-red-500">{errors.yearlevel_id.message}</p>
               )}
@@ -298,39 +541,36 @@ const filterPeriods = () => {
               </label>
               <div>
                 <div
-                  className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 flex items-center justify-between"
                   onClick={() => setIsSubjectOpen(!isSubjectOpen)}
                 >
-                  {subject_ids.length > 0
-                    ? `${subject_ids.length} selected`
-                    : loadingSubjects
-                    ? "Loading subjects..."
-                    : "Select Subjects"}
+                  <span>
+                    {subject_ids.length > 0
+                      ? `${subject_ids.length} selected`
+                      : loadingSubjects
+                      ? "Loading subjects..."
+                      : "Select Subjects"}
+                  </span>
                 </div>
                 {isSubjectOpen && (
                   <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
-                    {/* Search Bar */}
-                    <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                    {/* Search Bar (separate container, sticky) */}
+                    <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
                       <input
                         type="text"
                         value={subjectSearch}
                         onChange={(e) => setSubjectSearch(e.target.value)}
                         placeholder="Search subjects..."
-                        className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 z-5"
+                        className="input input-bordered w-full focus:outline-none dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500"
                       />
                     </div>
 
                     {/* Filtered Subjects */}
-                    {subjects
-                      .filter((s) =>
-                        s.subject_name
-                          .toLowerCase()
-                          .includes(subjectSearch.toLowerCase())
-                      )
-                      .map((s) => (
+                    <div className="">
+                      {filteredSubjects.map((s) => (
                         <label
                           key={s.id}
-                          className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600"
+                          className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
                         >
                           <input
                             type="checkbox"
@@ -344,16 +584,13 @@ const filterPeriods = () => {
                         </label>
                       ))}
 
-                    {/* No results */}
-                    {subjects.filter((s) =>
-                      s.subject_name
-                        .toLowerCase()
-                        .includes(subjectSearch.toLowerCase())
-                    ).length === 0 && (
-                      <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                        No subjects found
-                      </p>
-                    )}
+                      {/* No results */}
+                      {filteredSubjects.length === 0 && (
+                        <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                          No subjects found
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -373,31 +610,56 @@ const filterPeriods = () => {
               </label>
               <div>
                 <div
-                  className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  className="select select-bordered w-full cursor-pointer focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 flex items-center justify-between"
                   onClick={() => setIsPeriodOpen(!isPeriodOpen)}
                 >
-                  {period_ids.length > 0
-                    ? `${period_ids.length} selected`
-                    : loadingPeriods
-                    ? "Loading periods..."
-                    : "Select Periods"}
+                  <span>
+                    {period_ids.length > 0
+                      ? `${period_ids.length} selected`
+                      : loadingPeriods
+                      ? "Loading periods..."
+                      : "Select Periods"}
+                  </span>
                 </div>
                 {isPeriodOpen && (
                   <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
-                    {periods.map((p) => (
-                      <label
-                        key={p.id}
-                        className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600"
-                      >
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-primary mr-2"
-                          checked={period_ids.includes(p.id)}
-                          onChange={() => handleMultiSelect("period_ids", p.id)}
-                        />
-                        {p.name} | {p.start_period_time} - {p.end_period_time}
-                      </label>
-                    ))}
+                    {/* Search Bar for Periods */}
+                    <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
+                      <input
+                        type="text"
+                        value={periodSearch}
+                        onChange={(e) => setPeriodSearch(e.target.value)}
+                        placeholder="Search periods..."
+                        className="input input-bordered w-full focus:outline-none dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500"
+                      />
+                    </div>
+
+                    {/* Filtered Periods */}
+                    <div className="">
+                      {filteredPeriods.map((p) => (
+                        <label
+                          key={p.id}
+                          className="flex items-center p-3 hover:bg-gray-100 dark:hover:bg-gray-600"
+                        >
+                          <input
+                            type="checkbox"
+                            className="checkbox checkbox-primary mr-2"
+                            checked={period_ids.includes(p.id)}
+                            onChange={() =>
+                              handleMultiSelect("period_ids", p.id)
+                            }
+                          />
+                          {p.name} | {p.start_period_time} - {p.end_period_time}
+                        </label>
+                      ))}
+
+                      {/* No results */}
+                      {filteredPeriods.length === 0 && (
+                        <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                          No periods found
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
