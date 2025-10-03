@@ -84,7 +84,6 @@ import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
 import PrivacyPolicy from "../components/Privacy/Privacy";
 import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
-// import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
 
 
 export const routes = [
@@ -193,7 +192,7 @@ export const routes = [
     path: allRouterLink.UploadExamPaper,
     element: <UploadExamPaper />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
+    allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.StudentMarksFill,
@@ -205,13 +204,13 @@ export const routes = [
     path: allRouterLink.ViewExamPaper,
     element: <ViewExamPaper />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
+    allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.UpdateExamPaper,
     element: <UpdateExamPaper />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
+    allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.viewDocuments,

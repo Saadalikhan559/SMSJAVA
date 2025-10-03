@@ -71,7 +71,7 @@ const PeriodAssignment = () => {
             onClick={() => navigate(-1)}
             className="px-4 py-2 rounded shadow-sm bgTheme text-white hover:brightness-110 w-40"
           >
-            ← Back
+             Back
           </button>
         </div>
 
