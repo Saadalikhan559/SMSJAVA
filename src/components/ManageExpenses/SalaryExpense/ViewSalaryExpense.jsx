@@ -117,9 +117,9 @@ export const ViewSalaryExpense = () => {
             <input
               type="text"
               placeholder="Search Employee Name..."
-              className="input input-bordered w-full sm:max-w-xs focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
               value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
+              onChange={(e) => setSearchName(e.target.value.trimStart())}
             />
           </div>
         </div>
@@ -175,7 +175,7 @@ export const ViewSalaryExpense = () => {
                       {expense.joining_date}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                       ₹{expense.base_salary}
+                      ₹{expense.base_salary}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">

@@ -1,330 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import {
-//   fetchTeachers,
-//   fetchOfficeStaff,
-//   editOfficeStaffdetails,
-//   editTeachersdetails,
-// } from "../../services/api/Api";
-// import UpdateSuccessful from "../Modals/UpdateModal";
-// import { useForm } from "react-hook-form";
-
-// const UpdateStaffDetails = () => {
-//   const { id, type } = useParams();
-//   const navigate = useNavigate();
-
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [UpdateModal, setUpdateModal] = useState(false);
-
-//   const {
-//     register,
-//     handleSubmit,
-//     setValue,
-//     formState: { errors },
-//   } = useForm({ mode: "onChange" });
-
-//   const fetchStaff = async () => {
-//     try {
-//       let data;
-//       if (type === "teacher") {
-//         data = await fetchTeachers(id);
-//       } else if (type === "office") {
-//         data = await fetchOfficeStaff(id);
-//       } else {
-//         setError("Invalid staff type.");
-//         return;
-//       }
-
-//       Object.keys(data).forEach((key) => {
-//         if (data[key] !== null && data[key] !== undefined) {
-//           setValue(key, data[key]);
-//         }
-//       });
-//     } catch (err) {
-//       setError("Failed to load staff data.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchStaff();
-//   }, [id, type]);
-
-//   const onSubmit = async (formData) => {
-//     const payload = new FormData();
-//     for (const key in formData) {
-//       if (formData[key] !== null && formData[key] !== "") {
-//         payload.append(key, formData[key]);
-//       }
-//     }
-
-//     try {
-//       if (type === "teacher") {
-//         await editTeachersdetails(id, payload);
-//       } else if (type === "office") {
-//         await editOfficeStaffdetails(id, payload);
-//       } else {
-//         setError("Invalid staff type.");
-//         return;
-//       }
-//       setUpdateModal(true);
-//     } catch (err) {
-//       console.error(err);
-//       setError("Failed to update staff details.");
-//     }
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="flex flex-col items-center justify-center min-h-screen">
-//         <div className="flex space-x-2">
-//           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-//           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-//           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-//         </div>
-//         <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-//       </div>
-//     );
-//   }
-
-//   if (error) {
-//     return (
-//       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-//         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-//         <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <>
-//       <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
-//         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
-//           <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
-//             <i className="fa-solid fa-pen-to-square mr-2"></i>{" "}
-//             {type?.toLowerCase() === "teacher" ? "Update Teacher Details" : "Update Staff Details"}
-//           </h1>
-
-//           <form
-//             onSubmit={handleSubmit(onSubmit)}
-//             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-//             encType="multipart/form-data"
-//           >
-//             {/* First Name */}
-//             <div>
-//               <label className="label">First Name</label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter First Name"
-//                 {...register("first_name", { required: "First Name is required" })}
-//                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               />
-//               {errors.first_name && (
-//                 <span className="text-error text-sm">{errors.first_name.message}</span>
-//               )}
-//             </div>
-
-//             {/* Middle Name */}
-//             <div>
-//               <label className="label">Middle Name</label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter Middle Name"
-//                 {...register("middle_name")}
-//                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               />
-//               {errors.middle_name && (
-//                 <span className="text-error text-sm">{errors.middle_name.message}</span>
-//               )}
-//             </div>
-
-//             {/* Last Name */}
-//             <div>
-//               <label className="label">Last Name</label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter Last Name"
-//                 {...register("last_name", { required: "Last Name is required" })}
-//                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               />
-//               {errors.last_name && (
-//                 <span className="text-error text-sm">{errors.last_name.message}</span>
-//               )}
-//             </div>
-
-//             {/* Email */}
-//             <div>
-//               <label className="label">Email</label>
-//               <input
-//                 type="email"
-//                 placeholder="Enter Email"
-//                 {...register("email", {
-//                   required: "Email is required",
-//                   pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" },
-//                 })}
-//                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               />
-//               {errors.email && (
-//                 <span className="text-error text-sm">{errors.email.message}</span>
-//               )}
-//             </div>
-
-//             {/* Phone Number */}
-//             <div>
-//               <label className="label">Phone Number</label>
-//               <input
-//                 type="tel"
-//                 {...register("phone_no", {
-//                   required: "Phone number is required",
-//                   pattern: {
-//                     value: /^\d{10}$/,
-//                     message: "Phone number must be exactly 10 digits",
-//                   },
-//                   maxLength: {
-//                     value: 10,
-//                     message: "Phone number cannot exceed 10 digits",
-//                   },
-//                 })}
-//                 placeholder="Phone Number"
-//                 className={`input input-bordered w-full focus:outline-none ${errors.phone_no ? "input-error" : ""
-//                   }`}
-//               />
-//               {errors.phone_no && (
-//                 <span className="text-error text-sm">{errors.phone_no.message}</span>
-//               )}
-//             </div>
-
-//             {/* Gender */}
-//             <div>
-//               <label className="label">Gender</label>
-//               <select
-//                 {...register("gender", { required: "Gender is required" })}
-//                 className="select select-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               >
-//                 <option value="">Select Gender</option>
-//                 <option value="Male">Male</option>
-//                 <option value="Female">Female</option>
-//                 <option value="Other">Other</option>
-//               </select>
-//               {errors.gender && (
-//                 <span className="text-error text-sm">{errors.gender.message}</span>
-//               )}
-//             </div>
-
-//             {/* Aadhaar Number */}
-//             <div>
-//               <label className="label">Aadhaar Number</label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter Aadhaar Number"
-//                 {...register("adhaar_no", {
-//                   pattern: {
-//                     value: /^\d{12}$/,
-//                     message: "Aadhaar must be 12 digits (e.g. 123456789012)",
-//                   },
-//                 })}
-//                 className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.adhaar_no ? "input-error" : ""
-//                   }`}
-//               />
-//               {errors.adhaar_no && (
-//                 <span className="text-error text-sm">{errors.adhaar_no.message}</span>
-//               )}
-//             </div>
-
-//             {/* PAN Number */}
-//             <div>
-//               <label className="label">PAN Number</label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter PAN Number"
-//                 {...register("pan_no", {
-//                   pattern: {
-//                     value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-//                     message: "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)",
-//                   },
-//                 })}
-//                 className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.pan_no ? "input-error" : ""
-//                   }`}
-//               />
-//               {errors.pan_no && (
-//                 <span className="text-error text-sm">{errors.pan_no.message}</span>
-//               )}
-//             </div>
-
-
-//             {/* Qualification (teacher only) */}
-//             {type === "teacher" && (
-//               <div>
-//                 <label className="label">Qualification</label>
-//                 <input
-//                   type="text"
-//                   placeholder="Enter Qualification"
-//                   {...register("qualification", { required: "Qualification is required" })}
-//                   className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//                 />
-//                 {errors.qualification && (
-//                   <span className="text-error text-sm">{errors.qualification.message}</span>
-//                 )}
-//               </div>
-//             )}
-
-//             {/* Category */}
-//             <div>
-//               <label className="label">Category</label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter Category"
-//                 {...register("category")}
-//                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               />
-//               {errors.category && (
-//                 <span className="text-error text-sm">{errors.category.message}</span>
-//               )}
-//             </div>
-
-//             {/* Profile Picture */}
-//             <div className="md:col-span-2 lg:col-span-3">
-//               <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
-//                 Update Profile Picture
-//               </label>
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 {...register("user_profile")}
-//                 className="file-input file-input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-//               />
-//             </div>
-
-//             {/* Submit Button */}
-//             <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center mt-6">
-//               <button type="submit" className="btn bgTheme text-white">
-//                 <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
-//               </button>
-//             </div>
-//           </form>
-//         </div>
-//       </div>
-
-//       {UpdateModal && (
-//         <UpdateSuccessful
-//           handleCloseOnly={() => setUpdateModal(false)}
-//           handleCloseAndNavigate={() => navigate(`/staffDetail/${type}/${id}`)}
-//         />
-//       )}
-//     </>
-//   );
-// };
-
-// export default UpdateStaffDetails;
-
-
-
-
-
-
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -343,7 +16,7 @@ const UpdateStaffDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [UpdateModal, setUpdateModal] = useState(false);
-  const [profileFile, setProfileFile] = useState(null); // For manual file handling
+  const [profileFile, setProfileFile] = useState(null); 
 
   const {
     register,
@@ -352,6 +25,7 @@ const UpdateStaffDetails = () => {
     formState: { errors },
   } = useForm({ mode: "onChange" });
 
+  // Fetch staff data and prefill form
   const fetchStaff = async () => {
     try {
       let data;
@@ -383,8 +57,9 @@ const UpdateStaffDetails = () => {
   const onSubmit = async (formData) => {
     const payload = new FormData();
 
+    // Append all non-file fields
     for (const key in formData) {
-      if (formData[key] !== null && formData[key] !== "") {
+      if (key !== "user_profile" && formData[key] !== null && formData[key] !== "") {
         payload.append(key, formData[key]);
       }
     }
@@ -399,9 +74,6 @@ const UpdateStaffDetails = () => {
         await editTeachersdetails(id, payload);
       } else if (type === "office") {
         await editOfficeStaffdetails(id, payload);
-      } else {
-        setError("Invalid staff type.");
-        return;
       }
       setUpdateModal(true);
     } catch (err) {
@@ -455,9 +127,7 @@ const UpdateStaffDetails = () => {
                 {...register("first_name", { required: "First Name is required" })}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
-              {errors.first_name && (
-                <span className="text-error text-sm">{errors.first_name.message}</span>
-              )}
+              {errors.first_name && <span className="text-error text-sm">{errors.first_name.message}</span>}
             </div>
 
             {/* Middle Name */}
@@ -469,9 +139,6 @@ const UpdateStaffDetails = () => {
                 {...register("middle_name")}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
-              {errors.middle_name && (
-                <span className="text-error text-sm">{errors.middle_name.message}</span>
-              )}
             </div>
 
             {/* Last Name */}
@@ -483,9 +150,7 @@ const UpdateStaffDetails = () => {
                 {...register("last_name", { required: "Last Name is required" })}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
-              {errors.last_name && (
-                <span className="text-error text-sm">{errors.last_name.message}</span>
-              )}
+              {errors.last_name && <span className="text-error text-sm">{errors.last_name.message}</span>}
             </div>
 
             {/* Email */}
@@ -500,9 +165,7 @@ const UpdateStaffDetails = () => {
                 })}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
-              {errors.email && (
-                <span className="text-error text-sm">{errors.email.message}</span>
-              )}
+              {errors.email && <span className="text-error text-sm">{errors.email.message}</span>}
             </div>
 
             {/* Phone Number */}
@@ -510,25 +173,15 @@ const UpdateStaffDetails = () => {
               <label className="label">Phone Number</label>
               <input
                 type="tel"
+                placeholder="Phone Number"
                 {...register("phone_no", {
                   required: "Phone number is required",
-                  pattern: {
-                    value: /^\d{10}$/,
-                    message: "Phone number must be exactly 10 digits",
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: "Phone number cannot exceed 10 digits",
-                  },
+                  pattern: { value: /^\d{10}$/, message: "Phone number must be exactly 10 digits" },
+                  maxLength: { value: 10, message: "Phone number cannot exceed 10 digits" },
                 })}
-                placeholder="Phone Number"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.phone_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.phone_no ? "input-error" : ""}`}
               />
-              {errors.phone_no && (
-                <span className="text-error text-sm">{errors.phone_no.message}</span>
-              )}
+              {errors.phone_no && <span className="text-error text-sm">{errors.phone_no.message}</span>}
             </div>
 
             {/* Gender */}
@@ -543,9 +196,7 @@ const UpdateStaffDetails = () => {
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
-              {errors.gender && (
-                <span className="text-error text-sm">{errors.gender.message}</span>
-              )}
+              {errors.gender && <span className="text-error text-sm">{errors.gender.message}</span>}
             </div>
 
             {/* Aadhaar Number */}
@@ -555,18 +206,11 @@ const UpdateStaffDetails = () => {
                 type="text"
                 placeholder="Enter Aadhaar Number"
                 {...register("adhaar_no", {
-                  pattern: {
-                    value: /^\d{12}$/,
-                    message: "Aadhaar must be 12 digits (e.g. 123456789012)",
-                  },
+                  pattern: { value: /^\d{12}$/, message: "Aadhaar must be 12 digits (e.g. 123456789012)" },
                 })}
-                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${
-                  errors.adhaar_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.adhaar_no ? "input-error" : ""}`}
               />
-              {errors.adhaar_no && (
-                <span className="text-error text-sm">{errors.adhaar_no.message}</span>
-              )}
+              {errors.adhaar_no && <span className="text-error text-sm">{errors.adhaar_no.message}</span>}
             </div>
 
             {/* PAN Number */}
@@ -576,18 +220,11 @@ const UpdateStaffDetails = () => {
                 type="text"
                 placeholder="Enter PAN Number"
                 {...register("pan_no", {
-                  pattern: {
-                    value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-                    message: "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)",
-                  },
+                  pattern: { value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, message: "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)" },
                 })}
-                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${
-                  errors.pan_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.pan_no ? "input-error" : ""}`}
               />
-              {errors.pan_no && (
-                <span className="text-error text-sm">{errors.pan_no.message}</span>
-              )}
+              {errors.pan_no && <span className="text-error text-sm">{errors.pan_no.message}</span>}
             </div>
 
             {/* Qualification (teacher only) */}
@@ -600,9 +237,7 @@ const UpdateStaffDetails = () => {
                   {...register("qualification", { required: "Qualification is required" })}
                   className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                 />
-                {errors.qualification && (
-                  <span className="text-error text-sm">{errors.qualification.message}</span>
-                )}
+                {errors.qualification && <span className="text-error text-sm">{errors.qualification.message}</span>}
               </div>
             )}
 
@@ -615,12 +250,9 @@ const UpdateStaffDetails = () => {
                 {...register("category")}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
-              {errors.category && (
-                <span className="text-error text-sm">{errors.category.message}</span>
-              )}
             </div>
 
-            {/* Profile Picture */}
+            {/* Profile Picture (manual handling) */}
             <div className="md:col-span-2 lg:col-span-3">
               <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
                 Update Profile Picture
