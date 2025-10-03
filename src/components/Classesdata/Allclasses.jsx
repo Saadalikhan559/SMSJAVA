@@ -94,7 +94,7 @@ const Allclasses = () => {
                   className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
-                    {index + 1}.
+                    {index + 1}
                   </td>
                   <td className="px-4 py-3 text-center capitalize">
                     <Link

@@ -94,7 +94,7 @@ export const AdmissionForm = () => {
         ifsc_code: "",
         holder_name: "",
       },
-      guardian_type: "",
+      guardian_type_input: "",
       year_level: "",
       school_year: "",
       previous_school_name: "",
@@ -114,7 +114,7 @@ export const AdmissionForm = () => {
     setShowGuardianPassword(!showGuardianPassword);
   const handleGuardianTypesChange = (e) => {
     setSelectedGuardianType(e.target.value);
-    setValue("guardian_type", e.target.value);
+    setValue("guardian_type_input", e.target.value);
   };
 
   const handleRTECheckboxChange = (e) => {
@@ -934,10 +934,10 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <select
-                {...register("guardian_type", {
+                {...register("guardian_type_input", {
                   required: "Guardian type is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type ? "select-error" : ""
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type_input ? "select-error" : ""
                   }`}
                 value={selectedGuardianType}
                 onChange={handleGuardianTypesChange}
@@ -949,9 +949,9 @@ export const AdmissionForm = () => {
                   </option>
                 ))}
               </select>
-              {errors.guardian_type && (
+              {errors.guardian_type_input && (
                 <span className="text-error text-sm">
-                  {errors.guardian_type.message}
+                  {errors.guardian_type_input.message}
                 </span>
               )}
             </div>
