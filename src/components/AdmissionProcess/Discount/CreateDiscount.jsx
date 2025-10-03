@@ -14,6 +14,8 @@ const CreateDiscount = () => {
   const [pageLoading, setPageLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+
 
   const [formData, setFormData] = useState({
     admission_fee_discount: "",
@@ -95,7 +97,25 @@ const CreateDiscount = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = {};
+
+    if (!classId) errors.classId = "Class is required.";
+    if (!selectedStudentId) errors.student_id = "Student is required.";
+
+    const admission = parseFloat(formData.admission_fee_discount || 0);
+    const tuition = parseFloat(formData.tuition_fee_discount || 0);
+
+    if (admission <= 0 && tuition <= 0) {
+      errors.discount = "At least one discount amount must be greater than 0.";
+    }
+
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) return; // Stop if errors
+
     setIsSubmitting(true);
+
     try {
       const payload = { ...formData, is_allowed: true };
       await axiosInstance.post("/d/fee-discounts/", payload);
@@ -104,7 +124,7 @@ const CreateDiscount = () => {
       setAlertMessage("Discount created successfully!");
       setShowAlert(true);
 
-      // Reset all fields
+      // Reset fields
       setFormData({
         admission_fee_discount: "",
         tuition_fee_discount: "",
@@ -117,16 +137,17 @@ const CreateDiscount = () => {
       setSearchStudentInput("");
       setClassId("");
       setStudents([]);
+      setFormErrors({});
     } catch (err) {
       setAlertTitle("Error");
-      console.log('error', err.response.data);
-      
-      setAlertMessage(err.response.data.student_id);
+      console.log("error", err.response?.data);
+      setAlertMessage(err.response?.data?.student_id || "Something went wrong");
       setShowAlert(true);
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   const filteredStudents = students.filter((studentObj) =>
     studentObj.student_name
@@ -190,7 +211,9 @@ const CreateDiscount = () => {
                     {cls.level_name}
                   </option>
                 ))}
-              </select>
+              </select> {formErrors.classId && (
+                <p className="text-sm text-red-500 mt-1">{formErrors.classId}</p>
+              )}
             </div>
 
             {/* Student Dropdown/Search */}
@@ -248,7 +271,10 @@ const CreateDiscount = () => {
                       </p>
                     )}
                   </div>
+
                 </div>
+              )}  {formErrors.student_id && (
+                <p className="text-sm text-red-500 mt-1">{formErrors.student_id}</p>
               )}
             </div>
           </div>
@@ -272,7 +298,10 @@ const CreateDiscount = () => {
                 onChange={(e) =>
                   handleChange("admission_fee_discount", e.target.value)
                 }
-              />
+              /> {formErrors.discount && (
+                <p className="text-sm text-red-500 mt-1 col-span-2">{formErrors.discount}</p>
+              )}
+
             </div>
 
             <div className="form-control">
@@ -292,7 +321,10 @@ const CreateDiscount = () => {
                 onChange={(e) =>
                   handleChange("tuition_fee_discount", e.target.value)
                 }
-              />
+              />  {formErrors.discount && (
+                <p className="text-sm text-red-500 mt-1 col-span-2">{formErrors.discount}</p>
+              )}
+
             </div>
           </div>
 
@@ -320,7 +352,7 @@ const CreateDiscount = () => {
             <button
               type="submit"
               className="btn btn-primary w-full md:w-52 bgTheme text-white"
-              disabled={btnDisabled || isSubmitting}
+
             >
               {isSubmitting ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
