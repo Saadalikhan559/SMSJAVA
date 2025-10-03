@@ -8,7 +8,6 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 const BASE_URL = constants.baseUrl;
 
-
 export const ViewDocuments = () => {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,9 +16,8 @@ export const ViewDocuments = () => {
   const [selectedClass, setSelectedClass] = useState("All");
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [searchInput, setSearchInput] = useState("");
-  const [viewOption, setViewOption] = useState("my"); // 'my' or 'assigned'
+  const [viewOption, setViewOption] = useState("my");
   const { axiosInstance } = useContext(AuthContext);
-
 
   // Logged-in user info
   const studentId = localStorage.getItem("studentId");
@@ -27,9 +25,6 @@ export const ViewDocuments = () => {
   const teacherId = localStorage.getItem("teacherId");
   const officeStaffId = localStorage.getItem("officeStaffId");
   const userRole = localStorage.getItem("userRole");
-
-
-
 
   const fetchTeacherYearLevel = async (teacherId) => {
     try {
@@ -50,7 +45,7 @@ console.log(docs);
 
         if (userRole === "teacher") {
           const classes = await fetchTeacherYearLevel(teacherId);
-          setTeacherClasses(classes.map(c => c.year_level_name));
+          setTeacherClasses(classes.map((c) => c.year_level_name));
         }
 
         setLoading(false);
@@ -78,7 +73,6 @@ console.log(docs);
     );
   }
 
-
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
@@ -94,7 +88,13 @@ console.log(docs);
     return <div className="p-4 text-center">No documents available.</div>;
   }
 
-  const allDocTypes = [...new Set(details.flatMap(d => d.document_types_read.map(dt => dt.name.toLowerCase())))];
+  const allDocTypes = [
+    ...new Set(
+      details.flatMap((d) =>
+        d.document_types_read.map((dt) => dt.name.toLowerCase())
+      )
+    ),
+  ];
 
   const getRole = (doc) => {
     if (doc.student_id) return "Student";
@@ -105,23 +105,34 @@ console.log(docs);
   };
 
   const grouped = {};
-  details.forEach(doc => {
+  details.forEach((doc) => {
     const role = getRole(doc);
-    const name = doc.student_name || doc.guardian_name || doc.office_staff_name || doc.teacher_name;
+    const name =
+      doc.student_name ||
+      doc.guardian_name ||
+      doc.office_staff_name ||
+      doc.teacher_name;
     const yearLevel = doc.year_level || "N/A";
     const key = `${role}-${name}-${yearLevel}`;
 
     if (!grouped[key]) grouped[key] = { name, role, yearLevel, docs: {} };
 
-    doc.document_types_read.forEach(dt => {
+    doc.document_types_read.forEach((dt) => {
       const type = dt.name.toLowerCase();
-      grouped[key].docs[type] = doc.files.map(file =>
+      grouped[key].docs[type] = doc.files.map((file) =>
         file.file.replace("http://localhost:8000", `${constants.baseUrl}`)
       );
     });
   });
 
-  const allClasses = ["All", ...new Set(details.filter(d => d.student_id && d.year_level).map(d => d.year_level))];
+  const allClasses = [
+    "All",
+    ...new Set(
+      details
+        .filter((d) => d.student_id && d.year_level)
+        .map((d) => d.year_level)
+    ),
+  ];
 
   // Filter data
 const filteredData = Object.values(grouped)
@@ -196,7 +207,6 @@ const filteredData = Object.values(grouped)
     (detail.name || "").toLowerCase().includes(searchInput.toLowerCase())
   );
 
-
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
@@ -230,7 +240,9 @@ const filteredData = Object.values(grouped)
             <div className="mb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b dark:border-gray-700 pb-4">
               {/* Role Selector */}
               <div className="flex flex-col w-full sm:w-1/4">
-                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">Select Role:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                  Select Role:
+                </label>
                 <select
                   value={selectedRole}
                   onChange={(e) => {
@@ -250,7 +262,9 @@ const filteredData = Object.values(grouped)
               {/* Class Selector (only for Students) */}
               {selectedRole === "Student" && (
                 <div className="flex flex-col w-full sm:w-1/4">
-                  <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">Select Class:</label>
+                  <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                    Select Class:
+                  </label>
                   <select
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
@@ -267,7 +281,9 @@ const filteredData = Object.values(grouped)
 
               {/* Search Input */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">Search Name:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                  Search Name:
+                </label>
                 <input
                   type="text"
                   placeholder="Search Name..."
@@ -277,7 +293,6 @@ const filteredData = Object.values(grouped)
                 />
               </div>
             </div>
-
           )}
 
         {/* Table */}
@@ -291,7 +306,9 @@ const filteredData = Object.values(grouped)
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Name</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Role</th>
                     {userRole !== "student" && selectedRole === "Student" && (
-                      <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">
+                        Class
+                      </th>
                     )}
                     {allDocTypes.map((type) => (
                       <th
@@ -322,40 +339,61 @@ const filteredData = Object.values(grouped)
                           {person.role}
                         </td>
 
-                        {userRole !== "student" && selectedRole === "Student" && (
-                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                            {person.yearLevel || "-"}
-                          </td>
-                        )}
-
-                        {allDocTypes.map((type) => (
-                          <td
-                            key={type}
-                            className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
-                          >
-                            {person.docs[type] && person.docs[type].length > 0 ? (
-                              person.docs[type].map((url, i) => (
-                                <div key={i}>
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="underline textTheme hover:text-blue-800 dark:hover:text-blue-200"
-                                  >
-                                    View
-                                  </a>
-                                </div>
-                              ))
-                            ) : (
-                              <p className="text-sm text-gray-700 dark:text-gray-200 text-nowrap">Not Available</p>
-
+                          {userRole !== "student" &&
+                            selectedRole === "Student" && (
+                              <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                                {person.yearLevel || "-"}
+                              </td>
                             )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                </tbody>
 
+                          {allDocTypes.map((type) => (
+                            <td
+                              key={type}
+                              className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
+                            >
+                              {person.docs[type] &&
+                              person.docs[type].length > 0 ? (
+                                person.docs[type].map((url, i) => (
+                                  <div key={i}>
+                                    <a
+                                      href={url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="underline textTheme hover:text-blue-800 dark:hover:text-blue-200"
+                                    >
+                                      View
+                                    </a>
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                                  Not Available
+                                </p>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={
+                          allDocTypes.length +
+                          (userRole !== "student" && selectedRole === "Student"
+                            ? 3
+                            : 2)
+                        }
+                        className="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
+                      >
+                        <div className="flex flex-col items-center justify-center">
+                          <p className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                            No results found
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           </div>
