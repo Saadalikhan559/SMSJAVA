@@ -316,7 +316,7 @@ const filterPeriods = () => {
                         value={subjectSearch}
                         onChange={(e) => setSubjectSearch(e.target.value)}
                         placeholder="Search subjects..."
-                        className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                        className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 z-5"
                       />
                     </div>
 
