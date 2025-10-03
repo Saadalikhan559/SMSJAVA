@@ -84,6 +84,11 @@ import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
 import PrivacyPolicy from "../components/Privacy/Privacy";
 import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
+<<<<<<< HEAD
+=======
+import { StudentAdmissionFees } from "../components/AdmissionProcess/StudentAdmissionFees";
+// import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
+>>>>>>> 39f3dce5b8beeb863e7112e661b6ee540c19b91f
 
 
 export const routes = [
@@ -610,6 +615,12 @@ export const routes = [
     path: allRouterLink.managecategory,
     element: <CreateCategory/>,
     protected: true,
+  },
+    {
+    path: allRouterLink.studentAdmissionFees,
+    element: <StudentAdmissionFees/>,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
 
   // include all routes before this please
