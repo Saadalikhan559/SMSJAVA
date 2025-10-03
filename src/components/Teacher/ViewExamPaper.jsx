@@ -115,12 +115,12 @@ const ViewExamPaper = () => {
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className=" flex justify-end">
-        <Link
-          to={`${allRouterLink.UploadExamPaper}`}
-          className="btn bgTheme text-white"
-        >
-          <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
-        </Link>
+          <Link
+            to={`${allRouterLink.UploadExamPaper}`}
+            className="btn bgTheme text-white"
+          >
+            <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
+          </Link>
         </div>
 
         {/* Title */}
@@ -132,7 +132,7 @@ const ViewExamPaper = () => {
 
         {/* Filter Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-6 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-20 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Class Filter */}
               <div className="flex flex-col w-full sm:w-auto">
@@ -238,18 +238,13 @@ const ViewExamPaper = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{paper.paper_code}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{paper.year}</td>
                     <td className="px-4 py-3 text-sm gap-2 flex">
-                      {/* <Link
-                        to={`${allRouterLink.UpdateExamPaper}`}
+
+                      <Link
+                        to={`${allRouterLink.UpdateExamPaper}/${paper.id}`}
                         className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
                       >
                         Edit
-                      </Link> */}
-                      <Link
-  to={`${allRouterLink.UpdateExamPaper}/${paper.id}`}
-  className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
->
-  Edit
-</Link>
+                      </Link>
 
                       <button
                         className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1]"

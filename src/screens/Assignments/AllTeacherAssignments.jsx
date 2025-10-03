@@ -111,7 +111,7 @@ export const AllTeacherAssignments = () => {
   );
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         {/* Tabs styled like AllStaff */}
         <div className="flex gap-4 mb-6">
@@ -302,7 +302,7 @@ export const AllTeacherAssignments = () => {
                     </tr>
                   ) : filteredSubs.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="text-center py-4 text-red-500">
+                      <td colSpan="5" className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
                         No substitute assignments found for this date
                       </td>
                     </tr>
