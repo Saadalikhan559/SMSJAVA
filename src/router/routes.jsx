@@ -208,7 +208,7 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
-    path: allRouterLink.UpdateExamPaper,
+    path: `${allRouterLink.UpdateExamPaper}/:id`,
     element: <UpdateExamPaper />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
