@@ -76,47 +76,47 @@ const MarksheetsTable = () => {
 
   const filterData = staticPayload.filter((detail) =>
     detail.standard
-.toLowerCase().includes(selectedClass.toLowerCase())
+      .toLowerCase().includes(selectedClass.toLowerCase())
   );
   const filterBysearch = filterData.filter((detail) =>
     detail.student_name.toLowerCase().includes(searchInput.toLowerCase())
   );
   console.log(filterData);
-  
+
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-          <div className="mb-4">
+        <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-4">
-           Marksheets <i className="fa-solid fa-address-card ml-2"></i>
+            Marksheets <i className="fa-solid fa-address-card ml-2"></i>
           </h1>
         </div>
         {/* Search Input */}
         <div className="flex flex-wrap justify-between items-end gap-4 mb-4 w-full border-b pb-4">
           <div className=" w-full  sm:w-xs">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  Select Class:
-                </label>
-                <select
-                  className="select select-bordered w-full focus:outline-none"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option value="">All Classes</option>
-                  {yearLevels.map((level) => (
-                    <option key={level.id} value={level.level_name}>
-                      {level.level_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <label className="text-sm font-medium text-gray-700 mb-1">
+              Select Class:
+            </label>
+            <select
+              className="select select-bordered w-full focus:outline-none"
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+            >
+              <option value="">All Classes</option>
+              {yearLevels.map((level) => (
+                <option key={level.id} value={level.level_name}>
+                  {level.level_name}
+                </option>
+              ))}
+            </select>
+          </div>
           <input
             type="text"
             placeholder="Search Student Name..."
-            className="input input-bordered w-full sm:max-w-xs focus:outline-none"
+            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => setSearchInput(e.target.value.trimStart())}
           />
         </div>
 

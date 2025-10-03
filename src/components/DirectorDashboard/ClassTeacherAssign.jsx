@@ -154,24 +154,12 @@ const ClassTeacherAssign = () => {
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
-        <div className="mb-6 flex justify-end">
+        <div className=" flex justify-end">
           <button
+            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
             onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
-            className="flex items-center textTheme hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            View Allocated Class
+            View Allocated Class <span>&rarr;</span>
           </button>
         </div>
 

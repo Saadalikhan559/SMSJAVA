@@ -164,8 +164,8 @@ export const ViewAllExpenses = () => {
     } catch (error) {
       setApiError(
         error?.response?.data?.detail ||
-          error?.message ||
-          "Error deleting expense"
+        error?.message ||
+        "Error deleting expense"
       );
     } finally {
       setLoading(false);
@@ -315,7 +315,7 @@ export const ViewAllExpenses = () => {
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
                   <tr key={expense.id}>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.category_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.category_name}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.amount}</td>
                     <td
                       className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 truncate max-w-xs"
@@ -341,13 +341,12 @@ export const ViewAllExpenses = () => {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span
-                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${
-                          expense.status === "pending"
+                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${expense.status === "pending"
                             ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:bg-yellow-100"
                             : expense.status === "rejected"
-                            ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
-                            : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
-                        }`}
+                              ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
+                              : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
+                          }`}
                       >
                         {expense.status}
                       </span>

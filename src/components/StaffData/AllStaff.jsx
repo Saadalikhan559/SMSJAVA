@@ -32,7 +32,7 @@ const AllStaff = () => {
           fetchTeachers(),
           fetchOfficeStaff(),
         ]);
-        
+
         // Sort both arrays alphabetically by name
         const sortedTeachers = teacherData.sort(sortByName);
         const sortedOfficeStaff = officeData.sort(sortByName);
@@ -112,8 +112,9 @@ const AllStaff = () => {
                 type="text"
                 placeholder="Search Teacher Name"
                 value={teacherSearch}
-                onChange={(e) => setTeacherSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0b0b0c] focus:border-[#0f0f10]"
+                onChange={(e) => setTeacherSearch(e.target.value.trimStart())}
+                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+
               />
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
@@ -144,7 +145,9 @@ const AllStaff = () => {
                           <Link
                             to={`/staffDetail/teacher/${record.id}`}
                             state={{ level_name: record.level_name }}
-                            className="textTheme hover:underline"
+                            // className="textTheme hover:underline"
+                            className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
+
                           >
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
@@ -171,8 +174,9 @@ const AllStaff = () => {
                 type="text"
                 placeholder="Search Staff Member Name"
                 value={staffSearch}
-                onChange={(e) => setStaffSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#211f23] focus:border-[#252426]"
+                onChange={(e) => setStaffSearch(e.target.value.trimStart())}
+                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+
               />
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
@@ -203,7 +207,8 @@ const AllStaff = () => {
                           <Link
                             to={`/staffDetail/office/${record.id}`}
                             state={{ level_name: record.level_name }}
-                            className="textTheme hover:underline"
+                            // className="textTheme hover:underline"
+                            className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
                           >
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>

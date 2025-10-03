@@ -160,8 +160,8 @@ export const ViewDocuments = () => {
   console.log(filteredData);
 
   const filterBysearch = filteredData.filter((detail) =>
-  (detail.name || "").toLowerCase().includes(searchInput.toLowerCase())
-);
+    (detail.name || "").toLowerCase().includes(searchInput.toLowerCase())
+  );
 
 
   return (
@@ -238,9 +238,9 @@ export const ViewDocuments = () => {
                 <input
                   type="text"
                   placeholder="Search Name..."
-                  className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  onChange={(e) => setSearchInput(e.target.value.trimStart())}
                 />
               </div>
             </div>
@@ -277,7 +277,7 @@ export const ViewDocuments = () => {
                         key={idx}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                       >
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                        <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
                           {person.name}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">

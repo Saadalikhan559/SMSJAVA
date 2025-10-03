@@ -152,9 +152,9 @@ const TeacherAttendance = () => {
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
-         <div className=" flex justify-end">
+        <div className=" flex justify-end">
           <Link
-          to={allRouterLink.teacherAttendanceRecord}
+            to={allRouterLink.teacherAttendanceRecord}
             className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
           >
             Attendance Record <span>&rarr;</span>
@@ -172,13 +172,13 @@ const TeacherAttendance = () => {
             type="text"
             placeholder="Search by name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 px-3 py-2 rounded w-full sm:w-64 focus:outline-none"
+            onChange={(e) => setSearchTerm(e.target.value.trimStart())}
+            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
+        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg mb-20">
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
@@ -242,7 +242,7 @@ const TeacherAttendance = () => {
                 <tr>
                   <td
                     colSpan="7"
-                    className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                    className="px-4 py-6 text-center text-red-600 dark:text-red-400"
                   >
                     No teachers found
                   </td>
