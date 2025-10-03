@@ -99,7 +99,7 @@ const AttendanceRecord = () => {
 
 return (
   <>
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-lg">
         <span className="font-bold text-2xl flex pt-5 justify-center gap-1 text-gray-900 dark:text-gray-100">
           <i className="fa-solid fa-square-poll-vertical flex pt-1" /> Attendance Record
@@ -114,7 +114,7 @@ return (
           />
           <button
             onClick={handleReset}
-            className="btn bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white"
+            className="btn bgTheme disabled:opacity-50 disabled:cursor-not-allowed text-white"
             disabled={!selectedDate}
           >
             Reset
