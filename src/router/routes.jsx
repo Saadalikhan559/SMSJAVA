@@ -84,6 +84,7 @@ import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
 import PrivacyPolicy from "../components/Privacy/Privacy";
 import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
+import { StudentAdmissionFees } from "../components/AdmissionProcess/StudentAdmissionFees";
 
 
 export const routes = [
