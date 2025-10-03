@@ -94,6 +94,12 @@ const FeeDashboard = () => {
             height: 12,
             radius: 6,
           },
+          labels: {
+            colors: [
+              () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000",
+              () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000"
+            ],
+          },
         },
         dataLabels: {
           enabled: true,
@@ -146,7 +152,7 @@ const FeeDashboard = () => {
   );
 
   return (
-    <div className="p-4 space-y-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-4 space-y-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
         Fee Dashboard
       </h3>

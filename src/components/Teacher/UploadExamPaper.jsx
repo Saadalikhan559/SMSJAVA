@@ -180,12 +180,32 @@ const UploadExamPaper = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      setAlertMessage(
-        `Error: ${error.response?.data?.paper_code || error.message}`
-      );
+
+      let backendMsg = "Something went wrong";
+
+      if (error.response?.data) {
+        const errData = error.response.data;
+        if (typeof errData === "object") {
+          backendMsg = Object.entries(errData)
+            .map(([key, val]) => {
+              if (Array.isArray(val)) {
+                return `${key}: ${val.join(", ")}`;
+              }
+              return `${key}: ${val}`;
+            })
+            .join("\n");
+        } else if (typeof errData === "string") {
+          backendMsg = errData;
+        }
+      } else if (error.message) {
+        backendMsg = error.message;
+      }
+
+      setAlertMessage(`${backendMsg}`);
       setShowAlert(true);
     }
   };
+
 
   if (loading) {
     return (
@@ -253,7 +273,7 @@ const UploadExamPaper = () => {
                 error: errors.term,
                 requiredMsg: "Term is required",
               },
-             
+
             ].map(({ label, name, data, key, error, requiredMsg, renderValue = null }) => (
               <div className="form-control" key={name}>
                 <label className="label">
@@ -275,7 +295,7 @@ const UploadExamPaper = () => {
                 {error && <p className="text-error text-sm mt-1">{error.message}</p>}
               </div>
             ))}
-            
+
             <div className="relative">
               <label lassName="label-text dark:text-gray-200">
                 Teacher <span className="text-error">*</span>
@@ -399,7 +419,7 @@ const UploadExamPaper = () => {
                     )}
                   </div>
                 </div>
-              )}  
+              )}
 
               {errors.subject && (
                 <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>

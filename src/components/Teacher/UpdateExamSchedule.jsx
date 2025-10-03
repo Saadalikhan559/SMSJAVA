@@ -17,6 +17,9 @@ const UpdateExamSchedule = () => {
   const [examType, setExamType] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [accessToken, setAccessToken] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const navigate = useNavigate();
 
@@ -161,7 +164,8 @@ const UpdateExamSchedule = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        setSuccess("Exam schedule created successfully!");
+        setAlertMessage("Exam schedule updated successfully!");
+        setShowAlert(true);
         reset();
       } else {
         throw new Error(
@@ -170,326 +174,321 @@ const UpdateExamSchedule = () => {
       }
     } catch (err) {
       console.log(err.response?.data?.[0]);
-      setError(
+      setAlertMessage(
         err.response?.data?.[0] ||
-          err.response?.data?.message ||
-          "Failed to create exam schedule"
+        err.response?.data?.message ||
+        "Failed to create exam schedule"
       );
+      setShowAlert(true);
     }
   };
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-      <button
-        className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
-        onClick={handleNavigate}
-      >
-        Create Exam Schedule <span>&rarr;</span>
-      </button>
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
+        <div className=" flex justify-end">
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Update Exam Schedule <i className="fa-solid fa-pen-nib ml-2"></i>
-        </h1>
-
-        {error && (
-          <div className="alert alert-error mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="alert alert-success mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{success}</span>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          {/* Class Name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Class <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.class_name ? "select-error" : ""
-              }`}
-              {...register("class_name", { required: "Class is required" })}
-            >
-              <option value="">Select Class</option>
-              {className1?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.level_name}
-                </option>
-              ))}
-            </select>
-            {errors.class_name && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.class_name.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* School Year */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                School Year <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.school_year ? "select-error" : ""
-              }`}
-              {...register("school_year", {
-                required: "School year is required",
-              })}
-            >
-              <option value="">Select Year</option>
-              {schoolYear?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.year_name}
-                </option>
-              ))}
-            </select>
-            {errors.school_year && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.school_year.message}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Exam Type */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">
-                Exam Type <span className="text-error">*</span>
-              </span>
-            </label>
-            <select
-              className={`select select-bordered w-full ${
-                errors.exam_type ? "select-error" : ""
-              }`}
-              {...register("exam_type", { required: "Exam type is required" })}
-            >
-              <option value="">Select Exam Type</option>
-              {examType?.map((student) => (
-                <option key={student.id} value={student.id}>
-                  {student.name}
-                </option>
-              ))}
-            </select>
-            {errors.exam_type && (
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {errors.exam_type.message}
-                </span>
-              </label>
-            )}
-          </div>
-        </div>
-
-        {/* Papers Section */}
-        <div className="mt-10">
-          <h2 className="text-xl font-semibold mb-4">Exam Papers</h2>
-
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6 bg-base-200 p-4 rounded-lg"
-            >
-              {/* Subject */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">
-                    Subject <span className="text-error">*</span>
-                  </span>
-                </label>
-                <select
-                  className={`select select-bordered w-full ${
-                    errors.papers?.[index]?.subject_id ? "select-error" : ""
-                  }`}
-                  {...register(`papers.${index}.subject_id`, {
-                    required: "Subject is required",
-                  })}
-                >
-                  <option value="">Select Subject</option>
-                  {subjects?.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.subject_name}
-                    </option>
-                  ))}
-                </select>
-                {errors.papers?.[index]?.subject_id && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      {errors.papers[index].subject_id.message}
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              {/* Exam Date */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">
-                    Exam Date <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="date"
-                  className={`input input-bordered w-full ${
-                    errors.papers?.[index]?.exam_date ? "input-error" : ""
-                  }`}
-                  {...register(`papers.${index}.exam_date`, {
-                    required: "Exam date is required",
-                  })}
-                />
-                {errors.papers?.[index]?.exam_date && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      {errors.papers[index].exam_date.message}
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              {/* Start Time */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">
-                    Start Time <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="time"
-                  className={`input input-bordered w-full ${
-                    errors.papers?.[index]?.start_time ? "input-error" : ""
-                  }`}
-                  {...register(`papers.${index}.start_time`, {
-                    required: "Start time is required",
-                  })}
-                />
-                {errors.papers?.[index]?.start_time && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      {errors.papers[index].start_time.message}
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              {/* End Time */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">
-                    End Time <span className="text-error">*</span>
-                  </span>
-                </label>
-                <input
-                  type="time"
-                  className={`input input-bordered w-full ${
-                    errors.papers?.[index]?.end_time ? "input-error" : ""
-                  }`}
-                  {...register(`papers.${index}.end_time`, {
-                    required: "End time is required",
-                    validate: (value) => {
-                      const startTime = watch(`papers.${index}.start_time`);
-                      return (
-                        value > startTime || "End time must be after start time"
-                      );
-                    },
-                  })}
-                />
-                {errors.papers?.[index]?.end_time && (
-                  <label className="label">
-                    <span className="label-text-alt text-error">
-                      {errors.papers[index].end_time.message}
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              <div className="form-control md:col-span-4 flex justify-end">
-                <button
-                  type="button"
-                  className="btn btn-error btn-sm"
-                  onClick={() => remove(index)}
-                  disabled={fields.length <= 1}
-                >
-                  <i className="fa-solid fa-trash mr-1"></i> Remove
-                </button>
-              </div>
-            </div>
-          ))}
-
-          <div className="mt-4">
-            <button
-              type="button"
-              className="btn bgTheme text-white"
-              onClick={() =>
-                append({
-                  subject_id: "",
-                  exam_date: "",
-                  start_time: "",
-                  end_time: "",
-                })
-              }
-            >
-              <i className="fa-solid fa-plus mr-2"></i> Add Another Paper
-            </button>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-center mt-10">
           <button
-            type="submit"
-            className="btn bgTheme text-white w-52"
-            disabled={isSubmitting}
+            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            onClick={handleNavigate}
           >
-            {isSubmitting ? (
-              <i className="fa-solid fa-spinner fa-spin mr-2" />
-            ) : (
-              <i className="fa-solid fa-calendar-plus ml-2" />
-            )}
-            {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Create Schedule"}
+            Create Exam Schedule <span>&rarr;</span>
           </button>
         </div>
-      </form>
-    </div>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Update Exam Schedule <i className="fa-solid fa-pen-nib ml-2"></i>
+          </h1>
+
+          {error && (
+            <div className="alert alert-error mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+
+          {success && (
+            <div className="alert alert-success mb-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="stroke-current shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{success}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {/* Class Name */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">
+                  Class <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className={`select select-bordered w-full ${errors.class_name ? "select-error" : ""
+                  }`}
+                {...register("class_name", { required: "Class is required" })}
+              >
+                <option value="">Select Class</option>
+                {className1?.map((student) => (
+                  <option key={student.id} value={student.id}>
+                    {student.level_name}
+                  </option>
+                ))}
+              </select>
+              {errors.class_name && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.class_name.message}
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {/* School Year */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">
+                  School Year <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className={`select select-bordered w-full ${errors.school_year ? "select-error" : ""
+                  }`}
+                {...register("school_year", {
+                  required: "School year is required",
+                })}
+              >
+                <option value="">Select Year</option>
+                {schoolYear?.map((student) => (
+                  <option key={student.id} value={student.id}>
+                    {student.year_name}
+                  </option>
+                ))}
+              </select>
+              {errors.school_year && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.school_year.message}
+                  </span>
+                </label>
+              )}
+            </div>
+
+            {/* Exam Type */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">
+                  Exam Type <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                className={`select select-bordered w-full ${errors.exam_type ? "select-error" : ""
+                  }`}
+                {...register("exam_type", { required: "Exam type is required" })}
+              >
+                <option value="">Select Exam Type</option>
+                {examType?.map((student) => (
+                  <option key={student.id} value={student.id}>
+                    {student.name}
+                  </option>
+                ))}
+              </select>
+              {errors.exam_type && (
+                <label className="label">
+                  <span className="label-text-alt text-error">
+                    {errors.exam_type.message}
+                  </span>
+                </label>
+              )}
+            </div>
+          </div>
+
+          {/* Papers Section */}
+          <div className="mt-10">
+            <h2 className="text-xl font-semibold mb-4">Exam Papers</h2>
+
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6 bg-base-200 p-4 rounded-lg"
+              >
+                {/* Subject */}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">
+                      Subject <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <select
+                    className={`select select-bordered w-full ${errors.papers?.[index]?.subject_id ? "select-error" : ""
+                      }`}
+                    {...register(`papers.${index}.subject_id`, {
+                      required: "Subject is required",
+                    })}
+                  >
+                    <option value="">Select Subject</option>
+                    {subjects?.map((student) => (
+                      <option key={student.id} value={student.id}>
+                        {student.subject_name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.papers?.[index]?.subject_id && (
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        {errors.papers[index].subject_id.message}
+                      </span>
+                    </label>
+                  )}
+                </div>
+
+                {/* Exam Date */}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">
+                      Exam Date <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <input
+                    type="date"
+                    className={`input input-bordered w-full ${errors.papers?.[index]?.exam_date ? "input-error" : ""
+                      }`}
+                    {...register(`papers.${index}.exam_date`, {
+                      required: "Exam date is required",
+                    })}
+                  />
+                  {errors.papers?.[index]?.exam_date && (
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        {errors.papers[index].exam_date.message}
+                      </span>
+                    </label>
+                  )}
+                </div>
+
+                {/* Start Time */}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">
+                      Start Time <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <input
+                    type="time"
+                    className={`input input-bordered w-full ${errors.papers?.[index]?.start_time ? "input-error" : ""
+                      }`}
+                    {...register(`papers.${index}.start_time`, {
+                      required: "Start time is required",
+                    })}
+                  />
+                  {errors.papers?.[index]?.start_time && (
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        {errors.papers[index].start_time.message}
+                      </span>
+                    </label>
+                  )}
+                </div>
+
+                {/* End Time */}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">
+                      End Time <span className="text-error">*</span>
+                    </span>
+                  </label>
+                  <input
+                    type="time"
+                    className={`input input-bordered w-full ${errors.papers?.[index]?.end_time ? "input-error" : ""
+                      }`}
+                    {...register(`papers.${index}.end_time`, {
+                      required: "End time is required",
+                      validate: (value) => {
+                        const startTime = watch(`papers.${index}.start_time`);
+                        return (
+                          value > startTime || "End time must be after start time"
+                        );
+                      },
+                    })}
+                  />
+                  {errors.papers?.[index]?.end_time && (
+                    <label className="label">
+                      <span className="label-text-alt text-error">
+                        {errors.papers[index].end_time.message}
+                      </span>
+                    </label>
+                  )}
+                </div>
+
+                <div className="form-control md:col-span-4 flex gap-2 justify-end">
+                  <button
+                    type="button"
+                    className="btn bgTheme text-white"
+                    onClick={() => {
+                      if (fields.length < 5) {
+                        append({
+                          subject_id: "",
+                          exam_date: "",
+                          start_time: "",
+                          end_time: "",
+                        });
+                      } else {
+                        setAlertMessage("You can only add up to 4 more papers.");
+                        setShowAlert(true);
+                      }
+                    }}
+                    disabled={fields.length >= 5}
+                  >
+                    <i className="fa-solid fa-plus mr-2"></i> Add Another Paper
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-error "
+                    onClick={() => remove(index)}
+                    disabled={fields.length <= 1}
+                  >
+                    <i className="fa-solid fa-trash mr-1"></i> Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
+            <button
+              type="submit"
+              className="btn bgTheme text-white w-52"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? <i className="fa-solid fa-spinner fa-spin mr-2"></i> : "Create Schedule"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
