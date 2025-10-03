@@ -156,7 +156,17 @@ const StudentMarksFill = () => {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      setAlertMessage("Error: Submission failed");
+      if (error.response && error.response.data) {
+        const { errors } = error.response.data;
+
+        const formattedMessage = [
+          ...(errors || [])
+        ].join("\n");
+
+        setAlertMessage(formattedMessage);
+      } else {
+        setAlertMessage("An unexpected error occurred.");
+      }
       setShowAlert(true);
     }
   };
@@ -255,7 +265,7 @@ const StudentMarksFill = () => {
               )}
             </div>
 
-           
+
             {/* Subject */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -509,8 +519,11 @@ const StudentMarksFill = () => {
           <div className="modal-box">
             <h3 className="font-bold text-lg">Student Marks</h3>
             <p className="py-4">
-              {alertMessage.split("\n").map((line, idx) => <span key={idx}>{line}<br /></span>)}
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>{line}<br /></span>
+              ))}
             </p>
+
             <div className="modal-action">
               <button className="btn bgTheme text-white w-30" onClick={() => setShowAlert(false)}>OK</button>
             </div>
