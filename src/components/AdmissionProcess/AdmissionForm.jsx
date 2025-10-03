@@ -972,8 +972,8 @@ export const AdmissionForm = () => {
                     message: "Phone number must be exactly 10 digits",
                   },
                   maxLength: {
-                    value: 50,
-                    message: "Phone number cannot exceed 50 characters",
+                    value: 10,
+                    message: "Phone number cannot exceed 10 digits",
                   },
                 })}
                 placeholder="Phone Number"
@@ -1297,8 +1297,8 @@ export const AdmissionForm = () => {
                     message: "Emergency contact must be exactly 10 digits",
                   },
                   maxLength: {
-                    value: 100,
-                    message: "Emergency contact cannot exceed 100 characters",
+                    value: 10,
+                    message: "Emergency contact cannot exceed 10 digits",
                   },
                 })}
                 placeholder="Emergency Contact"
