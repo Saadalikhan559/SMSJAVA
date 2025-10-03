@@ -425,6 +425,12 @@ export const DocumentUpload = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-5"
       >
+         <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
+            <i className="fa-solid fa-file-arrow-up w-5"></i> Upload Documents
+          </h1>
+        </div>
+
         {/* Steps */}
         <ul className="steps mb-6 w-full">
           <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>
