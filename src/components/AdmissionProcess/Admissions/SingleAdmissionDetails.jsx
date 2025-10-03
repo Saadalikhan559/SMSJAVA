@@ -254,7 +254,7 @@ export const SingleAdmissionDetails = () => {
                 <p>{getValue(details.address, "division")}</p>
               </div>
               <div>
-                <p className="font-medium">Area Code:</p>
+                <p className="font-medium">Pin Code:</p>
                 <p>{getValue(details.address, "area_code")}</p>
               </div>
             </div>
@@ -267,11 +267,11 @@ export const SingleAdmissionDetails = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <p className="font-medium">Class:</p>
+                <p className="font-medium">Year Level:</p>
                 <p>{details.year_level || "Not Assigned"}</p>
               </div>
               <div>
-                <p className="font-medium">Academic Year:</p>
+                <p className="font-medium">School Year:</p>
                 <p>{details.school_year || "Not Specified"}</p>
               </div>
               <div>

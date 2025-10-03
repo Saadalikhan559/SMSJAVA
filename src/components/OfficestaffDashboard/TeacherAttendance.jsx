@@ -150,7 +150,7 @@ const TeacherAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className=" flex justify-end">
           <Link
@@ -208,6 +208,7 @@ const TeacherAttendance = () => {
                         type="date"
                         value={attendance[teacher.id]?.date || ""}
                         onChange={(e) => handleChange(teacher.id, "date", e.target.value)}
+                        max={new Date().toISOString().split("T")[0]}
                         className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 p-1 rounded text-center"
                       />
                     </td>

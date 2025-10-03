@@ -71,7 +71,7 @@ const AllStaff = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       {error && (
         <div className="text-red-600 text-center mb-4 font-medium dark:text-red-400">
           {error}
@@ -121,16 +121,16 @@ const AllStaff = () => {
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z--10">
                   <tr>
-                    <th className="px-4 py-3">S.NO</th>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Joined Date</th>
-                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3 text-nowrap">S.NO</th>
+                    <th className="px-4 py-3 text-nowrap">Name</th>
+                    <th className="px-4 py-3 text-nowrap">Joined Date</th>
+                    <th className="px-4 py-3 text-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredTeachers.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-red-400">
+                      <td colSpan="4" className="text-center py-6 dark:text-gray-300">
                         No data found.
                       </td>
                     </tr>
@@ -140,8 +140,8 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
-                        <td className="px-4 py-3 capitalize dark:text-gray-100">
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{index + 1}</td>
+                        <td className="px-4 py-3 capitalize dark:text-gray-100 text-nowrap">
                           <Link
                             to={`/staffDetail/teacher/${record.id}`}
                             state={{ level_name: record.level_name }}
@@ -152,8 +152,8 @@ const AllStaff = () => {
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.joining_date}</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active === true ? "Active" : "InActive"} </td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.joining_date}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.is_active === true ? "Active" : "InActive"} </td>
                       </tr>
                     ))
                   )}
@@ -183,16 +183,16 @@ const AllStaff = () => {
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z--10">
                   <tr>
-                    <th className="px-4 py-3">S.NO</th>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Joined Date</th>
-                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3 text-nowrap">S.NO</th>
+                    <th className="px-4 py-3 text-nowrap">Name</th>
+                    <th className="px-4 py-3 text-nowrap">Joined Date</th>
+                    <th className="px-4 py-3 text-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-red-400">
+                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-gray-300">
                         No data found.
                       </td>
                     </tr>
@@ -202,8 +202,8 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
-                        <td className="px-4 py-3 capitalize dark:text-gray-100 ">
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{index + 1}</td>
+                        <td className="px-4 py-3 capitalize dark:text-gray-100 text-nowrap">
                           <Link
                             to={`/staffDetail/office/${record.id}`}
                             state={{ level_name: record.level_name }}
@@ -213,8 +213,8 @@ const AllStaff = () => {
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date_joined}</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active === true ? "Active" : "InActive"} </td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.date_joined}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.is_active === true ? "Active" : "InActive"} </td>
                       </tr>
                     ))
                   )}

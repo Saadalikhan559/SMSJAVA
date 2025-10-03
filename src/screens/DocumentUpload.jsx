@@ -53,8 +53,6 @@ export const DocumentUpload = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
 
-
-
   const [role, setRole] = useState("");
 
   const [formData, setFormData] = useState({
@@ -80,10 +78,10 @@ export const DocumentUpload = () => {
       .includes(searchOfficeStaffInput.toLowerCase())
   );
   const filteredStudents = students.filter((studentObj) =>
-    studentObj.student_name.toLowerCase().includes(searchStudentInput.toLowerCase())
+    studentObj.student_name
+      .toLowerCase()
+      .includes(searchStudentInput.toLowerCase())
   );
-
-
 
   // Dynamic fields for document uploads
   const [uploadFields, setUploadFields] = useState([
@@ -242,7 +240,9 @@ export const DocumentUpload = () => {
     if (!yearLevelID) return;
     setLoadingStudents(true);
     try {
-      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelID);
+      const allStudentsByClass = await fetchStudentYearLevelByClass(
+        yearLevelID
+      );
       setStudents(allStudentsByClass);
     } catch {
       console.log("Failed to load students");
@@ -270,17 +270,17 @@ export const DocumentUpload = () => {
     const { name, value } = e.target;
     if (name === "year_level") {
       setFormData((prev) => ({ ...prev, [name]: value, student: "" }));
-
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-
-
   const handleAddField = () => {
-    setAddField(AddField + 1)
-    setUploadFields([...uploadFields, { files: null, document_types: "", identities: "" }]);
+    setAddField(AddField + 1);
+    setUploadFields([
+      ...uploadFields,
+      { files: null, document_types: "", identities: "" },
+    ]);
     setIdentityErrors([...identityErrors, ""]);
   };
 
@@ -289,7 +289,6 @@ export const DocumentUpload = () => {
     newFields[index].files = e.target.files[0];
     setUploadFields(newFields);
   };
-
 
   const handleUploadChange = (e, index) => {
     const { name, value } = e.target;
@@ -309,19 +308,23 @@ export const DocumentUpload = () => {
     }
 
     if (name === "document_types" || name === "identities") {
-      newErrors[index] = validateIdentity(newFields[index].identities, newFields[index].document_types);
+      newErrors[index] = validateIdentity(
+        newFields[index].identities,
+        newFields[index].document_types
+      );
     }
 
     setIdentityErrors(newErrors);
     setDocTypeErrors(newDocErrors);
   };
 
-
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
       .map((field, idx) => (idx !== currentIndex ? field.document_types : null))
       .filter(Boolean);
-    return documentType.filter((doc) => !selectedDocTypes.includes(doc.id.toString()));
+    return documentType.filter(
+      (doc) => !selectedDocTypes.includes(doc.id.toString())
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -331,7 +334,9 @@ export const DocumentUpload = () => {
     try {
       for (const [index, field] of uploadFields.entries()) {
         if (!field.files || !field.document_types) {
-          setAlertMessage("Please select file and document type for all fields");
+          setAlertMessage(
+            "Please select file and document type for all fields"
+          );
           setShowAlert(true);
           setLoading(false);
           return;
@@ -346,11 +351,16 @@ export const DocumentUpload = () => {
         const formDataToSend = new FormData();
         formDataToSend.append("files", field.files);
         formDataToSend.append("document_types", field.document_types);
-        if (formData.student) formDataToSend.append("student", formData.student);
-        if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
-        if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
-        if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
-        if (field.identities) formDataToSend.append("identities", field.identities);
+        if (formData.student)
+          formDataToSend.append("student", formData.student);
+        if (formData.teacher)
+          formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian)
+          formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff)
+          formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities)
+          formDataToSend.append("identities", field.identities);
 
         await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -360,7 +370,13 @@ export const DocumentUpload = () => {
       setAlertMessage("Documents uploaded successfully!");
       setShowAlert(true);
       setUploadFields([{ files: null, document_types: "", identities: "" }]);
-      setFormData({ student: "", teacher: "", guardian: "", office_staff: "", year_level: "" });
+      setFormData({
+        student: "",
+        teacher: "",
+        guardian: "",
+        office_staff: "",
+        year_level: "",
+      });
       setRole("");
       setStep(0);
     } catch {
@@ -383,7 +399,9 @@ export const DocumentUpload = () => {
 
   useEffect(() => {
     if (formData.year_level && yearLevel.length > 0) {
-      const selected = yearLevel.find((yl) => yl.id === parseInt(formData.year_level));
+      const selected = yearLevel.find(
+        (yl) => yl.id === parseInt(formData.year_level)
+      );
       if (selected) setYearLevelID(selected.id);
     }
   }, [formData.year_level, yearLevel]);
@@ -416,7 +434,9 @@ export const DocumentUpload = () => {
         {/* Steps */}
         <ul className="steps mb-6 w-full">
           <li className={`step ${step >= 0 ? "step-primary" : ""}`}>Role</li>
-          <li className={`step ${step >= 1 ? "step-primary" : ""}`}>Fill Form</li>
+          <li className={`step ${step >= 1 ? "step-primary" : ""}`}>
+            Fill Form
+          </li>
         </ul>
 
         {/* Custom theme for steps */}
@@ -437,6 +457,7 @@ export const DocumentUpload = () => {
       `}
         </style>
 
+        {/* STEP 0 */}
         {/* STEP 0 */}
         {step === 0 && (
           <div className="w-full max-w-6xl mx-auto p-6">
@@ -461,7 +482,8 @@ export const DocumentUpload = () => {
                   </option>
                   {filteredRoles.map((roleItem) => (
                     <option key={roleItem.id} value={roleItem.name}>
-                      {roleItem.name}
+                      {roleItem.name.charAt(0).toUpperCase() +
+                        roleItem.name.slice(1).toLowerCase()}
                     </option>
                   ))}
                 </select>
@@ -472,8 +494,8 @@ export const DocumentUpload = () => {
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-graduation-cap text-sm"></i> Class{" "}
-                      <span className="text-error">*</span>
+                      <i className="fa-solid fa-graduation-cap text-sm"></i>{" "}
+                      Class <span className="text-error">*</span>
                     </span>
                   </label>
                   <select
@@ -484,7 +506,9 @@ export const DocumentUpload = () => {
                     onChange={handleChange}
                   >
                     <option value="">
-                      {yearLevel.length === 0 ? "Loading classes..." : "Select Class"}
+                      {yearLevel.length === 0
+                        ? "Loading classes..."
+                        : "Select Class"}
                     </option>
                     {yearLevel.map((yearlev) => (
                       <option value={yearlev.id} key={yearlev.id}>
@@ -497,12 +521,12 @@ export const DocumentUpload = () => {
             </div>
           </div>
         )}
-
         {/* STEP 1 */}
         {step === 1 && (
           <div className="w-full max-w-6xl mx-auto p-6">
             <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
-              Upload your documents <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+              Upload your documents{" "}
+              <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
             </h1>
 
             {uploadFields.map((field, index) => (
@@ -514,7 +538,8 @@ export const DocumentUpload = () => {
                 <div className="form-control w-full">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-file-upload text-sm"></i> Document Upload
+                      <i className="fa-solid fa-file-upload text-sm"></i>{" "}
+                      Document Upload
                       <span className="text-error">*</span>
                     </span>
                   </label>
@@ -583,10 +608,11 @@ export const DocumentUpload = () => {
                   {index === 0 ? (
                     <button
                       type="button"
-                      className={`btn bgTheme text-white w-40 ${AddField === 3
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-purple-700"
-                        }`}
+                      className={`btn bgTheme text-white w-40 ${
+                        AddField === 3
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-purple-700"
+                      }`}
                       onClick={handleAddField}
                       disabled={AddField === 3}
                     >
@@ -597,10 +623,11 @@ export const DocumentUpload = () => {
                       type="button"
                       className="btn btn-error w-full"
                       onClick={() => {
-                        setUploadFields(uploadFields.filter((_, i) => i !== index)), setAddField(AddField - 1)
-                      }
-
-                      }
+                        setUploadFields(
+                          uploadFields.filter((_, i) => i !== index)
+                        ),
+                          setAddField(AddField - 1);
+                      }}
                     >
                       <i className="fa-solid fa-trash mr-1"></i> Remove
                     </button>
@@ -615,7 +642,8 @@ export const DocumentUpload = () => {
                 <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-user-graduate text-sm"></i> Student
+                      <i className="fa-solid fa-user-graduate text-sm"></i>{" "}
+                      Student
                     </span>
                   </label>
 
@@ -625,12 +653,18 @@ export const DocumentUpload = () => {
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") setShowStudentDropdown(!showStudentDropdown);
+                      if (e.key === "Enter" || e.key === " ")
+                        setShowStudentDropdown(!showStudentDropdown);
                     }}
                   >
-                    {selectedStudentName || (loadingStudents ? "Loading students..." : "Select Student")}
+                    {selectedStudentName ||
+                      (loadingStudents
+                        ? "Loading students..."
+                        : "Select Student")}
                     <i
-                      className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showStudentDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -642,7 +676,9 @@ export const DocumentUpload = () => {
                           placeholder="Search Student..."
                           className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
                           value={searchStudentInput}
-                          onChange={(e) => setSearchStudentInput(e.target.value)}
+                          onChange={(e) =>
+                            setSearchStudentInput(e.target.value)
+                          }
                         />
                       </div>
 
@@ -668,7 +704,9 @@ export const DocumentUpload = () => {
                           ))
                         ) : (
                           <p className="p-2 text-gray-500 dark:text-gray-400">
-                            {loadingStudents ? "Loading students..." : "No students found."}
+                            {loadingStudents
+                              ? "Loading students..."
+                              : "No students found."}
                           </p>
                         )}
                       </div>
@@ -681,7 +719,8 @@ export const DocumentUpload = () => {
                 <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-chalkboard-teacher text-sm"></i> Teacher
+                      <i className="fa-solid fa-chalkboard-teacher text-sm"></i>{" "}
+                      Teacher
                     </span>
                   </label>
 
@@ -691,8 +730,9 @@ export const DocumentUpload = () => {
                   >
                     {selectedTeacherName || "Select Teacher"}
                     <i
-                      className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"
-                        } ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showTeacherDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -704,7 +744,9 @@ export const DocumentUpload = () => {
                           placeholder="Search Teacher..."
                           className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
                           value={searchTeacherInput}
-                          onChange={(e) => setSearchTeacherInput(e.target.value)}
+                          onChange={(e) =>
+                            setSearchTeacherInput(e.target.value)
+                          }
                         />
                       </div>
 
@@ -741,7 +783,6 @@ export const DocumentUpload = () => {
                   )}
                 </div>
               )}
-
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -749,18 +790,22 @@ export const DocumentUpload = () => {
                 <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-user-shield text-sm"></i> Guardian
+                      <i className="fa-solid fa-user-shield text-sm"></i>{" "}
+                      Guardian
                     </span>
                   </label>
 
                   <div
                     className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-                    onClick={() => setShowGuardianDropdown(!showGuardianDropdown)}
+                    onClick={() =>
+                      setShowGuardianDropdown(!showGuardianDropdown)
+                    }
                   >
                     {selectedGuardianName || "Select Guardian"}
                     <i
-                      className={`fa-solid fa-chevron-${showGuardianDropdown ? "up" : "down"
-                        } ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showGuardianDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -772,7 +817,9 @@ export const DocumentUpload = () => {
                           placeholder="Search Guardian..."
                           className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
                           value={searchGuardianInput}
-                          onChange={(e) => setSearchGuardianInput(e.target.value)}
+                          onChange={(e) =>
+                            setSearchGuardianInput(e.target.value)
+                          }
                         />
                       </div>
 
@@ -814,18 +861,22 @@ export const DocumentUpload = () => {
                 <div className="form-control relative">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-briefcase text-sm"></i> Office Staff
+                      <i className="fa-solid fa-briefcase text-sm"></i> Office
+                      Staff
                     </span>
                   </label>
 
                   <div
                     className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-                    onClick={() => setShowOfficeStaffDropdown(!showOfficeStaffDropdown)}
+                    onClick={() =>
+                      setShowOfficeStaffDropdown(!showOfficeStaffDropdown)
+                    }
                   >
                     {selectedOfficeStaffName || "Select Office Staff"}
                     <i
-                      className={`fa-solid fa-chevron-${showOfficeStaffDropdown ? "up" : "down"
-                        } ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showOfficeStaffDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -837,7 +888,9 @@ export const DocumentUpload = () => {
                           placeholder="Search Office Staff..."
                           className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
                           value={searchOfficeStaffInput}
-                          onChange={(e) => setSearchOfficeStaffInput(e.target.value)}
+                          onChange={(e) =>
+                            setSearchOfficeStaffInput(e.target.value)
+                          }
                         />
                       </div>
 
@@ -874,23 +927,23 @@ export const DocumentUpload = () => {
                   )}
                 </div>
               )}
-
             </div>
           </div>
         )}
 
         {/* Navigation Buttons */}
         <div className="flex flex-col ju md:flex-row items-center md:items-stretch gap-4 p-6">
-         
           {step === 0 && (
             <div className="flex-1 flex justify-end">
               <button
                 type="button"
                 onClick={next}
-                className={`btn bgTheme text-white w-40 ${role.length === 0 || (role === constants.roles.student && !formData.year_level)
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-purple-700"
-                  }`}
+                className={`btn bgTheme text-white w-40 ${
+                  role.length === 0 ||
+                  (role === constants.roles.student && !formData.year_level)
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purple-700"
+                }`}
                 disabled={
                   role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
@@ -900,36 +953,37 @@ export const DocumentUpload = () => {
               </button>
             </div>
           )}
-   {step === 1 && (
-  <div className="flex-1 flex justify-end gap-4">
-    <button
-      type="button"
-      onClick={prev}
-      className="btn bgTheme text-white w-40 hover:bg-purple-700 flex items-center justify-center"
-    >
-      <i className="fa-solid fa-arrow-left mr-2"></i> Back
-    </button>
+          {step === 1 && (
+            <div className="flex-1 flex justify-end gap-4">
+              <button
+                type="button"
+                onClick={prev}
+                className="btn bgTheme text-white w-40 hover:bg-purple-700 flex items-center justify-center"
+              >
+                <i className="fa-solid fa-arrow-left mr-2"></i> Back
+              </button>
 
-    <button
-      type="submit"
-      className={`btn bgTheme text-white w-40 ${
-        Disable ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"
-      }`}
-      disabled={Disable}
-    >
-      {loading ? (
-        <>
-          <i className="fa-solid fa-spinner fa-spin mr-2"></i> 
-        </>
-      ) : (
-        <>
-          <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Upload
-        </>
-      )}
-    </button>
-  </div>
-)}
-
+              <button
+                type="submit"
+                className={`btn bgTheme text-white w-40 ${
+                  Disable
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purple-700"
+                }`}
+                disabled={Disable}
+              >
+                {loading ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-cloud-upload-alt mr-2"></i> Upload
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </form>
 

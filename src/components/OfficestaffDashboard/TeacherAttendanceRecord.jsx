@@ -11,6 +11,7 @@ const TeacherAttendanceRecord = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [updating, setUpdating] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
@@ -37,8 +38,13 @@ const TeacherAttendanceRecord = () => {
     const matchesName = searchName
       ? r.teacher_name.toLowerCase().includes(searchName.toLowerCase())
       : true;
-    return matchesDate && matchesName;
+    const matchesStatus = statusFilter
+      ? r.status.toLowerCase() === statusFilter.toLowerCase()
+      : true;
+
+    return matchesDate && matchesName && matchesStatus;
   });
+
 
   const openModal = (record) => {
     setSelectedRecord(record);
@@ -100,7 +106,7 @@ const TeacherAttendanceRecord = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
@@ -108,24 +114,54 @@ const TeacherAttendanceRecord = () => {
           </h1>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b pb-2 dark:border-gray-700">
-          <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-            <input
-              type="date"
-              value={searchDate}
-              onChange={(e) => setSearchDate(e.target.value)}
-              className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b pb-4 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4 w-full sm:w-auto">
+            {/* Date Filter */}
+            <div className="w-full sm:w-64">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Filter by Date:
+              </label>
+              <input
+                type="date"
+                value={searchDate}
+                onChange={(e) => setSearchDate(e.target.value)}
+                max={new Date().toISOString().split("T")[0]} 
+                className="border px-3 py-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <div className="w-full sm:w-64">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Filter by Status:
+              </label>
+              <select
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="">All Statuses</option>
+                <option value="present">Present</option>
+                <option value="leave">Leave</option>
+                <option value="absent">Absent</option>
+              </select>
+            </div>
           </div>
 
-          <input
-            type="text"
-            placeholder="Enter teacher name..."
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value.trimStart())}
-            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-          />
+          <div className="w-full sm:w-64">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              Search by Teacher Name:
+            </label>
+            <input
+              type="text"
+              placeholder="Enter teacher name..."
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value.trimStart())}
+              className="border px-3 py-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            />
+          </div>
         </div>
+
 
         <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600 text-xs sm:text-sm">
@@ -139,39 +175,41 @@ const TeacherAttendanceRecord = () => {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredRecords.length > 0 ? (
-                filteredRecords.map((record) => (
-                  <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
-                    <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
-                      {record.teacher_name}
-                    </td>
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date}</td>
-                    <td className="px-4 py-3 capitalize">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${record.status.toLowerCase() === 'present'
+                [...filteredRecords]
+                  .sort((a, b) => a.teacher_name.localeCompare(b.teacher_name))
+                  .map((record) => (
+                    <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
+                      <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-white">
+                        {record.teacher_name}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date}</td>
+                      <td className="px-4 py-3 capitalize">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${record.status.toLowerCase() === 'present'
                             ? 'bg-green-100 text-green-800 dark:bg-green-200 dark:text-green-900'
                             : record.status.toLowerCase() === 'leave'
                               ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-200 dark:text-yellow-900'
                               : 'bg-red-100 text-red-600 dark:bg-red-200 dark:text-red-800'
-                          }`}
-                      >
-                        {record.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => openModal(record)}
-                        className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:border-yellow-400 dark:bg-yellow-100 dark:text-yellow-900 dark:hover:bg-yellow-200"
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                            }`}
+                        >
+                          {record.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => openModal(record)}
+                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:border-yellow-400 dark:bg-yellow-100 dark:text-yellow-900 dark:hover:bg-yellow-200"
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  ))
               ) : (
                 <tr>
                   <td
                     colSpan="4"
-                    className="px-4 py-6 text-center  text-red-600 dark:text-red-400"
+                    className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
                   >
                     No records found {searchDate ? `for ${searchDate}` : ''}
                   </td>

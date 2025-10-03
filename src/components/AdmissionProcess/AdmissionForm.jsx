@@ -28,7 +28,8 @@ export const AdmissionForm = () => {
 
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const formRef = useRef(null);
-  const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] = useState(false);
+  const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] =
+    useState(false);
   const [isRTE, setIsRTE] = useState(false);
 
   const {
@@ -134,7 +135,7 @@ export const AdmissionForm = () => {
       setYearLevel(yearLevels);
     } catch (err) {
       console.log("Failed to load year levels. Please try again.");
-    } 
+    }
   };
 
   const getSchoolYears = async () => {
@@ -182,9 +183,6 @@ export const AdmissionForm = () => {
     }
   };
 
-
-
-
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -199,7 +197,6 @@ export const AdmissionForm = () => {
           getState(),
           getCity(),
         ]);
-
       } catch (err) {
         setError("Failed to fetch data");
       } finally {
@@ -209,7 +206,6 @@ export const AdmissionForm = () => {
 
     fetchAllData();
   }, []);
-
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -258,7 +254,8 @@ export const AdmissionForm = () => {
       setIsRTE(false);
     } catch (error) {
       alert(
-        `Failed to submit the form: ${error.response?.data?.message || error.message
+        `Failed to submit the form: ${
+          error.response?.data?.message || error.message
         }`
       );
     } finally {
@@ -288,12 +285,13 @@ export const AdmissionForm = () => {
     );
   }
 
-
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }
@@ -304,7 +302,7 @@ export const AdmissionForm = () => {
       <form
         ref={formRef}
         // className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
-        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
+        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-20"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
@@ -348,8 +346,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="First Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.first_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.first_name ? "input-error" : ""
+                }`}
               />
               {errors.student?.first_name && (
                 <span className="text-error text-sm">
@@ -398,8 +397,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Last Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.last_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.last_name ? "input-error" : ""
+                }`}
               />
               {errors.student?.last_name && (
                 <span className="text-error text-sm">
@@ -426,8 +426,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="student@example.com"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.email ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.email ? "input-error" : ""
+                }`}
               />
               {errors.student?.email && (
                 <span className="text-error text-sm">
@@ -458,8 +459,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg : Password@123"
-                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.student?.password ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full pr-10 focus:outline-none ${
+                  errors.student?.password ? "input-error" : ""
+                }`}
               />
               <button
                 type="button"
@@ -467,8 +469,9 @@ export const AdmissionForm = () => {
                 onClick={handleShowPassword}
               >
                 <i
-                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
               {errors.student?.password && (
@@ -500,8 +503,9 @@ export const AdmissionForm = () => {
                     return true;
                   },
                 })}
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.date_of_birth ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.date_of_birth ? "input-error" : ""
+                }`}
               />
               {errors.student?.date_of_birth && (
                 <span className="text-error text-sm">
@@ -521,8 +525,9 @@ export const AdmissionForm = () => {
                 {...register("student.gender", {
                   required: "Gender is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.gender ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.student?.gender ? "select-error" : ""
+                }`}
               >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
@@ -536,7 +541,6 @@ export const AdmissionForm = () => {
                 </span>
               )}
             </div>
-
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div className="form-control">
@@ -556,8 +560,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Father's Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.father_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.father_name ? "input-error" : ""
+                }`}
               />
               {errors.student?.father_name && (
                 <span className="text-error text-sm">
@@ -582,8 +587,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Mother's Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.mother_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.mother_name ? "input-error" : ""
+                }`}
               />
               {errors.student?.mother_name && (
                 <span className="text-error text-sm">
@@ -608,8 +614,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Religion"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.religion ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.religion ? "input-error" : ""
+                }`}
               />
               {errors.student?.religion && (
                 <span className="text-error text-sm">
@@ -630,8 +637,9 @@ export const AdmissionForm = () => {
                 {...register("student.category", {
                   required: "Category is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.category ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.student?.category ? "select-error" : ""
+                }`}
               >
                 <option value="">Select Category</option>
                 <option value="GEN">General</option>
@@ -649,7 +657,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-ruler-vertical text-sm"></i>
-                  Height
+                  Height (cm)
                 </span>
               </label>
               <input
@@ -658,8 +666,9 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Height must be positive" },
                 })}
                 placeholder="Height"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.height ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.height ? "input-error" : ""
+                }`}
                 min={0} // prevents down arrow from going negative
                 onKeyDown={(e) => {
                   if (e.key === "-" || e.key === "e") e.preventDefault(); // prevents typing negative or 'e'
@@ -667,7 +676,9 @@ export const AdmissionForm = () => {
                 onWheel={(e) => e.target.blur()} // prevents scroll changing value
               />
               {errors.student?.height && (
-                <span className="text-error text-sm">{errors.student.height.message}</span>
+                <span className="text-error text-sm">
+                  {errors.student.height.message}
+                </span>
               )}
             </div>
 
@@ -675,7 +686,7 @@ export const AdmissionForm = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-weight-scale text-sm"></i>
-                  Weight
+                  Weight (kg)
                 </span>
               </label>
               <input
@@ -684,8 +695,9 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Weight must be positive" },
                 })}
                 placeholder="Weight"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.weight ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.weight ? "input-error" : ""
+                }`}
               />
               {errors.student?.weight && (
                 <span className="text-error text-sm">
@@ -733,8 +745,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Number of Siblings"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.number_of_siblings ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.student?.number_of_siblings ? "input-error" : ""
+                }`}
               />
               {errors.student?.number_of_siblings && (
                 <span className="text-error text-sm">
@@ -763,8 +776,9 @@ export const AdmissionForm = () => {
                     },
                   })}
                   placeholder="RTE Number"
-                  className={`input input-bordered w-full focus:outline-none ${errors.rte_number ? "input-error" : ""
-                    }`}
+                  className={`input input-bordered w-full focus:outline-none ${
+                    errors.rte_number ? "input-error" : ""
+                  }`}
                 />
                 {errors.rte_number && (
                   <span className="text-error text-sm">
@@ -797,8 +811,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="First Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.first_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.first_name ? "input-error" : ""
+                }`}
               />
               {errors.guardian?.first_name && (
                 <span className="text-error text-sm">
@@ -847,8 +862,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Last Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.last_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.last_name ? "input-error" : ""
+                }`}
               />
               {errors.guardian?.last_name && (
                 <span className="text-error text-sm">
@@ -875,8 +891,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="guardian@example.com"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.email ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.email ? "input-error" : ""
+                }`}
               />
               {errors.guardian?.email && (
                 <span className="text-error text-sm">
@@ -907,8 +924,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg: Password@123"
-                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.guardian?.password ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full pr-10 focus:outline-none ${
+                  errors.guardian?.password ? "input-error" : ""
+                }`}
               />
               <button
                 type="button"
@@ -916,8 +934,9 @@ export const AdmissionForm = () => {
                 onClick={handleShowGuardianPassword}
               >
                 <i
-                  className={`fa-solid ${showGuardianPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${
+                    showGuardianPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
               {errors.guardian?.password && (
@@ -937,8 +956,9 @@ export const AdmissionForm = () => {
                 {...register("guardian_type_input", {
                   required: "Guardian type is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type_input ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.guardian_type_input ? "select-error" : ""
+                }`}
                 value={selectedGuardianType}
                 onChange={handleGuardianTypesChange}
               >
@@ -964,25 +984,73 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="tel"
-
                 {...register("guardian.phone_no", {
                   required: "Phone number is required",
                   pattern: {
-                    value: /^\d{10}$/,
+                    value: /^[6789]\d{9}$/,
+                    message:
+                      "Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits",
+                  },
+                  minLength: {
+                    value: 10,
                     message: "Phone number must be exactly 10 digits",
                   },
                   maxLength: {
-                    value: 50,
-                    message: "Phone number cannot exceed 50 characters",
+                    value: 10,
+                    message: "Phone number must be exactly 10 digits",
+                  },
+                  validate: {
+                    validStart: (value) =>
+                      /^[6789]/.test(value) ||
+                      "Phone number must start with 6, 7, 8, or 9",
                   },
                 })}
                 placeholder="Phone Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.phone_no ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.phone_no ? "input-error" : ""
+                }`}
+                onInput={(e) => {
+                  // Remove any non-digit characters
+                  e.target.value = e.target.value.replace(/\D/g, "");
+                  // Limit to 10 digits
+                  if (e.target.value.length > 10) {
+                    e.target.value = e.target.value.slice(0, 10);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  // Prevent typing of non-numeric characters except Backspace, Tab, Delete, Arrow keys
+                  if (
+                    !/[\d]|Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown/.test(
+                      e.key
+                    )
+                  ) {
+                    e.preventDefault();
+                  }
+
+                  // Prevent typing if first character is not 6,7,8,9 when at position 0
+                  if (e.target.selectionStart === 0 && /[0-5]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => {
+                  // Get pasted data
+                  const pastedData = e.clipboardData
+                    .getData("text")
+                    .replace(/\D/g, "");
+
+                  // Check if pasted data starts with valid digit
+                  if (!/^[6789]/.test(pastedData)) {
+                    e.preventDefault();
+                    // Optional: Show a temporary message
+                    alert("Pasted phone number must start with 6, 7, 8, or 9");
+                  }
+                }}
               />
               {errors.guardian?.phone_no && (
                 <span className="text-error text-sm">
-                  {errors.guardian.phone_no.message}
+                  {errors.guardian.phone_no.type === "validStart"
+                    ? errors.guardian.phone_no.message
+                    : errors.guardian.phone_no.message}
                 </span>
               )}
             </div>
@@ -1005,8 +1073,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Annual Income"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.annual_income ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.annual_income ? "input-error" : ""
+                }`}
               />
               {errors.guardian?.annual_income && (
                 <span className="text-error text-sm">
@@ -1047,8 +1116,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Qualification"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.qualification ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.qualification ? "input-error" : ""
+                }`}
               />
               {errors.guardian?.qualification && (
                 <span className="text-error text-sm">
@@ -1075,8 +1145,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Occupation"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.occupation ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.guardian?.occupation ? "input-error" : ""
+                }`}
               />
               {errors.guardian?.occupation && (
                 <span className="text-error text-sm">
@@ -1126,8 +1197,9 @@ export const AdmissionForm = () => {
                 {...register("year_level", {
                   required: "Year level is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.year_level ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.year_level ? "select-error" : ""
+                }`}
               >
                 <option value="">Select Year Level</option>
                 {yearLevel.map((yearlev) => (
@@ -1153,8 +1225,9 @@ export const AdmissionForm = () => {
                 {...register("school_year", {
                   required: "School year is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.school_year ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.school_year ? "select-error" : ""
+                }`}
               >
                 <option value="">Select School Year</option>
                 {schoolYears.map((schoolYear) => (
@@ -1188,8 +1261,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Previous School Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.previous_school_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.previous_school_name ? "input-error" : ""
+                }`}
               />
               {errors.previous_school_name && (
                 <span className="text-error text-sm">
@@ -1214,8 +1288,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Previous Class/Grade"
-                className={`input input-bordered w-full focus:outline-none ${errors.previous_standard_studied ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.previous_standard_studied ? "input-error" : ""
+                }`}
               />
               {errors.previous_standard_studied && (
                 <span className="text-error text-sm">
@@ -1246,11 +1321,14 @@ export const AdmissionForm = () => {
                     return true;
                   },
                 })}
-                className={`input input-bordered w-full focus:outline-none ${errors.admission_date ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.admission_date ? "input-error" : ""
+                }`}
               />
               {errors.admission_date && (
-                <span className="text-error text-sm">{errors.admission_date.message}</span>
+                <span className="text-error text-sm">
+                  {errors.admission_date.message}
+                </span>
               )}
             </div>
 
@@ -1265,8 +1343,9 @@ export const AdmissionForm = () => {
                 {...register("tc_letter", {
                   required: "TC letter status is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.tc_letter ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.tc_letter ? "select-error" : ""
+                }`}
               >
                 <option value="">Select</option>
                 <option value="yes">Yes</option>
@@ -1293,21 +1372,70 @@ export const AdmissionForm = () => {
                 {...register("emergency_contact_no", {
                   required: "Emergency contact is required",
                   pattern: {
-                    value: /^\d{10}$/,
+                    value: /^[6789]\d{9}$/,
+                    message:
+                      "Emergency contact must start with 6, 7, 8, or 9 and be exactly 10 digits",
+                  },
+                  minLength: {
+                    value: 10,
                     message: "Emergency contact must be exactly 10 digits",
                   },
                   maxLength: {
-                    value: 100,
-                    message: "Emergency contact cannot exceed 100 characters",
+                    value: 10,
+                    message: "Emergency contact must be exactly 10 digits",
+                  },
+                  validate: {
+                    validStart: (value) =>
+                      /^[6789]/.test(value) ||
+                      "Emergency contact must start with 6, 7, 8, or 9",
                   },
                 })}
                 placeholder="Emergency Contact"
-                className={`input input-bordered w-full focus:outline-none ${errors.emergency_contact_no ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.emergency_contact_no ? "input-error" : ""
+                }`}
+                onInput={(e) => {
+                  // Remove any non-digit characters
+                  e.target.value = e.target.value.replace(/\D/g, "");
+                  // Limit to 10 digits
+                  if (e.target.value.length > 10) {
+                    e.target.value = e.target.value.slice(0, 10);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  // Prevent typing of non-numeric characters except Backspace, Tab, Delete, Arrow keys
+                  if (
+                    !/[\d]|Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown/.test(
+                      e.key
+                    )
+                  ) {
+                    e.preventDefault();
+                  }
+
+                  // Prevent typing if first character is not 6,7,8,9 when at position 0
+                  if (e.target.selectionStart === 0 && /[0-5]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onPaste={(e) => {
+                  // Get pasted data
+                  const pastedData = e.clipboardData
+                    .getData("text")
+                    .replace(/\D/g, "");
+
+                  // Check if pasted data starts with valid digit
+                  if (!/^[6789]/.test(pastedData)) {
+                    e.preventDefault();
+                    // Optional: Show a temporary message
+                    alert("Pasted phone number must start with 6, 7, 8, or 9");   
+                  }
+                }}
               />
               {errors.emergency_contact_no && (
                 <span className="text-error text-sm">
-                  {errors.emergency_contact_no.message}
+                  {errors.emergency_contact_no.type === "validStart"
+                    ? errors.emergency_contact_no.message
+                    : errors.emergency_contact_no.message}
                 </span>
               )}
             </div>
@@ -1329,10 +1457,11 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Distance in km"
-                className={`input input-bordered w-full focus:outline-none ${errors.entire_road_distance_from_home_to_school
-                  ? "input-error"
-                  : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.entire_road_distance_from_home_to_school
+                    ? "input-error"
+                    : ""
+                }`}
               />
               {errors.entire_road_distance_from_home_to_school && (
                 <span className="text-error text-sm">
@@ -1356,8 +1485,9 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Marks cannot be negative" },
                 })}
                 placeholder="Marks Obtained"
-                className={`input input-bordered w-full focus:outline-none ${errors.obtain_marks ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.obtain_marks ? "input-error" : ""
+                }`}
               />
               {errors.obtain_marks && (
                 <span className="text-error text-sm">
@@ -1379,8 +1509,9 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Total marks cannot be negative" },
                 })}
                 placeholder="Total Marks"
-                className={`input input-bordered w-full focus:outline-none ${errors.total_marks ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.total_marks ? "input-error" : ""
+                }`}
               />
               {errors.total_marks && (
                 <span className="text-error text-sm">
@@ -1409,8 +1540,9 @@ export const AdmissionForm = () => {
                   max: { value: 2147483647, message: "Invalid house number" },
                 })}
                 placeholder="House Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.house_no ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.address?.house_no ? "input-error" : ""
+                }`}
               />
               {errors.address?.house_no && (
                 <span className="text-error text-sm">
@@ -1437,8 +1569,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Habitation"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.habitation ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.address?.habitation ? "input-error" : ""
+                }`}
               />
               {errors.address?.habitation && (
                 <span className="text-error text-sm">
@@ -1465,8 +1598,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Block"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.block ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.address?.block ? "input-error" : ""
+                }`}
               />
               {errors.address?.block && (
                 <span className="text-error text-sm">
@@ -1537,8 +1671,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="District"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.district ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.address?.district ? "input-error" : ""
+                }`}
               />
               {errors.address?.district && (
                 <span className="text-error text-sm">
@@ -1559,8 +1694,9 @@ export const AdmissionForm = () => {
                 {...register("address_input.city", {
                   required: "City is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none ${errors.address?.city ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none ${
+                  errors.address?.city ? "select-error" : ""
+                }`}
               >
                 <option value="">Select City</option>
                 {city.map((city) => (
@@ -1594,8 +1730,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Division"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.division ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.address?.division ? "input-error" : ""
+                }`}
               />
               {errors.address?.division && (
                 <span className="text-error text-sm">
@@ -1618,8 +1755,9 @@ export const AdmissionForm = () => {
                 {...register("address_input.state", {
                   required: "State is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none ${errors.address?.state ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none ${
+                  errors.address?.state ? "select-error" : ""
+                }`}
               >
                 <option value="">Select State</option>
                 {state.map((state) => (
@@ -1647,8 +1785,9 @@ export const AdmissionForm = () => {
                 {...register("address_input.country", {
                   required: "Country is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none ${errors.address?.country ? "select-error" : ""
-                  }`}
+                className={`select select-bordered w-full focus:outline-none ${
+                  errors.address?.country ? "select-error" : ""
+                }`}
               >
                 <option value="">Select Country</option>
                 {country.map((country) => (
@@ -1680,8 +1819,9 @@ export const AdmissionForm = () => {
                   max: { value: 2147483647, message: "Invalid pin code" },
                 })}
                 placeholder="Pin Code"
-                className={`input input-bordered w-full focus:outline-none ${errors.address?.area_code ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.address?.area_code ? "input-error" : ""
+                }`}
               />
               {errors.address?.area_code && (
                 <span className="text-error text-sm">
@@ -1708,8 +1848,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Full Address"
-                className={`textarea textarea-bordered w-full focus:outline-none ${errors.address?.address_line ? "textarea-error" : ""
-                  }`}
+                className={`textarea textarea-bordered w-full focus:outline-none ${
+                  errors.address?.address_line ? "textarea-error" : ""
+                }`}
               ></textarea>
               {errors.address?.address_line && (
                 <span className="text-error text-sm">
@@ -1746,8 +1887,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Full Name as in Bank"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.holder_name ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.banking_detail_input?.holder_name ? "input-error" : ""
+                }`}
                 onInput={(e) => {
                   e.target.value = e.target.value
                     .replace(/[^A-Za-z\s]/g, "")
@@ -1779,8 +1921,9 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Account Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.account_no ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.banking_detail_input?.account_no ? "input-error" : ""
+                }`}
                 onInput={(e) => {
                   e.target.value = e.target.value.replace(/[^0-9]/g, "");
                 }}
@@ -1806,12 +1949,14 @@ export const AdmissionForm = () => {
                   required: "IFSC code is required",
                   pattern: {
                     value: /^[A-Z]{4}[0-9A-Z][A-Z0-9]{6}$/,
-                    message: "Invalid IFSC code format (e.g. SBIN0001234 or BARBOBHOPAL)",
+                    message:
+                      "Invalid IFSC code format (e.g. SBIN0001234 or BARBOBHOPAL)",
                   },
                 })}
                 placeholder="eg: SBIN0001234"
-                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.ifsc_code ? "input-error" : ""
-                  }`}
+                className={`input input-bordered w-full focus:outline-none ${
+                  errors.banking_detail_input?.ifsc_code ? "input-error" : ""
+                }`}
                 onInput={(e) => {
                   e.target.value = e.target.value
                     .toUpperCase()
@@ -1824,17 +1969,13 @@ export const AdmissionForm = () => {
                   {errors.banking_detail_input.ifsc_code.message}
                 </span>
               )}
-
             </div>
           </div>
         </div>
 
         {/* Submit Button */}
         <div className="flex justify-center mt-10">
-          <button
-            type="submit"
-            className="btn bgTheme text-white w-40"
-          >
+          <button type="submit" className="btn bgTheme text-white w-40">
             {loading ? (
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
             ) : (
