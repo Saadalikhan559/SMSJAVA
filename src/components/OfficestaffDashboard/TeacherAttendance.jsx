@@ -77,7 +77,7 @@ const TeacherAttendance = () => {
       );
       setShowAlert(true);
     } catch {
-      setAlertMessage("Failed to mark Attendance");
+      setAlertMessage("Attendance is already Marked");
       setShowAlert(true);
     }
   };
@@ -155,7 +155,7 @@ const TeacherAttendance = () => {
         <div className=" flex justify-end">
           <Link
             to={allRouterLink.teacherAttendanceRecord}
-            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            className="btn bgTheme text-white"
           >
             Attendance Record <span>&rarr;</span>
           </Link>
@@ -206,6 +206,7 @@ const TeacherAttendance = () => {
                     <td className="px-4 py-3">
                       <input
                         type="date"
+                        disabled={attendance[teacher.id]?.marked}
                         value={attendance[teacher.id]?.date || ""}
                         onChange={(e) => handleChange(teacher.id, "date", e.target.value)}
                         max={new Date().toISOString().split("T")[0]}
@@ -216,7 +217,9 @@ const TeacherAttendance = () => {
                       <select
                         value={attendance[teacher.id]?.status || ""}
                         onChange={(e) => handleChange(teacher.id, "status", e.target.value)}
-                        className="select select-bordered w-full focus:outline-none text-nowrap border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                        disabled={attendance[teacher.id]?.marked}
+                        className={`select select-bordered w-full focus:outline-none text-nowrap border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 ${attendance[teacher.id]?.marked ? "bg-gray-300 cursor-not-allowed" : ""
+                          }`}
                       >
                         <option value="">-- Select Status --</option>
                         <option value="absent">Absent</option>
@@ -224,6 +227,7 @@ const TeacherAttendance = () => {
                         <option value="present">Present</option>
                       </select>
                     </td>
+
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleSave(teacher)}
