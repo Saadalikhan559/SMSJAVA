@@ -240,7 +240,7 @@ const Marksheet = () => {
                     ))}
                     <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
                   </tr>
-                                    <tr className="bg-white">
+                  <tr className="bg-white">
                     <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                       RANK
                     </td>
@@ -249,7 +249,7 @@ const Marksheet = () => {
                     ))}
                     <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
                   </tr>
-                                    <tr className="bg-white">
+                  <tr className="bg-white">
                     <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                       ATTENDANCE
                     </td>
@@ -258,7 +258,7 @@ const Marksheet = () => {
                     ))}
                     <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
                   </tr>
-                                    <tr className="bg-white">
+                  <tr className="bg-white">
                     <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                       DIVISION
                     </td>
@@ -292,7 +292,7 @@ const Marksheet = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {["GK/MORAL/EVS","Conversation", "Drawing/Craft", "Drawing"].map((subj) => (
+                  {["GK/MORAL/EVS", "Conversation", "Drawing/Craft", "Drawing"].map((subj) => (
                     <tr key={subj} className="bg-white">
                       <td className="border border-black px-1 py-0.5 text-left">{subj}</td>
                       <td className="border border-black font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 1")?.grade || "-"}</td>
@@ -326,13 +326,49 @@ const Marksheet = () => {
               </table>
             </div>
           </div>
-
           {/* Footer */}
           <div className="border-t-2 border-black pt-1 md:pt-3 text-xxs md:text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 md:mb-4">
-              <div><strong>Pass/Promoted to Class:</strong> {safeString(data.promoted_to_class)}</div>
-              <div><strong>Supplementary In:</strong> {data.supplementary_in.length > 0 ? data.supplementary_in.join(", ") : "—"}</div>
-              <div><strong>School Re-opens on:</strong> {new Date(data.school_reopen_date).toLocaleDateString("en-GB")}</div>
+              <div>
+                <strong>Pass/Promoted to Class:</strong>{" "}
+                {data.promoted_to_class}
+              </div>
+              <div>
+                <strong>Supplementary In:</strong>{" "}
+                {data.supplementary_in.length > 0
+                  ? data.supplementary_in.join(", ")
+                  : "—"}
+              </div>
+              <div>
+                <strong>School Re-opens on:</strong>{" "}
+                {new Date(data.school_reopen_date).toLocaleDateString("en-GB")}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 text-center pt-2 md:pt-4 border-t border-gray-400 font-semibold text-red-700 gap-2 md:gap-0">
+              <div>
+                <p>Sign of Class Teacher</p>
+                <img
+                  src="https://a.storyblok.com/f/191576/1176x882/0707bde47c/make_signature_hero_after.webp"
+                  alt="Class Teacher Signature"
+                  className="h-16 md:h-22 mx-auto object-contain"
+                />
+              </div>
+              <div>
+                <p>Sign of Principal</p>
+                <img
+                  src="https://www.signwell.com/assets/vip-signatures/muhammad-ali-signature-3f9237f6fc48c3a04ba083117948e16ee7968aae521ae4ccebdfb8f22596ad22.svg"
+                  alt="Principal Signature"
+                  className="h-16 md:h-22 mx-auto object-contain"
+                />
+              </div>
+              <div>
+                <p>Parent's/Guardian's Sign</p>
+                <img
+                  src="https://www.shutterstock.com/image-vector/signature-vector-hand-drawn-autograph-600nw-2387543207.jpg"
+                  alt="Parent/Guardian Signature"
+                  className="h-16 md:h-22 mx-auto object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>
