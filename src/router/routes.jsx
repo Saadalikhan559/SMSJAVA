@@ -208,12 +208,18 @@ export const routes = [
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.teacher],
   },
+  // {
+  //   path: allRouterLink.UpdateExamPaper,
+  //   element: <UpdateExamPaper />,
+  //   protected: true,
+  //   allowedRoles: [constants.roles.director, constants.roles.teacher],
+  // },
   {
-    path: allRouterLink.UpdateExamPaper,
-    element: <UpdateExamPaper />,
-    protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
-  },
+  path: `${allRouterLink.UpdateExamPaper}/:id`,
+  element: <UpdateExamPaper />,
+  protected: true,
+  allowedRoles: [constants.roles.director, constants.roles.teacher],
+},
   {
     path: allRouterLink.viewDocuments,
     element: <ViewDocuments />,
