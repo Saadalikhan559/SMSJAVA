@@ -7,6 +7,7 @@ import PaymentStatusDialogOffline from "./PaymentStatusDialogOffline";
 import { fetchStudents1 } from "../../services/api/Api";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { useParams } from "react-router-dom";
 
 export const StudentAdmissionFees = () => {
   const [students, setStudents] = useState([]);
@@ -23,7 +24,7 @@ export const StudentAdmissionFees = () => {
   const [ setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
-
+const {id} = useParams()
   console.log("fee", availableFees);
 
 
@@ -115,7 +116,8 @@ export const StudentAdmissionFees = () => {
       setIsLoading(true);
       setApiError("");
       const Students = await fetchStudents1(classId);
-      setStudents(Students);
+      const stu = students.find((s)=>s.id === id)
+      setStudents(stu);
     } catch (err) {
       console.log(err);
       
