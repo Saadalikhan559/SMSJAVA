@@ -63,7 +63,7 @@ const TimeTable = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4 flex items-center justify-center gap-2">
           <i className="fa-solid fa-table-list text-4xl text-gray-800 dark:text-gray-100"></i>

@@ -4,7 +4,7 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 import PaymentStatusDialog from "./PaymentStatusDialog";
 import PaymentStatusDialogOffline from "./PaymentStatusDialogOffline";
-import { fetchStudents1 } from "../../services/api/Api";
+import { fetchStudentById, fetchStudents1 } from "../../services/api/Api";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
@@ -25,7 +25,7 @@ export const StudentAdmissionFees = () => {
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
 const {id} = useParams()
-  console.log("fee", availableFees);
+  console.log("id", id);
 
 
 
@@ -74,7 +74,17 @@ const {id} = useParams()
       setIsLoading(false);
     }
   };
-
+  const getStudent = async () => {
+    try {
+      const data = await fetchStudentById(id);
+      console.log(data);
+      
+    } catch (error) {
+      console.error("Error loading student data", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchAvailableFees = async (studentId) => {
     if (!studentId) {
@@ -111,25 +121,26 @@ const {id} = useParams()
     }
   };
   // Fetch students for selected class
-  const getStudents = async (classId) => {
-    try {
-      setIsLoading(true);
-      setApiError("");
-      const Students = await fetchStudents1(classId);
-      const stu = students.find((s)=>s.id === id)
-      setStudents(stu);
-    } catch (err) {
-      console.log(err);
+  // const getStudents = async (classId) => {
+  //   try {
+  //     setIsLoading(true);
+  //     setApiError("");
+  //     const Students = await fetchStudents1(classId);
+  //     setStudents(stu);
+  //   } catch (err) {
+  //     console.log(err);
       
-      setApiError("Failed to load students");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     setApiError("Failed to load students");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
 
 
   useEffect(() => {
     getClasses();
+    getStudent()
   }, []);
 
   const handleClassChange = (e) => {
