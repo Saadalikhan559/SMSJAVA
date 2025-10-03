@@ -153,7 +153,7 @@ const DirectorMarkHolidays = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-gray-800 dark:text-gray-100">
-                  End Date
+                  End Date <span className="text-error">*</span>
                 </span>
               </label>
               <input

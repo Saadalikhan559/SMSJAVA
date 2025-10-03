@@ -102,7 +102,7 @@ const AllStudentsPerClass = () => {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="text-center py-6 text-red-500 dark:text-red-400">
+                  <td colSpan="2" className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
                     No students found.
                   </td>
                 </tr>

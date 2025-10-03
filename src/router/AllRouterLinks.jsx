@@ -1,3 +1,4 @@
+import { StudentAdmissionFees } from "../components/AdmissionProcess/StudentAdmissionFees";
 import PrivacyPolicy from "../components/Privacy/Privacy";
 
 export const allRouterLink = {
@@ -80,6 +81,7 @@ export const allRouterLink = {
     schoolIncome: "/schoolIncome",
     createIncome: "/createIncome",
     editIncom:"/editIncom/:id",
+    studentAdmissionFees:"/studentAdmissionFees/:id",
     privacyPolicy:"/privacyPolicy",
 
     // all routes before this
