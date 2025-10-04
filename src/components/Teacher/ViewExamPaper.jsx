@@ -606,7 +606,7 @@ const ViewExamPaper = () => {
                       </Link>
 
                       <button
-                        className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1]"
+                        className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1] text-nowrap"
                         onClick={() => handleViewPaper(paper.uploaded_file)}
                       >
                         View Paper
