@@ -41,6 +41,22 @@ export const DirectorDashboard = () => {
     loadAllDashboardData();
   }, []);
 
+  const [isDark, setIsDark] = useState(
+    document.documentElement.classList.contains("dark")
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   if (loading) {
     return (
@@ -59,7 +75,9 @@ export const DirectorDashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <p className="text-lg text-red-400 font-medium">
+          Failed to load data, Try Again
+        </p>
       </div>
     );
   }
@@ -100,7 +118,9 @@ export const DirectorDashboard = () => {
             className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white dark:bg-gray-800 dark:border-gray-700"
           >
             <div className="p-4 bgTheme text-white text-center">
-              <h2 className="text-xl font-bold capitalize">{key.replace("_", " ")}</h2>
+              <h2 className="text-xl font-bold capitalize">
+                {key.replace("_", " ")}
+              </h2>
             </div>
             <div className="p-4 text-center text-2xl font-semibold text-gray-800 dark:text-gray-100">
               {value}
@@ -137,15 +157,20 @@ export const DirectorDashboard = () => {
                       position: "bottom",
                       labels: {
                         colors: [
-                          () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000",
-                          () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000"
+                          () =>
+                            document.documentElement.classList.contains("dark")
+                              ? "#ffffff"
+                              : "#000000",
+                          () =>
+                            document.documentElement.classList.contains("dark")
+                              ? "#ffffff"
+                              : "#000000",
                         ],
                       },
                     },
                   }}
                   series={[data.count.male, data.count.female]}
                 />
-
               </div>
             </div>
           );
@@ -172,17 +197,29 @@ export const DirectorDashboard = () => {
                   constants.saffronOrange,
                   constants.usColor,
                 ],
-               legend: {
-                      position: "bottom",
-                      labels: {
-                        colors: [
-                          () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000",
-                          () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000",
-                          () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000",
-                          () => document.documentElement.classList.contains("dark") ? "#ffffff" : "#000000"
-                        ],
-                      },
-                    },
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    colors: [
+                      () =>
+                        document.documentElement.classList.contains("dark")
+                          ? "#ffffff"
+                          : "#000000",
+                      () =>
+                        document.documentElement.classList.contains("dark")
+                          ? "#ffffff"
+                          : "#000000",
+                      () =>
+                        document.documentElement.classList.contains("dark")
+                          ? "#ffffff"
+                          : "#000000",
+                      () =>
+                        document.documentElement.classList.contains("dark")
+                          ? "#ffffff"
+                          : "#000000",
+                    ],
+                  },
+                },
               }}
               series={studentCategorySeries}
             />
@@ -207,7 +244,7 @@ export const DirectorDashboard = () => {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: constants.textColor,
+                      color: constants.textTheme,
                     },
                   },
                 },
@@ -217,7 +254,7 @@ export const DirectorDashboard = () => {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: constants.textColor,
+                      color: constants.textTheme,
                     },
                   },
                 },
@@ -256,7 +293,7 @@ export const DirectorDashboard = () => {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: constants.textColor,
+                      color: constants.textTheme,
                     },
                   },
                 },
@@ -266,7 +303,7 @@ export const DirectorDashboard = () => {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: constants.textColor,
+                      color: constants.textTheme,
                     },
                   },
                 },
@@ -304,13 +341,15 @@ export const DirectorDashboard = () => {
                   width: 5,
                 },
                 xaxis: {
-                  categories: Object.keys(dashboardData.students_per_year || {}),
+                  categories: Object.keys(
+                    dashboardData.students_per_year || {}
+                  ),
                   title: {
                     text: "Year",
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: constants.textColor,
+                      color: constants.textTheme,
                     },
                   },
                 },
@@ -320,13 +359,9 @@ export const DirectorDashboard = () => {
                     style: {
                       fontSize: "14px",
                       fontWeight: 600,
-                      color: constants.textColor,
+                      color: constants.textTheme,
                     },
                   },
-                },
-                title: {
-                  text: "Yearly Admissions",
-                  align: "left",
                 },
                 colors: [constants.usColor],
               }}
@@ -340,7 +375,6 @@ export const DirectorDashboard = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

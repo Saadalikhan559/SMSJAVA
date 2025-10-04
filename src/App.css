@@ -124,3 +124,10 @@
     color: #f3f4f6 !important;
   }
 }
+
+
+
+
+.apexcharts-canvas .apexcharts-svg .apexcharts-yaxis-texts-g .apexcharts-text, .apexcharts-canvas .apexcharts-svg .apexcharts-xaxis-texts-g .apexcharts-text {
+  fill: #5E35B1 !important;
+}
