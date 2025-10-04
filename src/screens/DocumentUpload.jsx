@@ -484,7 +484,7 @@ const handleSubmit = async (e) => {
 
   // --- RENDER ---
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-5"

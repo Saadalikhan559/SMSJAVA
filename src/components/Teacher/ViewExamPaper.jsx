@@ -132,7 +132,7 @@
 
 //         {/* Filter Section */}
 //         <div className="w-full px-5">
-//           <div className="flex flex-wrap justify-between items-end gap-4 mb-20 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
+//           <div className="flex flex-wrap justify-between items-end gap-4 mb-10 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
 //             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
 //               {/* Class Filter */}
 //               <div className="flex flex-col w-full sm:w-auto">
@@ -444,7 +444,7 @@ const ViewExamPaper = () => {
 
         {/* Filter Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-20 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-10 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Class Filter */}
               <div className="flex flex-col w-full sm:w-auto">

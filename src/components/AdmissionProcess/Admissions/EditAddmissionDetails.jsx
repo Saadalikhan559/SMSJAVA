@@ -461,7 +461,7 @@ console.log(data);
     <>
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
-        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-20"
+        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-10"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
