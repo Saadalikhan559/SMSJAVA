@@ -101,6 +101,7 @@ export const AdmissionDetails = () => {
     const nameB = `${b.student_input.first_name} ${b.student_input.last_name}`.toLowerCase();
     return nameA.localeCompare(nameB);
   });
+console.log(sortedData);
 
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
@@ -192,6 +193,7 @@ export const AdmissionDetails = () => {
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Class</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">RTE</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Date</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
                     </tr>
                   </thead>
@@ -220,6 +222,9 @@ export const AdmissionDetails = () => {
                           {new Date(detail.admission_date)
                             .toLocaleDateString("en-GB")
                             .replaceAll("/", "-")}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          {detail.student_input.is_active ? "Active" : "InActive"}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm">
                           <div className="flex space-x-2">
