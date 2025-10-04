@@ -17,6 +17,7 @@ const ExamSchedule = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  const [existingSchedules, setExistingSchedules] = useState([]);
 
   const navigate = useNavigate();
   const { axiosInstance } = useContext(AuthContext);
@@ -111,7 +112,33 @@ const ExamSchedule = () => {
     navigate(allRouterLink.UpdateExamSchedule);
   };
 
+  // Watch for class and school year changes to check existing schedules
+  useEffect(() => {
+    const classId = watch("class_name");
+    const yearId = watch("school_year");
+
+    if (classId && yearId) {
+      axiosInstance
+        .get(
+          `/d/Exam-Schedule/get_by_class_year/?class_name=${classId}&school_year=${yearId}`
+        )
+        .then((res) => setExistingSchedules(res.data))
+        .catch((err) => setExistingSchedules([]));
+    } else {
+      setExistingSchedules([]);
+    }
+  }, [watch("class_name"), watch("school_year")]);
+
   const onSubmit = async (data) => {
+    // Prevent creating schedule if one already exists
+    if (existingSchedules.length > 0) {
+      setAlertMessage(
+        "Exam schedule for this class and school year already exists!"
+      );
+      setShowAlert(true);
+      return;
+    }
+
     try {
       setError("");
       setSuccess("");
@@ -145,8 +172,8 @@ const ExamSchedule = () => {
     } catch (err) {
       setAlertMessage(
         err.response?.data?.[0] ||
-        err.response?.data?.message ||
-        "Failed to create exam schedule"
+          err.response?.data?.message ||
+          "Failed to create exam schedule"
       );
       setShowAlert(true);
     }
@@ -181,6 +208,13 @@ const ExamSchedule = () => {
             </div>
           )}
 
+          {/* Warning if schedule exists */}
+          {existingSchedules.length > 0 && (
+            <p className="text-red-500 mb-4 font-medium">
+              Exam schedule for this class and school year already exists!
+            </p>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
@@ -204,14 +238,15 @@ const ExamSchedule = () => {
               )}
             </div>
 
-
             <div className="form-control">
               <label className="label">
                 <span className="label-text">School Year *</span>
               </label>
               <select
                 className="select select-bordered w-full"
-                {...register("school_year", { required: "School year is required" })}
+                {...register("school_year", {
+                  required: "School year is required",
+                })}
               >
                 <option value="">Select Year</option>
                 {schoolYear?.map((student) => (
@@ -261,8 +296,9 @@ const ExamSchedule = () => {
                 <div className="form-control">
                   <label className="label">Subject *</label>
                   <select
-                    className={`select select-bordered w-full ${errors.papers?.[index]?.subject_id ? "select-error" : ""
-                      }`}
+                    className={`select select-bordered w-full ${
+                      errors.papers?.[index]?.subject_id ? "select-error" : ""
+                    }`}
                     {...register(`papers.${index}.subject_id`, {
                       required: "Subject is required",
                     })}
@@ -312,9 +348,7 @@ const ExamSchedule = () => {
                       required: "End time is required",
                       validate: (value) => {
                         const startTime = watch(`papers.${index}.start_time`);
-                        return (
-                          value > startTime || "End time must be after start time"
-                        );
+                        return value > startTime || "End time must be after start time";
                       },
                     })}
                   />
@@ -351,7 +385,6 @@ const ExamSchedule = () => {
                     <i className="fa-solid fa-trash mr-1"></i> Remove
                   </button>
                 </div>
-
               </div>
             ))}
           </div>
@@ -360,7 +393,7 @@ const ExamSchedule = () => {
             <button
               type="submit"
               className="btn bgTheme text-white w-52"
-              disabled={isSubmitting}
+              disabled={isSubmitting || existingSchedules.length > 0}
             >
               {isSubmitting ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2" />

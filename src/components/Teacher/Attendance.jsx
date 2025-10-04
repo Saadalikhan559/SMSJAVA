@@ -45,13 +45,13 @@ export const Attendance = () => {
   // Loader UI
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <div className="flex space-x-2">
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
         </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+        <p className="mt-2 text-gray-500 dark:text-gray-300 text-sm">Loading data...</p>
       </div>
     );
   }
@@ -59,9 +59,9 @@ export const Attendance = () => {
   // Error UI
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 text-center p-6 transition-colors duration-300">
+        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 dark:text-red-300 mb-4"></i>
+        <p className="text-lg text-red-400 dark:text-red-300 font-medium">
           Failed to load data, Try Again
         </p>
       </div>
@@ -70,45 +70,46 @@ export const Attendance = () => {
 
   // Main content
   return (
-    <div className="p-6">
-      <h2 className="text-4xl font-semibold mb-6 text-center">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+      <h2 className="text-4xl font-semibold mb-6 text-center text-gray-800 dark:text-white">
         Attendance <i className="fa-solid fa-clipboard-user ml-2"></i>
       </h2>
-      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+
+      <div className="grid gap-8">
         {classList.map((classItem) => (
           <div
             key={classItem.teacher_year_level_id}
-            className="relative group bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:border-blue-200/50"
+            className="relative group bg-white dark:bg-gray-800 backdrop-blur-sm border border-white/20 dark:border-gray-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
           >
             <div className="absolute top-0 left-0 h-1.5 w-full bg-gradient-to-r from-[#5E35B1] via-[#684d9e] to-[#5424b4]"></div>
+
             <div className="p-6">
               <div className="flex items-start mb-5">
-                <div className="p-3 rounded-xl bg-blue-100/50 textTheme group-hover:bg-blue-200/70 transition-colors duration-300">
+                <div className="p-3 rounded-xl bg-blue-100/50 dark:bg-blue-900/40 textTheme group-hover:bg-blue-200/70 dark:group-hover:bg-blue-700/50 transition-colors duration-300">
                   <i className="fa-solid fa-chalkboard-user text-xl"></i>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 ml-4 mt-1">
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-white ml-4 mt-1">
                   {classItem.year_level_name}
                 </h3>
               </div>
+
               <div className="flex gap-4 mb-6 text-sm">
-                <span className="px-3 py-1.5 bg-blue-50 textTheme rounded-full flex items-center">
+                <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center">
                   <i className="fa-solid fa-users mr-2"></i>
                   students
                 </span>
-                <span className="px-3 py-1.5 bg-purple-50 textTheme rounded-full flex items-center">
+                <span className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 textTheme rounded-full flex items-center">
                   <i className="fa-solid fa-calendar-day mr-2"></i>
                   Mon/Wed/Fri
                 </span>
               </div>
-              <div className="space-y-3">
+
+              <div className="space-y-3 flex justify-around flex-wrap">
                 <button
                   onClick={() =>
-                    handleNavigate(
-                      classItem.year_level_name,
-                      classItem.year_level_id
-                    )
+                    handleNavigate(classItem.year_level_name, classItem.year_level_id)
                   }
-                  className="w-full py-3 px-4 bg-gradient-to-r from-[#5E35B1] to-[#4314a1] hover:from-[#4614aa] hover:[#5E35B1] text-white rounded-xl font-medium flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-100"
+                  className="btn bgTheme text-white m-1 transition-colors duration-300"
                 >
                   <i className="fa-solid fa-pen-clip mr-3"></i>
                   Take Attendance
@@ -117,7 +118,7 @@ export const Attendance = () => {
 
                 <button
                   onClick={() => handleShowAttendance(classItem.year_level_name)}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-medium flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:shadow-green-100"
+                  className="btn bgTheme text-white m-1 transition-colors duration-300"
                 >
                   <i className="fa-solid fa-list-check mr-3"></i>
                   Show Attendance
@@ -125,8 +126,9 @@ export const Attendance = () => {
                 </button>
               </div>
             </div>
-            <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-blue-300/10 rounded-full group-hover:bg-blue-400/20 transition-all duration-500"></div>
-            <div className="absolute -top-5 -left-5 w-16 h-16 bg-purple-300/10 rounded-full group-hover:bg-purple-400/20 transition-all duration-700"></div>
+
+            <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-blue-300/10 dark:bg-blue-700/10 rounded-full group-hover:bg-blue-400/20 dark:group-hover:bg-blue-500/20 transition-all duration-500"></div>
+            <div className="absolute -top-5 -left-5 w-16 h-16 bg-purple-300/10 dark:bg-purple-700/10 rounded-full group-hover:bg-purple-400/20 dark:group-hover:bg-purple-500/20 transition-all duration-700"></div>
           </div>
         ))}
       </div>

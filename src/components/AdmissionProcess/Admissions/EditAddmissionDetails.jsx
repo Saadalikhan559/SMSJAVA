@@ -58,6 +58,7 @@ export const EditAddmissionDetails = () => {
         weight: null,
         blood_group: "",
         number_of_siblings: "",
+        is_active:""
       },
       guardian: {
         first_name: "",
@@ -329,6 +330,7 @@ export const EditAddmissionDetails = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
+console.log(data);
 
     const payload = {
       student: {
@@ -336,6 +338,7 @@ export const EditAddmissionDetails = () => {
         middle_name: data.student.middle_name || "",
         last_name: data.student.last_name || "",
         email: data.student.email || "",
+        is_active:data.is_active === "true",
         father_name: data.student.father_name || "",
         mother_name: data.student.mother_name || "",
         date_of_birth: data.student.date_of_birth || null,
@@ -458,7 +461,7 @@ export const EditAddmissionDetails = () => {
     <>
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
-        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-20"
+        className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-10"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-3xl font-bold text-center mb-8">
@@ -591,6 +594,30 @@ export const EditAddmissionDetails = () => {
               {errors.student?.email && (
                 <span className="text-error text-sm">
                   {errors.student.email.message}
+                </span>
+              )}
+            </div>
+                   <div className="form-control">
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  Status <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                {...register("student.is_active", {
+                  required: "Status is required",
+                })}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
+                  errors.student?.gender ? "select-error" : ""
+                }`}
+              >
+                <option value="true">Active</option>
+                <option value="false">InActive</option>
+
+              </select>
+              {errors.student?.gender && (
+                <span className="text-error text-sm">
+                  {errors.student.gender.message}
                 </span>
               )}
             </div>
