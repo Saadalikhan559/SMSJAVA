@@ -84,7 +84,7 @@ import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
 import PrivacyPolicy from "../components/Privacy/Privacy";
 import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
-import { StudentAdmissionFees } from "../components/AdmissionProcess/StudentAdmissionFees";
+import { StudentAdmissionFees } from "../components/AdmissionProcess/StudentAdmissionFees"
 
 export const routes = [
   {
@@ -207,7 +207,7 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
-    path: allRouterLink.UpdateExamPaper,
+    path: `${allRouterLink.UpdateExamPaper}/:id`,
     element: <UpdateExamPaper />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
@@ -611,13 +611,12 @@ export const routes = [
     element: <CreateCategory/>,
     protected: true,
   },
-    {
+  {
     path: allRouterLink.studentAdmissionFees,
     element: <StudentAdmissionFees/>,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
-
   // include all routes before this please
 
   {
