@@ -145,7 +145,6 @@ return (
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          {/* --- Shared form control template below --- */}
           {[
             { label: "Exam Type", name: "exam_type", data: examType, key: "name", error: errors.exam_type },
             { label: "Year Level", name: "year_level", data: className1, key: "level_name", error: errors.year_level },

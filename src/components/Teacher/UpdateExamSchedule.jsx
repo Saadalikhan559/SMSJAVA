@@ -135,15 +135,11 @@ const UpdateExamSchedule = () => {
   const onSubmit = async (data) => {
     try {
       if (!accessToken) return;
-      setError("");
-      setSuccess("");
-      console.log("Form submitted:", data);
 
-      // Transform the data structure if needed before sending
       const payload = {
-        class_name: Number(data.class_name), // Convert to number
-        school_year: Number(data.school_year), // Convert to number
-        exam_type: Number(data.exam_type), // Convert to number
+        class_name: Number(data.class_name),
+        school_year: Number(data.school_year),
+        exam_type: Number(data.exam_type),
         papers: data.papers.map((paper) => ({
           subject_id: Number(paper.subject_id),
           exam_date: paper.exam_date,
@@ -169,19 +165,41 @@ const UpdateExamSchedule = () => {
         reset();
       } else {
         throw new Error(
-          response.data.message || "Failed to create exam schedule"
+          response.data.message || "Failed to update exam schedule"
         );
       }
     } catch (err) {
-      console.log(err.response?.data?.[0]);
-      setAlertMessage(
-        err.response?.data?.[0] ||
-        err.response?.data?.message ||
-        "Failed to create exam schedule"
-      );
+      console.log("Full error:", err.response?.data);
+
+      let errorMsg = "Failed to update exam schedule";
+
+      if (err.response?.data) {
+        const data = err.response.data;
+
+        if (typeof data === "string") {
+          errorMsg = data;
+        } else if (Array.isArray(data)) {
+          errorMsg = data.join("\n");
+        } else if (typeof data === "object") {
+          errorMsg = Object.entries(data)
+            .map(([key, val]) => {
+              if (Array.isArray(val)) {
+                return `${key}: ${val.join(", ")}`;
+              } else if (typeof val === "object") {
+                return `${key}: ${JSON.stringify(val)}`;
+              } else {
+                return `${key}: ${val}`;
+              }
+            })
+            .join("\n");
+        }
+      }
+
+      setAlertMessage(errorMsg);
       setShowAlert(true);
     }
   };
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
@@ -489,6 +507,29 @@ const UpdateExamSchedule = () => {
           </div>
         </form>
       </div>
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            <h3 className="font-bold text-lg">Exam Schedule</h3>
+            <p className="py-4 capitalize">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };
