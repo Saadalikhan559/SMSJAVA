@@ -232,15 +232,8 @@ const UploadExamPaper = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
-        {/* <button
-        className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme dark:text-blue-400"
-        onClick={handleNavigate}
-      >
-        Update Exam Paper <span>&rarr;</span>
-      </button> */}
-
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-center mb-8 dark:text-white">
             Upload Exam Paper <i className="fa-solid fa-file-upload ml-2"></i>
@@ -324,13 +317,6 @@ const UploadExamPaper = () => {
               {showTeacherDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
                   <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
-                    {/* <input
-                      type="text"
-                      placeholder="Search Teacher..."
-                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                      value={searchTeacherInput}
-                      onChange={(e) => setSearchTeacherInput(e.target.value)}
-                    /> */}
                   </div>
                   <div className="max-h-40 overflow-y-auto">
                     {filteredTeachers?.length > 0 ? (
@@ -389,13 +375,6 @@ const UploadExamPaper = () => {
               {showSubjectDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
                   <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
-                    {/* <input
-                      type="text"
-                      placeholder="Search Subject..."
-                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                      value={searchSubjectInput}
-                      onChange={(e) => setSearchSubjectInput(e.target.value)}
-                    /> */}
                   </div>
                   <div className="max-h-40 overflow-y-auto">
                     {filteredSubjects?.length > 0 ? (

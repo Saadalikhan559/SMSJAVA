@@ -612,12 +612,6 @@ export const routes = [
     element: <CreateCategory/>,
     protected: true,
   },
-    {
-    path: allRouterLink.studentAdmissionFees,
-    element: <StudentAdmissionFees/>,
-    protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
-  },
 
   // include all routes before this please
 
