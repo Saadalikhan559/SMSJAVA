@@ -103,7 +103,7 @@ export const AdmissionDetails = () => {
   });
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4  border-gray-200 dark:border-gray-700">
@@ -198,7 +198,7 @@ export const AdmissionDetails = () => {
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                     {sortedData.map((detail) => (
                       <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                        <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                        <td className="whitespace-nowrap font-bold px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                           {detail.student_input.first_name} {detail.student_input.last_name}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">

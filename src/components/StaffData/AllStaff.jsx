@@ -11,6 +11,19 @@ const AllStaff = () => {
   const [staffSearch, setStaffSearch] = useState("");
   const [activeTab, setActiveTab] = useState("teachers");
 
+  // Helper function to get full name for sorting
+  const getFullName = (record) => {
+    return [record.first_name, record.middle_name, record.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  };
+
+  // Helper function to sort alphabetically by name
+  const sortByName = (a, b) => {
+    return getFullName(a).localeCompare(getFullName(b));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -19,19 +32,10 @@ const AllStaff = () => {
           fetchTeachers(),
           fetchOfficeStaff(),
         ]);
-        const sortedTeachers = teacherData.sort((a, b) =>
-          [a.first_name, a.middle_name, a.last_name].filter(Boolean).join(" ")
-            .localeCompare(
-              [b.first_name, b.middle_name, b.last_name].filter(Boolean).join(" ")
-            )
-        );
 
-        const sortedOfficeStaff = officeData.sort((a, b) =>
-          [a.first_name, a.middle_name, a.last_name].filter(Boolean).join(" ")
-            .localeCompare(
-              [b.first_name, b.middle_name, b.last_name].filter(Boolean).join(" ")
-            )
-        );
+        // Sort both arrays alphabetically by name
+        const sortedTeachers = teacherData.sort(sortByName);
+        const sortedOfficeStaff = officeData.sort(sortByName);
 
         setteachers(sortedTeachers);
         setofficestaff(sortedOfficeStaff);
@@ -45,25 +49,13 @@ const AllStaff = () => {
     fetchData();
   }, []);
 
-
   const filteredTeachers = teachers.filter((teacher) =>
-    [teacher.first_name, teacher.middle_name, teacher.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
-      .includes(teacherSearch.toLowerCase())
+    getFullName(teacher).includes(teacherSearch.toLowerCase())
   );
-  console.log(filteredTeachers);
 
   const filteredOfficeStaff = officestaff.filter((staff) =>
-    [staff.first_name, staff.middle_name, staff.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
-      .includes(staffSearch.toLowerCase())
+    getFullName(staff).includes(staffSearch.toLowerCase())
   );
-
-
 
   if (loading) {
     return (
@@ -79,7 +71,7 @@ const AllStaff = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       {error && (
         <div className="text-red-600 text-center mb-4 font-medium dark:text-red-400">
           {error}
@@ -120,24 +112,25 @@ const AllStaff = () => {
                 type="text"
                 placeholder="Search Teacher Name"
                 value={teacherSearch}
-                onChange={(e) => setTeacherSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#0b0b0c] focus:border-[#0f0f10]"
+                onChange={(e) => setTeacherSearch(e.target.value.trimStart())}
+                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+
               />
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z--10">
                   <tr>
-                    <th className="px-4 py-3">S.NO</th>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Joined Date</th>
-                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3 text-nowrap">S.NO</th>
+                    <th className="px-4 py-3 text-nowrap">Name</th>
+                    <th className="px-4 py-3 text-nowrap">Joined Date</th>
+                    <th className="px-4 py-3 text-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredTeachers.length === 0 ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                      <td colSpan="4" className="text-center py-6 dark:text-gray-300">
                         No data found.
                       </td>
                     </tr>
@@ -147,18 +140,20 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}.</td>
-                        <td className="px-4 py-3 capitalize dark:text-gray-100">
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{index + 1}</td>
+                        <td className="px-4 py-3 capitalize dark:text-gray-100 text-nowrap">
                           <Link
                             to={`/staffDetail/teacher/${record.id}`}
                             state={{ level_name: record.level_name }}
-                            className="textTheme hover:underline"
+                            // className="textTheme hover:underline"
+                            className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
+
                           >
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.joining_date}</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active === true ? "Active" : "InActive"} </td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.joining_date}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.is_active === true ? "Active" : "InActive"} </td>
                       </tr>
                     ))
                   )}
@@ -179,24 +174,25 @@ const AllStaff = () => {
                 type="text"
                 placeholder="Search Staff Member Name"
                 value={staffSearch}
-                onChange={(e) => setStaffSearch(e.target.value)}
-                className="border px-3 py-2 rounded w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#211f23] focus:border-[#252426]"
+                onChange={(e) => setStaffSearch(e.target.value.trimStart())}
+                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+
               />
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z--10">
                   <tr>
-                    <th className="px-4 py-3">S.NO</th>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Joined Date</th>
-                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3 text-nowrap">S.NO</th>
+                    <th className="px-4 py-3 text-nowrap">Name</th>
+                    <th className="px-4 py-3 text-nowrap">Joined Date</th>
+                    <th className="px-4 py-3 text-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-gray-300">
                         No data found.
                       </td>
                     </tr>
@@ -206,18 +202,19 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}.</td>
-                        <td className="px-4 py-3 capitalize dark:text-gray-100 ">
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{index + 1}</td>
+                        <td className="px-4 py-3 capitalize dark:text-gray-100 text-nowrap">
                           <Link
                             to={`/staffDetail/office/${record.id}`}
                             state={{ level_name: record.level_name }}
-                            className="textTheme hover:underline"
+                            // className="textTheme hover:underline"
+                            className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
                           >
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date_joined}.</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.is_active === true ? "Active" : "InActive"} </td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.date_joined}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.is_active === true ? "Active" : "InActive"} </td>
                       </tr>
                     ))
                   )}
@@ -229,8 +226,6 @@ const AllStaff = () => {
       </div>
     </div>
   );
-
-
 };
 
 export default AllStaff;

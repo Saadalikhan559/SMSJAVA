@@ -2,7 +2,7 @@ import React from "react";
 
 const PrivacyPolicy = () => {
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto mb-20">
       <h1 className="text-3xl font-bold mb-4 textTheme">Privacy Policy - SMS</h1>
       <p className="mb-4">
         SMS (School Management System) values your privacy and is committed to protecting the personal information of students, parents, teachers, and staff. This Privacy Policy explains how we collect, use, and safeguard information in accordance with Indian privacy regulations.

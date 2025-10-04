@@ -14,6 +14,9 @@ const ExamSchedule = () => {
   const [schoolYear, setSchoolYear] = useState([]);
   const [examType, setExamType] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const navigate = useNavigate();
   const { axiosInstance } = useContext(AuthContext);
@@ -131,7 +134,8 @@ const ExamSchedule = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        setSuccess("Exam schedule created successfully!");
+        setAlertMessage("Exam schedule created successfully!");
+        setShowAlert(true);
         reset();
       } else {
         throw new Error(
@@ -139,23 +143,26 @@ const ExamSchedule = () => {
         );
       }
     } catch (err) {
-      setError(
+      setAlertMessage(
         err.response?.data?.[0] ||
-          err.response?.data?.message ||
-          "Failed to create exam schedule"
+        err.response?.data?.message ||
+        "Failed to create exam schedule"
       );
+      setShowAlert(true);
     }
   };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-        <button
-          className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
-          onClick={handleNavigate}
-        >
-          Update Exam Schedule <span>&rarr;</span>
-        </button>
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm mb-10">
+        <div className=" flex justify-end">
+          <button
+            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            onClick={handleNavigate}
+          >
+            Update Exam Schedule <span>&rarr;</span>
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-center mb-8">
@@ -180,9 +187,7 @@ const ExamSchedule = () => {
                 <span className="label-text">Class *</span>
               </label>
               <select
-                className={`select select-bordered w-full ${
-                  errors.class_name ? "select-error" : ""
-                }`}
+                className="select select-bordered w-full"
                 {...register("class_name", { required: "Class is required" })}
               >
                 <option value="">Select Class</option>
@@ -192,16 +197,20 @@ const ExamSchedule = () => {
                   </option>
                 ))}
               </select>
+              {errors.class_name && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.class_name.message}
+                </span>
+              )}
             </div>
+
 
             <div className="form-control">
               <label className="label">
                 <span className="label-text">School Year *</span>
               </label>
               <select
-                className={`select select-bordered w-full ${
-                  errors.school_year ? "select-error" : ""
-                }`}
+                className="select select-bordered w-full"
                 {...register("school_year", { required: "School year is required" })}
               >
                 <option value="">Select Year</option>
@@ -211,6 +220,11 @@ const ExamSchedule = () => {
                   </option>
                 ))}
               </select>
+              {errors.school_year && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.school_year.message}
+                </span>
+              )}
             </div>
 
             <div className="form-control">
@@ -218,9 +232,7 @@ const ExamSchedule = () => {
                 <span className="label-text">Exam Type *</span>
               </label>
               <select
-                className={`select select-bordered w-full ${
-                  errors.exam_type ? "select-error" : ""
-                }`}
+                className="select select-bordered w-full"
                 {...register("exam_type", { required: "Exam type is required" })}
               >
                 <option value="">Select Exam Type</option>
@@ -230,6 +242,11 @@ const ExamSchedule = () => {
                   </option>
                 ))}
               </select>
+              {errors.exam_type && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.exam_type.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -244,18 +261,24 @@ const ExamSchedule = () => {
                 <div className="form-control">
                   <label className="label">Subject *</label>
                   <select
-                    className="select select-bordered w-full"
+                    className={`select select-bordered w-full ${errors.papers?.[index]?.subject_id ? "select-error" : ""
+                      }`}
                     {...register(`papers.${index}.subject_id`, {
                       required: "Subject is required",
                     })}
                   >
                     <option value="">Select Subject</option>
-                    {subjects?.map((student) => (
-                      <option key={student.id} value={student.id}>
-                        {student.subject_name}
+                    {subjects.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.subject_name}
                       </option>
                     ))}
                   </select>
+                  {errors.papers?.[index]?.subject_id && (
+                    <span className="text-red-500 text-sm mt-1">
+                      {errors.papers[index].subject_id.message}
+                    </span>
+                  )}
                 </div>
 
                 <div className="form-control">
@@ -297,35 +320,40 @@ const ExamSchedule = () => {
                   />
                 </div>
 
-                <div className="form-control md:col-span-4 flex justify-end">
+                <div className="form-control md:col-span-4 gap-2 flex justify-end">
                   <button
                     type="button"
-                    className="btn btn-error btn-sm"
+                    className="btn bgTheme text-white"
+                    onClick={() => {
+                      if (fields.length < 5) {
+                        append({
+                          subject_id: "",
+                          exam_date: "",
+                          start_time: "",
+                          end_time: "",
+                        });
+                      } else {
+                        setAlertMessage("You can only add up to 4 more papers.");
+                        setShowAlert(true);
+                      }
+                    }}
+                    disabled={fields.length >= 5}
+                  >
+                    <i className="fa-solid fa-plus mr-2"></i> Add Another Paper
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn btn-error "
                     onClick={() => remove(index)}
                     disabled={fields.length <= 1}
                   >
                     <i className="fa-solid fa-trash mr-1"></i> Remove
                   </button>
                 </div>
+
               </div>
             ))}
-
-            <div className="mt-4">
-              <button
-                type="button"
-                className="btn bgTheme text-white"
-                onClick={() =>
-                  append({
-                    subject_id: "",
-                    exam_date: "",
-                    start_time: "",
-                    end_time: "",
-                  })
-                }
-              >
-                <i className="fa-solid fa-plus mr-2"></i> Add Another Paper
-              </button>
-            </div>
           </div>
 
           <div className="flex justify-center mt-10">
@@ -343,6 +371,29 @@ const ExamSchedule = () => {
           </div>
         </form>
       </div>
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            <h3 className="font-bold text-lg">Exam Schedule</h3>
+            <p className="py-4 capitalize">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

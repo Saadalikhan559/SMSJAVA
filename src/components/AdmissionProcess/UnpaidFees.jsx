@@ -217,7 +217,7 @@ const UnpaidFeesList = () => {
                   placeholder="Enter student name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value.trimStart())}
-                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ringTheme focus:outline-none"
+                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>
               <button
@@ -255,7 +255,7 @@ const UnpaidFeesList = () => {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {flattenedFees.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                  <td colSpan="9" className="text-center py-6 text-red-600 dark:text-red-400">
                     No data found.
                   </td>
                 </tr>
@@ -263,7 +263,7 @@ const UnpaidFeesList = () => {
                 flattenedFees.map((item, index) => (
                   <tr key={`${item.id}-${index}`} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-3">{index + 1}</td>
-                    <td className="px-4 py-3 text-nowrap">{item.studentName}</td>
+                    <td className="px-4 py-3 text-nowrap font-bold">{item.studentName}</td>
                     <td className="px-4 py-3 text-nowrap">{item.yearLevel}</td>
                     <td className="px-4 py-3">{item.month}</td>
                     <td className="px-4 py-3 text-nowrap">{item.fee_type}</td>
@@ -271,8 +271,8 @@ const UnpaidFeesList = () => {
                     <td className="px-4 py-3">₹{item.paidAmount}</td>
                     <td className="px-4 py-3">₹{item.dueAmount}</td>
                     <td className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium m-2 ${parseFloat(item.dueAmount) === 0
-                        ? "bg-green-100 text-green-600"
-                        : "bg-red-100 text-red-600"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-red-100 text-red-600"
                       }`}>
                       {parseFloat(item.dueAmount) === 0 ? "Paid" : "Unpaid"}
                     </td>

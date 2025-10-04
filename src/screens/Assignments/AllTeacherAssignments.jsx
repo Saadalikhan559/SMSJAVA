@@ -111,7 +111,7 @@ export const AllTeacherAssignments = () => {
   );
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-20">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         {/* Tabs styled like AllStaff */}
         <div className="flex gap-4 mb-6">
@@ -156,7 +156,7 @@ export const AllTeacherAssignments = () => {
                     placeholder="Enter teacher name..."
                     className="border px-3 py-2 rounded dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                     value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
+                    onChange={(e) => setSearchInput(e.target.value.trimStart())}
                   />
                 </div>
               </div>
@@ -268,7 +268,7 @@ export const AllTeacherAssignments = () => {
                     type="text"
                     placeholder="Enter teacher name..."
                     value={absentTeacherFilter}
-                    onChange={(e) => setAbsentTeacherFilter(e.target.value)}
+                    onChange={(e) => setAbsentTeacherFilter(e.target.value.trimStart())}
                     className="border px-3 py-2 rounded shadow-sm dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   />
                 </div>
@@ -276,26 +276,38 @@ export const AllTeacherAssignments = () => {
 
             </div>
             <br />
-            {subLoading ? (
-              <Loader text="Loading substitute assignments..." />
-            ) : subError ? (
-              <ErrorMessage text="Failed to load substitute assignments, Try Again" />
-            ) : filteredSubs.length === 0 ? (
-              <ErrorMessage text="No substitute assignments found for this date" />
-            ) : (
-              <div className="overflow-x-auto shadow-lg rounded-lg ">
-                <table className="min-w-full table-fixed text-sm text-left text-gray-700 dark:text-gray-200">
-                  <thead className="bgTheme text-white text-sm uppercase tracking-wide">
+            <div className="overflow-x-auto shadow-lg rounded-lg">
+              <table className="min-w-full table-fixed text-sm text-left text-gray-700 dark:text-gray-200">
+                <thead className="bgTheme text-white text-sm uppercase tracking-wide">
+                  <tr>
+                    <th className="px-6 py-3 w-[20%]">Date</th>
+                    <th className="px-6 py-3 w-[20%] text-nowrap">Absent Teacher</th>
+                    <th className="px-6 py-3 w-[20%]">Class</th>
+                    <th className="px-6 py-3 w-[20%]">Period</th>
+                    <th className="px-6 py-3 w-[20%] text-nowrap">Substitute Teacher</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                  {subLoading ? (
                     <tr>
-                      <th className="px-6 py-3 w-[20%]">Date</th>
-                      <th className="px-6 py-3 w-[20%] text-nowrap">Absent Teacher</th>
-                      <th className="px-6 py-3 w-[20%]">Class</th>
-                      <th className="px-6 py-3 w-[20%]">Period</th>
-                      <th className="px-6 py-3 w-[20%] text-nowrap">Substitute Teacher</th>
+                      <td colSpan="5" className="text-center py-4">
+                        <Loader text="Loading substitute assignments..." />
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                    {filteredSubs.map((a) => (
+                  ) : subError ? (
+                    <tr>
+                      <td colSpan="5" className="text-center py-4 text-red-500">
+                        Failed to load substitute assignments, Try Again
+                      </td>
+                    </tr>
+                  ) : filteredSubs.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                        No substitute assignments found for this date
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredSubs.map((a) => (
                       <tr
                         key={a.id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
@@ -308,11 +320,11 @@ export const AllTeacherAssignments = () => {
                         <td className="px-6 py-3 text-nowrap capitalize">{a.period}</td>
                         <td className="px-6 py-3 capitalize text-nowrap">{a.substitute_teacher_name}</td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </>
         )}
       </div>

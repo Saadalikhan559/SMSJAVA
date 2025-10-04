@@ -84,7 +84,7 @@ import { UpdateSalaryExpense } from "../components/ManageExpenses/SalaryExpense/
 import { EmployeeMonthlySalary } from "../components/ManageExpenses/SalaryExpense/EmployeeMonthlySalary";
 import PrivacyPolicy from "../components/Privacy/Privacy";
 import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
-// import CreateCategory from "../components/ManageExpenses/AllExpenses/CreateCategory";
+import { StudentAdmissionFees } from "../components/AdmissionProcess/StudentAdmissionFees";
 
 
 export const routes = [
@@ -193,7 +193,7 @@ export const routes = [
     path: allRouterLink.UploadExamPaper,
     element: <UploadExamPaper />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
+    allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.StudentMarksFill,
@@ -205,13 +205,13 @@ export const routes = [
     path: allRouterLink.ViewExamPaper,
     element: <ViewExamPaper />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
+    allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
-    path: allRouterLink.UpdateExamPaper,
+    path: `${allRouterLink.UpdateExamPaper}/:id`,
     element: <UpdateExamPaper />,
     protected: true,
-    allowedRoles: [constants.roles.director, constants.roles.teacher],
+    allowedRoles: [constants.roles.director, constants.roles.teacher, constants.roles.officeStaff],
   },
   {
     path: allRouterLink.viewDocuments,
@@ -611,6 +611,12 @@ export const routes = [
     path: allRouterLink.managecategory,
     element: <CreateCategory/>,
     protected: true,
+  },
+    {
+    path: allRouterLink.studentAdmissionFees,
+    element: <StudentAdmissionFees/>,
+    protected: true,
+    allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
 
   // include all routes before this please

@@ -53,78 +53,65 @@ const ViewAllocatedClass = () => {
     );
   }
 
-return (
-  <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
-    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
-      <div className="mb-1">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-1">
-          <i className="fa-solid fa-landmark"></i> Allocated Classes
-        </h1>
-      </div>
-      <div className="flex items-center justify-end mb-6 border-b border-gray-300 dark:border-gray-700 pb-2">
-        <div className="relative w-72">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg
-              className="h-5 w-5 text-gray-400 dark:text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+  return (
+    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+        <div className="mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-1">
+            <i className="fa-solid fa-landmark"></i> Allocated Classes
+          </h1>
+        </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+
           <input
             type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+
             placeholder="Search by teacher or class..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value.trimStart())}
           />
         </div>
-      </div>
 
-      {/* Table */}
-      <div className="w-full overflow-x-auto">
-        <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
-          <thead className="bgTheme text-white text-center">
-            <tr>
-              <th scope="col" className="px-4 py-3">Teacher</th>
-              <th scope="col" className="px-4 py-3">Class</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredClasses.length > 0 ? (
-              [...filteredClasses]
-                    .sort((a, b) => a.teacher_name.localeCompare(b.teacher_name))
-                    .map((classItem, index) => (
-                <tr
-                  key={classItem.id || index}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                >
-                  <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
-                    {classItem.teacher_name}
-                  </td>
-                  <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
-                    {classItem.year_level_name}
+        {/* Table */}
+        <div className="w-full overflow-x-auto">
+          <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+            <thead className="bgTheme text-white text-center">
+              <tr>
+                <th scope="col" className="px-4 py-3">Teacher</th>
+                <th scope="col" className="px-4 py-3">Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredClasses.length > 0 ? (
+                [...filteredClasses]
+                  .sort((a, b) => a.teacher_name.localeCompare(b.teacher_name))
+                  .map((classItem, index) => (
+                    <tr
+                      key={classItem.id || index}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
+                        {classItem.teacher_name}
+                      </td>
+                      <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
+                        {classItem.year_level_name}
+                      </td>
+                    </tr>
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                    No matching classes found
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" className="text-center py-6 text-gray-500 dark:text-gray-400">
-                  No matching classes found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 
 };
 

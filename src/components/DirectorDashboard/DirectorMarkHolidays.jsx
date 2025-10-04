@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useForm } from "react-hook-form";
 import { AuthContext } from "../../context/AuthContext";
 import { constants } from "../../global/constants";
 
@@ -7,29 +7,29 @@ const DirectorMarkHolidays = () => {
   const { axiosInstance } = useContext(AuthContext);
   const BASE_URL = constants.baseUrl;
 
-  
-  const [formData, setFormData] = useState({
-    title: "",
-    start_date: "",
-    end_date: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm();
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loder, setLoder] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
 
+  // watch dates for validation
+  const startDate = watch("start_date");
+
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
-      setError("");
       try {
-
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err) {
-        setError("Failed to load initial data. Try again.");
+        console.error("Failed to load initial data");
       } finally {
         setLoading(false);
       }
@@ -38,29 +38,16 @@ const DirectorMarkHolidays = () => {
     fetchInitialData();
   }, [BASE_URL]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoder(true);
-    setError("");
-    setSuccess("");
-
     try {
-      if (!formData.title || !formData.start_date) {
-        throw new Error("Please fill all required fields");
-      }
-
       const payload = {
-        title: formData.title,
-        start_date: formData.start_date,
-        end_date: formData.end_date || formData.start_date,
+        title: data.title,
+        start_date: data.start_date,
+        end_date: data.end_date || data.start_date,
       };
 
-      const response = await axiosInstance.post("/a/holidays/",   payload);
+      const response = await axiosInstance.post("/a/holidays/", payload);
 
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Failed to mark holiday");
@@ -68,15 +55,18 @@ const DirectorMarkHolidays = () => {
 
       setModalMessage("Holiday marked & notifications sent successfully!");
       setShowModal(true);
-      setFormData({ title: "", start_date: "", end_date: "" });
+      reset();
     } catch (err) {
-      setModalMessage(err.response?.data?.message || err.message || "An error occurred");
+      setModalMessage(
+        err.response?.data?.message || err.message || "An error occurred"
+      );
       setShowModal(true);
     } finally {
       setLoder(false);
     }
   };
 
+  // Full-page loader
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -90,137 +80,141 @@ const DirectorMarkHolidays = () => {
     );
   }
 
-  // Full-page error
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">{error}</p>
-      </div>
-    );
-  }
-
   return (
-   <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
-  <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
-    <form onSubmit={handleSubmit}>
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
-        <i className="fa-solid fa-calendar-day ml-2"></i> Assign Holidays
-      </h1>
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+      <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+            <i className="fa-solid fa-calendar-day ml-2"></i> Assign Holidays
+          </h1>
 
-      {success && (
-        <div className="alert alert-success mb-6 bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-100 flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>{success}</span>
-        </div>
-      )}
-
-      <div className="flex justify-center">
-        <div className="grid grid-cols-1 w-full md:w-1/2 gap-6 mt-6">
-          {/* Holiday Title */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text text-gray-800 dark:text-gray-100">
-                Holiday Title <span className="text-error">*</span>
-              </span>
-            </label>
-            <input
-              type="text"
-              name="title"
-              className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              placeholder="Enter holiday title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 w-full md:w-1/2 gap-6 mt-6">
+              {/* Holiday Title */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text text-gray-800 dark:text-gray-100">
+                    Holiday Title <span className="text-error">*</span>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                  placeholder="Enter holiday title"
+                  {...register("title", {
+                    required: "Holiday title is required",
+                    validate: (value) => {
+                      const words = value.trim().split(/\s+/);
+                      return (
+                        words.length <= 20 ||
+                        "Holiday title must not exceed 20 words"
+                      );
+                    },
+                  })}
+                />
+                {errors.title && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.title.message}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Start Date */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-gray-800 dark:text-gray-100">
+                  Start Date <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="date"
+                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                {...register("start_date", {
+                  required: "Start date is required",
+                  validate: (value) => {
+                    const today = new Date().toISOString().split("T")[0];
+                    return (
+                      value >= today || "Start date cannot be in the past"
+                    );
+                  },
+                })}
+              />
+              {errors.start_date && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.start_date.message}
+                </p>
+              )}
+            </div>
+
+            {/* End Date */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-gray-800 dark:text-gray-100">
+                  End Date <span className="text-error">*</span>
+                </span>
+              </label>
+              <input
+                type="date"
+                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                {...register("end_date", {
+                  validate: (value) => {
+                    if (!value) return true;
+                    if (startDate && value < startDate) {
+                      return "End date cannot be before start date";
+                    }
+                    return true;
+                  },
+                })}
+              />
+              {errors.end_date && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.end_date.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
+            <button
+              type="submit"
+              className="btn text-white bgTheme w-52"
+              disabled={loder}
+            >
+              {loder ? (
+                <i className="fa-solid fa-spinner fa-spin mr-2" />
+              ) : (
+                <>
+                  <i className="fa-solid fa-calendar-plus mr-2" />
+                  Mark Holiday
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Start Date */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text text-gray-800 dark:text-gray-100">
-              Start Date <span className="text-error">*</span>
-            </span>
-          </label>
-          <input
-            type="date"
-            name="start_date"
-            className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-            value={formData.start_date}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* End Date */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text text-gray-800 dark:text-gray-100">End Date</span>
-          </label>
-          <input
-            type="date"
-            name="end_date"
-            className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-            value={formData.end_date}
-            onChange={handleChange}
-            min={formData.start_date}
-          />
-        </div>
-      </div>
-
-      {/* Submit Button */}
-      <div className="flex justify-center mt-10">
-        <button
-          type="submit"
-          className="btn text-white bgTheme w-52"
-          disabled={loder}
-        >
-          {loder ? (
-            <i className="fa-solid fa-spinner fa-spin mr-2" />
-          ) : (
-            <>
-              <i className="fa-solid fa-calendar-plus mr-2" />
-              Mark Holiday
-            </>
-          )}
-        </button>
-      </div>
-    </form>
-  </div>
-
-  {/* Modal */}
-  {showModal && (
-    <dialog className="modal modal-open">
-      <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
-        <h3 className="font-bold text-lg">Mark Holidays</h3>
-        <p className="py-4 whitespace-pre-line">{modalMessage}</p>
-        <div className="modal-action">
-          <button
-            className="btn bgTheme text-white w-32"
-            onClick={() => setShowModal(false)}
-          >
-            OK
-          </button>
-        </div>
-      </div>
-    </dialog>
-  )}
-</div>
+      {/* Modal */}
+      {showModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+            <h3 className="font-bold text-lg">Mark Holidays</h3>
+            <p className="py-4 whitespace-pre-line">{modalMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-32"
+                onClick={() => setShowModal(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+    </div>
   );
 };
 

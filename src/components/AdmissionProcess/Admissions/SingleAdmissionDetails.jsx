@@ -71,7 +71,7 @@ export const SingleAdmissionDetails = () => {
     obj && obj[key] !== undefined && obj[key] !== null ? obj[key] : fallback;
 
   return (
-    <div className="p-3 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
+    <div className="p-3 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         {/* Header Section */}
         <div className="bgTheme text-white px-6 py-4">
@@ -254,7 +254,7 @@ export const SingleAdmissionDetails = () => {
                 <p>{getValue(details.address, "division")}</p>
               </div>
               <div>
-                <p className="font-medium">Area Code:</p>
+                <p className="font-medium">Pin Code:</p>
                 <p>{getValue(details.address, "area_code")}</p>
               </div>
             </div>
@@ -267,11 +267,11 @@ export const SingleAdmissionDetails = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <p className="font-medium">Class:</p>
+                <p className="font-medium">Year Level:</p>
                 <p>{details.year_level || "Not Assigned"}</p>
               </div>
               <div>
-                <p className="font-medium">Academic Year:</p>
+                <p className="font-medium">School Year:</p>
                 <p>{details.school_year || "Not Specified"}</p>
               </div>
               <div>

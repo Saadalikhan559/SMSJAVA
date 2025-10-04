@@ -77,7 +77,7 @@ const TeacherAttendance = () => {
       );
       setShowAlert(true);
     } catch {
-      setAlertMessage("Failed to mark Attendance");
+      setAlertMessage("Attendance is already Marked");
       setShowAlert(true);
     }
   };
@@ -150,12 +150,12 @@ const TeacherAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
-         <div className=" flex justify-end">
+        <div className=" flex justify-end">
           <Link
-          to={allRouterLink.teacherAttendanceRecord}
-            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            to={allRouterLink.teacherAttendanceRecord}
+            className="btn bgTheme text-white"
           >
             Attendance Record <span>&rarr;</span>
           </Link>
@@ -172,13 +172,13 @@ const TeacherAttendance = () => {
             type="text"
             placeholder="Search by name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 px-3 py-2 rounded w-full sm:w-64 focus:outline-none"
+            onChange={(e) => setSearchTerm(e.target.value.trimStart())}
+            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
+        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg mb-20">
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
@@ -206,8 +206,10 @@ const TeacherAttendance = () => {
                     <td className="px-4 py-3">
                       <input
                         type="date"
+                        disabled={attendance[teacher.id]?.marked}
                         value={attendance[teacher.id]?.date || ""}
                         onChange={(e) => handleChange(teacher.id, "date", e.target.value)}
+                        max={new Date().toISOString().split("T")[0]}
                         className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 p-1 rounded text-center"
                       />
                     </td>
@@ -215,7 +217,9 @@ const TeacherAttendance = () => {
                       <select
                         value={attendance[teacher.id]?.status || ""}
                         onChange={(e) => handleChange(teacher.id, "status", e.target.value)}
-                        className="select select-bordered w-full focus:outline-none text-nowrap border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                        disabled={attendance[teacher.id]?.marked}
+                        className={`select select-bordered w-full focus:outline-none text-nowrap border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 ${attendance[teacher.id]?.marked ? "bg-gray-300 cursor-not-allowed" : ""
+                          }`}
                       >
                         <option value="">-- Select Status --</option>
                         <option value="absent">Absent</option>
@@ -223,6 +227,7 @@ const TeacherAttendance = () => {
                         <option value="present">Present</option>
                       </select>
                     </td>
+
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleSave(teacher)}
@@ -242,7 +247,7 @@ const TeacherAttendance = () => {
                 <tr>
                   <td
                     colSpan="7"
-                    className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400"
+                    className="px-4 py-6 text-center text-red-600 dark:text-red-400"
                   >
                     No teachers found
                   </td>
