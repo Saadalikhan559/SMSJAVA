@@ -17,14 +17,11 @@ export const StudentAdmissionFees = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [showPaymentDialog1, setShowPaymentDialog1] = useState(false);
-  const [classes, setClasses] = useState([]);
-  const [selectedClassId, setSelectedClassId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingFees, setIsLoadingFees] = useState(false);
-  const [ setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
-const {id} = useParams()
+   const {id} = useParams()
   console.log("id", id);
 
 
@@ -54,29 +51,11 @@ const {id} = useParams()
   });
 
   const selectedStudentId = watch("student_id");
-  // const selectedMonth = watch("month");
 
-  // Custom Loader JSX
-
-  // Fetch all classes
-  const getClasses = async () => {
-    try {
-      setIsLoading(true);
-      setApiError("");
-      const response = await axios.get(`${BASE_URL}/d/year-levels/`);
-      setClasses(response.data);
-
-    } catch (err) {
-      console.log(err);
-      
-      setApiError("Failed to load classes");
-    } finally {
-      setIsLoading(false);
-    }
-  };
   const getStudent = async () => {
     try {
       const data = await fetchStudentById(id);
+      setSelectedStudent(data)
       console.log(data);
       
     } catch (error) {
@@ -86,18 +65,14 @@ const {id} = useParams()
     }
   };
 
-  const fetchAvailableFees = async (studentId) => {
-    if (!studentId) {
-      setAvailableFees([]);
-      return [];
-    }
-
+  const fetchAvailableFees = async () => {
+  
     try {
       setIsLoadingFees(true);
       setApiError("");
 
       const response = await axiosInstance.get(
-        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
+        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${id}`,
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -120,66 +95,18 @@ const {id} = useParams()
       setIsLoadingFees(false);
     }
   };
-  // Fetch students for selected class
-  // const getStudents = async (classId) => {
-  //   try {
-  //     setIsLoading(true);
-  //     setApiError("");
-  //     const Students = await fetchStudents1(classId);
-  //     setStudents(stu);
-  //   } catch (err) {
-  //     console.log(err);
-      
-  //     setApiError("Failed to load students");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  
+
 
 
   useEffect(() => {
-    getClasses();
-    getStudent()
+   getStudent()
   }, []);
+console.log(selectedStudent);
 
-  const handleClassChange = (e) => {
-    const classId = e.target.value;
-    setSelectedClassId(classId);
-    reset({
-      student_id: "",
-      month: "",
-      paid_amount: "",
-      payment_mode: "",
-      remarks: "",
-      received_by: "",
-    });
-    setSelectedFeeIds([]);
-    setSelectedStudent(null);
-    setAvailableFees([]);
-    setAvailableMonths([]);
-    setApiError("");
-  };
 
   useEffect(() => {
-    if (selectedClassId) {
-      getStudents(selectedClassId);
-    } else {
-      setStudents([]);
-    }
-  }, [selectedClassId]);
-
-  useEffect(() => {
-    if (selectedStudentId) {
-      const student = students.find((s) => s.student_id === parseInt(selectedStudentId));
-      setSelectedStudent(student);
-      fetchAvailableFees(selectedStudentId);
-    } else {
-      setSelectedStudent(null);
-      setAvailableFees([]);
-      setSelectedFeeIds([]);
-    }
-  }, [selectedStudentId, students]);
+   fetchAvailableFees();
+  }, []);
 
   useEffect(() => {
     if (selectedFeeIds.length > 0 && availableFees.length > 0) {
@@ -223,10 +150,6 @@ const {id} = useParams()
     });
   };
 
-  // const allMonths = [
-  //   "January", "February", "March", "April", "May", "June",
-  //   "July", "August", "September", "October", "November", "December"
-  // ];
 
   const paymentModes =
     role === constants.roles.officeStaff || constants.roles.director
@@ -235,6 +158,7 @@ const {id} = useParams()
 
 
 const displayRazorpay = async (payload) => {
+  const Payload = {...payload,student_id:id}
   try {
     const isScriptLoaded = await loadRazorpayScript();
     if (!isScriptLoaded) throw new Error("Razorpay SDK failed to load");
@@ -243,7 +167,7 @@ const displayRazorpay = async (payload) => {
 
     const orderResponse = await axiosInstance.post(
       `${BASE_URL}/d/fee-record/initiate-payment/`,
-      payload,
+      Payload,
       {
         headers: {
           "Content-Type": "application/json",
@@ -271,7 +195,7 @@ const displayRazorpay = async (payload) => {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
-            student_id: parseInt(student_id),
+            student_id: parseInt(id),
             month: selected_fees, 
             received_by: received_by,
             payment_mode: payment_mode,
@@ -310,7 +234,7 @@ const displayRazorpay = async (payload) => {
         email: selectedStudent?.email || "" 
       },
       notes: { 
-        student_id: student_id,
+        student_id: id,
         receipt_number: receipt_number
       },
       theme: { color: "#5E35B1" },
@@ -337,7 +261,7 @@ const displayRazorpay = async (payload) => {
     });
 
     const payload = {
-      student_id: parseInt(data.student_id),
+      student_id: parseInt(id),
       selected_fees,
       paid_amount: parseFloat(data.paid_amount).toFixed(2),
       payment_mode: data.payment_mode,
@@ -364,34 +288,6 @@ const displayRazorpay = async (payload) => {
       setPaymentStatus("Payment failed. Please try again.");
     }
   };
-
-  // const calculateTotalAmount = () => {
-  //   let baseTotal = 0;
-  //   let lateTotal = 0;
-  //   let dueTotal = 0;
-
-  //   availableFees.forEach((monthData) => {
-  //     monthData.fees.forEach((fee) => {
-  //       const rowKey = `${monthData.month}-${fee.id}`;
-  //       if (selectedFeeIds.includes(rowKey)) {
-  //         const base = parseFloat(fee.base_amount) || 0;
-  //         const late = parseFloat(fee.late_fee) || 0;
-  //         const due = parseFloat(fee.due_amount) || 0;
-
-  //         baseTotal += base;
-  //         lateTotal += late;
-  //         dueTotal += due;
-  //       }
-  //     });
-  //   });
-
-  //   return {
-  //     baseAmount: baseTotal,
-  //     lateFee: lateTotal,
-  //     Due: dueTotal,
-  //     totalAmount: baseTotal + lateTotal + dueTotal,
-  //   };
-  // };
 
 
 
@@ -454,37 +350,6 @@ const displayRazorpay = async (payload) => {
     });
   }, [selectedFeeIds, availableFees, setValue]);
 
-  // const calculateTotalAmount = () => {
-  //   let total = 0;
-  //   let lateFeeTotal = 0;
-  //   let dueFeeTotal = 0;
-
-  //   availableFees.forEach((yearLevel) => {
-  //     yearLevel.fees.forEach((fee) => {
-  //       if (selectedFeeIds.includes(fee.id)) {
-  //         const finalAmount = parseFloat(fee.final_amount) || 0;
-  //         const lateFee = parseFloat(fee.late_fee) || 0;
-  //         const dueAmount = parseFloat(fee.due_amount) || 0;
-
-  //         total += finalAmount;
-  //         lateFeeTotal += lateFee;
-  //         dueFeeTotal += dueAmount;
-  //       }
-  //     });
-  //   });
-
-  //   return {
-  //     baseAmount: total,
-  //     lateFee: lateFeeTotal,
-  //     Due: dueFeeTotal,
-  //     totalAmount: total + lateFeeTotal + dueFeeTotal,
-  //   };
-  // };
-
-  // const totalAmount = calculateTotalAmount();
-
-
-
 
   const stuId = window.localStorage.getItem("student_id");
   const stuYearlvlName = localStorage.getItem("stu_year_level_name");
@@ -497,18 +362,6 @@ const displayRazorpay = async (payload) => {
   console.log(localStorage.getItem("stu_year_level_name"));
 
   console.log(student);
-
-  // const handleRetry = () => {
-  //   if (selectedStudentId && selectedMonth) {
-  //     fetchAvailableFees(selectedStudentId, selectedMonth);
-  //   }
-  // };
-  const handleRetry = () => {
-    if (selectedStudentId) {
-      fetchAvailableFees(selectedStudentId);
-    }
-  };
-
 
 
 
@@ -560,251 +413,18 @@ const displayRazorpay = async (payload) => {
           </h1>
 
 
-          {/* Error Display */}
-          {/* {apiError && (
-            <div className="alert alert-error mb-6">
-              <div className="flex-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  className="w-6 h-6 mx-2 stroke-current"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  ></path>
-                </svg>
-                <label>{apiError}</label>
-              </div>
-              <button
-                type="button"
-                onClick={handleRetry}
-                className="btn btn-sm btn-ghost"
-              >
-                Retry
-              </button>
-            </div>
-          )} */}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Class Selection */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-school text-sm"></i>
-                  Class <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full focus:outline-none"
-                onChange={handleClassChange}
-                value={selectedClassId || ""}
-              >
-                <option value="">Select Class</option>
-                {UserRole === "director" ? classes?.map((classItem) => (
-                  <option key={classItem.id} value={classItem.id}>
-                    {classItem.level_name}
-                  </option>
-                ))
-                  : UserRole === "office staff" ? classes?.map((classItem) => (
-                    <option key={classItem.id} value={classItem.id}>
-                      {classItem.level_name}
-                    </option>
-                  ))
-                  : UserRole === "guardian" ? classes?.map((classItem) => (
-                    <option key={classItem.id} value={classItem.id}>
-                      {classItem.level_name}
-                    </option>
-                  ))
-
-                    : null}
-                {UserRole === "student" && (
-                  <option key={stuYearlvlId} value={stuYearlvlId}>
-                    {stuYearlvlName}
-                  </option>
-                )}
-              </select>
-            </div>
-
-            {/* Student Selection */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-user-graduate text-sm"></i>
-                  Student <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className={`select w-full focus:outline-none ${errors.student_id ? "select-error" : "select-bordered"
-                  }`}
-                {...register("student_id", {
-                  required: "Student selection is required",
-                })}
-                value={selectedStudentId || ""}
-                disabled={!selectedClassId}
-              >
-                <option value="">Select Student</option>
-                {isLoading ? (
-                  <option value="" disabled>
-                    Loading students...
-                  </option>
-                ) : UserRole === "director" ? (
-                  students?.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.student_name} - {student.student_email}
-                    </option>
-                  ))
-                ) : UserRole === "office staff" ? (
-                  students?.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.student_name} - {student.student_email}
-                    </option>
-                  ))
-                ) : UserRole === "guardian" ? (
-                  students?.map((student) => (
-                    <option key={student.student_id} value={student.student_id}>
-                      {student.student_name} - {student.student_email}
-                    </option>
-                  ))
-                )
-                  : UserRole === "student" ? (
-                    <option key={student?.student_id} value={student?.student_id}>
-                      {student?.student_name} - {student?.student_email}
-                    </option>
-                  ) : null}
-
-              </select>
-              {errors.student_id && (
-                <label className="label">
-                  <span className="label-text-alt text-error">
-                    {errors.student_id.message}
-                  </span>
-                </label>
-              )}
-            </div>
-
-            {/* Month Selection */}
-            {/* <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-calendar text-sm"></i>
-                  Month <span className="text-error">*</span>
-                </span>
-              </label>
-              <select
-                className={`select w-full focus:outline-none ${errors.month ? "select-error" : "select-bordered"
-                  }`}
-                {...register("month", {
-                  required: "Month selection is required",
-                })}
-                disabled={!selectedStudentId}
-              >
-                <option value="">Select Month</option>
-                {allMonths.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              {errors.month && (
-                <label className="label">
-                  <span className="label-text-alt text-error">
-                    {errors.month.message}
-                  </span>
-                </label>
-              )}
-            </div> */}
-          </div>
-
-          {/* Loading State */}
-          {/* {isLoadingFees && (
-            <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-        </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
-      </div>
-          )} */}
-
           {/* Available Fees Display */}
-          {availableFees.length > 0 && selectedStudent && (
+          {availableFees.length > 0  && (
             <div className="mt-8">
-
-
-              {/* {availableFees.map((yearLevel) => (
-                <div key={yearLevel.id} className="mb-6">
-                  <h3 className="text-lg font-medium mb-3">
-                    {yearLevel.year_level} Fees
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {yearLevel.fees.map((fee) => (
-                      <div key={fee.id} className="card bg-base-200 shadow-sm">
-                        <div className="card-body p-4">
-                          <div className="form-control">
-                            <label className="label cursor-pointer justify-start gap-4">
-                              {fee.final_amount > 0 || fee.due_amount > 0 ? (
-                                <input
-                                  type="checkbox"
-                                  checked={selectedFeeIds.includes(fee.id)}
-                                  onChange={(e) =>
-                                    handleFeeSelection(fee.id, e.target.checked)
-                                  }
-                                  className="checkbox checkbox-primary"
-                                />
-                              ) : (
-                                <div className="flex items-center gap-2 text-success">
-                                  <i className="fa-solid fa-check-circle"></i>
-                                </div>
-                              )}
-                              <div>
-                                <h3 className="card-title text-lg font-bold">
-                                  {fee.fee_type}
-                                </h3>
-                                {
-                                  // <div className="flex items-center gap-2 text-success">
-                                  //   <span>{fee.status}</span>
-                                  // </div>
-                                  <div
-                                    className={`flex items-center gap-2 ${fee.status === "Paid" ? "text-green-600" : "text-yellow-700"
-                                      }`}
-                                  >
-                                    <span>{fee.status}</span>
-
-
-                                  </div>
-
-
-                                }
-                                {fee.late_fee && (
-                                  <p className="text-sm text-warning mt-1">
-                                    Late Fee: ₹{fee.late_fee}
-                                  </p>
-                                )}
-                              </div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))} */}
-
-              {availableFees.length > 0 && selectedStudent && (
+              {availableFees.length > 0  && (
                 <div className="mt-8">
                   <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
-                    Fee Details for {selectedStudent.student_name}
+                    Fee Details for {selectedStudent.first_name +" "+ selectedStudent.last_name}
                   </h2>
                   <div className="overflow-x-auto">
                     <div className="max-h-[500px] overflow-y-auto rounded-lg border">
                       <table className="table w-full">
-                        <thead className="sticky top-0 bg-base-200 z-10">
+                        <thead className="sticky top-0 bg-base-200 z-2">
                           <tr>
                             <th>Month</th>
                             <th>Fee Type</th>
@@ -975,25 +595,7 @@ const displayRazorpay = async (payload) => {
                   Paid Amount <span className="text-error">*</span>
                 </span>
               </label>
-              {/* <input
-                type="number"
-                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
-                  }`}
-                {...register("paid_amount", {
-                  required: "Amount is required",
-                  min: { value: 0, message: "Amount must be positive" },
-                  max: {
-                    value: totalAmount.totalAmount, // max = total fees
-                    message: `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
-                  },
-                  validate: (value) =>
-                    parseFloat(value) <= totalAmount.totalAmount ||
-                    `Amount cannot exceed ₹${totalAmount.totalAmount.toFixed(2)}`,
-                })}
-                placeholder="Enter amount"
-                step="1"
-                disabled={selectedFeeIds.length === 0}
-              /> */}
+
               <input
                 type="number"
                 className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
