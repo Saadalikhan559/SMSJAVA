@@ -59,7 +59,7 @@ export const TeacherDashboard = () => {
   };
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-6 ">
       <LoginSuccessHandler/>
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         {dashboardData.teacher_name}'s Dashboard
@@ -71,12 +71,12 @@ export const TeacherDashboard = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
         {dashboardData.class_summary && dashboardData.class_summary.length > 0 ? (
           dashboardData.class_summary.map((detail, idx) => (
             <div
               key={idx}
-              className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white"
+              className="border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white dark:bg-gray-800 dark:border-gray-700"
             >
               {/* Header */}
               <div className="p-4 bgTheme text-white">
