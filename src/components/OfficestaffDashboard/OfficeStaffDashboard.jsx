@@ -137,7 +137,7 @@ export const OfficeStaffDashboard = () => {
         <div className="col-span-12 md:col-span-9">
           <div className="h-full border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 bgTheme text-white rounded-t-lg">
-              <h2 className="text-lg font-bold">Admissions Overview</h2>
+              <h2 className="text-lg font-bold">Student Admission Per Year</h2>
             </div>
             <div className="p-4 flex-1">
               <Chart
