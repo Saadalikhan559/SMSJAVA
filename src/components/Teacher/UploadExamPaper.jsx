@@ -62,6 +62,7 @@ const UploadExamPaper = () => {
   const [searchExamTypeInput, setSearchExamTypeInput] = useState('');
   const [selectedExamType, setSelectedExamType] = useState('');
   const [showExamTypeDropdown, setShowExamTypeDropdown] = useState(false);
+console.log(terms);
 
   const {
     register,
@@ -316,6 +317,7 @@ const UploadExamPaper = () => {
                 key: "year",
                 error: errors.term,
                 requiredMsg: "Term is required",
+                renderValue: (item) => `${item.year} - Term ${item.term_number}`
               },
 
             ].map(({ label, name, data, key, error, requiredMsg, renderValue = null }) => (

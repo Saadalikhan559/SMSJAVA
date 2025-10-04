@@ -1198,7 +1198,7 @@ export const fetchCalendar = async (month, year) => {
 export const importHolidays = async (year) => {
   try {
     const response = await axios.post(
-      `${BASE_URL}/a/holidays/import/?year=${year}`,
+      `${BASE_URL}a/holidays/import?year=${year}`,
       { year },
       {
         headers: {
