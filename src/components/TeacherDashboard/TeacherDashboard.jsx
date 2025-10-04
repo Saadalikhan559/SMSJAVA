@@ -71,7 +71,7 @@ export const TeacherDashboard = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
+      <div className="grid grid-cols-1 gap-6 ">
         {dashboardData.class_summary && dashboardData.class_summary.length > 0 ? (
           dashboardData.class_summary.map((detail, idx) => (
             <div
@@ -85,22 +85,22 @@ export const TeacherDashboard = () => {
 
               {/* Detail Section */}
               <div className="p-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">Class:</span>
-                  <span className="text-gray-800 font-semibold">{detail.level_name}</span>
+                <div className="flex">
+                  <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center mx-5">Class:</span>
+                  <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center">{detail.level_name}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">Classroom:</span>
-                  <span className="text-gray-800 font-semibold">{detail.room_name}</span>
+                <div className="flex">
+                  <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center mx-5">Classroom:</span>
+                  <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center">{detail.room_name}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium text-gray-600">Student Count:</span>
-                  <span className="text-gray-800 font-semibold">{detail.total_students}</span>
+                <div className="flex ">
+                  <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center mx-5">Student Count:</span>
+                  <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center">{detail.total_students}</span>
                 </div>
                 <span className='flex justify-center'>
                   <button
                     type="button"
-                    className="w-full font-semibold px-4 py-2 shadow-md rounded-md btn-theme"
+                    className="btn bgTheme text-white m-1 transition-colors duration-300"
                     onClick={() => handleShowAttendance(detail.level_name)}
                   > 
                     <i className="fa-solid fa-chalkboard-user mr-2" />
