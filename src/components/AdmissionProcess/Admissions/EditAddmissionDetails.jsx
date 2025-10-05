@@ -608,16 +608,17 @@ console.log(data);
                   required: "Status is required",
                 })}
                 className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.student?.gender ? "select-error" : ""
+                  errors.student?.is_active ? "select-error" : ""
                 }`}
               >
+                <option value="">Select Status</option>
                 <option value="true">Active</option>
                 <option value="false">InActive</option>
 
               </select>
-              {errors.student?.gender && (
+              {errors.student?.is_active && (
                 <span className="text-error text-sm">
-                  {errors.student.gender.message}
+                  {errors.student.is_active.message}
                 </span>
               )}
             </div>
