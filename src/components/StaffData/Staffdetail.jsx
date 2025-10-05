@@ -58,7 +58,7 @@ const Staffdetail = () => {
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center mb-10">
       <div className="p-6 bg-gray-100 dark:bg-gray-900 w-full min-h-screen">
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg">
           <div className="bgTheme text-white px-4 py-2 rounded-t-md">

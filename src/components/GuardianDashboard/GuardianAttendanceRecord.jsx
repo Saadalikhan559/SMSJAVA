@@ -179,7 +179,7 @@ const GuardianAttendanceRecord = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 mb-10">
       <h2 className="font-bold text-2xl flex justify-center items-center gap-2 textTheme">
         <i className="fa-solid fa-square-poll-vertical" /> Attendance Record
       </h2>

@@ -258,7 +258,7 @@ const MarksheetsTable = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-10">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-4">
           Marksheets <i className="fa-solid fa-address-card ml-2"></i>

@@ -54,7 +54,7 @@ const ViewAllocatedClass = () => {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-1">

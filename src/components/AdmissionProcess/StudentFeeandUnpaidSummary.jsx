@@ -220,7 +220,7 @@ const StudentFeeAndUnpaidSummary = () => {
     }
 
 return (
-  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
     <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full">
       <div>
         <button
