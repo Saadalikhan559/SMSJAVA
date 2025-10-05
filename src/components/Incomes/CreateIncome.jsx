@@ -83,7 +83,7 @@ const CreateIncome = () => {
   };
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-box my-5 shadow-sm dark:shadow-gray-700">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">

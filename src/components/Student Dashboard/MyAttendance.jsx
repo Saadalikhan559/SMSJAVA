@@ -47,7 +47,7 @@ const MyAttendance = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 bg-gray-50 mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           <i className="fa-solid fa-calendar-check mr-2"></i> My Attendance

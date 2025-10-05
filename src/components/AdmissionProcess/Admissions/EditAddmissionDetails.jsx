@@ -458,7 +458,7 @@ console.log(data);
   }
 
   return (
-    <>
+    <div className="mb-10">
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
         className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-10"
@@ -1984,6 +1984,6 @@ console.log(data);
           handleCloseAndNavigate={handleCloseAndNavigate}
         />
       )}
-    </>
+    </div>
   );
 };

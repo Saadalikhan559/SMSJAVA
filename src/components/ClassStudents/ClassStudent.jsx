@@ -174,7 +174,7 @@ export const ClassStudent = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
          <div className="mb-4 border-b pb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">

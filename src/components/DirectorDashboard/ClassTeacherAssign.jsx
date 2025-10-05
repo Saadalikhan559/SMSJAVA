@@ -152,7 +152,7 @@ const ClassTeacherAssign = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
         <div className=" flex justify-end">
           <button

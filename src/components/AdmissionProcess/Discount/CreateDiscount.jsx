@@ -59,7 +59,10 @@ const CreateDiscount = () => {
     setLoadingStudents(true);
     try {
       const data = await fetchStudents1(classId);
-      setStudents(data || []);
+      const sortedData = (data || []).sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
+      );
+      setStudents(sortedData);
       setError(false);
     } catch (err) {
       console.error("Failed to load students:", err);
@@ -69,6 +72,7 @@ const CreateDiscount = () => {
       setLoadingStudents(false);
     }
   };
+
 
   useEffect(() => {
     if (classId) loadStudents();

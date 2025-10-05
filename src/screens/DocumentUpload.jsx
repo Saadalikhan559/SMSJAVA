@@ -209,7 +209,10 @@ export const DocumentUpload = () => {
     setLoadingDocumentTypes(true);
     try {
       const docType = await fetchDocumentType();
-      setDocumentType(docType);
+      const sortedDocType = [...docType].sort((a, b) =>
+        a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      );
+      setDocumentType(sortedDocType);
     } catch (error) {
       console.log("Failed to load document types");
     } finally {
@@ -221,7 +224,12 @@ export const DocumentUpload = () => {
     setLoadingTeachers(true);
     try {
       const allTeachers = await fetchTeachers();
-      setTeachers(allTeachers);
+      const sortedTeachers = [...allTeachers].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+      setTeachers(sortedTeachers);
     } catch {
       console.log("Failed to load teachers");
     } finally {
@@ -363,91 +371,91 @@ export const DocumentUpload = () => {
     );
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const newDocErrors = [...docTypeErrors];
-  const newIdentityErrors = [...identityErrors];
-  let hasError = false;
+    const newDocErrors = [...docTypeErrors];
+    const newIdentityErrors = [...identityErrors];
+    let hasError = false;
 
-  try {
-    
-    for (const [index, field] of uploadFields.entries()) {
-      // Validate document type
-      if (!field.document_types) {
-        newDocErrors[index] = "Please select a document type";
-        hasError = true;
-      } else {
-        newDocErrors[index] = "";
+    try {
+
+      for (const [index, field] of uploadFields.entries()) {
+        // Validate document type
+        if (!field.document_types) {
+          newDocErrors[index] = "Please select a document type";
+          hasError = true;
+        } else {
+          newDocErrors[index] = "";
+        }
+
+        // Validate file
+        if (!field.files) {
+          newDocErrors[index] = "Please upload a file";
+          hasError = true;
+        }
+
+        // Validate identities
+        const identityError = validateIdentity(field.identities, field.document_types);
+        if (identityError) {
+          newIdentityErrors[index] = identityError;
+          hasError = true;
+        } else {
+          newIdentityErrors[index] = "";
+        }
+
+
+        console.log(`Validation result for index ${index}:`, {
+          docError: newDocErrors[index],
+          identityError: newIdentityErrors[index],
+        });
       }
 
-      // Validate file
-      if (!field.files) {
-        newDocErrors[index] = "Please upload a file";
-        hasError = true;
+      setDocTypeErrors([...newDocErrors]);
+      setIdentityErrors([...newIdentityErrors]);
+
+      if (hasError) {
+        setLoading(false);
+        return;
       }
 
-      // Validate identities
-      const identityError = validateIdentity(field.identities, field.document_types);
-      if (identityError) {
-        newIdentityErrors[index] = identityError;
-        hasError = true;
-      } else {
-        newIdentityErrors[index] = "";
+      for (const field of uploadFields) {
+        const formDataToSend = new FormData();
+        formDataToSend.append("files", field.files);
+        formDataToSend.append("document_types", field.document_types);
+
+        if (formData.student) formDataToSend.append("student", formData.student);
+        if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities) formDataToSend.append("identities", field.identities);
+
+        await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
-
-      console.log(`Validation result for index ${index}:`, {
-        docError: newDocErrors[index],
-        identityError: newIdentityErrors[index],
+      setAlertMessage("Documents uploaded successfully!");
+      setShowAlert(true);
+      setUploadFields([{ files: null, document_types: "", identities: "" }]);
+      setFormData({
+        student: "",
+        teacher: "",
+        guardian: "",
+        office_staff: "",
+        year_level: "",
       });
-    }
-
-    setDocTypeErrors([...newDocErrors]);
-    setIdentityErrors([...newIdentityErrors]);
-
-    if (hasError) {
+      setRole("");
+      setStep(0);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setAlertMessage("Upload failed");
+      setShowAlert(true);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    for (const field of uploadFields) {
-      const formDataToSend = new FormData();
-      formDataToSend.append("files", field.files);
-      formDataToSend.append("document_types", field.document_types);
-
-      if (formData.student) formDataToSend.append("student", formData.student);
-      if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
-      if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
-      if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
-      if (field.identities) formDataToSend.append("identities", field.identities);
-
-      await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    }
-
-    setAlertMessage("Documents uploaded successfully!");
-    setShowAlert(true);
-    setUploadFields([{ files: null, document_types: "", identities: "" }]);
-    setFormData({
-      student: "",
-      teacher: "",
-      guardian: "",
-      office_staff: "",
-      year_level: "",
-    });
-    setRole("");
-    setStep(0);
-  } catch (err) {
-    console.error("Upload failed:", err);
-    setAlertMessage("Upload failed");
-    setShowAlert(true);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
 

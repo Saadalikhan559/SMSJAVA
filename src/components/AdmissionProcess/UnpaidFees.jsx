@@ -150,7 +150,7 @@ const UnpaidFeesList = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         {/* Title */}
         <div className="mb-4">
@@ -255,7 +255,7 @@ const UnpaidFeesList = () => {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {flattenedFees.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-6 text-red-600 dark:text-red-400">
+                  <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">
                     No data found.
                   </td>
                 </tr>
