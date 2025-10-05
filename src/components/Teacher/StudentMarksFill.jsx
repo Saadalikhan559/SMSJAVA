@@ -170,18 +170,26 @@ const StudentMarksFill = () => {
       setShowAlert(true);
     }
   };
-  const filteredStudents = students.filter((studentObj) =>
-    studentObj.student_name.toLowerCase().includes(searchStudentInput.toLowerCase())
-  );
-  const filteredSubjects = subjects.filter((subjectObj) =>
-    subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
-  );
+  const filteredStudents = students
+    .filter((studentObj) =>
+      studentObj.student_name.toLowerCase().includes(searchStudentInput.toLowerCase())
+    )
+    .sort((a, b) => a.student_name.localeCompare(b.student_name));
+  const filteredSubjects = subjects
+    .filter((subjectObj) =>
+      subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
+    )
+    .sort((a, b) => a.subject_name.localeCompare(b.subject_name));
 
-  const filteredTeachers = teachers.filter((teacherObj) =>
-    `${teacherObj.first_name} ${teacherObj.last_name}`
-      .toLowerCase()
-      .includes(searchTeacherInput.toLowerCase())
-  );
+  const filteredTeachers = teachers
+    .filter((teacherObj) =>
+      `${teacherObj.first_name} ${teacherObj.last_name}`
+        .toLowerCase()
+        .includes(searchTeacherInput.toLowerCase())
+    )
+    .sort((a, b) =>
+      `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`)
+    );
 
 
   return (
@@ -376,7 +384,7 @@ const StudentMarksFill = () => {
                       filteredTeachers.map((teacherObj) => (
                         <p
                           key={teacherObj.id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             setSelectedTeacherId(teacherObj.id);
                             setSelectedTeacherName(`${teacherObj.first_name} ${teacherObj.last_name}`);
@@ -445,7 +453,7 @@ const StudentMarksFill = () => {
                       filteredStudents.map((studentObj) => (
                         <p
                           key={studentObj.student_id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             setSelectedStudentId(studentObj.student_id);
                             setSelectedStudentName(studentObj.student_name);

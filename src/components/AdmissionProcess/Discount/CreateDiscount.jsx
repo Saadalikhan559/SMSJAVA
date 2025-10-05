@@ -256,7 +256,7 @@ const CreateDiscount = () => {
                       filteredStudents.map((studentObj) => (
                         <p
                           key={studentObj.student_id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             setSelectedStudentId(studentObj.student_id);
                             setSelectedStudentName(studentObj.student_name);

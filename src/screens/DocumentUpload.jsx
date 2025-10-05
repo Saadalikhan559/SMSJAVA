@@ -241,7 +241,13 @@ export const DocumentUpload = () => {
     setLoadingGuardians(true);
     try {
       const allGuardians = await fetchGuardians();
-      setGuardians(allGuardians);
+      const sortedGuardians = [...allGuardians].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+
+      setGuardians(sortedGuardians);
     } catch {
       console.log("Failed to load guardians");
     } finally {
@@ -253,7 +259,13 @@ export const DocumentUpload = () => {
     setLoadingOfficeStaff(true);
     try {
       const allStaff = await fetchOfficeStaff();
-      setOfficeStaff(allStaff);
+      const sortedStaff = [...allStaff].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+
+      setOfficeStaff(sortedStaff);
     } catch {
       console.log("Failed to load office staff");
     } finally {
@@ -274,16 +286,19 @@ export const DocumentUpload = () => {
     if (!yearLevelID) return;
     setLoadingStudents(true);
     try {
-      const allStudentsByClass = await fetchStudentYearLevelByClass(
-        yearLevelID
+      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelID);
+      const sortedStudents = [...allStudentsByClass].sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
       );
-      setStudents(allStudentsByClass);
+
+      setStudents(sortedStudents);
     } catch {
       console.log("Failed to load students");
     } finally {
       setLoadingStudents(false);
     }
   };
+
 
   // --- HANDLERS ---
   const handleRoleChange = (e) => {
@@ -488,7 +503,10 @@ export const DocumentUpload = () => {
       role.name === constants.roles.officeStaff ||
       role.name === constants.roles.student ||
       role.name === constants.roles.guardian
-  );
+  )
+    .sort((a, b) =>
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
 
   // --- RENDER ---
   return (
@@ -754,7 +772,7 @@ export const DocumentUpload = () => {
                           filteredStudents.map((studentObj) => (
                             <p
                               key={studentObj.student_id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -821,7 +839,7 @@ export const DocumentUpload = () => {
                           filteredTeachers.map((teacher) => (
                             <p
                               key={teacher.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -893,7 +911,7 @@ export const DocumentUpload = () => {
                           filteredGuardians.map((guardian) => (
                             <p
                               key={guardian.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -963,7 +981,7 @@ export const DocumentUpload = () => {
                           filteredOfficeStaff.map((staff) => (
                             <p
                               key={staff.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,

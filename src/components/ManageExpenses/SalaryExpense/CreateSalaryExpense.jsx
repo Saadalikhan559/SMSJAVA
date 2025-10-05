@@ -70,7 +70,12 @@ export const CreateSalaryExpense = () => {
           const { data } = await axiosInstance.get(
             `/d/Employee/get_emp/?role=${roleName}`
           );
-          setEmployees(data || []);
+           const sortedEmployees = (data || []).sort((a, b) => {
+          const nameA = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+          const nameB = `${b.first_name || ""} ${b.last_name || ""}`.trim().toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+        setEmployees(sortedEmployees);
         }
       } else {
         setEmployees([]);
@@ -152,7 +157,7 @@ return (
               </span>
             </label>
             <select
-              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 capitalize"
               {...register("role", { required: "Role is required" })}
             >
               <option value="">Select Role</option>
@@ -210,7 +215,7 @@ return (
                         employee && (
                           <p
                             key={employee.id}
-                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                             onClick={() => {
                               setValue("employee", employee.id.toString(), {
                                 shouldValidate: true,

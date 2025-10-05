@@ -75,11 +75,15 @@ const ClassTeacherAssign = () => {
     }
   };
 
-  const filteredTeachers = teachers.filter((teacher) =>
-    `${teacher.first_name} ${teacher.last_name}`
-      .toLowerCase()
-      .includes(searchTeacherInput.toLowerCase())
-  );
+  const filteredTeachers = teachers
+    .filter((teacher) =>
+      `${teacher.first_name} ${teacher.last_name}`
+        .toLowerCase()
+        .includes(searchTeacherInput.toLowerCase())
+    )
+    .sort((a, b) =>
+      `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`)
+    );
 
   const handleSubmitForm = async (data) => {
     const payload = {
