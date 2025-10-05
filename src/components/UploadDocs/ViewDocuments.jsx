@@ -358,7 +358,7 @@ export const ViewDocuments = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filterBysearch.length > 0 ? (
                     [...filterBysearch]
-                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
                       .map((person) => (
                         <tr
                           key={`${person.role}-${person.name}-${person.yearLevel}`}
