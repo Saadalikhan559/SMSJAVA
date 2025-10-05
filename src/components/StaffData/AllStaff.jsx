@@ -130,7 +130,7 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredTeachers.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 dark:text-gray-300">
+                      <td colSpan="4" className="text-center py-6 text-gray-500 dark:text-gray-400">
                         No data found.
                       </td>
                     </tr>
@@ -192,7 +192,7 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-gray-300">
+                      <td colSpan="4" className="text-center py-6 text-gray-500 dark:text-gray-400">
                         No data found.
                       </td>
                     </tr>

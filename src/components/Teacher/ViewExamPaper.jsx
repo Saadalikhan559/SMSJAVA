@@ -490,9 +490,8 @@ const ViewExamPaper = () => {
                       filteredTeachers.map((teacher, index) => (
                         <div
                           key={index}
-                          className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer ${
-                            selectedTeacher === teacher ? "bg-blue-50 dark:bg-blue-900" : ""
-                          }`}
+                          className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer ${selectedTeacher === teacher ? "bg-blue-50 dark:bg-blue-900" : ""
+                            }`}
                           onClick={() => {
                             setSelectedTeacher(teacher);
                             setIsOpen(false);
@@ -579,13 +578,13 @@ const ViewExamPaper = () => {
                     <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 capitalize">
                       {paper.subject_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize text-nowrap">
                       {paper.year_level_name}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                       {paper.exam_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize text-nowrap">
                       {paper.teacher_name}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">

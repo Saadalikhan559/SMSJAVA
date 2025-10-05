@@ -91,7 +91,7 @@ const ViewAllocatedClass = () => {
                       key={classItem.id || index}
                       className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
-                      <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
+                      <td className="px-4 py-3 font-bold text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
                         {classItem.teacher_name}
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
@@ -101,7 +101,7 @@ const ViewAllocatedClass = () => {
                   ))
               ) : (
                 <tr>
-                  <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                  <td colSpan="2" className="text-center py-6 text-gray-500 dark:text-gray-400">
                     No matching classes found
                   </td>
                 </tr>
