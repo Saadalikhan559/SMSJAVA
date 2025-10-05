@@ -180,14 +180,14 @@ const ExamSchedule = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen  dark:bg-gray-900">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm mb-10">
         <div className=" flex justify-end">
           <button
-            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            className="btn bgTheme text-white"
             onClick={handleNavigate}
           >
-            Update Exam Schedule <span>&rarr;</span>
+           <i className="fa-solid fa-pen-nib ml-2"></i> Update Exam Schedule
           </button>
         </div>
 
