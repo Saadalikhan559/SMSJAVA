@@ -52,6 +52,8 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
+  const [identityError, setIdentityError] = useState("");
+
 
   const [role, setRole] = useState("");
 
@@ -191,6 +193,9 @@ export const DocumentUpload = () => {
 
     return "";
   };
+
+
+
 
   // --- API FETCH FUNCTIONS ---
   const getRoles = async () => {
@@ -363,92 +368,89 @@ export const DocumentUpload = () => {
     );
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
 
-  const newDocErrors = [...docTypeErrors];
-  const newIdentityErrors = [...identityErrors];
-  let hasError = false;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    
-    for (const [index, field] of uploadFields.entries()) {
-      // Validate document type
-      if (!field.document_types) {
-        newDocErrors[index] = "Please select a document type";
-        hasError = true;
-      } else {
-        newDocErrors[index] = "";
+    const newDocErrors = [...docTypeErrors];
+    const newIdentityErrors = [...identityErrors];
+    let hasError = false;
+
+    try {
+      for (const [index, field] of uploadFields.entries()) {
+        // Validate document type
+        if (!field.document_types) {
+          newDocErrors[index] = "Please select a document type";
+          hasError = true;
+        } else {
+          newDocErrors[index] = "";
+        }
+
+        // Validate file
+        if (!field.files) {
+          newDocErrors[index] = "Please upload a file";
+          hasError = true;
+        }
+
+        // Validate identities per field
+        const identityError = validateIdentity(field.identities, field.document_types);
+        if (!field.identities) {
+          newIdentityErrors[index] = "Identity is required";
+          hasError = true;
+        } else if (identityError) {
+          newIdentityErrors[index] = identityError;
+          hasError = true;
+        } else {
+          newIdentityErrors[index] = "";
+        }
       }
 
-      // Validate file
-      if (!field.files) {
-        newDocErrors[index] = "Please upload a file";
-        hasError = true;
+      setDocTypeErrors([...newDocErrors]);
+      setIdentityErrors([...newIdentityErrors]);
+
+      if (hasError) {
+        setLoading(false);
+        return;
       }
 
-      // Validate identities
-      const identityError = validateIdentity(field.identities, field.document_types);
-      if (identityError) {
-        newIdentityErrors[index] = identityError;
-        hasError = true;
-      } else {
-        newIdentityErrors[index] = "";
+      // Upload files
+      for (const field of uploadFields) {
+        const formDataToSend = new FormData();
+        formDataToSend.append("files", field.files);
+        formDataToSend.append("document_types", field.document_types);
+
+        if (formData.student) formDataToSend.append("student", formData.student);
+        if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities) formDataToSend.append("identities", field.identities);
+
+        await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
-
-      console.log(`Validation result for index ${index}:`, {
-        docError: newDocErrors[index],
-        identityError: newIdentityErrors[index],
+      setAlertMessage("Documents uploaded successfully!");
+      setShowAlert(true);
+      setUploadFields([{ files: null, document_types: "", identities: "" }]);
+      setFormData({
+        student: "",
+        teacher: "",
+        guardian: "",
+        office_staff: "",
+        year_level: "",
       });
-    }
-
-    setDocTypeErrors([...newDocErrors]);
-    setIdentityErrors([...newIdentityErrors]);
-
-    if (hasError) {
+      setRole("");
+      setStep(0);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setAlertMessage("Upload failed");
+      setShowAlert(true);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    for (const field of uploadFields) {
-      const formDataToSend = new FormData();
-      formDataToSend.append("files", field.files);
-      formDataToSend.append("document_types", field.document_types);
-
-      if (formData.student) formDataToSend.append("student", formData.student);
-      if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
-      if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
-      if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
-      if (field.identities) formDataToSend.append("identities", field.identities);
-
-      await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    }
-
-    setAlertMessage("Documents uploaded successfully!");
-    setShowAlert(true);
-    setUploadFields([{ files: null, document_types: "", identities: "" }]);
-    setFormData({
-      student: "",
-      teacher: "",
-      guardian: "",
-      office_staff: "",
-      year_level: "",
-    });
-    setRole("");
-    setStep(0);
-  } catch (err) {
-    console.error("Upload failed:", err);
-    setAlertMessage("Upload failed");
-    setShowAlert(true);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
 
   // --- SIDE EFFECTS ---
@@ -642,6 +644,7 @@ const handleSubmit = async (e) => {
                 </div>
 
                 {/* Identity */}
+
                 <div className="form-control w-full pt-6">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
@@ -651,17 +654,16 @@ const handleSubmit = async (e) => {
                   <input
                     type="text"
                     name="identities"
-                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                     value={field.identities}
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
+                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                   />
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
                     </span>
                   </div>
-
                 </div>
 
                 {/* Add/Remove */}
