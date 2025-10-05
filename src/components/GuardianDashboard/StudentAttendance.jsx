@@ -29,7 +29,7 @@ const StudentAttendance = ({ guardianId }) => {
   }, [guardianId]);
 
   return (
-    <div className="p-5 bg-gray-50 min-h-screen">
+    <div className="p-5 bg-gray-50 min-h-screen mb-10">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           <i className="fa-solid fa-chalkboard-user mr-2 " />

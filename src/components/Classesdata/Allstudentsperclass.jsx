@@ -61,7 +61,7 @@ const AllStudentsPerClass = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
 
         {/* Header */}

@@ -138,7 +138,7 @@ const TeacherSubstitute = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
         {/* Header */}
         <div className="mb-4">

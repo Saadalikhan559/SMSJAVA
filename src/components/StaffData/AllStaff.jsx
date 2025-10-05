@@ -78,7 +78,7 @@ const AllStaff = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-10">
         {/* Tabs */}
         <div className="flex gap-4 ">
           <button

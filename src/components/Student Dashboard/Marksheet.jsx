@@ -104,7 +104,7 @@ const Marksheet = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-2 md:p-6">
+    <div className="bg-gray-100 min-h-screen p-2 md:p-6 mb-10">
       <div ref={printRef}>
         <div className="max-w-2xl mx-auto border-3 border-red-700 p-4 bg-white shadow-xl font-sans text-sm m-4">
           {/* Header */}
