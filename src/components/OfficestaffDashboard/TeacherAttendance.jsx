@@ -266,7 +266,7 @@ const TeacherAttendance = () => {
                 <tr>
                   <td
                     colSpan="7"
-                    className="px-4 py-6 text-center text-red-600 dark:text-red-400"
+                    className="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                   >
                     No teachers found
                   </td>
