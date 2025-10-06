@@ -220,7 +220,7 @@ const StudentFeeAndUnpaidSummary = () => {
     }
 
 return (
-  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
     <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full">
       <div>
         <button
@@ -317,32 +317,32 @@ return (
               <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
                 <thead className="bgTheme text-white">
                   <tr>
-                    <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Month</th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Month</th>
                     {allFeeTypes.map((type, i) => (
-                      <th key={i} className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">
+                      <th key={i} className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">
                         {type}
                       </th>
                     ))}
-                    <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Total</th>
-                    <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Dues</th>
+                    <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap text-sm font-semibold">Total</th>
+                    <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap text-sm font-semibold">Dues</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
                   {filteredSummary.map((item, index) => (
-                    <tr key={index} className="hover:bg-blue-50 dark:hover:bg-gray-700">
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{item.month}</td>
+                    <tr key={index} className="hover:bg-blue-50 text-nowrap dark:hover:bg-gray-700">
+                      <td className="px-4 py-3 text-sm text-nowrap text-gray-900 dark:text-gray-100">{item.month}</td>
                       {allFeeTypes.map((type, i) => {
                         const amount = item.fee_type.find((f) => f.type === type)?.amount || 0;
                         return (
-                          <td key={i} className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                          <td key={i} className="px-4 py-3 text-nowrap text-sm text-gray-600 dark:text-gray-300">
                             ₹{amount.toFixed(2)}
                           </td>
                         );
                       })}
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">
                         ₹{item.total_amount.toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 font-medium">
+                      <td className="px-4 py-3 text-sm text-nowrap text-red-600 dark:text-red-400 font-medium">
                         ₹{item.due_amount.toFixed(2)}
                       </td>
                     </tr>
@@ -433,15 +433,15 @@ return (
             <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white">
                 <tr>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">S.No</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Student Name</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Class</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Month</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Fee Type</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Total Amount</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Paid Amount</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Due Amount</th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap text-sm font-semibold">Payment Status</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">S.No</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Student Name</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Class</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Month</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Fee Type</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Total Amount</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Paid Amount</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Due Amount</th>
+                  <th className="px-4 py-3 text-left whitespace-nowrap text-nowrap text-sm font-semibold">Payment Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -452,15 +452,15 @@ return (
                         key={`${item.id}-${group.year_level}-${fee.id}`}
                         className="hover:bg-blue-50 dark:hover:bg-gray-700"
                       >
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{index + 1}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{item.student?.name}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{group.year_level}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{item.month}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{fee.fee_type}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">₹{fee.amount}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">₹{item.paid_amount}</td>
-                        <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 font-medium">₹{item.due_amount}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">{item.payment_status}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">{index + 1}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">{item.student?.name}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">{group.year_level}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">{item.month}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">{fee.fee_type}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">₹{fee.amount}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">₹{item.paid_amount}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-red-600 dark:text-red-400 font-medium">₹{item.due_amount}</td>
+                        <td className="px-4 py-3 text-sm text-nowrap text-gray-600 dark:text-gray-300">{item.payment_status}</td>
                       </tr>
                     ))
                   )

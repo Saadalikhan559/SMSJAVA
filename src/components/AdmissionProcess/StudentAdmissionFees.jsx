@@ -401,7 +401,7 @@ const displayRazorpay = async (payload) => {
   }
 
   return (
-    <>
+    <div className="mb-24 md:mb-10">
       <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
         <form
           className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
@@ -426,12 +426,12 @@ const displayRazorpay = async (payload) => {
                       <table className="table w-full">
                         <thead className="sticky top-0 bg-base-200 z-2">
                           <tr>
-                            <th>Month</th>
-                            <th>Fee Type</th>
-                            <th>Amount</th>
-                            <th>Late Fee</th>
-                            <th>Status</th>
-                            <th>Select</th>
+                            <th className="text-nowrap">Month</th>
+                            <th className="v">Fee Type</th>
+                            <th className="text-nowrap">Amount</th>
+                            <th className="text-nowrap">Late Fee</th>
+                            <th className="text-nowrap">Status</th>
+                            <th className="text-nowrap">Select</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -449,7 +449,7 @@ const displayRazorpay = async (payload) => {
                                   {index === 0 && (
                                     <td
                                       rowSpan={monthData.fees.length}
-                                      className="font-semibold bg-base-100 align-top"
+                                      className="font-semibold bg-base-100 text-nowrap align-top"
                                     >
                                       {monthData.month}
                                     </td>
@@ -719,6 +719,6 @@ const displayRazorpay = async (payload) => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };

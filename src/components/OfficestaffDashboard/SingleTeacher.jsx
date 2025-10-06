@@ -45,7 +45,7 @@ const SingleTeacher = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-7">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-7 mb-24 md:mb-10">
       {/* Teacher Profile Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
         <div className="flex-1">

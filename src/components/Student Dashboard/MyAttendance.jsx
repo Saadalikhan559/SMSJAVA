@@ -47,7 +47,7 @@ const MyAttendance = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 bg-gray-50 mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           <i className="fa-solid fa-calendar-check mr-2"></i> My Attendance
@@ -92,7 +92,7 @@ const MyAttendance = () => {
               <tr>
                 {data.length > 0 &&
                   Object.keys(data[0]).map((key, i) => (
-                    <th key={i} className="px-4 py-3 text-left text-nowrap">
+                    <th key={i} className="px-4 py-3 text-left  text-nowrap">
                       {key}
                     </th>
                   ))}
@@ -109,7 +109,7 @@ const MyAttendance = () => {
                 data.map((row, index) => (
                   <tr key={index} className="hover:bg-blue-50">
                     {Object.values(row).map((value, i) => (
-                      <td key={i} className="px-4 py-3">
+                      <td key={i} className="px-4 py-3 text-nowrap">
                         {value}
                       </td>
                     ))}

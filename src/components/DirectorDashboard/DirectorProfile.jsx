@@ -145,7 +145,7 @@ const DirectorProfile = () => {
   }
 
 return (
-  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
     <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-8">

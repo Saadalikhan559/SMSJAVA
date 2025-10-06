@@ -54,7 +54,7 @@ const ViewAllocatedClass = () => {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-1">
@@ -78,8 +78,8 @@ const ViewAllocatedClass = () => {
           <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
             <thead className="bgTheme text-white text-center">
               <tr>
-                <th scope="col" className="px-4 py-3">Teacher</th>
-                <th scope="col" className="px-4 py-3">Class</th>
+                <th scope="col" className="px-4 py-3 text-nowrap">Teacher</th>
+                <th scope="col" className="px-4 py-3 text-nowrap">Class</th>
               </tr>
             </thead>
             <tbody>
@@ -89,19 +89,19 @@ const ViewAllocatedClass = () => {
                   .map((classItem, index) => (
                     <tr
                       key={classItem.id || index}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="hover:bg-gray-50  dark:hover:bg-gray-700"
                     >
-                      <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
+                      <td className="px-4 py-3 font-bold text-nowrap text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
                         {classItem.teacher_name}
                       </td>
-                      <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
+                      <td className="px-4 py-3 text-nowrap text-center text-sm text-gray-700 dark:text-gray-300 capitalize">
                         {classItem.year_level_name}
                       </td>
                     </tr>
                   ))
               ) : (
                 <tr>
-                  <td colSpan="2" className="text-center py-6 text-red-600 dark:text-red-400">
+                  <td colSpan="2" className="text-center py-6 text-gray-500 dark:text-gray-400">
                     No matching classes found
                   </td>
                 </tr>

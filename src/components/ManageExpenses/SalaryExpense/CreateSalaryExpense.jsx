@@ -70,7 +70,12 @@ export const CreateSalaryExpense = () => {
           const { data } = await axiosInstance.get(
             `/d/Employee/get_emp/?role=${roleName}`
           );
-          setEmployees(data || []);
+           const sortedEmployees = (data || []).sort((a, b) => {
+          const nameA = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
+          const nameB = `${b.first_name || ""} ${b.last_name || ""}`.trim().toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+        setEmployees(sortedEmployees);
         }
       } else {
         setEmployees([]);
@@ -125,7 +130,7 @@ export const CreateSalaryExpense = () => {
   };
 
 return (
-  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
         <i className="fa-solid fa-money-bill-wave w-5 mr-5"></i>
@@ -152,7 +157,7 @@ return (
               </span>
             </label>
             <select
-              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 capitalize"
               {...register("role", { required: "Role is required" })}
             >
               <option value="">Select Role</option>
@@ -210,7 +215,7 @@ return (
                         employee && (
                           <p
                             key={employee.id}
-                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                             onClick={() => {
                               setValue("employee", employee.id.toString(), {
                                 shouldValidate: true,

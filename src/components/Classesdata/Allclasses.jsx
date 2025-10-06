@@ -61,7 +61,7 @@ const Allclasses = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 p-6 max-w-7xl mx-auto rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-4">
           <i className="fa-solid fa-graduation-cap mr-2" />
@@ -72,9 +72,9 @@ const Allclasses = () => {
           <table className="min-w-full table-auto">
             <thead className="bgTheme text-white sticky top-0 z--1 text-sm">
               <tr>
-                <th scope="col" className="px-4 py-3 text-center">S.NO</th>
-                <th scope="col" className="px-4 py-3 text-center">Year Level</th>
-                <th scope="col" className="px-4 py-3 text-center">Number Of Students</th>
+                <th scope="col" className="px-4 py-3 text-nowrap text-center">S.NO</th>
+                <th scope="col" className="px-4 py-3 text-nowrap text-center">Year Level</th>
+                <th scope="col" className="px-4 py-3 text-nowrap text-center">Number Of Students</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -82,7 +82,7 @@ const Allclasses = () => {
                 <tr>
                   <td
                     colSpan="2"
-                    className="text-center py-6 text-gray-500 dark:text-gray-400"
+                    className="text-center py-6  text-gray-500 dark:text-gray-400"
                   >
                     No data found.
                   </td>
@@ -93,10 +93,10 @@ const Allclasses = () => {
                     key={record.id || index}
                     className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
-                    <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-center text-nowrap text-gray-700 dark:text-gray-300">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-3 font-bold text-center capitalize">
+                    <td className="px-4 py-3 font-bold text-nowrap text-center capitalize">
                       <Link
                         to={`/allStudentsPerClass/${record.id}`}
                         state={{ level_name: record.level_name }}
@@ -105,7 +105,7 @@ const Allclasses = () => {
                         {record.level_name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-center">{record.student_count}</td>
+                    <td className="px-4 py-3 text-center text-nowrap">{record.student_count}</td>
                   </tr>
                 ))
               )}

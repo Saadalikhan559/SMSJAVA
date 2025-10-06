@@ -12,6 +12,7 @@ const TeacherAttendance = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [savingAll, setSavingAll] = useState(false);
+  const [savingTeacher, setSavingTeacher] = useState({});
 
   useEffect(() => {
     const getData = async () => {
@@ -63,7 +64,7 @@ const TeacherAttendance = () => {
       setShowAlert(true);
       return;
     }
-
+    setSavingTeacher((prev) => ({ ...prev, [teacher.id]: true }));
     try {
       await saveTeacherAttendance([teacher], attendance);
 
@@ -76,9 +77,17 @@ const TeacherAttendance = () => {
         `Attendance Marked Successfully for ${teacher.first_name} ${teacher.last_name}`
       );
       setShowAlert(true);
-    } catch {
-      setAlertMessage("Attendance is already Marked");
+    } catch (error) {
+      console.error(error);
+      const msg =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to mark attendance";
+      setAlertMessage(msg);
       setShowAlert(true);
+    } finally {
+      setSavingTeacher((prev) => ({ ...prev, [teacher.id]: false }));
     }
   };
 
@@ -106,8 +115,14 @@ const TeacherAttendance = () => {
 
       setAlertMessage("Attendance Marked Successfully for Selected Teachers!");
       setShowAlert(true);
-    } catch {
-      setAlertMessage("Failed to Mark Attendance");
+    } catch (error) {
+      console.error(error);
+      const msg =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to mark attendance";
+      setAlertMessage(msg);
       setShowAlert(true);
     } finally {
       setSavingAll(false);
@@ -150,7 +165,7 @@ const TeacherAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className=" flex justify-end">
           <Link
@@ -182,12 +197,12 @@ const TeacherAttendance = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-center text-sm font-semibold">S.NO</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Teacher Name</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Email</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Date</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Status</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">S.NO</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Teacher Name</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Email</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Date</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Status</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -195,14 +210,14 @@ const TeacherAttendance = () => {
                 filteredTeachers.map((teacher, index) => (
                   <tr
                     key={teacher.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
+                    className="hover:bg-gray-50 text-nowrap dark:hover:bg-gray-700 text-center transition-colors"
                   >
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-700 dark:text-gray-300">{index + 1}</td>
 
-                    <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
+                    <td className="px-4 py-3  font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
                       {teacher.first_name} {teacher.last_name}
                     </td>
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{teacher.email}</td>
+                    <td className="px-4 py-3 text-nowrap  text-gray-700 dark:text-gray-300">{teacher.email}</td>
                     <td className="px-4 py-3">
                       <input
                         type="date"
@@ -231,14 +246,18 @@ const TeacherAttendance = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleSave(teacher)}
-                        disabled={attendance[teacher.id]?.marked}
+                        disabled={attendance[teacher.id]?.marked || savingTeacher[teacher.id]}
                         className={`btn w-28 ${attendance[teacher.id]?.marked
                           ? "bg-gray-400 textTheme cursor-not-allowed"
                           : "bgTheme text-white"
                           }`}
                       >
-                        {attendance[teacher.id]?.marked ? "Marked" : "Save"}
+                        {savingTeacher[teacher.id] ? (
+                          <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                        ) : null}
+                        {attendance[teacher.id]?.marked ? "Marked" : savingTeacher[teacher.id] ? " " : "Save"}
                       </button>
+
                     </td>
 
                   </tr>
@@ -247,7 +266,7 @@ const TeacherAttendance = () => {
                 <tr>
                   <td
                     colSpan="7"
-                    className="px-4 py-6 text-center text-red-600 dark:text-red-400"
+                    className="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                   >
                     No teachers found
                   </td>

@@ -258,7 +258,7 @@ const MarksheetsTable = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-10">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-4">
           Marksheets <i className="fa-solid fa-address-card ml-2"></i>
@@ -297,13 +297,13 @@ const MarksheetsTable = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
             <thead className="bgTheme text-white sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Student Name</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Father's Name</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Date of Birth</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Contact Number</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Class</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Academic Year</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Student Name</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Father's Name</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Date of Birth</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Contact Number</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Class</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Academic Year</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -316,13 +316,13 @@ const MarksheetsTable = () => {
               ) : (
                 filteredData.map((detail) => (
                   <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-bold text-gray-900 dark:text-gray-200">{detail.student_name || "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.father_name || "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.date_of_birth || "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.contact_number || "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.standard || "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.academic_year || "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm font-bold text-gray-900 dark:text-gray-200">{detail.student_name || "—"}</td>
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.father_name || "—"}</td>
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.date_of_birth || "—"}</td>
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.contact_number || "—"}</td>
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.standard || "—"}</td>
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">{detail.academic_year || "—"}</td>
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                       <Link
                         to={`/Marksheet/${detail.id}`}
                         className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"

@@ -214,7 +214,10 @@ export const DocumentUpload = () => {
     setLoadingDocumentTypes(true);
     try {
       const docType = await fetchDocumentType();
-      setDocumentType(docType);
+      const sortedDocType = [...docType].sort((a, b) =>
+        a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      );
+      setDocumentType(sortedDocType);
     } catch (error) {
       console.log("Failed to load document types");
     } finally {
@@ -226,7 +229,12 @@ export const DocumentUpload = () => {
     setLoadingTeachers(true);
     try {
       const allTeachers = await fetchTeachers();
-      setTeachers(allTeachers);
+      const sortedTeachers = [...allTeachers].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+      setTeachers(sortedTeachers);
     } catch {
       console.log("Failed to load teachers");
     } finally {
@@ -238,7 +246,13 @@ export const DocumentUpload = () => {
     setLoadingGuardians(true);
     try {
       const allGuardians = await fetchGuardians();
-      setGuardians(allGuardians);
+      const sortedGuardians = [...allGuardians].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+
+      setGuardians(sortedGuardians);
     } catch {
       console.log("Failed to load guardians");
     } finally {
@@ -250,7 +264,13 @@ export const DocumentUpload = () => {
     setLoadingOfficeStaff(true);
     try {
       const allStaff = await fetchOfficeStaff();
-      setOfficeStaff(allStaff);
+      const sortedStaff = [...allStaff].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+
+      setOfficeStaff(sortedStaff);
     } catch {
       console.log("Failed to load office staff");
     } finally {
@@ -271,16 +291,19 @@ export const DocumentUpload = () => {
     if (!yearLevelID) return;
     setLoadingStudents(true);
     try {
-      const allStudentsByClass = await fetchStudentYearLevelByClass(
-        yearLevelID
+      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelID);
+      const sortedStudents = [...allStudentsByClass].sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
       );
-      setStudents(allStudentsByClass);
+
+      setStudents(sortedStudents);
     } catch {
       console.log("Failed to load students");
     } finally {
       setLoadingStudents(false);
     }
   };
+
 
   // --- HANDLERS ---
   const handleRoleChange = (e) => {
@@ -368,7 +391,6 @@ export const DocumentUpload = () => {
     );
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -378,6 +400,7 @@ export const DocumentUpload = () => {
     let hasError = false;
 
     try {
+
       for (const [index, field] of uploadFields.entries()) {
         // Validate document type
         if (!field.document_types) {
@@ -393,17 +416,20 @@ export const DocumentUpload = () => {
           hasError = true;
         }
 
-        // Validate identities per field
+        // Validate identities
         const identityError = validateIdentity(field.identities, field.document_types);
-        if (!field.identities) {
-          newIdentityErrors[index] = "Identity is required";
-          hasError = true;
-        } else if (identityError) {
+        if (identityError) {
           newIdentityErrors[index] = identityError;
           hasError = true;
         } else {
           newIdentityErrors[index] = "";
         }
+
+
+        console.log(`Validation result for index ${index}:`, {
+          docError: newDocErrors[index],
+          identityError: newIdentityErrors[index],
+        });
       }
 
       setDocTypeErrors([...newDocErrors]);
@@ -414,7 +440,6 @@ export const DocumentUpload = () => {
         return;
       }
 
-      // Upload files
       for (const field of uploadFields) {
         const formDataToSend = new FormData();
         formDataToSend.append("files", field.files);
@@ -482,11 +507,14 @@ export const DocumentUpload = () => {
       role.name === constants.roles.officeStaff ||
       role.name === constants.roles.student ||
       role.name === constants.roles.guardian
-  );
+  )
+    .sort((a, b) =>
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
 
   // --- RENDER ---
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-5"
@@ -748,7 +776,7 @@ export const DocumentUpload = () => {
                           filteredStudents.map((studentObj) => (
                             <p
                               key={studentObj.student_id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -815,7 +843,7 @@ export const DocumentUpload = () => {
                           filteredTeachers.map((teacher) => (
                             <p
                               key={teacher.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -887,7 +915,7 @@ export const DocumentUpload = () => {
                           filteredGuardians.map((guardian) => (
                             <p
                               key={guardian.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -957,7 +985,7 @@ export const DocumentUpload = () => {
                           filteredOfficeStaff.map((staff) => (
                             <p
                               key={staff.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,

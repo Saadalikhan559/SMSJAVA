@@ -120,7 +120,7 @@ export const UpdateSalaryExpense = () => {
   console.log("id", id);
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 bg-gray-50 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
         <h1 className="text-3xl font-bold text-center mb-8">
           Update Paid Salary

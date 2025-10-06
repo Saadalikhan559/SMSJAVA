@@ -96,7 +96,7 @@ export const ViewSalaryExpense = () => {
 
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4 border-b border-gray-300 dark:border-gray-700">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
@@ -139,19 +139,19 @@ export const ViewSalaryExpense = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Joining Date
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Base Salary
                 </th>
-                <th className="px-20 py-3 text-left text-sm font-semibold whitespace-nowrap" width={10}>
+                <th className="px-20 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap" width={10}>
                   Actions
                 </th>
               </tr>
@@ -160,10 +160,10 @@ export const ViewSalaryExpense = () => {
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
                       {expense.name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
                       {(typeof expense.role === "string"
                         ? [expense.role]
                         : expense.role
@@ -171,13 +171,13 @@ export const ViewSalaryExpense = () => {
                         .map((r) => r)
                         .join(", ")}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap">
                       {expense.joining_date}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap">
                       ₹{expense.base_salary}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
+                    <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">
                         {constants.roles.director === userRole && (
                           <>

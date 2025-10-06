@@ -63,7 +63,7 @@ const TimeTable = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4 flex items-center justify-center gap-2">
           <i className="fa-solid fa-table-list text-4xl text-gray-800 dark:text-gray-100"></i>
@@ -155,18 +155,18 @@ const TimeTable = () => {
                       <table className="min-w-full border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
                         <thead className="bgTheme text-white sticky top-0">
                           <tr>
-                            <th className="px-4 py-3 text-left text-sm font-semibold">Subject</th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold">Day</th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold">Start Time</th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold">End Time</th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold">Duration</th>
+                            <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Subject</th>
+                            <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Date</th>
+                            <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Day</th>
+                            <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Start Time</th>
+                            <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">End Time</th>
+                            <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Duration</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                           {filteredPapers.length === 0 ? (
                             <tr>
-                              <td colSpan={6} className="text-center py-6 text-gray-500 dark:text-gray-400">
+                              <td colSpan={6} className="text-center text-nowrap py-6 text-gray-500 dark:text-gray-400">
                                 No papers found.
                               </td>
                             </tr>
@@ -181,20 +181,20 @@ const TimeTable = () => {
 
                               return (
                                 <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                  <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 capitalize">
+                                  <td className="px-4 py-3 text-sm text-nowrap font-medium text-gray-900 dark:text-gray-100 capitalize">
                                     {paper.subject_name}
                                   </td>
-                                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                  <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">
                                     {new Date(paper.exam_date).toLocaleDateString("en-US", {
                                       year: "numeric",
                                       month: "short",
                                       day: "numeric",
                                     })}
                                   </td>
-                                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{paper.day}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatTime(paper.start_time)}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{formatTime(paper.end_time)}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{duration}</td>
+                                  <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">{paper.day}</td>
+                                  <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">{formatTime(paper.start_time)}</td>
+                                  <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">{formatTime(paper.end_time)}</td>
+                                  <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">{duration}</td>
                                 </tr>
                               );
                             })

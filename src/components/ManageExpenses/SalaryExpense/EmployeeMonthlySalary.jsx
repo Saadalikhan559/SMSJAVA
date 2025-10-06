@@ -75,7 +75,7 @@ export const EmployeeMonthlySalary = () => {
   }, {});
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <div className="mb-6 pb-4 border-b">
           {/* Employee Name */}

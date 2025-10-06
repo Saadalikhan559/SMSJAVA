@@ -71,7 +71,7 @@ export const SingleAdmissionDetails = () => {
     obj && obj[key] !== undefined && obj[key] !== null ? obj[key] : fallback;
 
   return (
-    <div className="p-3 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 mb-10">
+    <div className="p-3 bg-gray-100 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         {/* Header Section */}
         <div className="bgTheme text-white px-6 py-4">

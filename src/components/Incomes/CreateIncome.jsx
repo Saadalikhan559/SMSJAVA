@@ -36,7 +36,10 @@ const CreateIncome = () => {
   const getCategories = async () => {
     try {
       const res = await axiosInstance.get("/d/income-category/");
-      setCategories(res.data);
+      const sortedCategories = (res.data || []).sort((a, b) =>
+        a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      );
+      setCategories(sortedCategories);
     } catch (err) {
       console.error("Failed to load categories:", err);
       setModalMessage("Failed to load income categories.");
@@ -83,7 +86,7 @@ const CreateIncome = () => {
   };
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-box my-5 shadow-sm dark:shadow-gray-700">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
@@ -177,7 +180,7 @@ const CreateIncome = () => {
                 placeholder="Description"
                 {...register("description", {
                   maxLength: {
-                    value:50,
+                    value: 50,
                     message: "Description cannot exceed 50 characters",
                   },
                 })}
@@ -220,8 +223,8 @@ const CreateIncome = () => {
                 className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
               >
                 <option value="">Select Payment Method</option>
-                <option value="cash">Cash</option>
                 <option value="bank">Bank</option>
+                <option value="cash">Cash</option>
                 <option value="online">Online</option>
               </select>
               {errors.payment_method && (

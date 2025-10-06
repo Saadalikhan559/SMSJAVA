@@ -71,14 +71,14 @@ const AllStaff = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       {error && (
         <div className="text-red-600 text-center mb-4 font-medium dark:text-red-400">
           {error}
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-10">
         {/* Tabs */}
         <div className="flex gap-4 ">
           <button
@@ -130,7 +130,7 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredTeachers.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 dark:text-gray-300">
+                      <td colSpan="4" className="text-center py-6 text-gray-500 dark:text-gray-400">
                         No data found.
                       </td>
                     </tr>
@@ -192,7 +192,7 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-red-600 dark:text-gray-300">
+                      <td colSpan="4" className="text-center py-6 text-gray-500 dark:text-gray-400">
                         No data found.
                       </td>
                     </tr>

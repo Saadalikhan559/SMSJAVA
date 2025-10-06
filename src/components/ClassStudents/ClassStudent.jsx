@@ -174,7 +174,7 @@ export const ClassStudent = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
          <div className="mb-4 border-b pb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
@@ -198,13 +198,13 @@ export const ClassStudent = () => {
             <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white">
                 <tr>
-                  <th className="px-4 py-3 text-left">Select</th>
-                  <th className="px-4 py-3 text-left">Student Name</th>
-                  <th className="px-4 py-3 text-left">Level</th>
-                  <th className="px-4 py-3 text-left">Academic Year</th>
-                  <th className="px-4 py-3 text-left">Date</th>
-                  <th className="px-4 py-3 text-left">Attendance</th>
-                  <th className="px-4 py-3 text-left">Action</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Select</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Student Name</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Level</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Academic Year</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Date</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Attendance</th>
+                  <th className="px-4 py-3 text-left text-nowrap">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -219,10 +219,10 @@ export const ClassStudent = () => {
                         }
                       />
                     </td>
-                    <td className="px-4 py-3">{student.student_name}</td>
-                    <td className="px-4 py-3">{student.level_name}</td>
-                    <td className="px-4 py-3">{student.year_name}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-nowrap">{student.student_name}</td>
+                    <td className="px-4 py-3 text-nowrap">{student.level_name}</td>
+                    <td className="px-4 py-3 text-nowrap">{student.year_name}</td>
+                    <td className="px-4 py-3 text-nowrap">
                       <input
                         type="date"
                         value={individualDates[student.student_id] || ""}
@@ -233,7 +233,7 @@ export const ClassStudent = () => {
                         max={getTodayDate()}
                       />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-nowrap">
                       <select
                         value={individualStatuses[student.student_id] || "present"}
                         onChange={(e) =>

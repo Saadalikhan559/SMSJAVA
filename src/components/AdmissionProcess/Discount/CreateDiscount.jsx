@@ -59,7 +59,10 @@ const CreateDiscount = () => {
     setLoadingStudents(true);
     try {
       const data = await fetchStudents1(classId);
-      setStudents(data || []);
+      const sortedData = (data || []).sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
+      );
+      setStudents(sortedData);
       setError(false);
     } catch (err) {
       console.error("Failed to load students:", err);
@@ -69,6 +72,7 @@ const CreateDiscount = () => {
       setLoadingStudents(false);
     }
   };
+
 
   useEffect(() => {
     if (classId) loadStudents();
@@ -180,7 +184,7 @@ const CreateDiscount = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
         <h1 className="text-3xl font-bold text-center mb-8">
           Create Discount
@@ -252,7 +256,7 @@ const CreateDiscount = () => {
                       filteredStudents.map((studentObj) => (
                         <p
                           key={studentObj.student_id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             setSelectedStudentId(studentObj.student_id);
                             setSelectedStudentName(studentObj.student_name);

@@ -142,8 +142,8 @@ const TeacherProfile = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
-      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
+    <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10">
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
         {/* Header with image and titles */}
         <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-8">
           {/* Profile Image */}
@@ -334,7 +334,7 @@ const TeacherProfile = () => {
             </button>
             <button
               onClick={handleEditClick}
-              className="btn btn-theme text-white"
+              className="btn bgTheme text-white"
             >
               <i className="fa-solid fa-pen-to-square"></i> Update
             </button>
