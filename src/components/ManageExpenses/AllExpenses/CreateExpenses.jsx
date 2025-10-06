@@ -37,7 +37,10 @@ export const CreateExpenses = () => {
     try {
       setError("");
       const response = await axiosInstance.get("/d/Expense-Category/");
-      setCategory(response.data);
+       const sortedCategory = (response.data || []).sort((a, b) =>
+      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+    );
+      setCategory(sortedCategory);
     } catch (err) {
       console.error("Cannot get the category:", err);
       setError("Failed to load categories. Please try again later.");
@@ -215,7 +218,7 @@ return (
               </span>
             </label>
             <select
-              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white capitalize"
               {...register("category", { required: "Category is required" })}
             >
               <option value="">Select Category</option>

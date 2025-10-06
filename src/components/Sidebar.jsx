@@ -364,7 +364,7 @@ export const Sidebar = () => {
                             Table
                           </Link>
                         </li>
-                        <li>
+                        {/* <li>
                           <Link
                             onClick={(e) =>
                               handleNavigation(e, allRouterLink.UploadExamPaper)
@@ -376,7 +376,7 @@ export const Sidebar = () => {
                             <i className="fa-solid fa-file-upload w-5"></i>{" "}
                             Upload Exam Paper
                           </Link>
-                        </li>
+                        </li> */}
                         <li>
                           <Link
                             onClick={(e) =>

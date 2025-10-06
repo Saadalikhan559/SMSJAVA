@@ -235,7 +235,7 @@ const FeeSummaryTable = () => {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-6 text-red-600 dark:text-red-400">
+                  <td colSpan="8" className="text-center py-6 text-gray-500 dark:text-gray-400">
                     No data found.
                   </td>
                 </tr>

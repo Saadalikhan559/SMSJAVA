@@ -110,115 +110,116 @@ const DiscountedStudents = () => {
   }
 
   return (
-   <>
-  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
-    <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
-      <div className="mb-1">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-1">
-        Discounted Students
-        </h1>
-      </div>
-
-      <div className="p-2">
-        <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b border-gray-300 dark:border-gray-600 pb-4">
-          <div className="w-full sm:w-xs">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-              Select Class:
-            </label>
-            <select
-              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-            >
-              <option value="">All Classes</option>
-              {yearLevels.map((level) => (
-                <option key={level.id} value={level.level_name}>
-                  {level.level_name}
-                </option>
-              ))}
-            </select>
+    <>
+      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+        <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
+          <div className="mb-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-1">
+              Discounted Students
+            </h1>
           </div>
 
-          <input
-            type="text"
-            placeholder="Search Student"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value.trimStart())}
-            className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-          />
-        </div>
+          <div className="p-2">
+            <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b border-gray-300 dark:border-gray-600 pb-4">
+              <div className="w-full sm:w-xs">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                  Select Class:
+                </label>
+                <select
+                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">All Classes</option>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.level_name}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-        <div className="w-full overflow-x-auto max-h-[70vh] no-scrollbar rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600 text-xs sm:text-sm">
-            <thead className="bgTheme text-white z-2 sticky top-0">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Scholar No</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Year Level</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Fee Discount</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Fee</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee Discount</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-nowrap">Reason</th>
-                <th className="px-18 py-3 text-center text-sm font-semibold pl-22 text-nowrap">Actions</th>
-              </tr>
-            </thead>
+              <input
+                type="text"
+                placeholder="Search Student"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value.trimStart())}
+                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
+            </div>
 
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-              {filteredStudents.length > 0 ? (
-                filteredBysearch.map((s) => (
-                  <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.student_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 capitalize text-nowrap">{s.scholar_no}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.year_level}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee_discount}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.discount_reason || "-"}</td>
-                    <td className="px-13 py-3 text-sm text-gray-500 dark:text-gray-300 flex gap-3">
-                      <Link
-                        to={`${allRouterLink.editStudentDiscount}/${s.id}`}
-                        className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                        onClick={() => openDeleteModal(s.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
+            <div className="w-full overflow-x-auto max-h-[70vh] no-scrollbar rounded-lg">
+              <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600 text-xs sm:text-sm">
+                <thead className="bgTheme text-white z-2 sticky top-0">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Scholar No</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Year Level</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Fee Discount</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Fee</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee Discount</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Tuition Fee</th>
+                    <th className="px-4 py-3 text-center text-sm font-semibold text-nowrap">Reason</th>
+                    <th className="px-18 py-3 text-center text-sm font-semibold pl-22 text-nowrap">Actions</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                    No students found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                </thead>
 
-    {confirmOpen && (
-      <dialog className="modal modal-open">
-        <div className="modal-box dark:bg-gray-800 dark:text-white">
-          <h3 className="font-bold text-lg">Confirm Delete</h3>
-          <p className="py-4">Are you sure you want to continue?</p>
-          <div className="modal-action">
-            <button className="btn bgTheme text-white" onClick={confirmDelete}>Continue</button>
-            <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>Cancel</button>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                  {filteredBysearch.length > 0 ? (
+                    filteredBysearch.map((s) => (
+                      <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.student_name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 capitalize text-nowrap">{s.scholar_no}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.year_level}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee_discount}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.discount_reason || "-"}</td>
+                        <td className="px-13 py-3 text-sm text-gray-500 dark:text-gray-300 flex gap-3">
+                          <Link
+                            to={`${allRouterLink.editStudentDiscount}/${s.id}`}
+                            className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            onClick={() => openDeleteModal(s.id)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="9" className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                        No students found
+                      </td>
+                    </tr>
+                  )}
+
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </dialog>
-    )}
-  </div>
-</>
+
+        {confirmOpen && (
+          <dialog className="modal modal-open">
+            <div className="modal-box dark:bg-gray-800 dark:text-white">
+              <h3 className="font-bold text-lg">Confirm Delete</h3>
+              <p className="py-4">Are you sure you want to continue?</p>
+              <div className="modal-action">
+                <button className="btn bgTheme text-white" onClick={confirmDelete}>Continue</button>
+                <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>Cancel</button>
+              </div>
+            </div>
+          </dialog>
+        )}
+      </div>
+    </>
   );
 };
 

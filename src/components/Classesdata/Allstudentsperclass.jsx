@@ -18,7 +18,11 @@ const AllStudentsPerClass = () => {
   const getStudents = async () => {
     try {
       const data = await fetchStudentYearLevelByClass(id);
-      setStudents(data);
+      const sortedData = [...data].sort((a, b) =>
+        (a.student_name || "").localeCompare(b.student_name || "", "en", { sensitivity: "base" })
+      );
+
+      setStudents(sortedData);
     } catch (err) {
       console.error("Error fetching students:", err);
       setError("Failed to fetch students.");
@@ -26,6 +30,7 @@ const AllStudentsPerClass = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     getStudents();

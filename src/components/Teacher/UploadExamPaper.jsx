@@ -62,7 +62,7 @@ const UploadExamPaper = () => {
   const [searchExamTypeInput, setSearchExamTypeInput] = useState('');
   const [selectedExamType, setSelectedExamType] = useState('');
   const [showExamTypeDropdown, setShowExamTypeDropdown] = useState(false);
-console.log(terms);
+  console.log(terms);
 
   const {
     register,
@@ -142,14 +142,22 @@ console.log(terms);
     navigate(allRouterLink.UpdateExamPaper);
   };
 
-  const filteredSubjects = subjects.filter((subjectObj) =>
-    subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
-  );
-  const filteredTeachers = teachers.filter((teacherObj) =>
-    `${teacherObj.first_name} ${teacherObj.last_name}`
-      .toLowerCase()
-      .includes(searchTeacherInput.toLowerCase())
-  );
+  const filteredSubjects = subjects
+    .filter((subjectObj) =>
+      subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
+    )
+    .sort((a, b) => a.subject_name.localeCompare(b.subject_name));
+
+  const filteredTeachers = teachers
+    .filter((teacherObj) =>
+      `${teacherObj.first_name} ${teacherObj.last_name}`
+        .toLowerCase()
+        .includes(searchTeacherInput.toLowerCase())
+    )
+    .sort((a, b) =>
+      `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`)
+    );
+
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -210,6 +218,11 @@ console.log(terms);
     }
   };
 
+  const filteredExamTypes = examType.filter((examTypeObj) =>
+    examTypeObj.name.toLowerCase().includes(searchExamTypeInput.toLowerCase())
+  );
+
+
 
   if (loading) {
     return (
@@ -244,7 +257,7 @@ console.log(terms);
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div className="relative">
+            <div className="relative">
               <label className="label-text dark:text-gray-200">
                 Exam Type <span className="text-error">*</span>
               </label>
@@ -271,11 +284,9 @@ console.log(terms);
 
               {showExamTypeDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
-                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
-                  </div>
                   <div className="max-h-40 overflow-y-auto">
-                    {examType?.length > 0 ? (
-                      examType.map((examTypeObj) => (
+                    {filteredExamTypes?.length > 0 ? (
+                      filteredExamTypes.map((examTypeObj) => (
                         <p
                           key={examTypeObj.id}
                           className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
@@ -295,6 +306,7 @@ console.log(terms);
                   </div>
                 </div>
               )}
+
 
               {errors.exam_type && (
                 <p className="text-red-500 text-sm mt-1">{errors.exam_type.message}</p>
@@ -341,7 +353,7 @@ console.log(terms);
                 {error && <p className="text-error text-sm mt-1">{error.message}</p>}
               </div>
             ))}
-        
+
 
 
             <div className="relative">
@@ -415,7 +427,7 @@ console.log(terms);
 
               <input
                 type="text"
-                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600 capitalize"
                 placeholder="Search Subject..."
                 value={searchSubjectInput || selectedSubjectName}
                 onChange={(e) => {

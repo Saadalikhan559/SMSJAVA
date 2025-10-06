@@ -67,12 +67,6 @@ const PeriodAssignment = () => {
             <i className="fa-solid fa-table-list mr-2"></i>
             Assigned Periods - {levelName}
           </h1>
-          <button
-            onClick={() => navigate(-1)}
-            className="px-4 py-2 rounded shadow-sm bgTheme text-white hover:brightness-110 w-40"
-          >
-             Back
-          </button>
         </div>
 
         <div className="overflow-x-auto">
