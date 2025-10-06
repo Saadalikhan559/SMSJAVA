@@ -142,8 +142,8 @@ const TeacherProfile = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10">
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md shadow-top-bottom overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
         {/* Header with image and titles */}
         <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-8">
           {/* Profile Image */}
@@ -343,10 +343,10 @@ const TeacherProfile = () => {
 
         {/* Dialog Box */}
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-transparent bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold text-[#167bff] mb-4">
+                <h2 className="text-xl font-bold text-[#167bff] dark:text-blue-400 mb-4">
                   Update Teacher Profile
                 </h2>
 
@@ -354,13 +354,13 @@ const TeacherProfile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Column 1 - Profile Image */}
                     <div className="space-y-4">
-                      <h3 className="text-md font-semibold text-gray-700 border-b pb-2">
+                      <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200 border-b pb-2">
                         Profile Image
                       </h3>
 
                       <div className="flex flex-col items-center space-y-4">
                         <div className="relative group">
-                          <div className="h-32 w-32 rounded-full bg-gray-100 overflow-hidden shadow-md border-2 border-gray-300 hover:border-blue-400 transition-all duration-200">
+                          <div className="h-32 w-32 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden shadow-md border-2 border-gray-300 dark:border-gray-600 hover:border-blue-400 transition-all duration-200">
                             {imagePreview ? (
                               typeof imagePreview === "string" ? (
                                 <img
@@ -376,7 +376,7 @@ const TeacherProfile = () => {
                                 />
                               )
                             ) : (
-                              <div className="h-full w-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-gray-100 to-gray-200">
+                              <div className="h-full w-full flex items-center justify-center text-gray-400 dark:text-gray-300 bg-gradient-to-br from-gray-100 dark:from-gray-700 to-gray-200 dark:to-gray-600">
                                 <FontAwesomeIcon
                                   icon={faUser}
                                   size="3x"
@@ -424,7 +424,7 @@ const TeacherProfile = () => {
                             <button
                               type="button"
                               onClick={handleRemoveImage}
-                              className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                              className="inline-flex items-center px-3 py-1 border border-red-300 dark:border-red-600 rounded-md shadow-sm text-sm font-medium text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900 hover:bg-red-100 dark:hover:bg-red-800"
                             >
                               <span className="mr-2">X</span>
                               Remove
@@ -436,12 +436,13 @@ const TeacherProfile = () => {
 
                     {/* Column 2 - Personal Info */}
                     <div className="space-y-4">
-                      <h3 className="text-md font-semibold text-gray-700 border-b pb-2">
+                      <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200 border-b pb-2">
                         Personal Information
                       </h3>
 
+                      {/* First Name */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           First Name
                         </label>
                         <input
@@ -449,7 +450,7 @@ const TeacherProfile = () => {
                           {...register("first_name", {
                             required: "First name is required",
                           })}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.first_name && (
                           <p className="text-red-500 text-xs mt-1">
@@ -458,19 +459,21 @@ const TeacherProfile = () => {
                         )}
                       </div>
 
+                      {/* Middle Name */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Middle Name
                         </label>
                         <input
                           type="text"
                           {...register("middle_name")}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                       </div>
 
+                      {/* Last Name */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Last Name
                         </label>
                         <input
@@ -478,7 +481,7 @@ const TeacherProfile = () => {
                           {...register("last_name", {
                             required: "Last name is required",
                           })}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.last_name && (
                           <p className="text-red-500 text-xs mt-1">
@@ -487,15 +490,16 @@ const TeacherProfile = () => {
                         )}
                       </div>
 
+                      {/* Gender */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Gender
                         </label>
                         <select
                           {...register("gender", {
                             required: "Gender is required",
                           })}
-                          className="select select-bordered w-full text-sm"
+                          className="select select-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         >
                           <option value="">Select Gender</option>
                           <option value="male">Male</option>
@@ -512,12 +516,13 @@ const TeacherProfile = () => {
 
                     {/* Column 3 - Contact & Professional Info */}
                     <div className="space-y-4">
-                      <h3 className="text-md font-semibold text-gray-700 border-b pb-2">
+                      <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200 border-b pb-2">
                         Contact Information
                       </h3>
 
+                      {/* Email */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Email
                         </label>
                         <input
@@ -529,7 +534,7 @@ const TeacherProfile = () => {
                               message: "Invalid email address",
                             },
                           })}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.email && (
                           <p className="text-red-500 text-xs mt-1">
@@ -538,8 +543,9 @@ const TeacherProfile = () => {
                         )}
                       </div>
 
+                      {/* Phone */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Phone Number
                         </label>
                         <input
@@ -552,14 +558,12 @@ const TeacherProfile = () => {
                             },
                           })}
                           onInput={(e) => {
-                            // Remove non-numeric characters
                             e.target.value = e.target.value.replace(/[^0-9]/g, "");
-                            // Limit to 10 digits
                             if (e.target.value.length > 10) {
                               e.target.value = e.target.value.slice(0, 10);
                             }
                           }}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.phone_no && (
                           <p className="text-red-500 text-xs mt-1">
@@ -568,12 +572,14 @@ const TeacherProfile = () => {
                         )}
                       </div>
 
-                      <h3 className="text-md font-semibold text-gray-700 border-b pb-2 mt-4">
+                      {/* Professional Information */}
+                      <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200 border-b pb-2 mt-4">
                         Professional Information
                       </h3>
 
+                      {/* Qualification */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Qualification
                         </label>
                         <input
@@ -581,7 +587,7 @@ const TeacherProfile = () => {
                           {...register("qualification", {
                             required: "Qualification is required",
                           })}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.qualification && (
                           <p className="text-red-500 text-xs mt-1">
@@ -590,8 +596,9 @@ const TeacherProfile = () => {
                         )}
                       </div>
 
+                      {/* Aadhaar */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           Aadhaar Number
                         </label>
                         <input
@@ -599,7 +606,7 @@ const TeacherProfile = () => {
                           {...register("adhaar_no", {
                             required: "Aadhaar number is required",
                           })}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.adhaar_no && (
                           <p className="text-red-500 text-xs mt-1">
@@ -608,8 +615,9 @@ const TeacherProfile = () => {
                         )}
                       </div>
 
+                      {/* PAN */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm font-semibold text-gray-500">
+                        <label className="text-sm font-semibold text-gray-500 dark:text-gray-300">
                           PAN Number
                         </label>
                         <input
@@ -617,7 +625,7 @@ const TeacherProfile = () => {
                           {...register("pan_no", {
                             required: "PAN number is required",
                           })}
-                          className="input input-bordered w-full text-sm"
+                          className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                         />
                         {errors.pan_no && (
                           <p className="text-red-500 text-xs mt-1">
@@ -628,6 +636,7 @@ const TeacherProfile = () => {
                     </div>
                   </div>
 
+                  {/* Buttons */}
                   <div className="flex justify-end gap-4 mt-6">
                     <button
                       type="button"
@@ -635,7 +644,7 @@ const TeacherProfile = () => {
                         setIsDialogOpen(false);
                         setImagePreview(null);
                       }}
-                      className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                      className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600"
                     >
                       Cancel
                     </button>
@@ -657,3 +666,5 @@ const TeacherProfile = () => {
 };
 
 export default TeacherProfile;
+
+
