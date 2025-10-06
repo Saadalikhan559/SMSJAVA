@@ -240,13 +240,14 @@ const UpdateExamPaper = () => {
     }
 
     try {
-      const response = await axiosInstance.put(
-        `/d/Exam-Paper/update_exampaper/${id}/`,
+       const response = await axiosInstance.put(
+        "/d/Exam-Paper/update_exampaper/",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
 
       if ([200, 201].includes(response.status)) {
         setAlertMessage("Exam Paper updated successfully!");

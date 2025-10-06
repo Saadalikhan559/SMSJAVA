@@ -293,15 +293,7 @@ const UpdateStaffDetails = () => {
             )}
 
             {/* Category */}
-            <div>
-              <label className="label">Category</label>
-              <input
-                type="text"
-                placeholder="Enter Category"
-                {...register("category")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
+    
 
             {/* Profile Picture (manual handling) */}
             <div className="md:col-span-2 lg:col-span-3">
