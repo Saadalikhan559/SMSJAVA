@@ -560,7 +560,7 @@ export const AdmissionFees = () => {
 
               {/* Dropdown with search and list */}
               {showStudentDropdown && selectedClassId && (
-                <div className="absolute z-10 bg-white dark:bg-gray-800 rounded w-full mt-1 shadow-lg ">
+                <div className="absolute z-2 bg-white text-gray-700 dark:bg-[#1d1d1df5] dark:text-amber-50 rounded w-full mt-1 shadow-lg ">
                   {/* Search input */}
                   <div className="p-2 sticky top-0 shadow-sm">
                     <input
@@ -623,7 +623,7 @@ export const AdmissionFees = () => {
                   <div className="overflow-x-auto">
                     <div className="max-h-[500px] overflow-y-auto rounded-lg border">
                       <table className="table w-full">
-                        <thead className="sticky top-0 bg-base-200 z-2">
+                        <thead className="sticky top-0 bg-base-200 z-1">
                           <tr>
                             <th>Month</th>
                             <th>Fee Type</th>

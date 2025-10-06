@@ -52,7 +52,7 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
-  const [identityError, setIdentityError] = useState("");
+  const [apiErrors, setApiErrors] = useState({});
 
 
   const [role, setRole] = useState("");
@@ -468,10 +468,18 @@ export const DocumentUpload = () => {
       });
       setRole("");
       setStep(0);
+       setApiErrors({});
     } catch (err) {
-      console.error("Upload failed:", err);
-      setAlertMessage("Upload failed");
-      setShowAlert(true);
+      if (err.response && err.response.data) {
+        setApiErrors(err.response.data);
+      } 
+      else if (err.pan_no) {
+        setApiErrors({ identities: err.identities });
+      } 
+     
+      // console.error("Upload failed:", err);
+      // setAlertMessage("Upload failed");
+      // setShowAlert(true);
     } finally {
       setLoading(false);
     }
@@ -690,6 +698,18 @@ export const DocumentUpload = () => {
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
+                        {/* React Hook Form Error */}
+              {apiErrors.identities && (
+                <span className="text-error text-sm">{apiErrors.identities.message}</span>
+              )}
+
+              {/* Backend API Error */}
+              {apiErrors.identities &&
+                apiErrors.identities.map((msg, idx) => (
+                  <span key={idx} className="text-error text-sm">
+                    {msg}
+                  </span>
+                ))}
                     </span>
                   </div>
                 </div>
