@@ -54,7 +54,7 @@ export const ResetPassword = () => {
   };
 
   return (
-    <>
+    <div className="mb-24 md:mb-10">
       <style>{constants.hideEdgeRevealStyle}</style>
       <div className="min-h-screen flex flex-col md:flex-row">
         <div className="hidden md:block md:w-2/3 formBgColor">
@@ -234,6 +234,6 @@ export const ResetPassword = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };

@@ -46,7 +46,7 @@ const PeriodsByClass = () => {
     );
   }
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 p-6 max-w-7xl rounded-lg shadow-lg mx-auto">
         <h1 className="text-3xl font-bold text-center mb-4 text-gray-800 dark:text-gray-100 border-b pb-4">
           <i className="fa-solid fa-graduation-cap mr-2"></i> Periods By Class
@@ -62,14 +62,14 @@ const PeriodsByClass = () => {
           <table className="min-w-full table-auto border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
             <thead className="bgTheme text-white text-center">
               <tr>
-                <th scope="col" className="px-4 py-3">S.NO</th>
-                <th scope="col" className="px-4 py-3">Year Level</th>
+                <th scope="col" className="px-4 py-3 text-nowrap">S.NO</th>
+                <th scope="col" className="px-4 py-3 text-nowrap">Year Level</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {yearLevels.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                  <td colSpan="2" className="text-center text-nowrap py-6 text-gray-500 dark:text-gray-400">
                     No data found.
                   </td>
                 </tr>
@@ -79,8 +79,8 @@ const PeriodsByClass = () => {
                     key={record.id || index}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center"
                   >
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{index + 1}.</td>
-                    <td className="px-4 py-3 font-bold">
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}.</td>
+                    <td className="px-4 py-3 text-nowrap font-bold">
                       <Link
                         to={`/periodAssignment/${record.id}`}
                         state={{ level_name: record.level_name }}

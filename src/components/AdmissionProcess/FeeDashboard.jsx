@@ -152,7 +152,7 @@ const FeeDashboard = () => {
   );
 
   return (
-    <div className="p-4 space-y-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-4 space-y-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
         Fee Dashboard
       </h3>

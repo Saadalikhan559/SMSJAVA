@@ -187,11 +187,11 @@ const TeacherSubstitute = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Teacher</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Classes</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Attendance Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold pl-12">Actions</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Teacher</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Email</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Classes</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Attendance Status</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold pl-12">Actions</th>
               </tr>
             </thead>
 

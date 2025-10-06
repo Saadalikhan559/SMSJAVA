@@ -201,7 +201,7 @@ const UpdateExamSchedule = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900">
+    <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
         <div className=" flex justify-end">
 

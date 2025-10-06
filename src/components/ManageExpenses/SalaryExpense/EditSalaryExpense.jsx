@@ -95,7 +95,7 @@ export const EditSalaryExpense = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-lg">
+    <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 mb-24 md:mb-10 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">
         Edit Salary
         <i className="fa-solid fa-percentage ml-2"></i>
