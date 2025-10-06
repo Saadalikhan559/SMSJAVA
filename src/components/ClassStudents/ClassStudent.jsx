@@ -17,6 +17,12 @@ export const ClassStudent = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+
+  // Alert modal states
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const year_level_id = Year_level_id;
   const BASE_URL = constants.baseUrl;
@@ -91,13 +97,15 @@ export const ClassStudent = () => {
   };
 
   const submitBulkAttendance = async () => {
-    try {
-      if (!attendanceDate) {
-        alert("Please select a date");
-        return;
-      }
-      if (!teacherID || !year_level_id) return;
+    if (!attendanceDate) {
+      setAlertMessage("Please select a date");
+      setShowAlert(true);
+      return;
+    }
+    if (!teacherID || !year_level_id) return;
 
+    setLoadingSubmit(true); // start loader
+    try {
       const payload = { teacher_id: teacherID, marked_at: attendanceDate, year_level_id };
 
       if (attendanceStatus === "present") payload.P = selectedStudents;
@@ -115,18 +123,25 @@ export const ClassStudent = () => {
         checkbox.checked = false;
       });
 
-      alert("Attendance marked successfully!");
-      window.location.reload();
+      setAlertMessage("Attendance marked successfully!");
+      setShowAlert(true);
     } catch (err) {
       console.error("Error submitting bulk attendance:", err);
-      alert(err.response?.data?.error || "An error occurred");
+      setAlertMessage(err.response?.data?.error || "An error occurred");
+      setShowAlert(true);
+    } finally {
+      setLoadingSubmit(false); // stop loader
     }
   };
 
+
+
+  // Individual attendance submission
   const submitIndividualAttendance = async (studentId) => {
     try {
       if (!individualDates[studentId]) {
-        alert("Please select a date");
+        setAlertMessage("Please select a date");
+        setShowAlert(true);
         return;
       }
       if (!teacherID) return;
@@ -139,11 +154,14 @@ export const ClassStudent = () => {
 
       await axios.post(`${BASE_URL}/a/multiple-attendance/`, payload);
 
-      alert("Attendance marked successfully!");
-      window.location.reload();
+      setAlertMessage("Attendance marked successfully!");
+      setShowAlert(true);
     } catch (err) {
       console.error("Error submitting individual attendance:", err);
-      alert(err.response?.data?.error || "An error occurred");
+      setAlertMessage(err.response?.data?.error || "An error occurred");
+      setShowAlert(true);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -153,10 +171,10 @@ export const ClassStudent = () => {
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full [animation-delay:-0.2s] animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full [animation-delay:-0.4s] animate-bounce"></div>
         </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+        <p className="mt-2 text-gray-500 dark:text-gray-300 text-sm">Loading data...</p>
       </div>
     );
   }
@@ -174,14 +192,14 @@ export const ClassStudent = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-         <div className="mb-4 border-b pb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
-          <i className="fa-solid fa-clipboard-user ml-2"></i> Students in {classLevel}{" "}
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+        <div className="mb-4 border-b pb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 text-center mb-1">
+            <i className="fa-solid fa-clipboard-user ml-2"></i> Students in {classLevel}{" "}
           </h1>
         </div>
-      
+
         {selectedStudents.length >= 2 && (
           <button
             onClick={handleBulkAttendance}
@@ -192,10 +210,10 @@ export const ClassStudent = () => {
         )}
 
         {classStudent.length === 0 ? (
-          <p className="text-gray-600">No students found.</p>
+          <p className="text-gray-600 dark:text-gray-300">No students found.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
+            <table className="min-w-full table-auto border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
               <thead className="bgTheme text-white">
                 <tr>
                   <th className="px-4 py-3 text-left text-nowrap">Select</th>
@@ -209,19 +227,19 @@ export const ClassStudent = () => {
               </thead>
               <tbody>
                 {classStudent.map((student) => (
-                  <tr key={student.id}>
+                  <tr key={student.id} className="even:bg-gray-50 dark:even:bg-gray-700">
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
-                        className="border border-gray-300 rounded-md px-2 py-1 w-full"
+                        className="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                         onChange={(e) =>
                           handleStudentSelect(student.student_id, e.target.checked)
                         }
                       />
                     </td>
-                    <td className="px-4 py-3 text-nowrap">{student.student_name}</td>
-                    <td className="px-4 py-3 text-nowrap">{student.level_name}</td>
-                    <td className="px-4 py-3 text-nowrap">{student.year_name}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-200">{student.student_name}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-200">{student.level_name}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-200">{student.year_name}</td>
                     <td className="px-4 py-3 text-nowrap">
                       <input
                         type="date"
@@ -229,7 +247,7 @@ export const ClassStudent = () => {
                         onChange={(e) =>
                           handleIndividualDateChange(student.student_id, e.target.value)
                         }
-                        className="border border-gray-300 rounded-md px-2 py-1 w-full"
+                        className="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                         max={getTodayDate()}
                       />
                     </td>
@@ -239,7 +257,7 @@ export const ClassStudent = () => {
                         onChange={(e) =>
                           handleIndividualStatusChange(student.student_id, e.target.value)
                         }
-                        className="border border-gray-300 rounded-md px-2 py-1 w-full"
+                        className="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                       >
                         <option value="present">Present</option>
                         <option value="absent">Absent</option>
@@ -249,7 +267,7 @@ export const ClassStudent = () => {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => submitIndividualAttendance(student.student_id)}
-                        className="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
+                        className="inline-flex items-center px-3 py-1 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800"
                         disabled={!individualDates[student.student_id]}
                       >
                         Save
@@ -263,35 +281,36 @@ export const ClassStudent = () => {
         )}
       </div>
 
+      {/* Bulk attendance modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm  flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
               Mark Attendance for {selectedStudents.length} Students
             </h3>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Date
               </label>
               <input
                 type="date"
                 value={attendanceDate}
                 onChange={(e) => setAttendanceDate(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                 required
                 max={getTodayDate()}
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Status
               </label>
               <select
                 value={attendanceStatus}
                 onChange={(e) => setAttendanceStatus(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
               >
                 <option value="present">Present</option>
                 <option value="absent">Absent</option>
@@ -302,20 +321,47 @@ export const ClassStudent = () => {
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>
               <button
                 onClick={submitBulkAttendance}
-                className="btn bgTheme text-white"
-                disabled={!attendanceDate}
+                className="btn bgTheme text-white flex items-center justify-center w-40"
+                disabled={!attendanceDate || loadingSubmit}
               >
-                Mark Attendance
+                {loadingSubmit && <i className="fa-solid fa-spinner fa-spin mr-2"></i>}
+                <span>{loadingSubmit ? "" : "Mark Attendance"}</span>
               </button>
+
             </div>
           </div>
         </div>
+      )}
+
+      {/* Alert modal */}
+      {showAlert && (
+        <dialog className="modal modal-open">
+          <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            <h3 className="font-bold text-lg">Teacher Attendance</h3>
+            <p className="py-4 capitalize">
+              {alertMessage.split("\n").map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </dialog>
       )}
     </div>
   );
