@@ -180,13 +180,13 @@ export const AllTeacherAssignments = () => {
                       <h2 className="text-xl font-bold truncate capitalize">
                         {data.teacher_name}
                       </h2>
-                      <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">
-                        {data.assignments.length > 0
-                          ? data.assignments[0].year_level_name
-                          : ""}
-                      </span>
+                      {data.assignments.length > 0 &&
+                        data.assignments[0].year_level_name &&
+                        data.assignments[0].year_level_name !== "Unassigned Year Level" &&
+                        data.assignments[0].year_level_name.trim() !== "" && (
+                          <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">{data.assignments[0].year_level_name}</span>
+                        )}
                     </div>
-
                     <div className="p-4 border-b border-gray-200 dark:border-gray-600">
                       <div className="flex justify-between items-center mb-2 text-gray-800 dark:text-gray-100">
                         <span className="font-medium">Periods Assigned:</span>
