@@ -75,17 +75,19 @@ export const Attendance = () => {
         Attendance <i className="fa-solid fa-clipboard-user ml-2"></i>
       </h2>
 
-      <div className="grid gap-8">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {classList.map((classItem) => (
           <div
             key={classItem.teacher_year_level_id}
-            className="relative group bg-white dark:bg-gray-800 backdrop-blur-sm border border-white/20 dark:border-gray-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+            className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 max-w-md mx-auto"
           >
+            {/* Header gradient line */}
             <div className="absolute top-0 left-0 h-1.5 w-full bg-gradient-to-r from-[#5E35B1] via-[#684d9e] to-[#5424b4]"></div>
 
             <div className="p-6">
+              {/* Logo + class name */}
               <div className="flex items-start mb-5">
-                <div className="p-3 rounded-xl bg-blue-100/50 dark:bg-blue-900/40 textTheme group-hover:bg-blue-200/70 dark:group-hover:bg-blue-700/50 transition-colors duration-300">
+                <div className="p-3 rounded-xl bg-blue-100/50 dark:bg-blue-900/30 text-purple-700 dark:text-purple-300">
                   <i className="fa-solid fa-chalkboard-user text-xl"></i>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 dark:text-white ml-4 mt-1">
@@ -93,17 +95,19 @@ export const Attendance = () => {
                 </h3>
               </div>
 
+              {/* Info chips */}
               <div className="flex gap-4 mb-6 text-sm">
-                <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 textTheme rounded-full flex items-center">
+                <span className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-purple-700 dark:text-purple-300 rounded-full flex items-center">
                   <i className="fa-solid fa-users mr-2"></i>
                   students
                 </span>
-                <span className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/30 textTheme rounded-full flex items-center">
+                <span className="px-3 py-1.5 bg-blue-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full flex items-center">
                   <i className="fa-solid fa-calendar-day mr-2"></i>
                   Mon/Wed/Fri
                 </span>
               </div>
 
+              {/* Buttons */}
               <div className="space-y-3 flex justify-around flex-wrap">
                 <button
                   onClick={() =>
@@ -126,9 +130,6 @@ export const Attendance = () => {
                 </button>
               </div>
             </div>
-
-            <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-blue-300/10 dark:bg-blue-700/10 rounded-full group-hover:bg-blue-400/20 dark:group-hover:bg-blue-500/20 transition-all duration-500"></div>
-            <div className="absolute -top-5 -left-5 w-16 h-16 bg-purple-300/10 dark:bg-purple-700/10 rounded-full group-hover:bg-purple-400/20 dark:group-hover:bg-purple-500/20 transition-all duration-700"></div>
           </div>
         ))}
       </div>
