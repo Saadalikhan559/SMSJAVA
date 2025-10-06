@@ -110,13 +110,8 @@ const FullAttendance = () => {
   }
 
   return (
-<<<<<<< HEAD
- <div className="p-4 bg-gray-50 min-h-screen flex justify-center">
-  <div className="bg-white p-4 rounded-lg shadow-md w-full max-w-5xl overflow-x-auto">
-=======
     <div className="p-6 bg-gray-50 min-h-screen flex justify-center mb-24 md:mb-10">
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-7xl overflow-x-auto">
->>>>>>> 769eafa77738f1881f77990e627db0245cae421b
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
           <i className="fa-solid fa-chalkboard-user mr-2" />
           Attendance Table
