@@ -16,7 +16,8 @@ const UpdateStaffDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [UpdateModal, setUpdateModal] = useState(false);
-  const [profileFile, setProfileFile] = useState(null); 
+  const [profileFile, setProfileFile] = useState(null);
+  const [apiErrors, setApiErrors] = useState({});
 
   const {
     register,
@@ -76,11 +77,28 @@ const UpdateStaffDetails = () => {
         await editOfficeStaffdetails(id, payload);
       }
       setUpdateModal(true);
+      setApiErrors({});
     } catch (err) {
-      console.error(err);
-      setError("Failed to update staff details.");
+      console.error("Failed to update teacher details:", err);
+
+      if (err.response && err.response.data) {
+        setApiErrors(err.response.data);
+      } 
+      else if (err.pan_no) {
+        setApiErrors({ pan_no: err.pan_no });
+      } 
+      else if (err.adhaar_no) {
+        setApiErrors({ adhaar_no: err.adhaar_no });
+      } 
+      else {
+        setError("Failed to update staff details.");
+      }
     }
+
+
   };
+  console.log(apiErrors);
+
 
   if (loading) {
     return (
@@ -206,12 +224,28 @@ const UpdateStaffDetails = () => {
                 type="text"
                 placeholder="Enter Aadhaar Number"
                 {...register("adhaar_no", {
-                  pattern: { value: /^\d{12}$/, message: "Aadhaar must be 12 digits (e.g. 123456789012)" },
+                  pattern: {
+                    value: /^\d{12}$/,
+                    message: "Aadhaar must be 12 digits (e.g. 123456789012)"
+                  },
                 })}
-                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.adhaar_no ? "input-error" : ""}`}
+                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.adhaar_no || apiErrors.adhaar_no ? "input-error" : ""
+                  }`}
               />
-              {errors.adhaar_no && <span className="text-error text-sm">{errors.adhaar_no.message}</span>}
+              {/* React Hook Form Error */}
+              {errors.adhaar_no && (
+                <span className="text-error text-sm">{errors.adhaar_no.message}</span>
+              )}
+
+              {/* Backend API Error */}
+              {apiErrors.adhaar_no &&
+                apiErrors.adhaar_no.map((msg, idx) => (
+                  <span key={idx} className="text-error text-sm">
+                    {msg}
+                  </span>
+                ))}
             </div>
+
 
             {/* PAN Number */}
             <div>
@@ -220,12 +254,29 @@ const UpdateStaffDetails = () => {
                 type="text"
                 placeholder="Enter PAN Number"
                 {...register("pan_no", {
-                  pattern: { value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, message: "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)" },
+                  pattern: {
+                    value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+                    message:
+                      "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)"
+                  },
                 })}
-                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.pan_no ? "input-error" : ""}`}
+                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.pan_no || apiErrors.pan_no ? "input-error" : ""
+                  }`}
               />
-              {errors.pan_no && <span className="text-error text-sm">{errors.pan_no.message}</span>}
+              {/* React Hook Form Error */}
+              {errors.pan_no && (
+                <span className="text-error text-sm">{errors.pan_no.message}</span>
+              )}
+
+              {/* Backend API Error */}
+              {apiErrors.pan_no &&
+                apiErrors.pan_no.map((msg, idx) => (
+                  <span key={idx} className="text-error text-sm">
+                    {msg}
+                  </span>
+                ))}
             </div>
+
 
             {/* Qualification (teacher only) */}
             {type === "teacher" && (

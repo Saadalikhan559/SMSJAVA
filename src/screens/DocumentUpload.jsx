@@ -52,7 +52,7 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
-  const [identityError, setIdentityError] = useState("");
+  const [apiErrors, setApiErrors] = useState({});
 
 
   const [role, setRole] = useState("");
@@ -468,10 +468,18 @@ export const DocumentUpload = () => {
       });
       setRole("");
       setStep(0);
+       setApiErrors({});
     } catch (err) {
-      console.error("Upload failed:", err);
-      setAlertMessage("Upload failed");
-      setShowAlert(true);
+      if (err.response && err.response.data) {
+        setApiErrors(err.response.data);
+      } 
+      else if (err.pan_no) {
+        setApiErrors({ identities: err.identities });
+      } 
+     
+      // console.error("Upload failed:", err);
+      // setAlertMessage("Upload failed");
+      // setShowAlert(true);
     } finally {
       setLoading(false);
     }
@@ -690,6 +698,18 @@ export const DocumentUpload = () => {
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
+                        {/* React Hook Form Error */}
+              {apiErrors.identities && (
+                <span className="text-error text-sm">{apiErrors.identities.message}</span>
+              )}
+
+              {/* Backend API Error */}
+              {apiErrors.identities &&
+                apiErrors.identities.map((msg, idx) => (
+                  <span key={idx} className="text-error text-sm">
+                    {msg}
+                  </span>
+                ))}
                     </span>
                   </div>
                 </div>
@@ -813,16 +833,63 @@ export const DocumentUpload = () => {
                     </span>
                   </label>
 
-                  <div
-                    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-                    onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
-                  >
-                    {selectedTeacherName || "Select Teacher"}
-                    <i
-                      className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"
-                        } ml-2`}
-                    ></i>
+                  <div className="form-control relative">
+                   
+
+                    {/* Clickable dropdown box */}
+                    <div
+                      className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                      onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
+                    >
+                      {selectedTeacherName || "Select Teacher"}
+                      <i
+                        className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
+                      ></i>
+                    </div>
+
+                    {/* Dropdown content */}
+                    {showTeacherDropdown && (
+                      <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                        {/* Search input */}
+                        <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                          <input
+                            type="text"
+                            placeholder="Search Teacher..."
+                            className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                            value={searchTeacherInput}
+                            onChange={(e) => setSearchTeacherInput(e.target.value)}
+                            autoComplete="off"
+                          />
+                        </div>
+
+                        {/* List of teachers */}
+                        <div className="max-h-40 overflow-y-auto">
+                          {filteredTeachers?.length > 0 ? (
+                            filteredTeachers.map((teacher) => (
+                              <p
+                                key={teacher.id}
+                                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                                onClick={() => {
+                                  const fullName = `${teacher.first_name} ${teacher.last_name}`;
+                                  setSelectedTeacherId(teacher.id);
+                                  setSelectedTeacherName(fullName);
+                                  setSearchTeacherInput("");
+                                  setShowTeacherDropdown(false);
+                                }}
+                              >
+                                {teacher.first_name} {teacher.last_name}
+                              </p>
+                            ))
+                          ) : (
+                            <p className="p-2 text-gray-500 dark:text-gray-400">
+                              No teachers found.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
+
 
                   {showTeacherDropdown && (
                     <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
