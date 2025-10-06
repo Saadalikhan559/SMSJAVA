@@ -82,7 +82,7 @@ const UpdateStudentDetail = () => {
 
   return (
     <>
-      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
           <h1 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-gray-100">
             <i className="fa-solid fa-pen-to-square mr-2"></i> Update Student Details

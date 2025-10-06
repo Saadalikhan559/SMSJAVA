@@ -72,7 +72,7 @@ export const Register = () => {
   };
 
   return (
-    <>
+    <div className="mb-24 md:mb-10">
       <style>{constants.hideEdgeRevealStyle}</style>
 
       <div className="min-h-screen flex flex-col md:flex-row">
@@ -252,6 +252,6 @@ export const Register = () => {
   </div>
 )}
 
-    </>
+    </div>
   );
 };

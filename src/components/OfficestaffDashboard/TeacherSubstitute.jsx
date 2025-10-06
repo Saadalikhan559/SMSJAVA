@@ -138,7 +138,7 @@ const TeacherSubstitute = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
         {/* Header */}
         <div className="mb-4">
@@ -185,11 +185,11 @@ const TeacherSubstitute = () => {
           <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Teacher</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Classes</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Attendance Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold pl-12">Actions</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Teacher</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Email</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Classes</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold">Attendance Status</th>
+                <th className="px-4 py-3 text-left text-nowrap text-sm font-semibold pl-12">Actions</th>
               </tr>
             </thead>
 
@@ -210,10 +210,10 @@ const TeacherSubstitute = () => {
               ) : filteredTeachers.length > 0 ? (
                 filteredTeachers.map((teacher) => (
                   <tr key={teacher.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-700 capitalize font-bold text-nowrap">
+                    <td className="px-4 py-3 text-sm  text-gray-700 capitalize font-bold text-nowrap">
                       {teacher.first_name} {teacher.last_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{teacher.email}</td>
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700">{teacher.email}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {teacher.year_levels.map((level) =>
                         level.periods.map((period) => (
@@ -224,7 +224,7 @@ const TeacherSubstitute = () => {
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 capitalize">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 text-nowrap">
+                      <span className="inline-flex items-center  px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 text-nowrap">
                         {teacher.attendance.status} ({teacher.attendance.date})
                       </span>
                     </td>

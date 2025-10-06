@@ -150,7 +150,7 @@ const UnpaidFeesList = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         {/* Title */}
         <div className="mb-4">
@@ -241,15 +241,15 @@ const UnpaidFeesList = () => {
           <table className="min-w-full table-auto divide-y divide-gray-300 dark:divide-gray-700">
             <thead className="bgTheme text-white sticky top-0 z-2">
               <tr>
-                <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Class</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Month</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Fee Type</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Total Amount</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Paid Amount</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Due Amount</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Payment Status</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">S.No</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Student Name</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Class</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Month</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Fee Type</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Total Amount</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Paid Amount</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Due Amount</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Payment Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -265,11 +265,11 @@ const UnpaidFeesList = () => {
                     <td className="px-4 py-3">{index + 1}</td>
                     <td className="px-4 py-3 text-nowrap font-bold">{item.studentName}</td>
                     <td className="px-4 py-3 text-nowrap">{item.yearLevel}</td>
-                    <td className="px-4 py-3">{item.month}</td>
+                    <td className="px-4 py-3 text-nowrap">{item.month}</td>
                     <td className="px-4 py-3 text-nowrap">{item.fee_type}</td>
-                    <td className="px-4 py-3">₹{item.amount}</td>
-                    <td className="px-4 py-3">₹{item.paidAmount}</td>
-                    <td className="px-4 py-3">₹{item.dueAmount}</td>
+                    <td className="px-4 py-3 text-nowrap">₹{item.amount}</td>
+                    <td className="px-4 py-3 text-nowrap">₹{item.paidAmount}</td>
+                    <td className="px-4 py-3 text-nowrap">₹{item.dueAmount}</td>
                     <td className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium m-2 ${parseFloat(item.dueAmount) === 0
                       ? "bg-green-100 text-green-600"
                       : "bg-red-100 text-red-600"

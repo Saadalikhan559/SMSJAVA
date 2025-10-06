@@ -135,7 +135,7 @@ const ViewExamPaper = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen p-5 mb-24 md:mb-10 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className="flex justify-end">
           <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white">
@@ -263,48 +263,48 @@ const ViewExamPaper = () => {
           <table className="min-w-full table-auto divide-y divide-gray-300 dark:divide-gray-700">
             <thead className="bgTheme text-white sticky top-0 z-2">
               <tr>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Subject</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Class</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Exam Type</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Teacher</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Total Marks</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Paper Code</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Academic Year</th>
-                <th className="px-14 py-3 text-left whitespace-nowrap">Actions</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Subject</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Class</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Exam Type</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Teacher</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Total Marks</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Paper Code</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Academic Year</th>
+                <th className="px-14 py-3 text-left text-nowrap whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                  <td colSpan="8" className="text-center text-nowrap py-6 text-gray-500 dark:text-gray-400">
                     No Examination Papers found.
                   </td>
                 </tr>
               ) : (
                 filteredData.map((paper) => (
                   <tr key={paper.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 capitalize">
+                    <td className="px-4 py-3 text-sm text-nowrap font-medium text-gray-900 dark:text-gray-100 capitalize">
                       {paper.subject_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize text-nowrap">
+                    <td className="px-4 py-3 text-sm  text-gray-700 dark:text-gray-300 capitalize text-nowrap">
                       {paper.year_level_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">
                       {paper.exam_name}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize text-nowrap">
                       {paper.teacher_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">
                       {paper.total_marks}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">
                       {paper.paper_code}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300">
                       {paper.year}
                     </td>
-                    <td className="px-4 py-3 text-sm gap-2 flex">
+                    <td className="px-4 py-3 text-sm gap-2 text-nowrap flex">
                       <Link
                         to={`${allRouterLink.UpdateExamPaper}/${paper.id}`}
                         className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"

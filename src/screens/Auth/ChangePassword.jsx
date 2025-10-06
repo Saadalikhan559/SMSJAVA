@@ -57,7 +57,7 @@ export const ChangePassword = () => {
   };
 
   return (
-    <>
+    <div className="mb-24 md:mb-10">
       <style>{constants.hideEdgeRevealStyle}</style>
       <div className="min-h-screen flex flex-col md:flex-row">
         <div className="hidden md:block md:w-2/3 formBgColor">
@@ -184,7 +184,7 @@ export const ChangePassword = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

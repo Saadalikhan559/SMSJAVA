@@ -104,7 +104,7 @@ export const AdmissionDetails = () => {
   console.log(sortedData);
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4  border-gray-200 dark:border-gray-700">
@@ -201,33 +201,33 @@ export const AdmissionDetails = () => {
                     {sortedData.length > 0 ? (
                       sortedData.map((detail) => (
                         <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                          <td className="whitespace-nowrap font-bold px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                          <td className="whitespace-nowrap text-nowrap font-bold px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                             {detail.student_input.first_name} {detail.student_input.last_name}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {detail.guardian_input.first_name} {detail.guardian_input.last_name} ({detail.guardian_type || "N/A"})
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {detail.student_input.date_of_birth}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {detail.student_input.gender}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {detail.year_level}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {detail.is_rte ? "Yes" : "No"}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {new Date(detail.admission_date)
                               .toLocaleDateString("en-GB")
                               .replaceAll("/", "-")}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
                             {detail.student_input.is_active ? "Active" : "InActive"}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3 text-sm">
+                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm">
                             <div className="flex space-x-2">
                               <Link
                                 to={allRouterLink.editAddmisionDetails.replace(":id", detail.id)}

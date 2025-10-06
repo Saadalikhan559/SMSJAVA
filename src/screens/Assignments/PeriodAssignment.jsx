@@ -60,7 +60,7 @@ const PeriodAssignment = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
@@ -73,11 +73,11 @@ const PeriodAssignment = () => {
           <table className="min-w-full table-auto border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
             <thead className="bgTheme text-white text-left">
               <tr>
-                <th className="px-4 py-3">S.No</th>
-                <th className="px-4 py-3">Subject</th>
-                <th className="px-4 py-3">Teacher</th>
-                <th className="px-4 py-3">Start Time</th>
-                <th className="px-4 py-3">End Time</th>
+                <th className="px-4 py-3 text-nowrap">S.No</th>
+                <th className="px-4 py-3 text-nowrap">Subject</th>
+                <th className="px-4 py-3 text-nowrap">Teacher</th>
+                <th className="px-4 py-3 text-nowrap">Start Time</th>
+                <th className="px-4 py-3 text-nowrap">End Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -93,11 +93,11 @@ const PeriodAssignment = () => {
                     key={index}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
                   >
-                    <td className="px-4 py-3">{index + 1}</td>
-                    <td className="px-4 py-3">{period.subject}</td>
-                    <td className="px-4 py-3">{period.teacher}</td>
-                    <td className="px-4 py-3">{period.start_time}</td>
-                    <td className="px-4 py-3">{period.end_time}</td>
+                    <td className="px-4 py-3 text-nowrap">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap">{period.subject}</td>
+                    <td className="px-4 py-3 text-nowrap">{period.teacher}</td>
+                    <td className="px-4 py-3 text-nowrap">{period.start_time}</td>
+                    <td className="px-4 py-3 text-nowrap">{period.end_time}</td>
                   </tr>
                 ))
               )}
