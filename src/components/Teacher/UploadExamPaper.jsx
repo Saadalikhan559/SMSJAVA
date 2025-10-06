@@ -59,6 +59,10 @@ const UploadExamPaper = () => {
   const [selectedTeacherName, setSelectedTeacherName] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState("");
 
+  const [searchExamTypeInput, setSearchExamTypeInput] = useState('');
+  const [selectedExamType, setSelectedExamType] = useState('');
+  const [showExamTypeDropdown, setShowExamTypeDropdown] = useState(false);
+console.log(terms);
 
   const {
     register,
@@ -240,16 +244,64 @@ const UploadExamPaper = () => {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="relative">
+              <label className="label-text dark:text-gray-200">
+                Exam Type <span className="text-error">*</span>
+              </label>
+
+              <input
+                type="hidden"
+                {...register("exam_type", { required: "Exam type is required" })}
+                value={selectedExamType ? selectedExamType : ""}
+              />
+
+              <input
+                type="text"
+                className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                placeholder="Search Exam Type..."
+                value={searchExamTypeInput || selectedExamType}
+                onChange={(e) => {
+                  setSearchExamTypeInput(e.target.value);
+                  setSelectedExamType(""); // Clear selected exam type when user types
+                  setShowExamTypeDropdown(true);
+                }}
+                onFocus={() => setShowExamTypeDropdown(true)}
+                autoComplete="off"
+              />
+
+              {showExamTypeDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                  </div>
+                  <div className="max-h-40 overflow-y-auto">
+                    {examType?.length > 0 ? (
+                      examType.map((examTypeObj) => (
+                        <p
+                          key={examTypeObj.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          onClick={() => {
+                            setSelectedExamType(examTypeObj.name);
+                            setSearchExamTypeInput(examTypeObj.name);
+                            setShowExamTypeDropdown(false);
+                            setValue("exam_type", examTypeObj.id);
+                          }}
+                        >
+                          {examTypeObj.name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No exam types found.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {errors.exam_type && (
+                <p className="text-red-500 text-sm mt-1">{errors.exam_type.message}</p>
+              )}
+            </div>
             {/* Reusable field block */}
             {[
-              {
-                label: "Exam Type",
-                name: "exam_type",
-                data: examType,
-                key: "name",
-                error: errors.exam_type,
-                requiredMsg: "Exam type is required",
-              },
               {
                 label: "Year Level",
                 name: "year_level",
@@ -265,6 +317,7 @@ const UploadExamPaper = () => {
                 key: "year",
                 error: errors.term,
                 requiredMsg: "Term is required",
+                renderValue: (item) => `${item.year} - Term ${item.term_number}`
               },
 
             ].map(({ label, name, data, key, error, requiredMsg, renderValue = null }) => (
@@ -288,6 +341,8 @@ const UploadExamPaper = () => {
                 {error && <p className="text-error text-sm mt-1">{error.message}</p>}
               </div>
             ))}
+        
+
 
             <div className="relative">
               <label lassName="label-text dark:text-gray-200">

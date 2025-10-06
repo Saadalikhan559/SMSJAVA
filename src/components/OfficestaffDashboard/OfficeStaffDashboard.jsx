@@ -66,7 +66,7 @@ export const OfficeStaffDashboard = () => {
         style: {
           fontSize: "14px",
           fontWeight: 600,
-          color: `${constants.textColor}`,
+          color: constants.textTheme,
         },
       },
     },
@@ -76,17 +76,13 @@ export const OfficeStaffDashboard = () => {
         style: {
           fontSize: "14px",
           fontWeight: 600,
-          color: `${constants.textColor}`,
+          color: constants.textTheme,
         },
       },
     },
     stroke: {
       curve: "straight",
       width: 5,
-    },
-    title: {
-      text: "Yearly Admissions",
-      align: "left",
     },
     colors: [constants.canadaPink],
   };
@@ -99,8 +95,8 @@ export const OfficeStaffDashboard = () => {
   ];
 
   return (
-    <div className="p-4 space-y-9 mb-20">
-      <LoginSuccessHandler/>
+    <div className="p-4 space-y-9 mb-10">
+      <LoginSuccessHandler />
       <h3 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
         Office Staff Dashboard
       </h3>
@@ -108,13 +104,13 @@ export const OfficeStaffDashboard = () => {
       <div className="grid grid-cols-12 gap-4">
         {/* Left Column */}
         <div className="col-span-12 md:col-span-3 flex flex-col gap-4 h-full">
-          <div className="flex-1 border rounded-lg shadow-md borderTheme bg-white">
+          <div className="flex-1 border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 bgTheme text-white rounded-t-lg">
               <h2 className="text-lg font-bold">Academic Year</h2>
             </div>
             <div className="p-6 flex items-center justify-center">
               <div className="text-center">
-                <p className="text-3xl font-extrabold text-gray-900 tracking-wide">
+                <p className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 tracking-wide">
                   {dashboardData.current_academic_year}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">Session</p>
@@ -122,13 +118,13 @@ export const OfficeStaffDashboard = () => {
             </div>
           </div>
 
-          <div className="flex-1 border rounded-lg shadow-md borderTheme bg-white">
+          <div className="flex-1 border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 bgTheme text-white rounded-t-lg">
               <h2 className="text-lg font-bold">New Admissions This Year</h2>
             </div>
             <div className="p-6 flex items-center justify-center">
               <div className="text-center">
-                <p className="text-3xl font-extrabold text-gray-900 tracking-wide">
+                <p className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 tracking-wide">
                   {dashboardData.new_admissions_this_year}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">Total Count</p>
@@ -139,12 +135,17 @@ export const OfficeStaffDashboard = () => {
 
         {/* Right Column: Chart */}
         <div className="col-span-12 md:col-span-9">
-          <div className="h-full border rounded-lg shadow-md borderTheme bg-white flex flex-col">
+          <div className="h-full border rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl borderTheme bg-white dark:bg-gray-800 dark:border-gray-700">
             <div className="p-4 bgTheme text-white rounded-t-lg">
-              <h2 className="text-lg font-bold">Admissions Overview</h2>
+              <h2 className="text-lg font-bold">Student Admission Per Year</h2>
             </div>
             <div className="p-4 flex-1">
-              <Chart options={options} series={series} type="line" height={350} />
+              <Chart
+                options={options}
+                series={series}
+                type="line"
+                height={350}
+              />
             </div>
           </div>
         </div>

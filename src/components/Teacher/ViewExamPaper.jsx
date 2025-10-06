@@ -132,7 +132,7 @@
 
 //         {/* Filter Section */}
 //         <div className="w-full px-5">
-//           <div className="flex flex-wrap justify-between items-end gap-4 mb-20 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
+//           <div className="flex flex-wrap justify-between items-end gap-4 mb-10 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
 //             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
 //               {/* Class Filter */}
 //               <div className="flex flex-col w-full sm:w-auto">
@@ -444,7 +444,7 @@ const ViewExamPaper = () => {
 
         {/* Filter Section */}
         <div className="w-full px-5">
-          <div className="flex flex-wrap justify-between items-end gap-4 mb-20 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
+          <div className="flex flex-wrap justify-between items-end gap-4 mb-10 w-full border-b border-gray-300 dark:border-gray-700 pb-4">
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Class Filter */}
               <div className="flex flex-col w-full sm:w-auto">
@@ -606,7 +606,7 @@ const ViewExamPaper = () => {
                       </Link>
 
                       <button
-                        className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1]"
+                        className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1] text-nowrap"
                         onClick={() => handleViewPaper(paper.uploaded_file)}
                       >
                         View Paper

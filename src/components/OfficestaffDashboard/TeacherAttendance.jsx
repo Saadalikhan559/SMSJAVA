@@ -150,7 +150,7 @@ const TeacherAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-20">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className=" flex justify-end">
           <Link
@@ -178,7 +178,7 @@ const TeacherAttendance = () => {
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg mb-20">
+        <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg mb-10">
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>

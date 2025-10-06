@@ -124,13 +124,13 @@ const FeeDashboard = () => {
                   show: true,
                   fontSize: "22px",
                   fontWeight: "bold",
-                  color: `${constants.textColor}`,
+                  color: "gray",
                   formatter: (val) => `${val.toLocaleString()}`,
                 },
                 total: {
                   show: true,
                   label: "Total",
-                  color: "#666",
+                  color: "#6B7280",
                   formatter: (w) => {
                     const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
                     return `${sum.toLocaleString()}`;

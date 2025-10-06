@@ -3,9 +3,7 @@ export const constants = {
   isOffline: true,
 
   // baseUrl: "https://smsproject1.pythonanywhere.com/", //deployed for testing    
-
   baseUrl: "https://smsproject.pythonanywhere.com/", //deployed for school     
-
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms/", //farha     
   //  baseUrl: "https://9gqxjbjg-8000.inc1.devtunnels.ms/", //tahur      
 
@@ -53,6 +51,7 @@ export const constants = {
   // },
 
   bgTheme: "#5E35B1",
+  textTheme: "#5E35B1",
   saffronOrange: "#FF9933",
   usColor: "#5cb7ffd9",
   italianGreen: "#4bcd89d9",
