@@ -194,6 +194,8 @@ export const Sidebar = () => {
                     Documents
                   </h3>
                   <ul className="space-y-1">
+                     {(role === constants.roles.director ||
+                      role === constants.roles.officeStaff) && (
                     <li>
                       <Link
                         onClick={(e) =>
@@ -206,7 +208,7 @@ export const Sidebar = () => {
                         <i className="fa-solid fa-file-arrow-up w-5"></i> Upload
                         Documents
                       </Link>
-                    </li>
+                    </li>)}
                     <li>
                       <Link
                         onClick={(e) =>
