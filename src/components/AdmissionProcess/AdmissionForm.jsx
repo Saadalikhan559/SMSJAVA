@@ -297,7 +297,7 @@ export const AdmissionForm = () => {
   }
 
   return (
-    <div className="mb-10">
+    <div className="mb-24 md:mb-10">
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
         ref={formRef}

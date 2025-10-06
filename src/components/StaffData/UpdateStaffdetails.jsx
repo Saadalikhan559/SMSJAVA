@@ -106,7 +106,7 @@ const UpdateStaffDetails = () => {
 
   return (
     <>
-      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
           <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
             <i className="fa-solid fa-pen-to-square mr-2"></i>{" "}
@@ -179,7 +179,7 @@ const UpdateStaffDetails = () => {
                   pattern: { value: /^\d{10}$/, message: "Phone number must be exactly 10 digits" },
                   maxLength: { value: 10, message: "Phone number cannot exceed 10 digits" },
                 })}
-                className={`input input-bordered w-full focus:outline-none ${errors.phone_no ? "input-error" : ""}`}
+                className={`input input-bordered w-full  dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none ${errors.phone_no ? "input-error" : ""}`}
               />
               {errors.phone_no && <span className="text-error text-sm">{errors.phone_no.message}</span>}
             </div>

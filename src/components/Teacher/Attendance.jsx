@@ -70,7 +70,7 @@ export const Attendance = () => {
 
   // Main content
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 mb-10">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 mb-24 md:mb-10">
       <h2 className="text-4xl font-semibold mb-6 text-center text-gray-800 dark:text-white">
         Attendance <i className="fa-solid fa-clipboard-user ml-2"></i>
       </h2>

@@ -111,7 +111,7 @@ const DiscountedStudents = () => {
 
   return (
     <>
-      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
           <div className="mb-1">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-1">
@@ -171,10 +171,10 @@ const DiscountedStudents = () => {
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.student_name}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 capitalize text-nowrap">{s.scholar_no}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.year_level}</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee_discount}</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.admission_fee}</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee_discount}</td>
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-center">₹{s.tuition_fee}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">₹{s.admission_fee_discount}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">₹{s.admission_fee}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">₹{s.tuition_fee_discount}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">₹{s.tuition_fee}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.discount_reason || "-"}</td>
                         <td className="px-13 py-3 text-sm text-gray-500 dark:text-gray-300 flex gap-3">
                           <Link

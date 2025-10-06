@@ -110,7 +110,7 @@ const FullAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen flex justify-center mb-10">
+    <div className="p-6 bg-gray-50 min-h-screen flex justify-center mb-24 md:mb-10">
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-7xl overflow-x-auto">
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
           <i className="fa-solid fa-chalkboard-user mr-2" />
@@ -149,7 +149,7 @@ const FullAttendance = () => {
                 {headers.map((header, idx) => (
                   <th
                     key={idx}
-                    className="px-4 py-3 text-center font-semibold border-b border-gray-300 whitespace-nowrap"
+                    className="px-4 py-3 text-center text-nowrap font-semibold border-b border-gray-300 whitespace-nowrap"
                     style={{ minWidth: '120px' }}
                   >
                     {header}
@@ -162,7 +162,7 @@ const FullAttendance = () => {
                 <tr>
                   <td
                     colSpan={headers.length}
-                    className="text-center py-6 text-gray-500"
+                    className="text-center text-nowrap py-6 text-gray-500"
                   >
                     Attendance Not Found.
                   </td>
@@ -173,7 +173,7 @@ const FullAttendance = () => {
                     {headers.map((header, i) => (
                       <td
                         key={i}
-                        className="px-4 py-3 text-center text-sm text-gray-800 border-t border-gray-200"
+                        className="px-4 py-3 text-nowrap text-center text-sm text-gray-800 border-t border-gray-200"
                         style={{ minWidth: '120px', wordBreak: 'break-word' }}
                       >
                         {item[header] || '--'}

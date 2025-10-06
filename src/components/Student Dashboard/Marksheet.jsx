@@ -104,7 +104,7 @@ const Marksheet = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-2 md:p-6 mb-10">
+    <div className="bg-gray-100 min-h-screen p-2 md:p-6 mb-24 md:mb-10">
       <div ref={printRef}>
         <div className="max-w-2xl mx-auto border-3 border-red-700 p-4 bg-white shadow-xl font-sans text-sm m-4">
           {/* Header */}
@@ -191,7 +191,7 @@ const Marksheet = () => {
                 <thead className="bg-gray-200">
                   <tr>
                     {["Subject", "FA1", "FA2", "SA1", "FA3", "SA2", "Avg SA1+SA2"].map((h, i) => (
-                      <th key={i} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{h}</th>
+                      <th key={i} className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -200,11 +200,11 @@ const Marksheet = () => {
                     const [fa1, fa2, sa1, fa3, sa2, avg] = getSubjectScores(subject);
                     return (
                       <tr key={subject} className="bg-white">
-                        <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                        <td className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                           {subject.toUpperCase()}
                         </td>
                         {[fa1, fa2, sa1, fa3, sa2, avg].map((score, idx) => (
-                          <td key={idx} className={`border border-black px-1 py-0.5 md:px-2 md:py-1 ${score !== "-" && score < 40 ? "text-red-600" : ""}`}>
+                          <td key={idx} className={`border border-text-nowrapblack  px-1 py-0.5 md:px-2 md:py-1 ${score !== "-" && score < 40 ? "text-red-600" : ""}`}>
                             {score}
                           </td>
                         ))}
@@ -212,60 +212,60 @@ const Marksheet = () => {
                     );
                   })}
                   <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                    <td className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                       TOTAL
                     </td>
                     {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">
+                      <td key={exam} className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1">
                         {data.subjects.find(e => e.exam_type === exam)?.total ?? 0}/500
                       </td>
                     ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{data.total_marks}/500</td>
+                    <td className="border border-black text-nowrap px-1 py-0.5 md:px-2 md:py-1">{data.total_marks}/500</td>
                   </tr>
                   <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                    <td className="border border-black text-nowrap px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                       PERCENTAGE
                     </td>
                     {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{data.subjects.find(e => e.exam_type === exam)?.percentage ?? "-"}%</td>
+                      <td key={exam} className="border border-black text-nowrap px-1 py-0.5 md:px-2 md:py-1">{data.subjects.find(e => e.exam_type === exam)?.percentage ?? "-"}%</td>
                     ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{data.percentage}%</td>
+                    <td className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1">{data.percentage}%</td>
                   </tr>
                   <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                    <td className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
                       GRADE
                     </td>
                     {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
                       <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
                     ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
+                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1">{safeString(data.grade)}</td>
                   </tr>
                   <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1 text-center text-red-500 font-bold">
                       RANK
                     </td>
                     {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
+                      <td key={exam} className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
                     ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
+                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1">{safeString(data.grade)}</td>
                   </tr>
                   <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1 text-center text-red-500 font-bold">
                       ATTENDANCE
                     </td>
                     {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
+                      <td key={exam} className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
                     ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
+                    <td className="border border-black px-1 py-0.5 md:px-2 text-nowrap md:py-1">{safeString(data.grade)}</td>
                   </tr>
                   <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
+                    <td className="border border-black px-1 py-0.5 md:px-2 text-nowrap md:py-1 text-center text-red-500 font-bold">
                       DIVISION
                     </td>
                     {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
+                      <td key={exam} className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
                     ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.grade)}</td>
+                    <td className="border border-black px-1 py-0.5 md:px-2 text-nowrap md:py-1">{safeString(data.grade)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -286,17 +286,17 @@ const Marksheet = () => {
               <table className="w-full text-xxs md:text-xs border border-black text-center border-collapse">
                 <thead className="bg-gray-200">
                   <tr>
-                    <th className="border border-black px-1 py-0.5">SUBJECT</th>
-                    <th className="border border-black px-1 py-0.5">I Term</th>
-                    <th className="border border-black px-1 py-0.5">II Term</th>
+                    <th className="border border-black text-nowrap px-1 py-0.5">SUBJECT</th>
+                    <th className="border border-black text-nowrap px-1 py-0.5">I Term</th>
+                    <th className="border border-black text-nowrap px-1 py-0.5">II Term</th>
                   </tr>
                 </thead>
                 <tbody>
                   {["GK/MORAL/EVS", "Conversation", "Drawing/Craft", "Drawing"].map((subj) => (
                     <tr key={subj} className="bg-white">
-                      <td className="border border-black px-1 py-0.5 text-left">{subj}</td>
-                      <td className="border border-black font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 1")?.grade || "-"}</td>
-                      <td className="border border-black font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 2")?.grade || "-"}</td>
+                      <td className="border border-black  text-nowrap px-1 py-0.5 text-left">{subj}</td>
+                      <td className="border border-black text-nowrap font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 1")?.grade || "-"}</td>
+                      <td className="border border-black text-nowrap font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 2")?.grade || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -307,19 +307,19 @@ const Marksheet = () => {
               <table className="w-full text-xxs md:text-xs border border-black border-collapse">
                 <thead className="bg-gray-200">
                   <tr>
-                    <th className="border border-black px-1 py-0.5">SUBJECT</th>
-                    <th className="border border-black px-1 py-0.5">I Term</th>
-                    <th className="border border-black px-1 py-0.5">II Term</th>
-                    <th className="border border-black px-1 py-0.5">Remarks</th>
+                    <th className="border border-black text-nowrap px-1 py-0.5">SUBJECT</th>
+                    <th className="border border-black text-nowrap px-1 py-0.5">I Term</th>
+                    <th className="border border-black text-nowrap px-1 py-0.5">II Term</th>
+                    <th className="border border-black px-1 py-0.5 text-nowrap">Remarks</th>
                   </tr>
                 </thead>
                 <tbody>
                   {["Cleanliness", "Discipline", "Piuntuality", "Attention in Class"].map((trait) => (
                     <tr key={trait} className="bg-white">
-                      <td className="border border-black px-1 py-0.5 text-left">{trait}</td>
-                      <td className="border border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 1")?.grade || "-"}</td>
-                      <td className="border border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 2")?.grade || "-"}</td>
-                      <td className="border border-black pl-1 text-left">{data.personal_social.find(item => item.quality === trait && item.term === "Term 2")?.remark || "-"}</td>
+                      <td className="border text-nowrap border-black px-1 py-0.5 text-left">{trait}</td>
+                      <td className="border text-nowrap border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 1")?.grade || "-"}</td>
+                      <td className="border text-nowrap border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 2")?.grade || "-"}</td>
+                      <td className="border text-nowrap border-black pl-1 text-left">{data.personal_social.find(item => item.quality === trait && item.term === "Term 2")?.remark || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
