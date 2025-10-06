@@ -59,8 +59,9 @@ const UploadExamPaper = () => {
   const [selectedTeacherName, setSelectedTeacherName] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState("");
 
-  const [searchExamTypeInput, setSearchExamTypeInput] = useState('');
-  const [selectedExamType, setSelectedExamType] = useState('');
+  const [selectedExamType, setSelectedExamType] = useState("");
+  const [selectedExamTypeId, setSelectedExamTypeId] = useState("");
+  const [searchExamTypeInput, setSearchExamTypeInput] = useState("");
   const [showExamTypeDropdown, setShowExamTypeDropdown] = useState(false);
   console.log(terms);
 
@@ -257,61 +258,84 @@ const UploadExamPaper = () => {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="relative">
-              <label className="label-text dark:text-gray-200">
-                Exam Type <span className="text-error">*</span>
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                  <i className="fa-solid fa-clipboard-list text-sm"></i>
+                  Exam Type <span className="text-error">*</span>
+                </span>
               </label>
 
+              {/* Display box that toggles dropdown */}
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                onClick={() => setShowExamTypeDropdown(!showExamTypeDropdown)}
+              >
+                {selectedExamType || "Select Exam Type"}
+                <i
+                  className={`fa-solid fa-chevron-${showExamTypeDropdown ? "up" : "down"} ml-2`}
+                ></i>
+              </div>
+
+              {/* Hidden input for react-hook-form */}
               <input
                 type="hidden"
                 {...register("exam_type", { required: "Exam type is required" })}
-                value={selectedExamType ? selectedExamType : ""}
+                value={selectedExamTypeId || ""}
               />
 
-              <input
-                type="text"
-                className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                placeholder="Search Exam Type..."
-                value={searchExamTypeInput || selectedExamType}
-                onChange={(e) => {
-                  setSearchExamTypeInput(e.target.value);
-                  setSelectedExamType(""); // Clear selected exam type when user types
-                  setShowExamTypeDropdown(true);
-                }}
-                onFocus={() => setShowExamTypeDropdown(true)}
-                autoComplete="off"
-              />
-
+              {/* Dropdown */}
               {showExamTypeDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  {/* Search input inside dropdown */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Exam Type..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchExamTypeInput}
+                      onChange={(e) => {
+                        setSearchExamTypeInput(e.target.value);
+                        setSelectedExamType("");
+                      }}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  {/* Exam type list */}
                   <div className="max-h-40 overflow-y-auto">
                     {filteredExamTypes?.length > 0 ? (
                       filteredExamTypes.map((examTypeObj) => (
                         <p
                           key={examTypeObj.id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             setSelectedExamType(examTypeObj.name);
-                            setSearchExamTypeInput(examTypeObj.name);
+                            setSelectedExamTypeId(examTypeObj.id);
+                            setSearchExamTypeInput("");
                             setShowExamTypeDropdown(false);
-                            setValue("exam_type", examTypeObj.id);
+                            setValue("exam_type", examTypeObj.id, { shouldValidate: true });
                           }}
                         >
                           {examTypeObj.name}
                         </p>
                       ))
                     ) : (
-                      <p className="p-2 text-gray-500 dark:text-gray-400">No exam types found.</p>
+                      <p className="p-2 text-gray-500 dark:text-gray-400">
+                        No exam types found.
+                      </p>
                     )}
                   </div>
                 </div>
               )}
 
-
+              {/* Error message */}
               {errors.exam_type && (
-                <p className="text-red-500 text-sm mt-1">{errors.exam_type.message}</p>
+                <p className="text-error text-sm mt-1">{errors.exam_type.message}</p>
               )}
             </div>
+
+
             {/* Reusable field block */}
             {[
               {
@@ -356,52 +380,71 @@ const UploadExamPaper = () => {
 
 
 
-            <div className="relative">
-              <label lassName="label-text dark:text-gray-200">
-                Teacher <span className="text-error">*</span>
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+
+                  Teacher <span className="text-error">*</span>
+                </span>
               </label>
 
+              {/* Display box that toggles dropdown */}
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
+              >
+                {selectedTeacherName || "Select Teacher"}
+                <i
+                  className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
+                ></i>
+              </div>
+
+              {/* Hidden input for react-hook-form */}
               <input
                 type="hidden"
                 {...register("teacher", { required: "Teacher is required" })}
-                value={selectedTeacherName ? selectedTeacherId : ""}
+                value={selectedTeacherId || ""}
               />
 
-              <input
-                type="text"
-                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                placeholder="Search Teacher..."
-                value={searchTeacherInput || selectedTeacherName}
-                onChange={(e) => {
-                  setSearchTeacherInput(e.target.value);
-                  setSelectedTeacherName("");
-                  setShowTeacherDropdown(true);
-                }}
-                onFocus={() => setShowTeacherDropdown(true)}
-                autoComplete="off"
-              />
-
+              {/* Dropdown */}
               {showTeacherDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
-                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                  {/* Search input inside dropdown */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Teacher..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchTeacherInput}
+                      onChange={(e) => {
+                        setSearchTeacherInput(e.target.value);
+                        setSelectedTeacherName("");
+                      }}
+                      autoComplete="off"
+                    />
                   </div>
+
+                  {/* Teacher list */}
                   <div className="max-h-40 overflow-y-auto">
                     {filteredTeachers?.length > 0 ? (
-                      filteredTeachers.map((teacherObj) => (
-                        <p
-                          key={teacherObj.id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
-                          onClick={() => {
-                            setSelectedTeacherId(teacherObj.id);
-                            setSelectedTeacherName(`${teacherObj.first_name} ${teacherObj.last_name}`);
-                            setSearchTeacherInput(`${teacherObj.first_name} ${teacherObj.last_name}`);
-                            setShowTeacherDropdown(false);
-                            setValue("teacher", teacherObj.id);
-                          }}
-                        >
-                          {teacherObj.first_name} {teacherObj.last_name}
-                        </p>
-                      ))
+                      filteredTeachers.map((teacherObj) => {
+                        const teacherFullName = `${teacherObj.first_name} ${teacherObj.last_name}`;
+                        return (
+                          <p
+                            key={teacherObj.id}
+                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                            onClick={() => {
+                              setSelectedTeacherId(teacherObj.id);
+                              setSelectedTeacherName(teacherFullName);
+                              setSearchTeacherInput("");
+                              setShowTeacherDropdown(false);
+                              setValue("teacher", teacherObj.id, { shouldValidate: true });
+                            }}
+                          >
+                            {teacherFullName}
+                          </p>
+                        );
+                      })
                     ) : (
                       <p className="p-2 text-gray-500 dark:text-gray-400">No teachers found.</p>
                     )}
@@ -409,52 +452,70 @@ const UploadExamPaper = () => {
                 </div>
               )}
 
+              {/* Error message */}
               {errors.teacher && (
-                <p className="text-red-500 text-sm mt-1">{errors.teacher.message}</p>
+                <p className="text-error text-sm mt-1">{errors.teacher.message}</p>
               )}
             </div>
 
-            <div className="relative">
-              <label lassName="label-text dark:text-gray-200">
-                Subject <span className="text-error">*</span>
+
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                  <i className="fa-solid fa-book-open text-sm"></i>
+                  Subject <span className="text-error">*</span>
+                </span>
               </label>
 
+              {/* Display box that toggles dropdown */}
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 capitalize"
+                onClick={() => setShowSubjectDropdown(!showSubjectDropdown)}
+              >
+                {selectedSubjectName || "Select Subject"}
+                <i
+                  className={`fa-solid fa-chevron-${showSubjectDropdown ? "up" : "down"} ml-2`}
+                ></i>
+              </div>
+
+              {/* Hidden input for react-hook-form */}
               <input
                 type="hidden"
                 {...register("subject", { required: "Subject is required" })}
-                value={selectedSubjectName ? selectedSubjectId : ""}
+                value={selectedSubjectId || ""}
               />
 
-              <input
-                type="text"
-                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600 capitalize"
-                placeholder="Search Subject..."
-                value={searchSubjectInput || selectedSubjectName}
-                onChange={(e) => {
-                  setSearchSubjectInput(e.target.value);
-                  setSelectedSubjectName("");
-                  setShowSubjectDropdown(true);
-                }}
-                onFocus={() => setShowSubjectDropdown(true)}
-                autoComplete="off"
-              />
-
+              {/* Dropdown */}
               {showSubjectDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
-                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
+                  {/* Search input inside dropdown */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Subject..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500 capitalize"
+                      value={searchSubjectInput}
+                      onChange={(e) => {
+                        setSearchSubjectInput(e.target.value);
+                        setSelectedSubjectName("");
+                      }}
+                      autoComplete="off"
+                    />
                   </div>
+
+                  {/* Subject list */}
                   <div className="max-h-40 overflow-y-auto">
                     {filteredSubjects?.length > 0 ? (
                       filteredSubjects.map((subjectObj) => (
                         <p
                           key={subjectObj.id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
                             setSelectedSubjectId(subjectObj.id);
                             setSelectedSubjectName(subjectObj.subject_name);
-                            setSearchSubjectInput(subjectObj.subject_name);
+                            setSearchSubjectInput("");
                             setShowSubjectDropdown(false);
-                            setValue("subject", subjectObj.id);
+                            setValue("subject", subjectObj.id, { shouldValidate: true });
                           }}
                         >
                           {subjectObj.subject_name}
@@ -467,10 +528,12 @@ const UploadExamPaper = () => {
                 </div>
               )}
 
+              {/* Error message */}
               {errors.subject && (
-                <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+                <p className="text-error text-sm mt-1">{errors.subject.message}</p>
               )}
             </div>
+
 
             {/* Total Marks */}
             <div className="form-control">
