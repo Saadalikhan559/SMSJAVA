@@ -137,23 +137,25 @@ const TeacherSubstitute = () => {
       )
   );
 
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen mb-10">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-4 sm:p-6">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         {/* Header */}
         <div className="mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-1">
             <i className="fa-solid fa-chalkboard-user"></i> Teacher Substitute
           </h1>
         </div>
-        <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center  gap-4 mb-3 border-b pb-2">
 
+        {/* Filters */}
+        <div className="flex flex-col justify-between sm:flex-row items-start sm:items-center gap-4 mb-3 border-b pb-2 border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full sm:w-auto"
+              className="border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md px-3 py-2 text-sm w-full sm:w-auto"
             />
             <div className="relative w-full sm:w-72">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -171,7 +173,7 @@ const TeacherSubstitute = () => {
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 text-sm"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 dark:text-gray-200 placeholder-gray-500 text-sm"
                 placeholder="Search by teacher, email or class..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -182,8 +184,8 @@ const TeacherSubstitute = () => {
 
         {/* Table */}
         <div className="w-full max-h-[70vh] overflow-x-auto rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300 text-xs sm:text-sm">
-            <thead className="bgTheme text-white z-2 sticky top-0">
+          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
+            <thead className="bgTheme text-white sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Teacher</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">Email</th>
@@ -193,7 +195,7 @@ const TeacherSubstitute = () => {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {loading ? (
                 <tr>
                   <td colSpan="5" className="px-4 py-6 text-center">
@@ -203,32 +205,36 @@ const TeacherSubstitute = () => {
                         <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
                         <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
                       </div>
-                      <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+                      <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">
+                        Loading data...
+                      </p>
                     </div>
                   </td>
                 </tr>
               ) : filteredTeachers.length > 0 ? (
                 filteredTeachers.map((teacher) => (
-                  <tr key={teacher.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-700 capitalize font-bold text-nowrap">
+                  <tr key={teacher.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 font-bold capitalize text-nowrap">
                       {teacher.first_name} {teacher.last_name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{teacher.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                      {teacher.email}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
                       {teacher.year_levels.map((level) =>
                         level.periods.map((period) => (
-                          <div key={period.id} className="text-gray-500 ml-2 text-nowrap">
+                          <div key={period.id} className="ml-2 text-nowrap">
                             {level.level_name}: {period.name} ({period.subject})
                           </div>
                         ))
                       )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 capitalize">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 text-nowrap">
                         {teacher.attendance.status} ({teacher.attendance.date})
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                       <button
                         onClick={() => setSelectedTeacher(teacher)}
                         className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 text-nowrap"
@@ -240,13 +246,8 @@ const TeacherSubstitute = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-4 py-6 text-center">
-                    <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
-                      <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-                      <p className="text-lg text-red-400 font-medium">
-                        No matching teachers found
-                      </p>
-                    </div>
+                  <td colSpan="5" className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                    No matching teachers found
                   </td>
                 </tr>
               )}
@@ -254,12 +255,12 @@ const TeacherSubstitute = () => {
           </table>
         </div>
 
-        {/* Modal */}
+        {/* Modal for Assign Substitute */}
         {selectedTeacher && (
           <dialog id="subModal" className="modal modal-open">
-            <div className="modal-box w-full sm:max-w-3xl relative">
+            <div className="modal-box w-full sm:max-w-3xl relative bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
               <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 font-bold text-xl"
+                className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-bold text-xl"
                 onClick={() => setSelectedTeacher(null)}
               >
                 ×
@@ -276,9 +277,12 @@ const TeacherSubstitute = () => {
                 <div className="space-y-4 max-h-[400px] overflow-y-auto">
                   {selectedTeacher.year_levels.map((level) =>
                     level.periods.map((period) => (
-                      <div key={period.id} className="border rounded-md p-3 bg-gray-50">
+                      <div
+                        key={period.id}
+                        className="border border-gray-300 dark:border-gray-600 rounded-md p-3 bg-gray-50 dark:bg-gray-700"
+                      >
                         <div className="flex items-center justify-between">
-                          <p className="font-medium text-gray-800">
+                          <p className="font-medium">
                             {level.level_name} - {period.name} ({period.subject})
                           </p>
                           <label className="text-sm flex items-center gap-2">
@@ -307,7 +311,7 @@ const TeacherSubstitute = () => {
                           ? period.same_class_free_teachers
                           : period.other_class_free_teachers
                         )?.length > 0 ? (
-                          <ul className="mt-2 text-sm text-gray-700 space-y-2">
+                          <ul className="mt-2 text-sm space-y-2">
                             {(period.showSameClass
                               ? period.same_class_free_teachers
                               : period.other_class_free_teachers
@@ -319,8 +323,8 @@ const TeacherSubstitute = () => {
                                 <div>
                                   <span className="capitalize">
                                     {ft.first_name} {ft.last_name}
-                                  </span>
-                                  <span> ({ft.email})</span>
+                                  </span>{" "}
+                                  ({ft.email})
                                 </div>
                                 <input
                                   type="checkbox"
@@ -357,14 +361,16 @@ const TeacherSubstitute = () => {
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-sm text-gray-500">No free teachers available</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            No free teachers available
+                          </p>
                         )}
                       </div>
                     ))
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No periods assigned</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">No periods assigned</p>
               )}
 
               <div className="modal-action">
@@ -428,10 +434,10 @@ const TeacherSubstitute = () => {
           </dialog>
         )}
 
-        {/*  modal */}
+        {/* Alert Modal */}
         {showAlert && (
           <dialog className="modal modal-open">
-            <div className="modal-box">
+            <div className="modal-box bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200">
               <h3 className="font-bold text-lg">Assign Substitute</h3>
               <p className="py-4 capitalize">
                 {alertMessage.split("\n").map((line, idx) => (
@@ -455,6 +461,7 @@ const TeacherSubstitute = () => {
       </div>
     </div>
   );
+
 };
 
 export default TeacherSubstitute;
