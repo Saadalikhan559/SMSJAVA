@@ -83,9 +83,14 @@ const UpdateStaffDetails = () => {
 
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
-      } else if (err.pan_no) {
+      } 
+      else if (err.pan_no) {
         setApiErrors({ pan_no: err.pan_no });
-      } else {
+      } 
+      else if (err.adhaar_no) {
+        setApiErrors({ adhaar_no: err.adhaar_no });
+      } 
+      else {
         setError("Failed to update staff details.");
       }
     }
