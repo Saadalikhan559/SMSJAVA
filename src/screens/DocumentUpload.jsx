@@ -52,6 +52,8 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
+  const [identityError, setIdentityError] = useState("");
+
 
   const [role, setRole] = useState("");
 
@@ -191,6 +193,9 @@ export const DocumentUpload = () => {
 
     return "";
   };
+
+
+
 
   // --- API FETCH FUNCTIONS ---
   const getRoles = async () => {
@@ -473,7 +478,6 @@ export const DocumentUpload = () => {
   };
 
 
-
   // --- SIDE EFFECTS ---
   useEffect(() => {
     getRoles();
@@ -668,6 +672,7 @@ export const DocumentUpload = () => {
                 </div>
 
                 {/* Identity */}
+
                 <div className="form-control w-full pt-6">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
@@ -677,17 +682,16 @@ export const DocumentUpload = () => {
                   <input
                     type="text"
                     name="identities"
-                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                     value={field.identities}
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
+                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                   />
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
                     </span>
                   </div>
-
                 </div>
 
                 {/* Add/Remove */}

@@ -308,7 +308,7 @@ export const ClassStudent = () => {
               </button>
               <button
                 onClick={submitBulkAttendance}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                className="btn bgTheme text-white"
                 disabled={!attendanceDate}
               >
                 Mark Attendance

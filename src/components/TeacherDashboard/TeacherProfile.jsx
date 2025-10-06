@@ -32,7 +32,7 @@ const TeacherProfile = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onChange" });
 
   useEffect(() => {
     const fetchTeacherData = async () => {
@@ -173,7 +173,7 @@ const TeacherProfile = () => {
             <h1 className="text-xl sm:text-2xl font-bold textTheme uppercase">
               Teacher Profile
             </h1>
-            <p className="text-sm sm:text-base text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
               Manage your account information and settings
             </p>
           </div>
@@ -543,10 +543,22 @@ const TeacherProfile = () => {
                           Phone Number
                         </label>
                         <input
-                          type="tel"
+                          type="text"
                           {...register("phone_no", {
                             required: "Phone number is required",
+                            pattern: {
+                              value: /^[0-9]*$/,
+                              message: "Only numbers are allowed",
+                            },
                           })}
+                          onInput={(e) => {
+                            // Remove non-numeric characters
+                            e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                            // Limit to 10 digits
+                            if (e.target.value.length > 10) {
+                              e.target.value = e.target.value.slice(0, 10);
+                            }
+                          }}
                           className="input input-bordered w-full text-sm"
                         />
                         {errors.phone_no && (
