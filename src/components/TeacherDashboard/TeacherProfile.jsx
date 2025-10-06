@@ -225,16 +225,18 @@ const TeacherProfile = () => {
 
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500">
-                  <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 mr-2" />
-                  Email
+                  <FontAwesomeIcon icon={faVenusMars} className="w-4 h-4 mr-2" />
+                  Gender
                 </label>
                 <input
                   type="text"
-                  value={profileData.email || "Not provided"}
+                  value={profileData.gender || "Not provided"}
                   className="input input-bordered w-full text-sm"
                   readOnly
                 />
               </div>
+
+
             </div>
 
             {/* Column 2 */}
@@ -251,19 +253,19 @@ const TeacherProfile = () => {
                   readOnly
                 />
               </div>
-
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500">
-                  <FontAwesomeIcon icon={faVenusMars} className="w-4 h-4 mr-2" />
-                  Gender
+                  <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 mr-2" />
+                  Email
                 </label>
                 <input
                   type="text"
-                  value={profileData.gender || "Not provided"}
+                  value={profileData.email || "Not provided"}
                   className="input input-bordered w-full text-sm"
                   readOnly
                 />
               </div>
+
 
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-semibold text-gray-500">
@@ -343,7 +345,7 @@ const TeacherProfile = () => {
 
         {/* Dialog Box */}
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0  bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-xl font-bold text-[#167bff] dark:text-blue-400 mb-4">
