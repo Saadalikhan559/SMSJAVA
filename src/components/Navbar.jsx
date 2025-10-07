@@ -6,13 +6,15 @@ import { allRouterLink } from "../router/AllRouterLinks";
 import LogoutModal from "../components/Modals/LogoutModal";
 
 export const Navbar = () => {
-  const { LogoutUser, userRole, isAuthenticated, userName, userProfile } =
+  const { LogoutUser, userRole, isAuthenticated, userName, userProfile, axiosInstance } =
     useContext(AuthContext);
   const navigate = useNavigate();
 
   const [profileImageError, setProfileImageError] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const logoutDialogRef = useRef(null);
+  const [profileData, setProfileData] = useState({});
+  const BASE_URL = constants.baseUrl;
 
   const defaultProfileImage =
     "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
@@ -24,6 +26,8 @@ export const Navbar = () => {
   const handleLogout = async () => {
     try {
       await LogoutUser();
+      setProfileData({});
+      setProfileImageError(false);
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout error:", error);
@@ -60,8 +64,63 @@ export const Navbar = () => {
   };
 
   const closeDropdown = () => {
-    document.activeElement.blur(); 
+    document.activeElement.blur();
   };
+
+useEffect(() => {
+  if (!isAuthenticated || !userRole) return;
+
+  const fetchProfileData = async () => {
+    try {
+    
+      let response;
+
+      switch (userRole) {
+        case constants.roles.director:
+          response = await axiosInstance.get(`/d/director/director_my_profile/`);
+          break;
+        case constants.roles.officeStaff:
+          response = await axiosInstance.get(`/d/officestaff/OfficeStaff_my_profile/`);
+          break;
+        case constants.roles.teacher:
+          response = await axiosInstance.get(`/t/teacher/teacher_my_profile/`);
+          break;
+        case constants.roles.student:
+          response = await axiosInstance.get(`/s/students/student_my_profile/`);
+          break;
+        case constants.roles.guardian:
+          response = await axiosInstance.get(`/s/guardian/guardian_my_profile/`);
+          break;
+        default:
+          throw new Error("Unsupported user role");
+      }
+
+      const data = response.data;
+      setProfileData(data);
+      
+    } catch (err) {
+      console.error("Error fetching profile data:", err);
+      
+    } 
+  };
+
+  fetchProfileData();
+}, [axiosInstance, userRole, isAuthenticated]);
+
+
+
+  let profilePicUrl = defaultProfileImage;
+
+
+  if (isAuthenticated) {
+    if (profileData?.user_profile) {
+      profilePicUrl = `${BASE_URL}${profileData.user_profile}`;
+    } else if (userProfile) {
+      profilePicUrl = `${BASE_URL}${userProfile}`;
+    }
+  }
+
+
 
   return (
     <>
@@ -102,11 +161,7 @@ export const Navbar = () => {
                   <div className="w-8 md:w-10 rounded-full">
                     <img
                       alt="User profile"
-                      src={
-                        profileImageError || !userProfile
-                          ? defaultProfileImage
-                          : userProfile
-                      }
+                      src={profilePicUrl}
                       onError={handleImageError}
                     />
                   </div>
