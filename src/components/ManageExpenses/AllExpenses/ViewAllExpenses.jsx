@@ -341,11 +341,11 @@ export const ViewAllExpenses = () => {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span
-                        className={`px-2 py-1 text-sm font-medium text-nowrap rounded-md shadow-sm border ${expense.status === "pending"
-                            ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:bg-yellow-100"
+                        className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${expense.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
                             : expense.status === "rejected"
-                              ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
-                              : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-green-100 text-green-800"
                           }`}
                       >
                         {expense.status}

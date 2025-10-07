@@ -238,9 +238,9 @@ export const SchoolIncome = () => {
 
                     <td>
                       <span
-                        className={`inline-flex items-center px-3 text-nowrap py-1 rounded-md shadow-sm text-sm font-medium ${income.status === "confirmed"
+                        className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${income.status === "confirmed"
                           ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-600"
+                          : "bg-red-100 text-red-800"
                           }`}
                       >
                         {income.status}

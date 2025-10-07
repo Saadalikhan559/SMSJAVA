@@ -168,9 +168,9 @@ export const EmployeeMonthlySalary = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
                       {detail ? (
                         <span
-                          className={`px-2 py-1 text-sm font-medium rounded-md capitalize shadow-sm border ${detail.status === "pending"
-                              ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:text-yellow-300 dark:bg-yellow-900 dark:border-yellow-700"
-                              : "text-green-700 bg-green-50 border-green-300 dark:text-green-300 dark:bg-green-900 dark:border-green-700"
+                          className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${detail.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800"
                             }`}
                         >
                           {detail.status}
@@ -182,55 +182,26 @@ export const EmployeeMonthlySalary = () => {
 
                     {/* Dropdown Actions */}
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
-                      <div className="relative inline-block text-left w-full">
-                        <button
-                          type="button"
-                          className="flex w-full justify-center px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 items-center"
-                          onClick={() =>
-                            setOpenDropdown((prev) =>
-                              prev === month ? null : month
-                            )
-                          }
+                      {(!detail || (detail.status !== "paid" && detail.status !== "pending")) ? (
+                        <Link
+                          to={allRouterLink.paySalaryExpense.replace(":id", id)}
+                          state={{ selectedMonth: month }}
+                          className="w-18 inline-flex flex-col items-center px-3 py-1 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100"
+
                         >
-                          Options
-                          <i className="fa-solid fa-chevron-down ml-2"></i>
-                        </button>
-
-                        {openDropdown === month && (
-                          <div
-                            className="absolute right-0 mt-2 w-32 origin-top-right bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 divide-y divide-gray-100 dark:divide-gray-600 rounded-md shadow-lg z-10"
-                            role="menu"
-                          >
-                            <div className="py-1">
-                              {(!detail || detail.status !== "paid") && (
-                                <Link
-                                  to={allRouterLink.paySalaryExpense.replace(":id", id)}
-                                  state={{ selectedMonth: month }}
-                                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                  role="menuitem"
-                                >
-                                  Pay
-                                </Link>
-                              )}
-
-                              {detail && (
-                                <Link
-                                  to={allRouterLink.updateSalaryExpense.replace(
-                                    ":id",
-                                    id
-                                  )}
-                                  state={{ selectedMonth: month }}
-                                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                  role="menuitem"
-                                >
-                                  Update
-                                </Link>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                          Pay
+                        </Link>
+                      ) : (
+                        <Link
+                          to={allRouterLink.updateSalaryExpense.replace(":id", id)}
+                          state={{ selectedMonth: month }}
+                          className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                        >
+                          Update
+                        </Link>
+                      )}
                     </td>
+
                   </tr>
                 );
               })}
