@@ -175,9 +175,9 @@ const ClassTeacherAssign = () => {
             </h1>
           </div><br />
 
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 flex-col md:flex-row md:space-x-4">
             {/* Teacher Dropdown */}
-            <div className="w-1/2 relative">
+            <div className="w-full md:w-1/2 relative">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Teacher <span className="text-error">*</span>
               </label>
@@ -256,7 +256,7 @@ const ClassTeacherAssign = () => {
             </div>
 
             {/* Year Level */}
-            <div className="w-1/2">
+            <div className="w-full md:w-1/2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Year Level <span className="text-error">*</span>
               </label>
