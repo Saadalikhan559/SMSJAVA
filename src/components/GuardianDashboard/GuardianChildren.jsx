@@ -50,56 +50,62 @@ if (loading) {
   }
 
     return (
-        <div className="min-h-screen p-5 bg-gray-50 mb-24 md:mb-10">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen-md mx-auto">
-                <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 border-b pb-4">
-                    <i className="fa-solid fa-graduation-cap mr-2"></i> Children Name
-                </h1>
+        <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 mb-24 md:mb-10">
+      <div className="bg-white dark:bg-gray-800 p-6 max-w-7xl rounded-lg shadow-lg mx-auto transition-colors duration-300">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100 border-b border-gray-300 dark:border-gray-600 pb-4">
+          <i className="fa-solid fa-graduation-cap mr-2"></i> Children Name
+        </h1>
 
-                {error && (
-                    <div className="text-red-600 text-center mb-4 font-medium">
-                        {error}
-                    </div>
-                )}
+        {error && (
+          <div className="text-red-600 dark:text-red-400 text-center mb-4 font-medium">
+            {error}
+          </div>
+        )}
 
-                <div className="overflow-x-auto text-center">
-                    <table className="min-w-full table-auto border border-gray-300 rounded-lg overflow-hidden">
-                        <thead className="bgTheme text-white text-center">
-                            <tr>
-                                <th scope="col" className="px-4 py-3 text-nowrap">S.NO</th>
-                                <th scope="col" className="px-4 py-3 text-nowrap">Student Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Children.length === 0 ? (
-                                <tr>
-                                    <td colSpan="2" className="text-center text-nowrap py-6 text-gray-500">
-                                        No data found.
-                                    </td>
-                                </tr>
-                            ) : (
-                                Children.map((record, index) => (
-                                    <tr key={record.id || index} className="hover:bg-blue-50 text-center">
-                                        <td className="px-4 py-3 text-nowrap textTheme">{index + 1}.</td>
-                                        <td className="px-4 py-3 text-nowrap textTheme hover:underline">
-                                            <Link
-                                                to={allRouterLink.studentFeeCard.replace(
-                                                    ":student_id",
-                                                    record.id
-                                                )}
-                                            >
-                                                {`${record.first_name || ""} ${record.middle_name || ""} ${record.last_name || ""}`.trim()}
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div className="overflow-x-auto text-center">
+          <table className="min-w-full table-auto border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+            <thead className="bgTheme text-white text-center">
+              <tr>
+                <th scope="col" className="px-4 py-3 text-nowrap">S.NO</th>
+                <th scope="col" className="px-4 py-3 text-nowrap">Student Name</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+              {Children.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="2"
+                    className="text-center text-nowrap py-6 text-gray-500 dark:text-gray-400"
+                  >
+                    No data found.
+                  </td>
+                </tr>
+              ) : (
+                Children.map((record, index) => (
+                  <tr
+                    key={record.id || index}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
+                  >
+                    <td className="px-4 py-3 text-nowrap text-gray-700 dark:text-gray-300">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap textTheme hover:underline font-bold">
+                      <Link
+                        to={allRouterLink.studentFeeCard.replace(
+                          ":student_id",
+                          record.id
+                        )}
+                      >
+                        {`${record.first_name || ""} ${record.middle_name || ""} ${record.last_name || ""}`.trim()}
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default GuardianChildren;

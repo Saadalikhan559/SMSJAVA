@@ -25,12 +25,21 @@ const UpdateExamPaper = () => {
   const [loadingPaper, setLoadingPaper] = useState(false);
   const [currentPaper, setCurrentPaper] = useState(null);
 
+  // Dropdown states
+  const [showExamTypeDropdown, setShowExamTypeDropdown] = useState(false);
+  const [searchExamType, setSearchExamType] = useState("");
+  const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
+  const [searchSubject, setSearchSubject] = useState("");
+  const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+  const [searchTeacher, setSearchTeacher] = useState("");
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    setValue,
     watch,
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       exam_type: "",
@@ -44,7 +53,7 @@ const UpdateExamPaper = () => {
     },
   });
 
-  // Fetch Exam Types — RETURNS DATA
+  // Fetch Exam Types
   const getExamType = async () => {
     try {
       const response = await axiosInstance.get("/d/Exam-Type/");
@@ -56,7 +65,7 @@ const UpdateExamPaper = () => {
     }
   };
 
-  // Fetch Year Levels — RETURNS DATA
+  // Fetch Year Levels
   const getClassName = async () => {
     try {
       const data = await fetchYearLevels();
@@ -68,7 +77,7 @@ const UpdateExamPaper = () => {
     }
   };
 
-  // Fetch Subjects — RETURNS DATA
+  // Fetch Subjects
   const getSubjects = async () => {
     try {
       const data = await fetchSubjects();
@@ -80,7 +89,7 @@ const UpdateExamPaper = () => {
     }
   };
 
-  // Fetch Terms — RETURNS DATA
+  // Fetch Terms
   const getTerms = async () => {
     try {
       const data = await fetchTerms();
@@ -92,7 +101,7 @@ const UpdateExamPaper = () => {
     }
   };
 
-  // Fetch Teachers — RETURNS DATA
+  // Fetch Teachers
   const getTeachers = async () => {
     try {
       const data = await fetchAllTeachers();
@@ -104,7 +113,7 @@ const UpdateExamPaper = () => {
     }
   };
 
-  // Fetch All Exam Papers — RETURNS DATA
+  // Fetch All Exam Papers
   const fetchExamPaper = async () => {
     try {
       const response = await axiosInstance.get(`/d/Exam-Paper/get_exampaper/`);
@@ -114,6 +123,22 @@ const UpdateExamPaper = () => {
       throw err;
     }
   };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".form-control.relative")) {
+        setShowExamTypeDropdown(false);
+        setShowSubjectDropdown(false);
+        setShowTeacherDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Main Loader Effect
   useEffect(() => {
@@ -128,7 +153,6 @@ const UpdateExamPaper = () => {
       setLoadingPaper(true);
 
       try {
-        // Fetch all required data
         const examTypesData = await getExamType();
         const classesData = await getClassName();
         const subjectsData = await getSubjects();
@@ -136,7 +160,6 @@ const UpdateExamPaper = () => {
         const teachersData = await getTeachers();
         const allPapers = await fetchExamPaper();
 
-        // Find paper by ID
         const foundPaper = allPapers.find(
           (paper) => String(paper.id) === String(id)
         );
@@ -147,13 +170,11 @@ const UpdateExamPaper = () => {
 
         setCurrentPaper(foundPaper);
 
-
         const examTypeItem = examTypesData.find(
           (et) =>
             et.name?.trim().toLowerCase() ===
             foundPaper.exam_name?.trim().toLowerCase()
         );
-
 
         const classItem = classesData.find(
           (c) =>
@@ -161,19 +182,16 @@ const UpdateExamPaper = () => {
             foundPaper.year_level_name?.trim().toLowerCase()
         );
 
-
         const subjectItem = subjectsData.find(
           (s) =>
             s.subject_name?.trim().toLowerCase() ===
             foundPaper.subject_name?.trim().toLowerCase()
         );
 
-
         const termItem = termsData.find(
           (t) =>
             t.year?.trim().toLowerCase() === foundPaper.year?.trim().toLowerCase()
         );
-
 
         const teacherItem = teachersData.find(
           (t) =>
@@ -222,13 +240,14 @@ const UpdateExamPaper = () => {
     }
 
     try {
-      const response = await axiosInstance.put(
-        `/d/Exam-Paper/update_exampaper/${id}/`,
+       const response = await axiosInstance.put(
+        "/d/Exam-Paper/update_exampaper/",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
 
       if ([200, 201].includes(response.status)) {
         setAlertMessage("Exam Paper updated successfully!");
@@ -244,6 +263,19 @@ const UpdateExamPaper = () => {
       );
       setShowAlert(true);
     }
+  };
+
+  // Helper functions
+  const getTeacherFullName = (teacher) => {
+    return `${teacher.first_name || ""} ${teacher.last_name || ""}`.trim();
+  };
+
+  const getExamTypeDisplay = (examType) => {
+    return examType?.name || "Select Exam Type";
+  };
+
+  const getSubjectDisplay = (subject) => {
+    return subject?.subject_name || "Select Subject";
   };
 
   // ➤ LOADING STATE
@@ -269,15 +301,206 @@ const UpdateExamPaper = () => {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* ===== CUSTOM DROPDOWN: EXAM TYPE ===== */}
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">
+                  Exam Type <span className="text-error">*</span>
+                </span>
+              </label>
+
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                onClick={() => setShowExamTypeDropdown(!showExamTypeDropdown)}
+              >
+                {watch("exam_type")
+                  ? getExamTypeDisplay(
+                      examType.find((et) => String(et.id) === String(watch("exam_type")))
+                    )
+                  : "Select Exam Type"}
+                <i
+                  className={`fa-solid fa-chevron-${
+                    showExamTypeDropdown ? "up" : "down"
+                  } ml-2`}
+                ></i>
+              </div>
+
+              {showExamTypeDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Exam Type..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchExamType}
+                      onChange={(e) => setSearchExamType(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="max-h-40 overflow-y-auto">
+                    {examType
+                      .filter((et) =>
+                        getExamTypeDisplay(et)
+                          .toLowerCase()
+                          .includes(searchExamType.toLowerCase())
+                      )
+                      .map((et) => (
+                        <p
+                          key={et.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setValue("exam_type", et.id.toString(), {
+                              shouldValidate: true,
+                            });
+                            setSearchExamType("");
+                            setShowExamTypeDropdown(false);
+                          }}
+                        >
+                          {getExamTypeDisplay(et)}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+              )}
+              {errors.exam_type && (
+                <p className="text-error text-sm mt-1">{errors.exam_type.message}</p>
+              )}
+            </div>
+
+            {/* ===== CUSTOM DROPDOWN: SUBJECT ===== */}
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">
+                  Subject <span className="text-error">*</span>
+                </span>
+              </label>
+
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                onClick={() => setShowSubjectDropdown(!showSubjectDropdown)}
+              >
+                {watch("subject")
+                  ? getSubjectDisplay(
+                      subjects.find((s) => String(s.id) === String(watch("subject")))
+                    )
+                  : "Select Subject"}
+                <i
+                  className={`fa-solid fa-chevron-${
+                    showSubjectDropdown ? "up" : "down"
+                  } ml-2`}
+                ></i>
+              </div>
+
+              {showSubjectDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Subject..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchSubject}
+                      onChange={(e) => setSearchSubject(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="max-h-40 overflow-y-auto">
+                    {subjects
+                      .filter((s) =>
+                        getSubjectDisplay(s)
+                          .toLowerCase()
+                          .includes(searchSubject.toLowerCase())
+                      )
+                      .map((s) => (
+                        <p
+                          key={s.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setValue("subject", s.id.toString(), {
+                              shouldValidate: true,
+                            });
+                            setSearchSubject("");
+                            setShowSubjectDropdown(false);
+                          }}
+                        >
+                          {getSubjectDisplay(s)}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+              )}
+              {errors.subject && (
+                <p className="text-error text-sm mt-1">{errors.subject.message}</p>
+              )}
+            </div>
+
+            {/* ===== CUSTOM DROPDOWN: TEACHER ===== */}
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">
+                  Teacher <span className="text-error">*</span>
+                </span>
+              </label>
+
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
+              >
+                {watch("teacher")
+                  ? getTeacherFullName(
+                      teachers.find((t) => String(t.id) === String(watch("teacher")))
+                    )
+                  : "Select Teacher"}
+                <i
+                  className={`fa-solid fa-chevron-${
+                    showTeacherDropdown ? "up" : "down"
+                  } ml-2`}
+                ></i>
+              </div>
+
+              {showTeacherDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Teacher..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchTeacher}
+                      onChange={(e) => setSearchTeacher(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="max-h-40 overflow-y-auto">
+                    {teachers
+                      .filter((t) =>
+                        getTeacherFullName(t)
+                          .toLowerCase()
+                          .includes(searchTeacher.toLowerCase())
+                      )
+                      .map((t) => (
+                        <p
+                          key={t.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setValue("teacher", t.id.toString(), {
+                              shouldValidate: true,
+                            });
+                            setSearchTeacher("");
+                            setShowTeacherDropdown(false);
+                          }}
+                        >
+                          {getTeacherFullName(t)}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+              )}
+              {errors.teacher && (
+                <p className="text-error text-sm mt-1">{errors.teacher.message}</p>
+              )}
+            </div>
+
+            {/* ===== STANDARD SELECTS: YEAR LEVEL & TERM ===== */}
             {[
-              {
-                label: "Exam Type",
-                name: "exam_type",
-                data: examType,
-                key: "name",
-                error: errors.exam_type,
-                requiredMsg: "Exam Type is required",
-              },
               {
                 label: "Year Level",
                 name: "year_level",
@@ -294,22 +517,6 @@ const UpdateExamPaper = () => {
                 error: errors.term,
                 requiredMsg: "Term is required",
                 renderValue: (item) => `${item.year} - Term ${item.term_number}`,
-              },
-              {
-                label: "Subject",
-                name: "subject",
-                data: subjects,
-                key: "subject_name",
-                error: errors.subject,
-                requiredMsg: "Subject is required",
-              },
-              {
-                label: "Teacher",
-                name: "teacher",
-                data: teachers,
-                render: (t) => `${t.first_name} ${t.last_name}`,
-                error: errors.teacher,
-                requiredMsg: "Teacher is required",
               },
             ].map(({ label, name, data, key, error, render, renderValue, requiredMsg }) => (
               <div className="form-control" key={name}>
@@ -350,9 +557,7 @@ const UpdateExamPaper = () => {
                 })}
               />
               {errors.total_marks && (
-                <p className="text-error text-sm mt-1">
-                  {errors.total_marks.message}
-                </p>
+                <p className="text-error text-sm mt-1">{errors.total_marks.message}</p>
               )}
             </div>
 
@@ -376,9 +581,7 @@ const UpdateExamPaper = () => {
                 })}
               />
               {errors.paper_code && (
-                <p className="text-error text-sm mt-1">
-                  {errors.paper_code.message}
-                </p>
+                <p className="text-error text-sm mt-1">{errors.paper_code.message}</p>
               )}
             </div>
 

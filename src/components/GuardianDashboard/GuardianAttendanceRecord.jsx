@@ -179,117 +179,72 @@ const GuardianAttendanceRecord = () => {
   };
 
   return (
-    <div className="p-4 mb-24 md:mb-10">
-      <h2 className="font-bold text-2xl flex justify-center items-center gap-2 textTheme">
+    <div className="p-4 mb-24 md:mb-10"><br></br>
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
         <i className="fa-solid fa-square-poll-vertical" /> Attendance Record
-      </h2>
-
-      {/* Enhanced Filter Controls */}
+      </h1>
       <div className="flex flex-wrap justify-start gap-6 my-8">
         <div className="flex flex-col gap-1">
-          <label htmlFor="month" className="text-sm font-medium text-gray-600">
+          <label htmlFor="month" className="text-sm font-medium text-gray-600 dark:text-gray-300">
             Select Month
           </label>
-          <div className="relative">
-            <select
-              id="month"
-              name="month"
-              value={filterMonth}
-              onChange={handleFilterChange}
-              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm cursor-pointer transition-all duration-200 hover:border-purple-400"
-              disabled={isLoading}
-            >
-              {monthOptions.map((month) => (
-                <option key={month.value} value={month.value}>
-                  {month.label}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
-            </div>
-          </div>
+          <select
+            id="month"
+            name="month"
+            value={filterMonth}
+            onChange={handleFilterChange}
+            className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+          >
+            {monthOptions.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="year" className="text-sm font-medium text-gray-600">
+          <label htmlFor="year" className="text-sm font-medium text-gray-600 dark:text-gray-300">
             Select Year
           </label>
-          <div className="relative">
-            <select
-              id="year"
-              name="year"
-              value={filterYear}
-              onChange={handleFilterChange}
-              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm cursor-pointer transition-all duration-200 hover:border-purple-400"
-              disabled={isLoading}
-            >
-              {yearOptions.map((year) => (
-                <option key={year.value} value={year.value}>
-                  {year.label}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
-            </div>
-          </div>
+          <select
+            id="year"
+            name="year"
+            value={filterYear}
+            onChange={handleFilterChange}
+            className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+            disabled={isLoading}
+          >
+            {yearOptions.map((year) => (
+              <option key={year.value} value={year.value}>
+                {year.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex items-end">
-          {!isLoading ? (
-            <button
-              onClick={getGuardianAttendance}
-              className="px-4 py-2 bgTheme text-white border-[#5E35B1] rounded-lg hover:bg-[#6e00ff] focus:outline-none focus:ring-2 focus:ring-[#6e00ff] focus:ring-offset-2 shadow-md transition-colors duration-200"
-            >
-              <i className="fas fa-sync-alt mr-2"></i> Refresh
-            </button>
-          ) : (
-            <button
-              disabled
-              className="px-4 py-2 bg-[#5E35B1] text-white rounded-lg cursor-not-allowed shadow-md"
-            >
-              <i className="fas fa-spinner fa-spin mr-2"></i> Loading...
-            </button>
-          )}
+          <button
+            onClick={getGuardianAttendance}
+            disabled={isLoading}
+            className={`btn bgTheme text-white w-30 ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bgTheme hover:opacity-90"
+              }`}
+          >
+            {isLoading ? (
+              <>
+                <i className="fas fa-spinner fa-spin"></i>
+              </>
+            ) : (
+              <>
+                <i className="fas fa-sync-alt"></i> Refresh
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      {isLoading ? (
-        <button
-          onClick={getGuardianAttendance}
-          disabled={isLoading}
-          className="self-end px-4 py-2 rounded-lg shadow-md bgTheme text-white flex items-center gap-2"
-        >
-          {isLoading ? (
-            <div className="flex space-x-2">
-              <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce"></div>
-              <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-              <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-            </div>
-          ) : (
-            <>
-              <i className="fas fa-sync-alt" /> Refresh
-            </>
-          )}
-        </button>
-      ) : null}
-
-      {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
           <ReactApexChart
             options={monthlyOptions}
             series={monthlySeries}
@@ -298,7 +253,7 @@ const GuardianAttendanceRecord = () => {
           />
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
           <ReactApexChart
             options={yearlyOptions}
             series={yearlySeries}
@@ -307,7 +262,7 @@ const GuardianAttendanceRecord = () => {
           />
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow md:col-span-2">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow md:col-span-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {guardianList.children.map((child, index) => (
               <div key={index} className="p-4">
@@ -315,18 +270,7 @@ const GuardianAttendanceRecord = () => {
                   {child.student_name} - {child.class_name}
                 </h3>
                 <ReactApexChart
-                  options={{
-                    ...percentageOptions,
-                    title: {
-                      text: `${child.student_name}'s Attendance`,
-                      align: "center",
-                      style: {
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        color: colorPrimary,
-                      },
-                    },
-                  }}
+                  options={percentageOptions}
                   series={[
                     percentageSeries[index].data[0],
                     percentageSeries[index].data[1],
