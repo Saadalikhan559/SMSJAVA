@@ -168,11 +168,10 @@ export const EmployeeMonthlySalary = () => {
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
                       {detail ? (
                         <span
-                          className={`px-2 py-1 text-sm font-medium rounded-md capitalize shadow-sm border ${
-                            detail.status === "pending"
+                          className={`px-2 py-1 text-sm font-medium rounded-md capitalize shadow-sm border ${detail.status === "pending"
                               ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:text-yellow-300 dark:bg-yellow-900 dark:border-yellow-700"
                               : "text-green-700 bg-green-50 border-green-300 dark:text-green-300 dark:bg-green-900 dark:border-green-700"
-                          }`}
+                            }`}
                         >
                           {detail.status}
                         </span>
@@ -203,16 +202,16 @@ export const EmployeeMonthlySalary = () => {
                             role="menu"
                           >
                             <div className="py-1">
-                              <Link
-                                to={allRouterLink.paySalaryExpense.replace(
-                                  ":id",
-                                  id
-                                )}
-                                state={{ selectedMonth: month }}
-                                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-                              >
-                                Pay
-                              </Link>
+                              {(!detail || detail.status !== "paid") && (
+                                <Link
+                                  to={allRouterLink.paySalaryExpense.replace(":id", id)}
+                                  state={{ selectedMonth: month }}
+                                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                  role="menuitem"
+                                >
+                                  Pay
+                                </Link>
+                              )}
 
                               {detail && (
                                 <Link
