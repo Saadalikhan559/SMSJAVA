@@ -193,8 +193,8 @@ export const AdmissionDetails = () => {
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Class</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">RTE</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Date</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
+                      <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
+                      <th className="px-10 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">

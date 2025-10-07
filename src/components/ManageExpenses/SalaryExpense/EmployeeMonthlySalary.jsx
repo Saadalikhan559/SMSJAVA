@@ -131,11 +131,11 @@ export const EmployeeMonthlySalary = () => {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
                   Payment Date
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">
+                <th className="px-12 py-3 text-left text-sm font-semibold text-nowrap">
                   Status
                 </th>
                 <th
-                  className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
+                  className="px- py-3 text-left text-sm font-semibold text-nowrap"
                   width={10}
                 >
                   Actions
