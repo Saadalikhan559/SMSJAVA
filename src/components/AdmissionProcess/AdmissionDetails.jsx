@@ -225,7 +225,15 @@ export const AdmissionDetails = () => {
                               .replaceAll("/", "-")}
                           </td>
                           <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {detail.student_input.is_active ? "Active" : "InActive"}
+                            <span
+                              className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${detail.student_input.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                                }`}
+                            >
+                              {detail.student_input.is_active ? "Active" : "InActive"}
+
+                            </span>
                           </td>
                           <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm">
                             <div className="flex space-x-2">

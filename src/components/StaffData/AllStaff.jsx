@@ -119,7 +119,7 @@ const AllStaff = () => {
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
               <table className="min-w-full table-auto  rounded-lg">
-                <thead className="bgTheme text-white text-center sticky top-0 z--10">
+                <thead className="bgTheme text-white text-center sticky top-0 z-2">
                   <tr>
                     <th className="px-4 py-3 text-nowrap">S.NO</th>
                     <th className="px-4 py-3 text-nowrap">Name</th>
@@ -145,7 +145,6 @@ const AllStaff = () => {
                           <Link
                             to={`/staffDetail/teacher/${record.id}`}
                             state={{ level_name: record.level_name }}
-                            // className="textTheme hover:underline"
                             className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
 
                           >
@@ -153,7 +152,17 @@ const AllStaff = () => {
                           </Link>
                         </td>
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.joining_date}</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.is_active === true ? "Active" : "InActive"} </td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${record.is_active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {record.is_active ? "Active" : "InActive"}
+                          </span>
+                        </td>
+
                       </tr>
                     ))
                   )}
@@ -181,7 +190,7 @@ const AllStaff = () => {
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
               <table className="min-w-full table-auto  rounded-lg">
-                <thead className="bgTheme text-white text-center sticky top-0 z--10">
+                <thead className="bgTheme text-white text-center sticky top-0 z-2">
                   <tr>
                     <th className="px-4 py-3 text-nowrap">S.NO</th>
                     <th className="px-4 py-3 text-nowrap">Name</th>
@@ -207,14 +216,22 @@ const AllStaff = () => {
                           <Link
                             to={`/staffDetail/office/${record.id}`}
                             state={{ level_name: record.level_name }}
-                            // className="textTheme hover:underline"
                             className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
                           >
                             {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
                           </Link>
                         </td>
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.date_joined}</td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.is_active === true ? "Active" : "InActive"} </td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${record.is_active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {record.is_active === true ? "Active" : "InActive"}
+                          </span>
+                        </td>
                       </tr>
                     ))
                   )}
