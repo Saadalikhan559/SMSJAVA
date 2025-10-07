@@ -58,6 +58,15 @@ const UpdateStaffDetails = () => {
   const onSubmit = async (formData) => {
     const payload = new FormData();
 
+
+
+    // Convert "true"/"false" string to actual boolean
+    if (formData.is_active === "true") {
+      formData.is_active = true;
+    } else if (formData.is_active === "false") {
+      formData.is_active = false;
+    }
+
     // Append all non-file fields
     for (const key in formData) {
       if (key !== "user_profile" && formData[key] !== null && formData[key] !== "") {
@@ -83,13 +92,13 @@ const UpdateStaffDetails = () => {
 
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
-      } 
+      }
       else if (err.pan_no) {
         setApiErrors({ pan_no: err.pan_no });
-      } 
+      }
       else if (err.adhaar_no) {
         setApiErrors({ adhaar_no: err.adhaar_no });
-      } 
+      }
       else {
         setError("Failed to update staff details.");
       }
@@ -202,6 +211,31 @@ const UpdateStaffDetails = () => {
               {errors.phone_no && <span className="text-error text-sm">{errors.phone_no.message}</span>}
             </div>
 
+            {/* Status */}
+
+            <div>
+              <label className="label">
+                <span className="label-text flex items-center gap-2">
+                  Status <span className="text-error">*</span>
+                </span>
+              </label>
+              <select
+                {...register("is_active", {
+                  required: "Status is required",
+                })}
+                className="select select-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+              >
+                <option value="">Select Status</option>
+                <option value="true">Active</option>
+                <option value="false">InActive</option>
+              </select>
+              {errors.is_active && (
+                <span className="text-error text-sm">
+                  {errors.is_active.message}
+                </span>   
+              )}
+            </div>
+
             {/* Gender */}
             <div>
               <label className="label">Gender</label>
@@ -293,7 +327,7 @@ const UpdateStaffDetails = () => {
             )}
 
             {/* Category */}
-    
+
 
             {/* Profile Picture (manual handling) */}
             <div className="md:col-span-2 lg:col-span-3">
