@@ -1,4 +1,4 @@
-  import { useRef, useEffect, useState, useContext } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { constants } from "../global/constants";
@@ -12,8 +12,6 @@ export const Navbar = () => {
 
   const [profileImageError, setProfileImageError] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-
   const logoutDialogRef = useRef(null);
 
   const defaultProfileImage =
@@ -59,6 +57,10 @@ export const Navbar = () => {
       default:
         return allRouterLink.notFound;
     }
+  };
+
+  const closeDropdown = () => {
+    document.activeElement.blur(); 
   };
 
   return (
@@ -114,19 +116,17 @@ export const Navbar = () => {
                   tabIndex={0}
                   className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow"
                 >
-                  <li>
+                  <li onClick={closeDropdown}>
                     <Link to={getProfileRoute(userRole)}>
                       <i className="fa-solid fa-user"></i> Profile
                     </Link>
                   </li>
-                  <li>
+                  <li onClick={closeDropdown}>
                     <Link to={allRouterLink.changePassword}>
                       <i className="fa-solid fa-lock"></i> Change Password
                     </Link>
                   </li>
-
-                  
-                  <li>
+                  <li onClick={closeDropdown}>
                     <Link to={allRouterLink.viewDocuments || "/view-documents"}>
                       <i className="fa-solid fa-folder-open"></i> View Documents
                     </Link>
@@ -134,28 +134,33 @@ export const Navbar = () => {
 
                   {userRole === constants.roles.director && (
                     <>
-                      <li>
+                      <li onClick={closeDropdown}>
                         <Link to={allRouterLink.registerUser}>
                           <i className="fa-solid fa-user-plus"></i> Create User
                         </Link>
                       </li>
-                      <li>
+                      <li onClick={closeDropdown}>
                         <Link to={allRouterLink.allTeacherAssignment}>
-                          <i className="fa-solid fa-book"></i> Teacher
-                          Assignments
+                          <i className="fa-solid fa-book"></i> Teacher Assignments
                         </Link>
                       </li>
                     </>
                   )}
 
                   {userRole === constants.roles.teacher && (
-                    <li>
+                    <li onClick={closeDropdown}>
                       <Link to={allRouterLink.attendance}>
                         <i className="fa-solid fa-book"></i> Attendance
                       </Link>
                     </li>
                   )}
-                  <li onClick={() => setShowLogoutModal(true)}>
+
+                  <li
+                    onClick={() => {
+                      closeDropdown();
+                      setShowLogoutModal(true);
+                    }}
+                  >
                     <a className="text-orange-600 cursor-pointer">
                       <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
                       Logout
