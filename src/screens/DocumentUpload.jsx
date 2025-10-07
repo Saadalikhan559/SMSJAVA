@@ -434,6 +434,7 @@ export const DocumentUpload = () => {
 
       setDocTypeErrors([...newDocErrors]);
       setIdentityErrors([...newIdentityErrors]);
+   
 
       if (hasError) {
         setLoading(false);
@@ -468,7 +469,11 @@ export const DocumentUpload = () => {
       });
       setRole("");
       setStep(0);
-       setApiErrors({});
+      setApiErrors({});
+      setSelectedTeacherName("")
+      setSelectedGuardianName("")
+      setSelectedStudentName("")
+      setSelectedOfficeStaffName("")
     } catch (err) {
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
