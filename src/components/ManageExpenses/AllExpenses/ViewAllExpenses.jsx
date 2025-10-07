@@ -208,7 +208,7 @@ export const ViewAllExpenses = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-4">
@@ -316,16 +316,16 @@ export const ViewAllExpenses = () => {
                 filteredExpenses.map((expense) => (
                   <tr key={expense.id}>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.category_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.amount}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.amount}</td>
                     <td
-                      className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 truncate max-w-xs"
+                      className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-200 truncate max-w-xs"
                       title={expense.description}
                     >
                       {expense.description}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.expense_date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.payment_method}</td>
-                    <td className="px-4 py-3 text-sm truncate max-w-xs">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-200">{expense.expense_date}</td>
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-200">{expense.payment_method}</td>
+                    <td className="px-4 py-3 text-sm text-nowrap truncate max-w-xs">
                       {expense.attachment ? (
                         <button
                           onClick={() => handleViewAttachment(expense.attachment)}
@@ -341,7 +341,7 @@ export const ViewAllExpenses = () => {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span
-                        className={`px-2 py-1 text-sm font-medium rounded-md shadow-sm border ${expense.status === "pending"
+                        className={`px-2 py-1 text-sm font-medium text-nowrap rounded-md shadow-sm border ${expense.status === "pending"
                             ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:bg-yellow-100"
                             : expense.status === "rejected"
                               ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
@@ -351,8 +351,8 @@ export const ViewAllExpenses = () => {
                         {expense.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{expense.created_at}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.created_by_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-200">{expense.created_at}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700  dark:text-gray-200 text-nowrap">{expense.created_by_name}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">{expense.approved_by_name}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
                       <div className="flex space-x-2">

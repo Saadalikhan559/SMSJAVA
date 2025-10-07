@@ -18,7 +18,11 @@ const AllStudentsPerClass = () => {
   const getStudents = async () => {
     try {
       const data = await fetchStudentYearLevelByClass(id);
-      setStudents(data);
+      const sortedData = [...data].sort((a, b) =>
+        (a.student_name || "").localeCompare(b.student_name || "", "en", { sensitivity: "base" })
+      );
+
+      setStudents(sortedData);
     } catch (err) {
       console.error("Error fetching students:", err);
       setError("Failed to fetch students.");
@@ -26,6 +30,7 @@ const AllStudentsPerClass = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     getStudents();
@@ -61,7 +66,7 @@ const AllStudentsPerClass = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
 
         {/* Header */}
@@ -95,14 +100,14 @@ const AllStudentsPerClass = () => {
           <table className="min-w-full table-auto">
             <thead className="bgTheme text-white sticky top-0 z--10 text-sm">
               <tr>
-                <th scope="col" className="px-4 py-3 text-center">S.NO</th>
-                <th scope="col" className="px-4 py-3 text-center">Student Name</th>
+                <th scope="col" className="px-4 py-3 text-center text-nowrap">S.NO</th>
+                <th scope="col" className="px-4 py-3 text-center text-nowrap">Student Name</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                  <td colSpan="2" className="px-4 py-6 text-nowrap text-center text-sm text-gray-500 dark:text-gray-400">
                     No students found.
                   </td>
                 </tr>
@@ -110,12 +115,12 @@ const AllStudentsPerClass = () => {
                 filteredStudents.map((record, index) => (
                   <tr
                     key={record.id || index}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+                    className="hover:bg-gray-50 text-nowrap dark:hover:bg-gray-700 transition-colors text-center"
                   >
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                    <td className="px-4 py-3 text-nowrap text-gray-700 dark:text-gray-300">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
+                    <td className="px-4 py-3  font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
                       <Link
                         to={`/Studentdetails/${record.student_id}`}
                         className="textTheme hover:underline"

@@ -29,7 +29,7 @@ const StudentAttendance = ({ guardianId }) => {
   }, [guardianId]);
 
   return (
-    <div className="p-5 bg-gray-50 min-h-screen mb-10">
+    <div className="p-5 bg-gray-50 min-h-screen mb-24 md:mb-10">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-screen">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           <i className="fa-solid fa-chalkboard-user mr-2 " />
@@ -48,7 +48,7 @@ const StudentAttendance = ({ guardianId }) => {
                   {columns.map((col, index) => (
                     <th
                       key={index}
-                      className="px-4 py-3 text-left whitespace-nowrap font-semibold"
+                      className="px-4 py-3 text-nowrap text-left whitespace-nowrap font-semibold"
                     >
                       {col}
                     </th>
@@ -59,7 +59,7 @@ const StudentAttendance = ({ guardianId }) => {
                 {data.map((row, idx) => (
                   <tr key={idx} className="hover:bg-blue-50 transition">
                     {columns.map((col, i) => (
-                      <td key={i} className="px-4 py-3 text-sm text-center text-gray-700">
+                      <td key={i} className="px-4 py-3 text-nowrap text-sm text-center text-gray-700">
                         {row[col] ?? '--'}
                       </td>
                     ))}

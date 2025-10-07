@@ -72,7 +72,7 @@ export const StudentDashboard = () => {
   }
 
  return (
-  <div className="p-6 space-y-6 max-w-7xl mx-auto mb-10">
+  <div className="p-6 space-y-6 max-w-7xl mx-auto mb-24 md:mb-10">
     <LoginSuccessHandler />
     <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
       Student Dashboard

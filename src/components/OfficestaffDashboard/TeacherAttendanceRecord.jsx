@@ -106,7 +106,7 @@ const TeacherAttendanceRecord = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
@@ -167,10 +167,10 @@ const TeacherAttendanceRecord = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600 text-xs sm:text-sm">
             <thead className="bgTheme text-white sticky top-0 z-2">
               <tr>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Teacher Name</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Date</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Status</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Teacher Name</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Date</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Status</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -179,13 +179,13 @@ const TeacherAttendanceRecord = () => {
                   .sort((a, b) => a.teacher_name.localeCompare(b.teacher_name))
                   .map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
-                      <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-white">
+                      <td className="px-4 py-3 font-bold text-nowrap capitalize text-gray-700 dark:text-white">
                         {record.teacher_name}
                       </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{record.date}</td>
+                      <td className="px-4 py-3 text-gray-700 text-nowrap dark:text-gray-300">{record.date}</td>
                       <td className="px-4 py-3 capitalize">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${record.status.toLowerCase() === 'present'
+                          className={`inline-flex items-center text-nowrap px-3 py-1 rounded-md shadow-sm text-sm font-medium ${record.status.toLowerCase() === 'present'
                             ? 'bg-green-100 text-green-800 dark:bg-green-200 dark:text-green-900'
                             : record.status.toLowerCase() === 'leave'
                               ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-200 dark:text-yellow-900'

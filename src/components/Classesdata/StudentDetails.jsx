@@ -53,7 +53,7 @@ const StudentDetails = () => {
   }
 
   return (
-    <div className="flex justify-center bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="flex justify-center bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="p-6 w-screen h-screen">
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg">
           <div className="bgTheme text-white px-4 py-2 rounded-t-md flex items-center justify-between">

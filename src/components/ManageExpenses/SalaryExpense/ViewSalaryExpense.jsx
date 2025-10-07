@@ -96,7 +96,7 @@ export const ViewSalaryExpense = () => {
 
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4 border-b border-gray-300 dark:border-gray-700">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
@@ -139,77 +139,80 @@ export const ViewSalaryExpense = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Joining Date
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold whitespace-nowrap">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap">
                   Base Salary
                 </th>
-                <th className="px-20 py-3 text-left text-sm font-semibold whitespace-nowrap" width={10}>
-                  Actions
-                </th>
+                {/* Only show Actions column if userRole is NOT officeStaff */}
+                {userRole !== constants.roles.officeStaff && (
+                  <th className="px-20 py-3 text-left text-sm font-semibold text-nowrap whitespace-nowrap" width={10}>
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredExpenses.length > 0 ? (
                 filteredExpenses.map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
                       {expense.name}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
-                      {(typeof expense.role === "string"
-                        ? [expense.role]
-                        : expense.role
-                      )
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap capitalize">
+                      {(typeof expense.role === "string" ? [expense.role] : expense.role)
                         .map((r) => r)
                         .join(", ")}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap">
                       {expense.joining_date}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-300 whitespace-nowrap">
                       ₹{expense.base_salary}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm w-56">
-                      <div className="flex space-x-2">
-                        {constants.roles.director === userRole && (
-                          <>
-                            <Link
-                              to={allRouterLink.editSalaryExpense.replace(":id", expense.id)}
-                              className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                            >
-                              Edit
-                            </Link>
+                    {/* Only show Actions buttons if userRole is NOT officeStaff */}
+                    {userRole !== constants.roles.officeStaff && (
+                      <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm w-56">
+                        <div className="flex space-x-2">
+                          {constants.roles.director === userRole && (
+                            <>
+                              <Link
+                                to={allRouterLink.editSalaryExpense.replace(":id", expense.id)}
+                                className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                              >
+                                Edit
+                              </Link>
 
-                            <button
-                              onClick={() => handleDeleteClick(expense.id)}
-                              className="inline-flex items-center px-3 py-1 shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
-                            >
-                              Delete
-                            </button>
+                              <button
+                                onClick={() => handleDeleteClick(expense.id)}
+                                className="inline-flex items-center px-3 py-1 shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+                              >
+                                Delete
+                              </button>
 
-                            <Link
-                              to={allRouterLink.employeeMonthySalary.replace(":id", expense.id)}
-                              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100"
-                            >
-                              Details
-                            </Link>
-                          </>
-                        )}
-                      </div>
-                    </td>
+                              <Link
+                                to={allRouterLink.employeeMonthySalary.replace(":id", expense.id)}
+                                className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100"
+                              >
+                                Details
+                              </Link>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={userRole !== constants.roles.officeStaff ? 10 : 9} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                     <div className="flex flex-col items-center justify-center">
                       <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400 dark:text-gray-600"></i>
                       <p>No Salary Found</p>
@@ -220,6 +223,7 @@ export const ViewSalaryExpense = () => {
             </tbody>
           </table>
         </div>
+
 
         <ConfirmationModal
           ref={modalRef}

@@ -237,7 +237,7 @@ export const ViewDocuments = () => {
   const colSpan = allDocTypes.length + baseCols + (showClassColumn ? 1 : 0);
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
@@ -358,7 +358,7 @@ export const ViewDocuments = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filterBysearch.length > 0 ? (
                     [...filterBysearch]
-                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
                       .map((person) => (
                         <tr
                           key={`${person.role}-${person.name}-${person.yearLevel}`}

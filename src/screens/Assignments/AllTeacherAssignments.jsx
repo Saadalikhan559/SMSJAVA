@@ -111,7 +111,7 @@ export const AllTeacherAssignments = () => {
   );
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         {/* Tabs styled like AllStaff */}
         <div className="flex gap-4 mb-6">
@@ -180,13 +180,13 @@ export const AllTeacherAssignments = () => {
                       <h2 className="text-xl font-bold truncate capitalize">
                         {data.teacher_name}
                       </h2>
-                      <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">
-                        {data.assignments.length > 0
-                          ? data.assignments[0].year_level_name
-                          : ""}
-                      </span>
+                      {data.assignments.length > 0 &&
+                        data.assignments[0].year_level_name &&
+                        data.assignments[0].year_level_name !== "Unassigned Year Level" &&
+                        data.assignments[0].year_level_name.trim() !== "" && (
+                          <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">{data.assignments[0].year_level_name}</span>
+                        )}
                     </div>
-
                     <div className="p-4 border-b border-gray-200 dark:border-gray-600">
                       <div className="flex justify-between items-center mb-2 text-gray-800 dark:text-gray-100">
                         <span className="font-medium">Periods Assigned:</span>
@@ -280,10 +280,10 @@ export const AllTeacherAssignments = () => {
               <table className="min-w-full table-fixed text-sm text-left text-gray-700 dark:text-gray-200">
                 <thead className="bgTheme text-white text-sm uppercase tracking-wide">
                   <tr>
-                    <th className="px-6 py-3 w-[20%]">Date</th>
+                    <th className="px-6 py-3 w-[20%] text-nowrap">Date</th>
                     <th className="px-6 py-3 w-[20%] text-nowrap">Absent Teacher</th>
-                    <th className="px-6 py-3 w-[20%]">Class</th>
-                    <th className="px-6 py-3 w-[20%]">Period</th>
+                    <th className="px-6 py-3 w-[20%] text-nowrap">Class</th>
+                    <th className="px-6 py-3 w-[20%] text-nowrap">Period</th>
                     <th className="px-6 py-3 w-[20%] text-nowrap">Substitute Teacher</th>
                   </tr>
                 </thead>
@@ -310,7 +310,7 @@ export const AllTeacherAssignments = () => {
                     filteredSubs.map((a) => (
                       <tr
                         key={a.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
+                        className="hover:bg-gray-50  dark:hover:bg-gray-600 transition-colors duration-200"
                       >
                         <td className="px-6 py-3 text-nowrap">{a.date}</td>
                         <td className="px-6 py-3 capitalize text-nowrap">{a.absent_teacher_name}</td>

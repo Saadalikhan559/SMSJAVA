@@ -123,7 +123,7 @@ const FeeSummaryTable = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">
@@ -222,20 +222,20 @@ const FeeSummaryTable = () => {
           <table className="min-w-full rounded-lg">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-left whitespace-nowrap">S.No</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Student Name</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Class</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Year</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Month</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Total Amount</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Paid Amount</th>
-                <th className="px-4 py-3 text-left whitespace-nowrap">Due Amount</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">S.No</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Student Name</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Class</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Year</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Month</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Total Amount</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Paid Amount</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Due Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-6 text-red-600 dark:text-red-400">
+                  <td colSpan="8" className="text-center py-6 text-gray-500 dark:text-gray-400">
                     No data found.
                   </td>
                 </tr>
@@ -245,14 +245,14 @@ const FeeSummaryTable = () => {
                     key={record.student_id || index}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{index + 1}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100 font-bold">{record.student_name}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.year_level}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.school_year}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">{record.month}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">₹{record.total_amount}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">₹{record.paid_amount}</td>
-                    <td className="px-4 py-3 text-gray-800 dark:text-gray-100">₹{record.due_amount}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100 font-bold">{record.student_name}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.year_level}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.school_year}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.month}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">₹{record.total_amount}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">₹{record.paid_amount}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">₹{record.due_amount}</td>
                   </tr>
                 ))
               )}

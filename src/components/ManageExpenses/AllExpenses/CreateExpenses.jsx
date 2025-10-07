@@ -37,7 +37,10 @@ export const CreateExpenses = () => {
     try {
       setError("");
       const response = await axiosInstance.get("/d/Expense-Category/");
-      setCategory(response.data);
+       const sortedCategory = (response.data || []).sort((a, b) =>
+      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+    );
+      setCategory(sortedCategory);
     } catch (err) {
       console.error("Cannot get the category:", err);
       setError("Failed to load categories. Please try again later.");
@@ -174,7 +177,7 @@ export const CreateExpenses = () => {
     navigate(`${allRouterLink.viewAllExpenses}`);
   };
 return (
-  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+  <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
     <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 dark:text-white rounded-box my-5 shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-8">
         Create Expense <i className="fa-solid fa-receipt ml-2"></i>
@@ -215,7 +218,7 @@ return (
               </span>
             </label>
             <select
-              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white capitalize"
               {...register("category", { required: "Category is required" })}
             >
               <option value="">Select Category</option>

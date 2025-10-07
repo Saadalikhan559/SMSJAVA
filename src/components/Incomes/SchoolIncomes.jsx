@@ -130,7 +130,7 @@ export const SchoolIncome = () => {
   if (error) return <Error />;
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 mb-10">
+    <div className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
@@ -199,31 +199,31 @@ export const SchoolIncome = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
             <thead className="bgTheme text-white sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Month</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Amount</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Income Date</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Category</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">School Year</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Payment Method</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Attachment</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Month</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Amount</th>
+                <th className="px-4 py-3 text-left text-sm  font-semibold text-nowrap">Income Date</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Category</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Description</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">School Year</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Payment Method</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Attachment</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Status</th>
+                <th className="px-4 py-3 text-left text-sm text-nowrap font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
               {incomeDetails.length > 0 ? (
                 incomeDetails.map((income) => (
-                  <tr key={income.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.month}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">₹{income.amount}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.income_date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.category_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.description}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{income.school_year}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 capitalize">{income.payment_method}</td>
+                  <tr key={income.id} className="hover:bg-gray-100 text-nowrap dark:hover:bg-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300">{income.month}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300">₹{income.amount}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300">{income.income_date}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300">{income.category_name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300">{income.description}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300">{income.school_year}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-nowrap dark:text-gray-300 capitalize">{income.payment_method}</td>
 
-                    <td className="px-4 py-3 text-sm text-blue-600">
+                    <td className="px-4 py-3 text-sm text-blue-600 text-nowrap">
                       {income.attachment ? (
                         <button
                           onClick={() => handleViewAttachment(income.attachment)}
@@ -238,7 +238,7 @@ export const SchoolIncome = () => {
 
                     <td>
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-md shadow-sm text-sm font-medium ${income.status === "confirmed"
+                        className={`inline-flex items-center px-3 text-nowrap py-1 rounded-md shadow-sm text-sm font-medium ${income.status === "confirmed"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-600"
                           }`}
@@ -246,7 +246,7 @@ export const SchoolIncome = () => {
                         {income.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 flex gap-2">
+                    <td className="px-4 py-3 text-nowrap text-sm text-gray-700 dark:text-gray-300 flex gap-2">
                       <Link
                         to={allRouterLink.editIncom.replace(":id", income.id)}
                         className="px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"

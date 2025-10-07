@@ -478,7 +478,7 @@ export const AdmissionFees = () => {
   }
 
   return (
-    <div className="mb-10">
+    <div className="mb-24 md:mb-10">
       <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900">
         <form
           className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
@@ -530,13 +530,26 @@ export const AdmissionFees = () => {
             </div>
 
             {/* Student Selection */}
-            <div className="relative">
-              <label className="label-text dark:text-gray-200 flex items-center gap-1 mb-1">
-                <i className="fa-solid fa-user-graduate text-sm"></i>
-                Student <span className="text-error">*</span>
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                  <i className="fa-solid fa-user-graduate text-sm"></i>
+                  Student <span className="text-error">*</span>
+                </span>
               </label>
 
-              {/* Hidden input to store selected student_id */}
+         
+              <div
+                className={`input input-bordered w-full flex items-center justify-between cursor-pointer ${!selectedClassId ? "cursor-not-allowed opacity-70" : ""}`}
+                onClick={() => {
+                  if (selectedClassId) setShowStudentDropdown(!showStudentDropdown);
+                }}
+              >
+                {selectedStudentName || "Select Student"}
+                <i className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}></i>
+              </div>
+
+              {/* Hidden input for form submission */}
               <input
                 type="hidden"
                 {...register("student_id", {
@@ -545,59 +558,55 @@ export const AdmissionFees = () => {
                 value={watch("student_id") || ""}
               />
 
-              {/* Searchable text input */}
-              <input
-                type="text"
-                className={`input input-bordered w-full focus:outline-none ${errors.student_id ? "border-red-500" : ""
-                  }`}
-                placeholder={
-                  selectedClassId ? "Search Student by Name or Email..." : "Select class first"
-                }
-                value={searchStudentInput || selectedStudentName}
-                onChange={(e) => {
-                  setSearchStudentInput(e.target.value);
-                  setSelectedStudentName("");
-                  setShowStudentDropdown(true);
-                }}
-                onFocus={() => {
-                  if (selectedClassId) setShowStudentDropdown(true);
-                }}
-                disabled={!selectedClassId}
-                autoComplete="off"
-              />
-
-              {/* Dropdown results */}
+              {/* Dropdown with search and list */}
               {showStudentDropdown && selectedClassId && (
-                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600 max-h-48 overflow-y-auto">
-                  {isLoading ? (
-                    <p className="p-2 text-gray-500 dark:text-gray-400">Loading students...</p>
-                  ) : filteredStudents?.length > 0 ? (
-                    filteredStudents.map((student) => (
-                      <p
-                        key={student.student_id}
-                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
-                        onClick={() => {
-                          setSelectedStudentName(`${student.student_name} - ${student.student_email}`);
-                          setSearchStudentInput(`${student.student_name} - ${student.student_email}`);
-                          setShowStudentDropdown(false);
-                          setValue("student_id", student.student_id);
-                          clearErrors("student_id");
-                        }}
-                      >
-                        {student.student_name} - {student.student_email}
-                      </p>
-                    ))
-                  ) : (
-                    <p className="p-2 text-gray-500 dark:text-gray-400">No students found.</p>
-                  )}
+                <div className="absolute z-2 bg-white text-gray-700 dark:bg-[#1d1d1df5] dark:text-amber-50 rounded w-full mt-1 shadow-lg ">
+                  {/* Search input */}
+                  <div className="p-2 sticky top-0 shadow-sm">
+                    <input
+                      type="text"
+                      placeholder="Search Student by Name or Email..."
+                      className="input input-bordered w-full focus:outline-none"
+                      value={searchStudentInput}
+                      onChange={(e) => setSearchStudentInput(e.target.value)}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  {/* Student results */}
+                  <div className="max-h-40 overflow-y-auto">
+                    {isLoading ? (
+                      <p className="p-2">Loading students...</p>
+                    ) : filteredStudents?.length > 0 ? (
+                      filteredStudents.map((student) => (
+                        <p
+                          key={student.student_id}
+                          className="p-2"
+                          onClick={() => {
+                            const displayName = `${student.student_name} - ${student.student_email}`;
+                            setSelectedStudentName(displayName);
+                            setSearchStudentInput("");
+                            setShowStudentDropdown(false);
+                            setValue("student_id", student.student_id, { shouldValidate: true });
+                            clearErrors("student_id");
+                          }}
+                        >
+                          {student.student_name} - {student.student_email}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2">No students found.</p>
+                    )}
+                  </div>
                 </div>
               )}
 
               {/* Error message */}
               {errors.student_id && (
-                <p className="text-red-500 text-sm mt-1">{errors.student_id.message}</p>
+                <p className="text-error text-sm mt-1">{errors.student_id.message}</p>
               )}
             </div>
+
 
 
           </div>
@@ -614,7 +623,7 @@ export const AdmissionFees = () => {
                   <div className="overflow-x-auto">
                     <div className="max-h-[500px] overflow-y-auto rounded-lg border">
                       <table className="table w-full">
-                        <thead className="sticky top-0 bg-base-200 z-2">
+                        <thead className="sticky top-0 bg-base-200 z-1">
                           <tr>
                             <th>Month</th>
                             <th>Fee Type</th>

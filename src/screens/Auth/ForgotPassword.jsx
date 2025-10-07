@@ -38,7 +38,7 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <>
+    <div className="mb-24 md:mb-10">
       <div className="min-h-screen flex flex-col md:flex-row">
         <div className="hidden md:block md:w-2/3 formBgColor">
           <img
@@ -103,6 +103,6 @@ export const ForgotPassword = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };

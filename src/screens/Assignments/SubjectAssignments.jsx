@@ -110,9 +110,7 @@ export const SubjectAssignments = () => {
     const filtered = yearLevelsData.filter((y) =>
       y.level_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    // Sort year levels by name
-    return filtered.sort((a, b) => a.level_name.localeCompare(b.level_name));
+    return filtered
   };
 
   const filterSubjectsData = (subjectsData, searchTerm) => {
@@ -354,7 +352,7 @@ const handleSubmitForm = async (data) => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
         <div className=" flex justify-end">
           <button
@@ -364,7 +362,7 @@ const handleSubmitForm = async (data) => {
             Teacher Assignments <span>&rarr;</span>
           </button>
 
-        </div>
+        </div><br></br>
 
         <form onSubmit={handleSubmit(handleSubmitForm)}>
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">

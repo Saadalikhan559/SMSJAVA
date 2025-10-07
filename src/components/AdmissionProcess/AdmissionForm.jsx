@@ -297,7 +297,7 @@ export const AdmissionForm = () => {
   }
 
   return (
-    <div className="mb-10">
+    <div className="mb-24 md:mb-10">
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
         ref={formRef}
@@ -530,10 +530,10 @@ export const AdmissionForm = () => {
                 }`}
               >
                 <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select> 
 
               {errors.student?.gender && (
                 <span className="text-error text-sm">

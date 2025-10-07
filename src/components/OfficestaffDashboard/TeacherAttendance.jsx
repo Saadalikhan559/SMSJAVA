@@ -165,7 +165,7 @@ const TeacherAttendance = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className=" flex justify-end">
           <Link
@@ -197,12 +197,12 @@ const TeacherAttendance = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700 text-xs sm:text-sm">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
-                <th className="px-4 py-3 text-center text-sm font-semibold">S.NO</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Teacher Name</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Email</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Date</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Status</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold">Action</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">S.NO</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Teacher Name</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Email</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Date</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Status</th>
+                <th className="px-4 py-3 text-center text-nowrap text-sm font-semibold">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -210,14 +210,14 @@ const TeacherAttendance = () => {
                 filteredTeachers.map((teacher, index) => (
                   <tr
                     key={teacher.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center transition-colors"
+                    className="hover:bg-gray-50 text-nowrap dark:hover:bg-gray-700 text-center transition-colors"
                   >
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-700 dark:text-gray-300">{index + 1}</td>
 
-                    <td className="px-4 py-3 font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
+                    <td className="px-4 py-3  font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
                       {teacher.first_name} {teacher.last_name}
                     </td>
-                    <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{teacher.email}</td>
+                    <td className="px-4 py-3 text-nowrap  text-gray-700 dark:text-gray-300">{teacher.email}</td>
                     <td className="px-4 py-3">
                       <input
                         type="date"

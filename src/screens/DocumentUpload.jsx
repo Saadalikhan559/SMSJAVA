@@ -52,6 +52,8 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
+  const [apiErrors, setApiErrors] = useState({});
+
 
   const [role, setRole] = useState("");
 
@@ -192,6 +194,9 @@ export const DocumentUpload = () => {
     return "";
   };
 
+
+
+
   // --- API FETCH FUNCTIONS ---
   const getRoles = async () => {
     setLoadingRoles(true);
@@ -209,7 +214,10 @@ export const DocumentUpload = () => {
     setLoadingDocumentTypes(true);
     try {
       const docType = await fetchDocumentType();
-      setDocumentType(docType);
+      const sortedDocType = [...docType].sort((a, b) =>
+        a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      );
+      setDocumentType(sortedDocType);
     } catch (error) {
       console.log("Failed to load document types");
     } finally {
@@ -221,7 +229,12 @@ export const DocumentUpload = () => {
     setLoadingTeachers(true);
     try {
       const allTeachers = await fetchTeachers();
-      setTeachers(allTeachers);
+      const sortedTeachers = [...allTeachers].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+      setTeachers(sortedTeachers);
     } catch {
       console.log("Failed to load teachers");
     } finally {
@@ -233,7 +246,13 @@ export const DocumentUpload = () => {
     setLoadingGuardians(true);
     try {
       const allGuardians = await fetchGuardians();
-      setGuardians(allGuardians);
+      const sortedGuardians = [...allGuardians].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+
+      setGuardians(sortedGuardians);
     } catch {
       console.log("Failed to load guardians");
     } finally {
@@ -245,7 +264,13 @@ export const DocumentUpload = () => {
     setLoadingOfficeStaff(true);
     try {
       const allStaff = await fetchOfficeStaff();
-      setOfficeStaff(allStaff);
+      const sortedStaff = [...allStaff].sort((a, b) => {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+      });
+
+      setOfficeStaff(sortedStaff);
     } catch {
       console.log("Failed to load office staff");
     } finally {
@@ -266,16 +291,19 @@ export const DocumentUpload = () => {
     if (!yearLevelID) return;
     setLoadingStudents(true);
     try {
-      const allStudentsByClass = await fetchStudentYearLevelByClass(
-        yearLevelID
+      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelID);
+      const sortedStudents = [...allStudentsByClass].sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
       );
-      setStudents(allStudentsByClass);
+
+      setStudents(sortedStudents);
     } catch {
       console.log("Failed to load students");
     } finally {
       setLoadingStudents(false);
     }
   };
+
 
   // --- HANDLERS ---
   const handleRoleChange = (e) => {
@@ -363,92 +391,99 @@ export const DocumentUpload = () => {
     );
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const newDocErrors = [...docTypeErrors];
-  const newIdentityErrors = [...identityErrors];
-  let hasError = false;
+    const newDocErrors = [...docTypeErrors];
+    const newIdentityErrors = [...identityErrors];
+    let hasError = false;
 
-  try {
-    
-    for (const [index, field] of uploadFields.entries()) {
-      // Validate document type
-      if (!field.document_types) {
-        newDocErrors[index] = "Please select a document type";
-        hasError = true;
-      } else {
-        newDocErrors[index] = "";
+    try {
+
+      for (const [index, field] of uploadFields.entries()) {
+        // Validate document type
+        if (!field.document_types) {
+          newDocErrors[index] = "Please select a document type";
+          hasError = true;
+        } else {
+          newDocErrors[index] = "";
+        }
+
+        // Validate file
+        if (!field.files) {
+          newDocErrors[index] = "Please upload a file";
+          hasError = true;
+        }
+
+        // Validate identities
+        const identityError = validateIdentity(field.identities, field.document_types);
+        if (identityError) {
+          newIdentityErrors[index] = identityError;
+          hasError = true;
+        } else {
+          newIdentityErrors[index] = "";
+        }
+
+
+        console.log(`Validation result for index ${index}:`, {
+          docError: newDocErrors[index],
+          identityError: newIdentityErrors[index],
+        });
       }
 
-      // Validate file
-      if (!field.files) {
-        newDocErrors[index] = "Please upload a file";
-        hasError = true;
+      setDocTypeErrors([...newDocErrors]);
+      setIdentityErrors([...newIdentityErrors]);
+
+      if (hasError) {
+        setLoading(false);
+        return;
       }
 
-      // Validate identities
-      const identityError = validateIdentity(field.identities, field.document_types);
-      if (identityError) {
-        newIdentityErrors[index] = identityError;
-        hasError = true;
-      } else {
-        newIdentityErrors[index] = "";
+      for (const field of uploadFields) {
+        const formDataToSend = new FormData();
+        formDataToSend.append("files", field.files);
+        formDataToSend.append("document_types", field.document_types);
+
+        if (formData.student) formDataToSend.append("student", formData.student);
+        if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities) formDataToSend.append("identities", field.identities);
+
+        await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
-
-      console.log(`Validation result for index ${index}:`, {
-        docError: newDocErrors[index],
-        identityError: newIdentityErrors[index],
+      setAlertMessage("Documents uploaded successfully!");
+      setShowAlert(true);
+      setUploadFields([{ files: null, document_types: "", identities: "" }]);
+      setFormData({
+        student: "",
+        teacher: "",
+        guardian: "",
+        office_staff: "",
+        year_level: "",
       });
-    }
-
-    setDocTypeErrors([...newDocErrors]);
-    setIdentityErrors([...newIdentityErrors]);
-
-    if (hasError) {
+      setRole("");
+      setStep(0);
+       setApiErrors({});
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setApiErrors(err.response.data);
+      } 
+      else if (err.pan_no) {
+        setApiErrors({ identities: err.identities });
+      } 
+     
+      // console.error("Upload failed:", err);
+      // setAlertMessage("Upload failed");
+      // setShowAlert(true);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    for (const field of uploadFields) {
-      const formDataToSend = new FormData();
-      formDataToSend.append("files", field.files);
-      formDataToSend.append("document_types", field.document_types);
-
-      if (formData.student) formDataToSend.append("student", formData.student);
-      if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
-      if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
-      if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
-      if (field.identities) formDataToSend.append("identities", field.identities);
-
-      await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    }
-
-    setAlertMessage("Documents uploaded successfully!");
-    setShowAlert(true);
-    setUploadFields([{ files: null, document_types: "", identities: "" }]);
-    setFormData({
-      student: "",
-      teacher: "",
-      guardian: "",
-      office_staff: "",
-      year_level: "",
-    });
-    setRole("");
-    setStep(0);
-  } catch (err) {
-    console.error("Upload failed:", err);
-    setAlertMessage("Upload failed");
-    setShowAlert(true);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
 
   // --- SIDE EFFECTS ---
@@ -480,11 +515,14 @@ const handleSubmit = async (e) => {
       role.name === constants.roles.officeStaff ||
       role.name === constants.roles.student ||
       role.name === constants.roles.guardian
-  );
+  )
+    .sort((a, b) =>
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
 
   // --- RENDER ---
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-5"
@@ -642,6 +680,7 @@ const handleSubmit = async (e) => {
                 </div>
 
                 {/* Identity */}
+
                 <div className="form-control w-full pt-6">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
@@ -651,17 +690,28 @@ const handleSubmit = async (e) => {
                   <input
                     type="text"
                     name="identities"
-                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                     value={field.identities}
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
+                    className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
                   />
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
+                        {/* React Hook Form Error */}
+              {apiErrors.identities && (
+                <span className="text-error text-sm">{apiErrors.identities.message}</span>
+              )}
+
+              {/* Backend API Error */}
+              {apiErrors.identities &&
+                apiErrors.identities.map((msg, idx) => (
+                  <span key={idx} className="text-error text-sm">
+                    {msg}
+                  </span>
+                ))}
                     </span>
                   </div>
-
                 </div>
 
                 {/* Add/Remove */}
@@ -746,7 +796,7 @@ const handleSubmit = async (e) => {
                           filteredStudents.map((studentObj) => (
                             <p
                               key={studentObj.student_id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -783,16 +833,63 @@ const handleSubmit = async (e) => {
                     </span>
                   </label>
 
-                  <div
-                    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-                    onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
-                  >
-                    {selectedTeacherName || "Select Teacher"}
-                    <i
-                      className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"
-                        } ml-2`}
-                    ></i>
+                  <div className="form-control relative">
+                   
+
+                    {/* Clickable dropdown box */}
+                    <div
+                      className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                      onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
+                    >
+                      {selectedTeacherName || "Select Teacher"}
+                      <i
+                        className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
+                      ></i>
+                    </div>
+
+                    {/* Dropdown content */}
+                    {showTeacherDropdown && (
+                      <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                        {/* Search input */}
+                        <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                          <input
+                            type="text"
+                            placeholder="Search Teacher..."
+                            className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                            value={searchTeacherInput}
+                            onChange={(e) => setSearchTeacherInput(e.target.value)}
+                            autoComplete="off"
+                          />
+                        </div>
+
+                        {/* List of teachers */}
+                        <div className="max-h-40 overflow-y-auto">
+                          {filteredTeachers?.length > 0 ? (
+                            filteredTeachers.map((teacher) => (
+                              <p
+                                key={teacher.id}
+                                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                                onClick={() => {
+                                  const fullName = `${teacher.first_name} ${teacher.last_name}`;
+                                  setSelectedTeacherId(teacher.id);
+                                  setSelectedTeacherName(fullName);
+                                  setSearchTeacherInput("");
+                                  setShowTeacherDropdown(false);
+                                }}
+                              >
+                                {teacher.first_name} {teacher.last_name}
+                              </p>
+                            ))
+                          ) : (
+                            <p className="p-2 text-gray-500 dark:text-gray-400">
+                              No teachers found.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
+
 
                   {showTeacherDropdown && (
                     <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
@@ -813,7 +910,7 @@ const handleSubmit = async (e) => {
                           filteredTeachers.map((teacher) => (
                             <p
                               key={teacher.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -885,7 +982,7 @@ const handleSubmit = async (e) => {
                           filteredGuardians.map((guardian) => (
                             <p
                               key={guardian.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,
@@ -955,7 +1052,7 @@ const handleSubmit = async (e) => {
                           filteredOfficeStaff.map((staff) => (
                             <p
                               key={staff.id}
-                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
+                              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,

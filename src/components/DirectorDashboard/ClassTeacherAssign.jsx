@@ -75,11 +75,15 @@ const ClassTeacherAssign = () => {
     }
   };
 
-  const filteredTeachers = teachers.filter((teacher) =>
-    `${teacher.first_name} ${teacher.last_name}`
-      .toLowerCase()
-      .includes(searchTeacherInput.toLowerCase())
-  );
+  const filteredTeachers = teachers
+    .filter((teacher) =>
+      `${teacher.first_name} ${teacher.last_name}`
+        .toLowerCase()
+        .includes(searchTeacherInput.toLowerCase())
+    )
+    .sort((a, b) =>
+      `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`)
+    );
 
   const handleSubmitForm = async (data) => {
     const payload = {
@@ -152,7 +156,7 @@ const ClassTeacherAssign = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
         <div className=" flex justify-end">
           <button

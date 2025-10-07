@@ -145,7 +145,7 @@ const DirectorProfile = () => {
   }
 
 return (
-  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-10">
+  <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
     <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden px-4 sm:px-6 lg:px-8 py-8 m-2.5">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-8">
@@ -365,9 +365,9 @@ return (
                   className="select select-bordered w-full text-sm bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
                 >
                   <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
                 </select>
                 {errors.gender && (
                   <p className="text-red-500 text-xs mt-1">

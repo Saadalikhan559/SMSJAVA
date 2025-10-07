@@ -59,7 +59,10 @@ const CreateDiscount = () => {
     setLoadingStudents(true);
     try {
       const data = await fetchStudents1(classId);
-      setStudents(data || []);
+      const sortedData = (data || []).sort((a, b) =>
+        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
+      );
+      setStudents(sortedData);
       setError(false);
     } catch (err) {
       console.error("Failed to load students:", err);
@@ -69,6 +72,7 @@ const CreateDiscount = () => {
       setLoadingStudents(false);
     }
   };
+
 
   useEffect(() => {
     if (classId) loadStudents();
@@ -180,7 +184,7 @@ const CreateDiscount = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
         <h1 className="text-3xl font-bold text-center mb-8">
           Create Discount
@@ -217,66 +221,73 @@ const CreateDiscount = () => {
             </div>
 
             {/* Student Dropdown/Search */}
-            <div className="relative">
-              <label className="label-text flex items-center gap-1">
-                Student <span className="text-error">*</span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full focus:outline-none  dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                placeholder="Search Student..."
-                value={searchStudentInput || selectedStudentName}
-                onChange={(e) => {
-                  setSearchStudentInput(e.target.value);
-                  setShowStudentDropdown(true);
-                  setSelectedStudentName("");
-                }}
-                onFocus={() => setShowStudentDropdown(true)}
-                autoComplete="off"
-              />
+          <div className="form-control relative">
+  <label className="label">
+    <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+      <i className="fa-solid fa-user-graduate text-sm"></i>
+      Student <span className="text-error">*</span>
+    </span>
+  </label>
 
-              {showStudentDropdown && (
-                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
-                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
-                    {/* <input
-                      type="text"
-                      placeholder="Search Student..."
-                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
-                      value={searchStudentInput}
-                      onChange={(e) => setSearchStudentInput(e.target.value)}
-                    /> */}
-                  </div>
+  {/* Clickable input-style box to open dropdown */}
+  <div
+    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+    onClick={() => setShowStudentDropdown(!showStudentDropdown)}
+  >
+    {selectedStudentName || "Select Student"}
+    <i className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}></i>
+  </div>
 
-                  <div className="max-h-40 overflow-y-auto">
-                    {!loadingStudents && filteredStudents.length > 0 ? (
-                      filteredStudents.map((studentObj) => (
-                        <p
-                          key={studentObj.student_id}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200"
-                          onClick={() => {
-                            setSelectedStudentId(studentObj.student_id);
-                            setSelectedStudentName(studentObj.student_name);
-                            setSearchStudentInput(studentObj.student_name);
-                            setShowStudentDropdown(false);
-                          }}
-                        >
-                          {studentObj.student_name}
-                        </p>
-                      ))
-                    ) : (
-                      <p className="p-2 text-gray-500 dark:text-gray-400">
-                        {loadingStudents
-                          ? "Loading students..."
-                          : "No students found."}
-                      </p>
-                    )}
-                  </div>
+  {/* Dropdown */}
+  {showStudentDropdown && (
+    <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+      {/* Search input inside dropdown */}
+      <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+        <input
+          type="text"
+          placeholder="Search Student..."
+          className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+          value={searchStudentInput}
+          onChange={(e) => {
+            setSearchStudentInput(e.target.value);
+            setSelectedStudentName("");
+          }}
+          autoComplete="off"
+        />
+      </div>
 
-                </div>
-              )}  {formErrors.student_id && (
-                <p className="text-sm text-red-500 mt-1">{formErrors.student_id}</p>
-              )}
-            </div>
+      {/* Student list */}
+      <div className="max-h-40 overflow-y-auto">
+        {!loadingStudents && filteredStudents.length > 0 ? (
+          filteredStudents.map((studentObj) => (
+            <p
+              key={studentObj.student_id}
+              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+              onClick={() => {
+                setSelectedStudentId(studentObj.student_id);
+                setSelectedStudentName(studentObj.student_name);
+                setSearchStudentInput("");
+                setShowStudentDropdown(false);
+              }}
+            >
+              {studentObj.student_name}
+            </p>
+          ))
+        ) : (
+          <p className="p-2 text-gray-500 dark:text-gray-400">
+            {loadingStudents ? "Loading students..." : "No students found."}
+          </p>
+        )}
+      </div>
+    </div>
+  )}
+
+  {/* Error display (external validation) */}
+  {formErrors.student_id && (
+    <p className="text-error text-sm mt-1">{formErrors.student_id}</p>
+  )}
+</div>
+
           </div>
 
           {/* Fee Discounts */}

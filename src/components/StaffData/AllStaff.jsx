@@ -71,7 +71,7 @@ const AllStaff = () => {
   }
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-10">
+    <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       {error && (
         <div className="text-red-600 text-center mb-4 font-medium dark:text-red-400">
           {error}
