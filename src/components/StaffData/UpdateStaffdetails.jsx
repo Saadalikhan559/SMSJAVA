@@ -244,8 +244,8 @@ const UpdateStaffDetails = () => {
                 className="select select-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               >
                 <option value="">Select Gender</option>
-                <option value="Male">Male</option>
                 <option value="Female">Female</option>
+                <option value="Male">Male</option>
                 <option value="Other">Other</option>
               </select>
               {errors.gender && <span className="text-error text-sm">{errors.gender.message}</span>}

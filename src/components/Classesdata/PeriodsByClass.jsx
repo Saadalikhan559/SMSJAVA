@@ -79,7 +79,7 @@ const PeriodsByClass = () => {
                     key={record.id || index}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center"
                   >
-                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}.</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}</td>
                     <td className="px-4 py-3 text-nowrap font-bold">
                       <Link
                         to={`/periodAssignment/${record.id}`}
