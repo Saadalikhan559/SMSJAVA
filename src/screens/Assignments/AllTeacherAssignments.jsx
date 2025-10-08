@@ -182,9 +182,11 @@ export const AllTeacherAssignments = () => {
                       </h2>
                       {data.assignments.length > 0 &&
                         data.assignments[0].year_level_name &&
-                        data.assignments[0].year_level_name !== "Unassigned Year Level" &&
-                        data.assignments[0].year_level_name.trim() !== "" && (
-                          <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">{data.assignments[0].year_level_name}</span>
+                        data.assignments[0].year_level_name.trim() !== "" &&
+                        data.assignments[0].year_level_name !== "Unassigned class" && (
+                          <span className="text-sm bg-white textTheme px-2 py-1 rounded font-semibold capitalize">
+                            {data.assignments[0].year_level_name}
+                          </span>
                         )}
                     </div>
                     <div className="p-4 border-b border-gray-200 dark:border-gray-600">
