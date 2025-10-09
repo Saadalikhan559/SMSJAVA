@@ -33,6 +33,20 @@ export const AdmissionForm = () => {
     useState(false);
   const [isRTE, setIsRTE] = useState(false);
 
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [selectedCityName, setSelectedCityName] = useState("");
+  const [citySearchInput, setCitySearchInput] = useState("");
+
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [selectedCountryName, setSelectedCountryName] = useState("");
+  const [countrySearchInput, setCountrySearchInput] = useState("");
+
+  const [showStateDropdown, setShowStateDropdown] = useState(false);
+  const [selectedStateName, setSelectedStateName] = useState("");
+  const [stateSearchInput, setStateSearchInput] = useState("");
+
+
+
   const {
     register,
     watch,
@@ -254,9 +268,8 @@ export const AdmissionForm = () => {
       setSelectedGuardianType("");
       setIsRTE(false);
     } catch (error) {
-      setAlertMessage(
-        `Failed to submit the form: ${
-          error.response?.data?.message || error.message
+      alert(
+        `Failed to submit the form: ${error.response?.data?.message || error.message
         }`
       );
       setShowAlert(true);
@@ -273,6 +286,27 @@ export const AdmissionForm = () => {
     setShowAdmissionSuccessModal(false);
     navigate("/addmissionDetails");
   };
+
+  const filteredCities = city
+    .filter((c) =>
+      c.name.toLowerCase().includes(citySearchInput.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredCountries = country
+    .filter((c) =>
+      c.name.toLowerCase().includes(countrySearchInput.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+
+
+  const filteredStates = state
+    .filter((s) =>
+      s.name.toLowerCase().includes(stateSearchInput.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
 
   if (loading) {
     return (
@@ -347,9 +381,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="First Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.first_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.first_name ? "input-error" : ""
+                  }`}
               />
               {errors.student?.first_name && (
                 <span className="text-error text-sm">
@@ -398,9 +431,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Last Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.last_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.last_name ? "input-error" : ""
+                  }`}
               />
               {errors.student?.last_name && (
                 <span className="text-error text-sm">
@@ -427,9 +459,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="student@example.com"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.email ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.email ? "input-error" : ""
+                  }`}
               />
               {errors.student?.email && (
                 <span className="text-error text-sm">
@@ -460,9 +491,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg : Password@123"
-                className={`input input-bordered w-full pr-10 focus:outline-none ${
-                  errors.student?.password ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.student?.password ? "input-error" : ""
+                  }`}
               />
               <button
                 type="button"
@@ -470,9 +500,8 @@ export const AdmissionForm = () => {
                 onClick={handleShowPassword}
               >
                 <i
-                  className={`fa-solid ${
-                    showPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
+                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"
+                    }`}
                 ></i>
               </button>
               {errors.student?.password && (
@@ -504,9 +533,8 @@ export const AdmissionForm = () => {
                     return true;
                   },
                 })}
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.date_of_birth ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.date_of_birth ? "input-error" : ""
+                  }`}
               />
               {errors.student?.date_of_birth && (
                 <span className="text-error text-sm">
@@ -526,15 +554,14 @@ export const AdmissionForm = () => {
                 {...register("student.gender", {
                   required: "Gender is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.student?.gender ? "select-error" : ""
-                }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.gender ? "select-error" : ""
+                  }`}
               >
                 <option value="">Select Gender</option>
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
                 <option value="Other">Other</option>
-              </select> 
+              </select>
 
               {errors.student?.gender && (
                 <span className="text-error text-sm">
@@ -561,9 +588,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Father's Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.father_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.father_name ? "input-error" : ""
+                  }`}
               />
               {errors.student?.father_name && (
                 <span className="text-error text-sm">
@@ -588,9 +614,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Mother's Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.mother_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.mother_name ? "input-error" : ""
+                  }`}
               />
               {errors.student?.mother_name && (
                 <span className="text-error text-sm">
@@ -615,9 +640,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Religion"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.religion ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.religion ? "input-error" : ""
+                  }`}
               />
               {errors.student?.religion && (
                 <span className="text-error text-sm">
@@ -638,9 +662,8 @@ export const AdmissionForm = () => {
                 {...register("student.category", {
                   required: "Category is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.student?.category ? "select-error" : ""
-                }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.category ? "select-error" : ""
+                  }`}
               >
                 <option value="">Select Category</option>
                 <option value="GEN">General</option>
@@ -667,9 +690,8 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Height must be positive" },
                 })}
                 placeholder="Height"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.height ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.height ? "input-error" : ""
+                  }`}
                 min={0} // prevents down arrow from going negative
                 onKeyDown={(e) => {
                   if (e.key === "-" || e.key === "e") e.preventDefault(); // prevents typing negative or 'e'
@@ -696,9 +718,8 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Weight must be positive" },
                 })}
                 placeholder="Weight"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.weight ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.weight ? "input-error" : ""
+                  }`}
               />
               {errors.student?.weight && (
                 <span className="text-error text-sm">
@@ -746,9 +767,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Number of Siblings"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.student?.number_of_siblings ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.number_of_siblings ? "input-error" : ""
+                  }`}
               />
               {errors.student?.number_of_siblings && (
                 <span className="text-error text-sm">
@@ -777,9 +797,8 @@ export const AdmissionForm = () => {
                     },
                   })}
                   placeholder="RTE Number"
-                  className={`input input-bordered w-full focus:outline-none ${
-                    errors.rte_number ? "input-error" : ""
-                  }`}
+                  className={`input input-bordered w-full focus:outline-none ${errors.rte_number ? "input-error" : ""
+                    }`}
                 />
                 {errors.rte_number && (
                   <span className="text-error text-sm">
@@ -812,9 +831,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="First Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.first_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.first_name ? "input-error" : ""
+                  }`}
               />
               {errors.guardian?.first_name && (
                 <span className="text-error text-sm">
@@ -863,9 +881,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Last Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.last_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.last_name ? "input-error" : ""
+                  }`}
               />
               {errors.guardian?.last_name && (
                 <span className="text-error text-sm">
@@ -892,9 +909,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="guardian@example.com"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.email ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.email ? "input-error" : ""
+                  }`}
               />
               {errors.guardian?.email && (
                 <span className="text-error text-sm">
@@ -925,9 +941,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg: Password@123"
-                className={`input input-bordered w-full pr-10 focus:outline-none ${
-                  errors.guardian?.password ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.guardian?.password ? "input-error" : ""
+                  }`}
               />
               <button
                 type="button"
@@ -935,9 +950,8 @@ export const AdmissionForm = () => {
                 onClick={handleShowGuardianPassword}
               >
                 <i
-                  className={`fa-solid ${
-                    showGuardianPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
+                  className={`fa-solid ${showGuardianPassword ? "fa-eye-slash" : "fa-eye"
+                    }`}
                 ></i>
               </button>
               {errors.guardian?.password && (
@@ -957,9 +971,8 @@ export const AdmissionForm = () => {
                 {...register("guardian_type_input", {
                   required: "Guardian type is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.guardian_type_input ? "select-error" : ""
-                }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type_input ? "select-error" : ""
+                  }`}
                 value={selectedGuardianType}
                 onChange={handleGuardianTypesChange}
               >
@@ -1007,9 +1020,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Phone Number"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.phone_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.phone_no ? "input-error" : ""
+                  }`}
                 onInput={(e) => {
                   // Remove any non-digit characters
                   e.target.value = e.target.value.replace(/\D/g, "");
@@ -1074,9 +1086,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Annual Income"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.annual_income ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.annual_income ? "input-error" : ""
+                  }`}
               />
               {errors.guardian?.annual_income && (
                 <span className="text-error text-sm">
@@ -1117,9 +1128,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Qualification"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.qualification ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.qualification ? "input-error" : ""
+                  }`}
               />
               {errors.guardian?.qualification && (
                 <span className="text-error text-sm">
@@ -1146,9 +1156,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Occupation"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.guardian?.occupation ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.occupation ? "input-error" : ""
+                  }`}
               />
               {errors.guardian?.occupation && (
                 <span className="text-error text-sm">
@@ -1198,9 +1207,8 @@ export const AdmissionForm = () => {
                 {...register("year_level", {
                   required: "Year level is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.year_level ? "select-error" : ""
-                }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.year_level ? "select-error" : ""
+                  }`}
               >
                 <option value="">Select Year Level</option>
                 {yearLevel.map((yearlev) => (
@@ -1226,9 +1234,8 @@ export const AdmissionForm = () => {
                 {...register("school_year", {
                   required: "School year is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.school_year ? "select-error" : ""
-                }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.school_year ? "select-error" : ""
+                  }`}
               >
                 <option value="">Select School Year</option>
                 {schoolYears.map((schoolYear) => (
@@ -1262,9 +1269,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Previous School Name"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.previous_school_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.previous_school_name ? "input-error" : ""
+                  }`}
               />
               {errors.previous_school_name && (
                 <span className="text-error text-sm">
@@ -1289,9 +1295,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Previous Class/Grade"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.previous_standard_studied ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.previous_standard_studied ? "input-error" : ""
+                  }`}
               />
               {errors.previous_standard_studied && (
                 <span className="text-error text-sm">
@@ -1322,9 +1327,8 @@ export const AdmissionForm = () => {
                     return true;
                   },
                 })}
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.admission_date ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.admission_date ? "input-error" : ""
+                  }`}
               />
               {errors.admission_date && (
                 <span className="text-error text-sm">
@@ -1344,9 +1348,8 @@ export const AdmissionForm = () => {
                 {...register("tc_letter", {
                   required: "TC letter status is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${
-                  errors.tc_letter ? "select-error" : ""
-                }`}
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.tc_letter ? "select-error" : ""
+                  }`}
               >
                 <option value="">Select</option>
                 <option value="no">No</option>
@@ -1392,9 +1395,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Emergency Contact"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.emergency_contact_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.emergency_contact_no ? "input-error" : ""
+                  }`}
                 onInput={(e) => {
                   // Remove any non-digit characters
                   e.target.value = e.target.value.replace(/\D/g, "");
@@ -1428,7 +1430,7 @@ export const AdmissionForm = () => {
                   if (!/^[6789]/.test(pastedData)) {
                     e.preventDefault();
                     // Optional: Show a temporary message
-                    alert("Pasted phone number must start with 6, 7, 8, or 9");   
+                    alert("Pasted phone number must start with 6, 7, 8, or 9");
                   }
                 }}
               />
@@ -1458,11 +1460,10 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Distance in km"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.entire_road_distance_from_home_to_school
-                    ? "input-error"
-                    : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.entire_road_distance_from_home_to_school
+                  ? "input-error"
+                  : ""
+                  }`}
               />
               {errors.entire_road_distance_from_home_to_school && (
                 <span className="text-error text-sm">
@@ -1486,9 +1487,8 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Marks cannot be negative" },
                 })}
                 placeholder="Marks Obtained"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.obtain_marks ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.obtain_marks ? "input-error" : ""
+                  }`}
               />
               {errors.obtain_marks && (
                 <span className="text-error text-sm">
@@ -1510,9 +1510,8 @@ export const AdmissionForm = () => {
                   min: { value: 0, message: "Total marks cannot be negative" },
                 })}
                 placeholder="Total Marks"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.total_marks ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.total_marks ? "input-error" : ""
+                  }`}
               />
               {errors.total_marks && (
                 <span className="text-error text-sm">
@@ -1541,9 +1540,8 @@ export const AdmissionForm = () => {
                   max: { value: 2147483647, message: "Invalid house number" },
                 })}
                 placeholder="House Number"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.house_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.address?.house_no ? "input-error" : ""
+                  }`}
               />
               {errors.address?.house_no && (
                 <span className="text-error text-sm">
@@ -1570,9 +1568,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Habitation"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.habitation ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.address?.habitation ? "input-error" : ""
+                  }`}
               />
               {errors.address?.habitation && (
                 <span className="text-error text-sm">
@@ -1599,9 +1596,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Block"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.block ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.address?.block ? "input-error" : ""
+                  }`}
               />
               {errors.address?.block && (
                 <span className="text-error text-sm">
@@ -1672,9 +1668,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="District"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.district ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.address?.district ? "input-error" : ""
+                  }`}
               />
               {errors.address?.district && (
                 <span className="text-error text-sm">
@@ -1684,34 +1679,76 @@ export const AdmissionForm = () => {
             </div>
 
             {/* City */}
-            <div className="form-control">
+            <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-city text-sm"></i>
-                  City
+                  City <span className="text-error">*</span>
                 </span>
               </label>
-              <select
-                {...register("address_input.city", {
-                  required: "City is required",
-                })}
-                className={`select select-bordered w-full focus:outline-none ${
-                  errors.address?.city ? "select-error" : ""
-                }`}
+
+              {/* Custom dropdown input */}
+              <div
+                className={`input input-bordered w-full flex items-center justify-between cursor-pointer ${errors.address_input?.city ? "input-error" : ""
+                  }`}
+                onClick={() => setShowCityDropdown(!showCityDropdown)}
               >
-                <option value="">Select City</option>
-                {city.map((city) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-              {errors.address?.city && (
+                <span className="text-gray-700 dark:text-gray-200">
+                  {selectedCityName || "Select City"}
+                </span>
+                <i
+                  className={`fa-solid fa-chevron-${showCityDropdown ? "up" : "down"} ml-2 text-gray-500`}
+                ></i>
+              </div>
+
+              {/* Dropdown menu */}
+              {showCityDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-[#242627] rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  {/* Search input */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-[#242627]">
+                    <input
+                      type="text"
+                      placeholder="Search City..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-[#242627] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={citySearchInput}
+                      onChange={(e) => setCitySearchInput(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Filtered city list */}
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredCities.length > 0 ? (
+                      filteredCities.map((city) => (
+                        <p
+                          key={city.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setValue("address_input.city", city.id.toString(), {
+                              shouldValidate: true,
+                            });
+                            setSelectedCityName(city.name);
+                            setCitySearchInput("");
+                            setShowCityDropdown(false);
+                          }}
+                        >
+                          {city.name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No cities found</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Validation error */}
+              {errors.address_input?.city && (
                 <span className="text-error text-sm">
-                  {errors.address.city.message}
+                  {errors.address_input.city.message}
                 </span>
               )}
             </div>
+
 
             {/* Division */}
             <div className="form-control">
@@ -1731,9 +1768,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Division"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.division ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.address?.division ? "input-error" : ""
+                  }`}
               />
               {errors.address?.division && (
                 <span className="text-error text-sm">
@@ -1745,64 +1781,143 @@ export const AdmissionForm = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {/* State */}
-            <div className="form-control">
+            <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-flag text-sm"></i>
-                  State
+                  State <span className="text-error">*</span>
                 </span>
               </label>
-              <select
-                {...register("address_input.state", {
-                  required: "State is required",
-                })}
-                className={`select select-bordered w-full focus:outline-none ${
-                  errors.address?.state ? "select-error" : ""
-                }`}
+
+              {/* Custom dropdown trigger */}
+              <div
+                className={`input input-bordered w-full flex items-center justify-between cursor-pointer ${errors.address_input?.state ? "input-error" : ""
+                  }`}
+                onClick={() => setShowStateDropdown(!showStateDropdown)}
               >
-                <option value="">Select State</option>
-                {state.map((state) => (
-                  <option key={state.id} value={state.id}>
-                    {state.name}
-                  </option>
-                ))}
-              </select>
-              {errors.address?.state && (
-                <span className="text-error text-sm">
-                  {errors.address.state.message}
+                <span className="text-gray-700 dark:text-gray-200">
+                  {selectedStateName || "Select State"}
                 </span>
+                <i
+                  className={`fa-solid fa-chevron-${showStateDropdown ? "up" : "down"} ml-2 text-gray-500`}
+                ></i>
+              </div>
+
+              {/* Dropdown menu */}
+              {showStateDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-[#242627] rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  {/* Search input */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-[#242627]">
+                    <input
+                      type="text"
+                      placeholder="Search State..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-[#242627] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={stateSearchInput}
+                      onChange={(e) => setStateSearchInput(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Filtered state list */}
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredStates.length > 0 ? (
+                      filteredStates.map((state) => (
+                        <p
+                          key={state.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setValue("address_input.state", state.id.toString(), {
+                              shouldValidate: true,
+                            });
+                            setSelectedStateName(state.name);
+                            setStateSearchInput("");
+                            setShowStateDropdown(false);
+                          }}
+                        >
+                          {state.name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No states found</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Validation error */}
+              {errors.address_input?.state && (
+                <span className="text-error text-sm">{errors.address_input.state.message}</span>
               )}
             </div>
 
             {/* Country */}
-            <div className="form-control">
+            <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
                   <i className="fa-solid fa-globe text-sm"></i>
-                  Country
+                  Country <span className="text-error">*</span>
                 </span>
               </label>
-              <select
-                {...register("address_input.country", {
-                  required: "Country is required",
-                })}
-                className={`select select-bordered w-full focus:outline-none ${
-                  errors.address?.country ? "select-error" : ""
-                }`}
+
+              {/* Custom dropdown input */}
+              <div
+                className={`input input-bordered w-full flex items-center justify-between cursor-pointer ${errors.address_input?.country ? "input-error" : ""
+                  }`}
+                onClick={() => setShowCountryDropdown(!showCountryDropdown)}
               >
-                <option value="">Select Country</option>
-                {country.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
-              {errors.address?.country && (
-                <span className="text-error text-sm">
-                  {errors.address.country.message}
+                <span className="text-gray-700 dark:text-gray-200">
+                  {selectedCountryName || "Select Country"}
                 </span>
+                <i
+                  className={`fa-solid fa-chevron-${showCountryDropdown ? "up" : "down"} ml-2 text-gray-500`}
+                ></i>
+              </div>
+
+              {/* Dropdown list */}
+              {showCountryDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-[#242627] rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  {/* Search input */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-[#242627]">
+                    <input
+                      type="text"
+                      placeholder="Search Country..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-[#242627] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={countrySearchInput}
+                      onChange={(e) => setCountrySearchInput(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Filtered country list */}
+                  <div className="max-h-40 overflow-y-auto">
+                    {filteredCountries.length > 0 ? (
+                      filteredCountries.map((country) => (
+                        <p
+                          key={country.id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setValue("address_input.country", country.id.toString(), {
+                              shouldValidate: true,
+                            });
+                            setSelectedCountryName(country.name);
+                            setCountrySearchInput("");
+                            setShowCountryDropdown(false);
+                          }}
+                        >
+                          {country.name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">No countries found</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Validation error */}
+              {errors.address_input?.country && (
+                <span className="text-error text-sm">{errors.address_input.country.message}</span>
               )}
             </div>
+
 
             {/* Pincode */}
             <div className="form-control ">
@@ -1820,9 +1935,8 @@ export const AdmissionForm = () => {
                   max: { value: 2147483647, message: "Invalid pin code" },
                 })}
                 placeholder="Pin Code"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.address?.area_code ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.address?.area_code ? "input-error" : ""
+                  }`}
               />
               {errors.address?.area_code && (
                 <span className="text-error text-sm">
@@ -1849,9 +1963,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Full Address"
-                className={`textarea textarea-bordered w-full focus:outline-none ${
-                  errors.address?.address_line ? "textarea-error" : ""
-                }`}
+                className={`textarea textarea-bordered w-full focus:outline-none ${errors.address?.address_line ? "textarea-error" : ""
+                  }`}
               ></textarea>
               {errors.address?.address_line && (
                 <span className="text-error text-sm">
@@ -1888,9 +2001,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Full Name as in Bank"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.banking_detail_input?.holder_name ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.holder_name ? "input-error" : ""
+                  }`}
                 onInput={(e) => {
                   e.target.value = e.target.value
                     .replace(/[^A-Za-z\s]/g, "")
@@ -1922,9 +2034,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="Account Number"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.banking_detail_input?.account_no ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.account_no ? "input-error" : ""
+                  }`}
                 onInput={(e) => {
                   e.target.value = e.target.value.replace(/[^0-9]/g, "");
                 }}
@@ -1955,9 +2066,8 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg: SBIN0001234"
-                className={`input input-bordered w-full focus:outline-none ${
-                  errors.banking_detail_input?.ifsc_code ? "input-error" : ""
-                }`}
+                className={`input input-bordered w-full focus:outline-none ${errors.banking_detail_input?.ifsc_code ? "input-error" : ""
+                  }`}
                 onInput={(e) => {
                   e.target.value = e.target.value
                     .toUpperCase()
