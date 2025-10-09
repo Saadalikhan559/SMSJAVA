@@ -30,6 +30,8 @@ export const EditAddmissionDetails = () => {
   const [isRTE, setIsRTE] = useState(false);
   const [rteNumber, setRteNumber] = useState("");
   const [showEditSuccessModal, setShowEditSuccessModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const formRef = useRef(null);
 
   const {
@@ -421,11 +423,12 @@ console.log(data);
       setShowEditSuccessModal(true);
     } catch (error) {
       console.error("Update error:", error.response?.data || error.message);
-      alert(
+      setAlertMessage(
         `Failed to update the form: ${
           error.response?.data?.message || error.message
         }`
       );
+      setShowAlert(true);
     } finally {
       setLoading(false);
     }
@@ -1985,6 +1988,23 @@ console.log(data);
           handleCloseAndNavigate={handleCloseAndNavigate}
         />
       )}
+       {/* Modal */}
+        {showAlert && (
+          <dialog open className="modal modal-open">
+            <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+              <h3 className="font-bold text-lg">Edit Student Details</h3>
+              <p className="py-4">{alertMessage}</p>
+              <div className="modal-action">
+                <button
+                  className="btn bgTheme text-white w-30"
+                  onClick={() => setShowAlert(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </dialog>
+        )}
     </div>
   );
 };
