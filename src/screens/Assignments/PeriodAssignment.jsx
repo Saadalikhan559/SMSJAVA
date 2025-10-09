@@ -23,7 +23,10 @@ const PeriodAssignment = () => {
         if (!data.assigned_periods || data.assigned_periods.length === 0) {
           setAssignedPeriods([]);
         } else {
-          setAssignedPeriods(data.assigned_periods);
+          const sortedPeriods = [...data.assigned_periods].sort((a, b) =>
+          a.subject.localeCompare(b.subject)
+        );
+          setAssignedPeriods(sortedPeriods);
         }
       } catch (err) {
         console.error("Failed to fetch periods:", err);

@@ -25,7 +25,8 @@ export const AdmissionForm = () => {
   const [city, setCity] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
   const [selectedGuardianType, setSelectedGuardianType] = useState("");
   const formRef = useRef(null);
   const [showAdmissionSuccessModal, setShowAdmissionSuccessModal] =
@@ -253,11 +254,12 @@ export const AdmissionForm = () => {
       setSelectedGuardianType("");
       setIsRTE(false);
     } catch (error) {
-      alert(
+      setAlertMessage(
         `Failed to submit the form: ${
           error.response?.data?.message || error.message
         }`
       );
+      setShowAlert(true);
     } finally {
       setLoading(false);
     }
@@ -1990,6 +1992,23 @@ export const AdmissionForm = () => {
           handleCloseAndNavigate={handleCloseAndNavigate}
         />
       )}
+       {/* Modal */}
+        {showAlert && (
+          <dialog open className="modal modal-open">
+            <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+              <h3 className="font-bold text-lg">Admission Form</h3>
+              <p className="py-4">{alertMessage}</p>
+              <div className="modal-action">
+                <button
+                  className="btn bgTheme text-white w-30"
+                  onClick={() => setShowAlert(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </dialog>
+        )}
     </div>
   );
 };

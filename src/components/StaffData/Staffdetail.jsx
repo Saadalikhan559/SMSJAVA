@@ -100,6 +100,45 @@ const Staffdetail = () => {
                 </div>
               )}
             </div>
+              <h3 className="text-xl font-semibold mt-10 mb-4 text-gray-800 dark:text-gray-100">
+                Banking Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 dark:text-gray-200">
+                <div>
+                  <strong>Account Number:</strong><br />
+                  {staffData.banking_data?.account_no || "N/A"}
+                </div>
+                <div>
+                  <strong>IFSC Code:</strong><br />
+                  {staffData.banking_data?.ifsc_code || "N/A"}
+                </div>
+                <div className="md:col-span-2">
+                  <strong>Holder Name:</strong><br />
+                  {staffData.banking_data?.holder_name || "N/A"}
+                </div>
+              </div>
+
+              <h3 className="text-xl font-semibold mt-10 mb-4 text-gray-800 dark:text-gray-100">
+                Address Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700 dark:text-gray-200">
+                <div><strong>House No:</strong><br />{staffData.address_data?.house_no || "N/A"}</div>
+                <div><strong>Habitation:</strong><br />{staffData.address_data?.habitation || "N/A"}</div>
+                <div><strong>Ward No:</strong><br />{staffData.address_data?.ward_no || "N/A"}</div>
+                <div><strong>Zone No:</strong><br />{staffData.address_data?.zone_no || "N/A"}</div>
+                <div><strong>Block:</strong><br />{staffData.address_data?.block || "N/A"}</div>
+                <div><strong>District:</strong><br />{staffData.address_data?.district || "N/A"}</div>
+                <div><strong>Division:</strong><br />{staffData.address_data?.division || "N/A"}</div>
+                <div><strong>Area Code:</strong><br />{staffData.address_data?.area_code || "N/A"}</div>
+                <div className="md:col-span-2 lg:col-span-3">
+                  <strong>Address Line:</strong><br />{staffData.address_data?.address_line || "N/A"}
+                </div>
+                <div><strong>Country:</strong><br />{staffData.address_data?.country_name || "N/A"}</div>
+                <div><strong>State:</strong><br />{staffData.address_data?.state_name || "N/A"}</div>
+                <div><strong>City:</strong><br />{staffData.address_data?.city_name || "N/A"}</div>
+              </div>
+
+
 
             <div className="flex justify-center p-8 gap-4">
               <Link to={`/staffdetail/update/${type}/${id}`}>
