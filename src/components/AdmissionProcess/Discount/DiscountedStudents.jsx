@@ -44,7 +44,10 @@ const DiscountedStudents = () => {
     setError(false);
     try {
       const { data } = await axiosInstance.get("/d/fee-discounts/");
-      setStudents(data);
+      const sortedData = [...data].sort((a, b) =>
+      a.student_name.localeCompare(b.student_name)
+    );
+    setStudents(sortedData);
     } catch (err) {
       console.error("Error fetching students:", err);
       setError(true);

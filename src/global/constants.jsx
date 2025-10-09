@@ -3,8 +3,7 @@ export const constants = {
   isOffline: true,
 
   // baseUrl: "https://smsproject1.pythonanywhere.com/", //deployed for testing    
-  baseUrl: "https://smsproject.pythonanywhere.com/", //deployed for school   
-  
+  baseUrl: "https://smsproject.pythonanywhere.com/", //deployed for school     
   // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms/", //farha     
   //  baseUrl: "https://9gqxjbjg-8000.inc1.devtunnels.ms/", //tahur      
 
