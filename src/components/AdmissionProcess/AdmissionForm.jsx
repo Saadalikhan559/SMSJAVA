@@ -301,7 +301,6 @@ export const AdmissionForm = () => {
       <style>{constants.hideEdgeRevealStyle}</style>
       <form
         ref={formRef}
-        // className="w-full max-w-6xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none"
         className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm focus:outline-none mb-10"
         onSubmit={handleSubmit(onSubmit)}
       >
@@ -530,8 +529,8 @@ export const AdmissionForm = () => {
                 }`}
               >
                 <option value="">Select Gender</option>
-                <option value="Male">Male</option>
                 <option value="Female">Female</option>
+                <option value="Male">Male</option>
                 <option value="Other">Other</option>
               </select> 
 
@@ -1348,9 +1347,9 @@ export const AdmissionForm = () => {
                 }`}
               >
                 <option value="">Select</option>
-                <option value="yes">Yes</option>
                 <option value="no">No</option>
-                <option value="not_applicable">Not applicable</option>
+                <option value="not_applicable">Not Applicable</option>
+                <option value="yes">Yes</option>
               </select>
               {errors.tc_letter && (
                 <span className="text-error text-sm">

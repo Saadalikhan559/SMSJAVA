@@ -141,9 +141,9 @@ const TeacherAttendanceRecord = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
                 <option value="">All Statuses</option>
-                <option value="present">Present</option>
-                <option value="leave">Leave</option>
                 <option value="absent">Absent</option>
+                <option value="leave">Leave</option>
+                <option value="present">Present</option>
               </select>
             </div>
           </div>

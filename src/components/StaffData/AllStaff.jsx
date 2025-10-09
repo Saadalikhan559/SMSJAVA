@@ -99,7 +99,7 @@ const AllStaff = () => {
           >
             <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
           </button>
-        </div>
+        </div><br/>
 
         {/* Teachers Tab */}
         {activeTab === "teachers" && (
@@ -117,7 +117,7 @@ const AllStaff = () => {
 
               />
             </div>
-            <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
+            <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg overflow-hidden">
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z-2">
                   <tr>
