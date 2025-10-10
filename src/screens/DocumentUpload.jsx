@@ -435,6 +435,7 @@ export const DocumentUpload = () => {
       setDocTypeErrors([...newDocErrors]);
       setIdentityErrors([...newIdentityErrors]);
 
+
       if (hasError) {
         setLoading(false);
         return;
@@ -468,15 +469,19 @@ export const DocumentUpload = () => {
       });
       setRole("");
       setStep(0);
-       setApiErrors({});
+      setApiErrors({});
+      setSelectedTeacherName("")
+      setSelectedGuardianName("")
+      setSelectedStudentName("")
+      setSelectedOfficeStaffName("")
     } catch (err) {
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
-      } 
+      }
       else if (err.pan_no) {
         setApiErrors({ identities: err.identities });
-      } 
-     
+      }
+
       // console.error("Upload failed:", err);
       // setAlertMessage("Upload failed");
       // setShowAlert(true);
@@ -690,7 +695,7 @@ export const DocumentUpload = () => {
                   <input
                     type="text"
                     name="identities"
-                    value={field.identities}
+                    value={field.identities.toUpperCase()}
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
                     className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
@@ -698,18 +703,18 @@ export const DocumentUpload = () => {
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
-                        {/* React Hook Form Error */}
-              {apiErrors.identities && (
-                <span className="text-error text-sm">{apiErrors.identities.message}</span>
-              )}
+                      {/* React Hook Form Error */}
+                      {apiErrors.identities && (
+                        <span className="text-error text-sm">{apiErrors.identities.message}</span>
+                      )}
 
-              {/* Backend API Error */}
-              {apiErrors.identities &&
-                apiErrors.identities.map((msg, idx) => (
-                  <span key={idx} className="text-error text-sm">
-                    {msg}
-                  </span>
-                ))}
+                      {/* Backend API Error */}
+                      {apiErrors.identities &&
+                        apiErrors.identities.map((msg, idx) => (
+                          <span key={idx} className="text-error text-sm">
+                            {msg}
+                          </span>
+                        ))}
                     </span>
                   </div>
                 </div>
@@ -834,7 +839,7 @@ export const DocumentUpload = () => {
                   </label>
 
                   <div className="form-control relative">
-                   
+
 
                     {/* Clickable dropdown box */}
                     <div

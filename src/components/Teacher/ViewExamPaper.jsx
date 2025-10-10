@@ -141,7 +141,7 @@ const ViewExamPaper = () => {
           <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white">
             <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
           </Link>
-        </div>
+        </div><br/>
 
         {/* Title */}
         <div className="mb-4">

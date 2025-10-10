@@ -160,12 +160,12 @@ const ClassTeacherAssign = () => {
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
         <div className=" flex justify-end">
           <button
-            className="font-bold text-xl cursor-pointer hover:underline flex items-center gap-2 textTheme"
+            className="btn bgTheme text-white"
             onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
           >
             View Allocated Class <span>&rarr;</span>
           </button>
-        </div>
+        </div><br/>
 
         <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
           <div className="text-center">
@@ -175,9 +175,9 @@ const ClassTeacherAssign = () => {
             </h1>
           </div><br />
 
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 flex-col md:flex-row md:space-x-4">
             {/* Teacher Dropdown */}
-            <div className="w-1/2 relative">
+            <div className="w-full md:w-1/2 relative">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Teacher <span className="text-error">*</span>
               </label>
@@ -256,7 +256,7 @@ const ClassTeacherAssign = () => {
             </div>
 
             {/* Year Level */}
-            <div className="w-1/2">
+            <div className="w-full md:w-1/2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Year Level <span className="text-error">*</span>
               </label>

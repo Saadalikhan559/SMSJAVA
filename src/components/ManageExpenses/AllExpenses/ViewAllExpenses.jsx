@@ -172,7 +172,7 @@ export const ViewAllExpenses = () => {
     }
   };
 
-  // ✅ Attachment handler
+  // Attachment handler
   const handleViewAttachment = async (filePath) => {
     if (!filePath) {
       setFileErrorModal(true);
@@ -288,27 +288,18 @@ export const ViewAllExpenses = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600">
             <thead className="bgTheme text-white sticky top-0 z-10">
               <tr>
-                {[
-                  "Category",
-                  "Amount",
-                  "Description",
-                  "Expense Date",
-                  "Payment Method",
-                  "Attachment",
-                  "Status",
-                  "Created At",
-                  "Created By",
-                  "Approved By",
-                  "Actions",
-                ].map((header) => (
-                  <th
-                    key={header}
-                    className="px-4 py-3 text-left text-sm font-semibold text-nowrap"
-                  >
-                    {header}
-                  </th>
-                ))}
-              </tr>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Category</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Amount</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Description</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Expense Date</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Payment Method</th>
+                      <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Attachment</th>
+                      <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
+                      <th className="px-18 py-3 text-left text-sm font-semibold text-nowrap">Created At</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Created By</th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Approved By</th>
+                      <th className="px-12 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
+                    </tr>
             </thead>
 
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -324,7 +315,7 @@ export const ViewAllExpenses = () => {
                       {expense.description}
                     </td>
                     <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-200">{expense.expense_date}</td>
-                    <td className="px-4 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-200">{expense.payment_method}</td>
+                    <td className="px-10 py-3 text-sm text-nowrap text-gray-700 dark:text-gray-200 capitalize">{expense.payment_method}</td>
                     <td className="px-4 py-3 text-sm text-nowrap truncate max-w-xs">
                       {expense.attachment ? (
                         <button
@@ -341,11 +332,11 @@ export const ViewAllExpenses = () => {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span
-                        className={`px-2 py-1 text-sm font-medium text-nowrap rounded-md shadow-sm border ${expense.status === "pending"
-                            ? "text-yellow-700 bg-yellow-50 border-yellow-300 dark:bg-yellow-100"
+                        className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${expense.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
                             : expense.status === "rejected"
-                              ? "text-red-700 bg-red-50 border-red-300 dark:bg-red-100"
-                              : "text-green-700 bg-green-50 border-green-300 dark:bg-green-100"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-green-100 text-green-800"
                           }`}
                       >
                         {expense.status}

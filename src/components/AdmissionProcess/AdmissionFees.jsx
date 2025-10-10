@@ -435,11 +435,14 @@ export const AdmissionFees = () => {
 
 
   // Filter students by name or email based on input
-  const filteredStudents = students?.filter((student) =>
-    `${student.student_name} ${student.student_email}`
+ const filteredStudents = students
+  ?.filter((student) =>
+    `${student?.student_name || ""} ${student?.student_email || ""}`
       .toLowerCase()
-      .includes(searchStudentInput.toLowerCase())
-  );
+      .includes(searchStudentInput.trim().toLowerCase())
+  )
+  .sort((a, b) => a.student_name.localeCompare(b.student_name));
+
 
 
 
@@ -560,7 +563,7 @@ export const AdmissionFees = () => {
 
               {/* Dropdown with search and list */}
               {showStudentDropdown && selectedClassId && (
-                <div className="absolute z-2 bg-white text-gray-700 dark:bg-[#1d1d1df5] dark:text-amber-50 rounded w-full mt-1 shadow-lg ">
+                <div className="absolute z-2 bg-white text-gray-700 dark:bg-[#191b1b] dark:text-amber-50 rounded w-full mt-1 shadow-lg ">
                   {/* Search input */}
                   <div className="p-2 sticky top-0 shadow-sm">
                     <input

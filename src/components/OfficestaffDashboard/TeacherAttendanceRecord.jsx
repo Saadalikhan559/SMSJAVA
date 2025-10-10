@@ -125,7 +125,7 @@ const TeacherAttendanceRecord = () => {
                 type="date"
                 value={searchDate}
                 onChange={(e) => setSearchDate(e.target.value)}
-                max={new Date().toISOString().split("T")[0]} 
+                max={new Date().toISOString().split("T")[0]}
                 className="border px-3 py-2 rounded w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
               />
             </div>
@@ -141,9 +141,9 @@ const TeacherAttendanceRecord = () => {
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
                 <option value="">All Statuses</option>
-                <option value="present">Present</option>
-                <option value="leave">Leave</option>
                 <option value="absent">Absent</option>
+                <option value="leave">Leave</option>
+                <option value="present">Present</option>
               </select>
             </div>
           </div>
@@ -185,11 +185,11 @@ const TeacherAttendanceRecord = () => {
                       <td className="px-4 py-3 text-gray-700 text-nowrap dark:text-gray-300">{record.date}</td>
                       <td className="px-4 py-3 capitalize">
                         <span
-                          className={`inline-flex items-center text-nowrap px-3 py-1 rounded-md shadow-sm text-sm font-medium ${record.status.toLowerCase() === 'present'
-                            ? 'bg-green-100 text-green-800 dark:bg-green-200 dark:text-green-900'
+                          className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${record.status.toLowerCase() === 'present'
+                            ? 'bg-green-100 text-green-800'
                             : record.status.toLowerCase() === 'leave'
-                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-200 dark:text-yellow-900'
-                              : 'bg-red-100 text-red-600 dark:bg-red-200 dark:text-red-800'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-600'
                             }`}
                         >
                           {record.status}

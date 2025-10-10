@@ -337,7 +337,7 @@ return (
                 { name: 'middle_name', label: 'Middle Name' },
                 { name: 'last_name', label: 'Last Name', required: true },
                 { name: 'email', label: 'Email', type: 'email', required: true },
-                { name: 'phone_no', label: 'Phone Number', type: 'tel', required: true },
+                { name: 'phone_no', label: 'Phone Number', type: 'number', required: true },
               ].map((field) => (
                 <div key={field.name} className="flex flex-col gap-1">
                   <label className="text-sm font-semibold text-gray-500 dark:text-gray-400">
