@@ -121,16 +121,22 @@ const UpdateStudentDetail = () => {
                 placeholder="Enter Middle Name"
                 {...register("middle_name", {
                   pattern: {
-                    value: /^[A-Za-z]*$/,
-                    message: "Only alphabets are allowed (A-Z)",
+                    value: /^[A-Za-z]+$/, // Only alphabets, no spaces allowed
+                    message: "Only alphabets are allowed (no spaces)",
                   },
                 })}
+                onKeyDown={(e) => {
+                  if (e.key === " ") {
+                    e.preventDefault(); // Prevent space input
+                  }
+                }}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
               {errors.middle_name && (
                 <span className="text-red-400 text-sm mt-0">{errors.middle_name.message}</span>
               )}
             </div>
+
 
             {/* Last Name */}
             <div>

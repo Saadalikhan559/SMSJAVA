@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { fetchYearLevels, fetchStudentYearLevelByClass } from "../../services/api/Api";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+
 
 const Allclasses = () => {
+
   const [yearLevels, setYearLevels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const getYearLevels = async () => {
     setLoading(true);
 
@@ -21,6 +23,7 @@ const Allclasses = () => {
           };
         })
       );
+    
 
       setYearLevels(withCounts);
 

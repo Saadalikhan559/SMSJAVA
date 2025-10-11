@@ -58,6 +58,32 @@ export const DirectorDashboard = () => {
     return () => observer.disconnect();
   }, []);
 
+const classOrder = [
+  "Pre Nursery",
+  "Nursery",
+  "KG 1",
+  "KG 2",
+  "Class 1",
+  "Class 2",
+  "Class 3",
+  "Class 4",
+  "Class 5",
+  "Class 6",
+  "Class 7",
+  "Class 8",
+  "Class 9",
+  "Class 10",
+  "Class 11",
+  "Class 12",
+];
+
+const classStrength = dashboardData?.class_strength || {};
+
+const sortedClasses = classOrder.filter(c => classStrength.hasOwnProperty(c));
+const sortedData = sortedClasses.map(c => classStrength[c]);
+
+
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -287,7 +313,7 @@ export const DirectorDashboard = () => {
               options={{
                 chart: { toolbar: { show: false }, background: "transparent" },
                 xaxis: {
-                  categories: Object.keys(dashboardData.class_strength || {}),
+                  categories: sortedClasses,
                   title: {
                     text: "Class",
                     style: {
@@ -318,7 +344,7 @@ export const DirectorDashboard = () => {
               series={[
                 {
                   name: "Students",
-                  data: Object.values(dashboardData.class_strength || {}),
+                  data: sortedData,
                 },
               ]}
             />
