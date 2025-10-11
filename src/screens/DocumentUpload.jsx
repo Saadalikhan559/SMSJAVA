@@ -720,11 +720,11 @@ export const DocumentUpload = () => {
                 </div>
 
                 {/* Add/Remove */}
-                <div className="form-control w-full flex items-end pt-7">
+                <div className="form-control w-full flex items-end pt-7 ">
                   {index === 0 ? (
                     <button
                       type="button"
-                      className={`btn bgTheme text-white w-full lg:max-w-52 xl:min-w-72 ${AddField === 3
+                      className={`btn bgTheme text-white w-auto md:w-36  ${AddField === 3
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:bg-purple-700"
                         }`}
@@ -736,7 +736,7 @@ export const DocumentUpload = () => {
                   ) : (
                     <button
                       type="button"
-                      className="btn btn-error w-full lg:max-w-52 xl:min-w-72 "
+                      className="btn btn-error w-auto md:w-36 "
                       onClick={() => {
                         setUploadFields(
                           uploadFields.filter((_, i) => i !== index)
@@ -1115,7 +1115,7 @@ export const DocumentUpload = () => {
               <button
                 type="button"
                 onClick={prev}
-                className="btn bgTheme w-auto md:w-34 text-white  hover:bg-purple-700 flex items-center justify-center"
+                className="btn bgTheme w-auto md:w-36 text-white  hover:bg-purple-700 flex items-center justify-center"
               >
                 <i className="fa-solid fa-arrow-left mr-2"></i> Back
               </button>
