@@ -595,7 +595,7 @@ export const routes = [
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },
   {
-    path: allRouterLink.editIncom,
+    path: allRouterLink.editIncome,
     element: <UpdateIncome/>,
     protected: true,
     allowedRoles: [constants.roles.director],
