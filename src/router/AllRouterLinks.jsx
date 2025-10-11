@@ -80,7 +80,7 @@ export const allRouterLink = {
     teacherAttendanceRecord:"/teacherAttendanceRecord",
     schoolIncome: "/schoolIncome",
     createIncome: "/createIncome",
-    editIncome:"/editIncome/:id",
+    editIncom:"/editIncom/:id",
     studentAdmissionFees:"/studentAdmissionFees/:id",
     privacyPolicy:"/privacyPolicy",
 
