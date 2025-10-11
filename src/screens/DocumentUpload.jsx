@@ -724,7 +724,7 @@ export const DocumentUpload = () => {
                   {index === 0 ? (
                     <button
                       type="button"
-                      className={`btn bgTheme text-white w-full md:w-32 ${AddField === 3
+                      className={`btn bgTheme text-white w-full lg:w-56  ${AddField === 3
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:bg-purple-700"
                         }`}
@@ -736,7 +736,7 @@ export const DocumentUpload = () => {
                   ) : (
                     <button
                       type="button"
-                      className="btn btn-error w-full md:w-32"
+                      className="btn btn-error w-full lg:w-56 "
                       onClick={() => {
                         setUploadFields(
                           uploadFields.filter((_, i) => i !== index)
