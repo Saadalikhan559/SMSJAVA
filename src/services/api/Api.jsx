@@ -500,7 +500,6 @@ export const fetchViewDocuments = async () => {
 };
 
 export const fetchStudents1 = async (classId) => {
-  console.log(classId);
   try {
     const response = await axios.get(
       `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
