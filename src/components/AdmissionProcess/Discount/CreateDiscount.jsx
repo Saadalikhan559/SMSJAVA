@@ -4,6 +4,7 @@ import { AuthContext } from "../../../context/AuthContext";
 
 const CreateDiscount = () => {
   const { axiosInstance } = useContext(AuthContext);
+  
 
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -15,7 +16,6 @@ const CreateDiscount = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-
 
   const [formData, setFormData] = useState({
     admission_fee_discount: "",
@@ -60,7 +60,9 @@ const CreateDiscount = () => {
     try {
       const data = await fetchStudents1(classId);
       const sortedData = (data || []).sort((a, b) =>
-        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
+        a.student_name.localeCompare(b.student_name, "en", {
+          sensitivity: "base",
+        })
       );
       setStudents(sortedData);
       setError(false);
@@ -72,7 +74,6 @@ const CreateDiscount = () => {
       setLoadingStudents(false);
     }
   };
-
 
   useEffect(() => {
     if (classId) loadStudents();
@@ -110,13 +111,15 @@ const CreateDiscount = () => {
     const admission = parseFloat(formData.admission_fee_discount || 0);
     const tuition = parseFloat(formData.tuition_fee_discount || 0);
 
-    if (admission <= 0 && tuition <= 0) {
-      errors.discount = "At least one discount amount must be greater than 0.";
+    if ( tuition <= 0 && admission <= 0) {
+      errors.discount =
+        "Admission or Tuition Fee Discount must be greater than 0";
     }
+
 
     setFormErrors(errors);
 
-    if (Object.keys(errors).length > 0) return; // Stop if errors
+    if (Object.keys(errors).length > 0) return;
 
     setIsSubmitting(true);
 
@@ -152,12 +155,12 @@ const CreateDiscount = () => {
     }
   };
 
-
   const filteredStudents = students.filter((studentObj) =>
     studentObj.student_name
       .toLowerCase()
       .includes(searchStudentInput.toLowerCase())
   );
+
 
   if (pageLoading) {
     return (
@@ -215,79 +218,89 @@ const CreateDiscount = () => {
                     {cls.level_name}
                   </option>
                 ))}
-              </select> {formErrors.classId && (
-                <p className="text-sm text-red-500 mt-1">{formErrors.classId}</p>
+              </select>{" "}
+              {formErrors.classId && (
+                <p className="text-sm text-red-500 mt-1">
+                  {formErrors.classId}
+                </p>
               )}
             </div>
 
             {/* Student Dropdown/Search */}
-          <div className="form-control relative">
-  <label className="label">
-    <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
-      <i className="fa-solid fa-user-graduate text-sm"></i>
-      Student <span className="text-error">*</span>
-    </span>
-  </label>
+            <div className="form-control relative">
+              <label className="label">
+                <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
+                  <i className="fa-solid fa-user-graduate text-sm"></i>
+                  Student <span className="text-error">*</span>
+                </span>
+              </label>
 
-  {/* Clickable input-style box to open dropdown */}
-  <div
-    className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-    onClick={() => setShowStudentDropdown(!showStudentDropdown)}
-  >
-    {selectedStudentName || "Select Student"}
-    <i className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}></i>
-  </div>
+              {/* Clickable input-style box to open dropdown */}
+              <div
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                onClick={() => setShowStudentDropdown(!showStudentDropdown)}
+              >
+                {selectedStudentName || "Select Student"}
+                <i
+                  className={`fa-solid fa-chevron-${
+                    showStudentDropdown ? "up" : "down"
+                  } ml-2`}
+                ></i>
+              </div>
 
-  {/* Dropdown */}
-  {showStudentDropdown && (
-    <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
-      {/* Search input inside dropdown */}
-      <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
-        <input
-          type="text"
-          placeholder="Search Student..."
-          className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
-          value={searchStudentInput}
-          onChange={(e) => {
-            setSearchStudentInput(e.target.value);
-            setSelectedStudentName("");
-          }}
-          autoComplete="off"
-        />
-      </div>
+              {/* Dropdown */}
+              {showStudentDropdown && (
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                  {/* Search input inside dropdown */}
+                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search Student..."
+                      className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
+                      value={searchStudentInput}
+                      onChange={(e) => {
+                        setSearchStudentInput(e.target.value);
+                        setSelectedStudentName("");
+                      }}
+                      autoComplete="off"
+                    />
+                  </div>
 
-      {/* Student list */}
-      <div className="max-h-40 overflow-y-auto">
-        {!loadingStudents && filteredStudents.length > 0 ? (
-          filteredStudents.map((studentObj) => (
-            <p
-              key={studentObj.student_id}
-              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
-              onClick={() => {
-                setSelectedStudentId(studentObj.student_id);
-                setSelectedStudentName(studentObj.student_name);
-                setSearchStudentInput("");
-                setShowStudentDropdown(false);
-              }}
-            >
-              {studentObj.student_name}
-            </p>
-          ))
-        ) : (
-          <p className="p-2 text-gray-500 dark:text-gray-400">
-            {loadingStudents ? "Loading students..." : "No students found."}
-          </p>
-        )}
-      </div>
-    </div>
-  )}
+                  {/* Student list */}
+                  <div className="max-h-40 overflow-y-auto">
+                    {!loadingStudents && filteredStudents.length > 0 ? (
+                      filteredStudents.map((studentObj) => (
+                        <p
+                          key={studentObj.student_id}
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
+                          onClick={() => {
+                            setSelectedStudentId(studentObj.student_id);
+                            setSelectedStudentName(studentObj.student_name);
+                            setSearchStudentInput("");
+                            setShowStudentDropdown(false);
+                          }}
+                        >
+                          {studentObj.student_name}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="p-2 text-gray-500 dark:text-gray-400">
+                        {loadingStudents
+                          ? "Loading students..."
+                          : "No students found."}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
 
-  {/* Error display (external validation) */}
-  {formErrors.student_id && (
-    <p className="text-error text-sm mt-1">{formErrors.student_id}</p>
-  )}
-</div>
-
+              {/* Error display (external validation) */}
+              {formErrors.student_id && (
+                <p className="text-error text-sm mt-1">
+                  {formErrors.student_id}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Fee Discounts */}
@@ -309,10 +322,12 @@ const CreateDiscount = () => {
                 onChange={(e) =>
                   handleChange("admission_fee_discount", e.target.value)
                 }
-              /> {formErrors.discount && (
-                <p className="text-sm text-red-500 mt-1 col-span-2">{formErrors.discount}</p>
+              />{" "}
+              {formErrors.discount && (
+                <p className="text-sm text-red-500 mt-1 col-span-2">
+                  {formErrors.discount}
+                </p>
               )}
-
             </div>
 
             <div className="form-control">
@@ -332,10 +347,12 @@ const CreateDiscount = () => {
                 onChange={(e) =>
                   handleChange("tuition_fee_discount", e.target.value)
                 }
-              />  {formErrors.discount && (
-                <p className="text-sm text-red-500 mt-1 col-span-2">{formErrors.discount}</p>
+              />{" "}
+              {formErrors.discount && (
+                <p className="text-sm text-red-500 mt-1 col-span-2">
+                  {formErrors.discount}
+                </p>
               )}
-
             </div>
           </div>
 
@@ -352,9 +369,7 @@ const CreateDiscount = () => {
               placeholder="e.g. Sibling concession"
               rows={3}
               value={formData.discount_reason}
-              onChange={(e) =>
-                handleChange("discount_reason", e.target.value)
-              }
+              onChange={(e) => handleChange("discount_reason", e.target.value)}
             ></textarea>
           </div>
 
@@ -363,7 +378,6 @@ const CreateDiscount = () => {
             <button
               type="submit"
               className="btn btn-primary w-full md:w-52 bgTheme text-white"
-
             >
               {isSubmitting ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
