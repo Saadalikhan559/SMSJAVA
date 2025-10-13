@@ -25,6 +25,7 @@ export const AdmissionFees = () => {
   const { axiosInstance } = useContext(AuthContext);
 
 
+
   const [selectedStudentName, setSelectedStudentName] = useState("");
   const [searchStudentInput, setSearchStudentInput] = useState("");
   const [showStudentDropdown, setShowStudentDropdown] = useState(false);
@@ -462,6 +463,27 @@ export const AdmissionFees = () => {
     };
   }, []);
 
+const handleMonthSelection = (monthData, isChecked) => {
+  const updatedSelectedFeeIds = [...selectedFeeIds];
+
+  monthData.fees.forEach((fee) => {
+    const rowKey = `${monthData.month}-${fee.id}`;
+    const isSelectable = fee.status !== "Already Paid";
+
+    if (isSelectable) {
+      const index = updatedSelectedFeeIds.indexOf(rowKey);
+
+      if (isChecked && index === -1) {
+        updatedSelectedFeeIds.push(rowKey);
+      } else if (!isChecked && index !== -1) {
+        updatedSelectedFeeIds.splice(index, 1);
+      }
+    }
+  });
+
+  setSelectedFeeIds(updatedSelectedFeeIds);
+};
+
 
 
   if (isLoading && !apiError) {
@@ -675,11 +697,24 @@ export const AdmissionFees = () => {
                                   {index === 0 && (
                                     <td
                                       rowSpan={monthData.fees.length}
-                                      className="font-semibold bg-base-100 align-top"
+                                      className="font-semibold bg-base-100 align-top px-4 py-2"
                                     >
-                                      {monthData.month}
+                                      <div className="flex items-center gap-2">
+                                        <span>{monthData.month}</span>
+                                        <input
+                                          type="checkbox"
+                                          className="checkbox checkbox-sm checkbox-primary"
+                                          checked={monthData.fees
+                                            .filter((fee) => fee.status !== "Already Paid")
+                                            .every((fee) => selectedFeeIds.includes(`${monthData.month}-${fee.id}`))
+                                          }
+                                          onChange={(e) => handleMonthSelection(monthData, e.target.checked)}
+                                        />
+                                      </div>
                                     </td>
                                   )}
+
+
                                   <td>{fee.fee_type}</td>
                                   <td>
                                     ₹
