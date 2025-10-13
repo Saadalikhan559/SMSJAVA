@@ -6,8 +6,14 @@ import { allRouterLink } from "../router/AllRouterLinks";
 import LogoutModal from "../components/Modals/LogoutModal";
 
 export const Navbar = () => {
-  const { LogoutUser, userRole, isAuthenticated, userName, userProfile, axiosInstance } =
-    useContext(AuthContext);
+  const {
+    LogoutUser,
+    userRole,
+    isAuthenticated,
+    userName,
+    userProfile,
+    axiosInstance,
+  } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [profileImageError, setProfileImageError] = useState(false);
@@ -67,50 +73,54 @@ export const Navbar = () => {
     document.activeElement.blur();
   };
 
-useEffect(() => {
-  if (!isAuthenticated || !userRole) return;
+  useEffect(() => {
+    if (!isAuthenticated || !userRole) return;
 
-  const fetchProfileData = async () => {
-    try {
-    
-      let response;
+    const fetchProfileData = async () => {
+      try {
+        let response;
 
-      switch (userRole) {
-        case constants.roles.director:
-          response = await axiosInstance.get(`/d/director/director_my_profile/`);
-          break;
-        case constants.roles.officeStaff:
-          response = await axiosInstance.get(`/d/officestaff/OfficeStaff_my_profile/`);
-          break;
-        case constants.roles.teacher:
-          response = await axiosInstance.get(`/t/teacher/teacher_my_profile/`);
-          break;
-        case constants.roles.student:
-          response = await axiosInstance.get(`/s/students/student_my_profile/`);
-          break;
-        case constants.roles.guardian:
-          response = await axiosInstance.get(`/s/guardian/guardian_my_profile/`);
-          break;
-        default:
-          throw new Error("Unsupported user role");
+        switch (userRole) {
+          case constants.roles.director:
+            response = await axiosInstance.get(
+              `/d/director/director_my_profile/`
+            );
+            break;
+          case constants.roles.officeStaff:
+            response = await axiosInstance.get(
+              `/d/officestaff/OfficeStaff_my_profile/`
+            );
+            break;
+          case constants.roles.teacher:
+            response = await axiosInstance.get(
+              `/t/teacher/teacher_my_profile/`
+            );
+            break;
+          case constants.roles.student:
+            response = await axiosInstance.get(
+              `/s/students/student_my_profile/`
+            );
+            break;
+          case constants.roles.guardian:
+            response = await axiosInstance.get(
+              `/s/guardian/guardian_my_profile/`
+            );
+            break;
+          default:
+            throw new Error("Unsupported user role");
+        }
+
+        const data = response.data;
+        setProfileData(data);
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
       }
+    };
 
-      const data = response.data;
-      setProfileData(data);
-      
-    } catch (err) {
-      console.error("Error fetching profile data:", err);
-      
-    } 
-  };
-
-  fetchProfileData();
-}, [axiosInstance, userRole, isAuthenticated]);
-
-
+    fetchProfileData();
+  }, [axiosInstance, userRole, isAuthenticated]);
 
   let profilePicUrl = defaultProfileImage;
-
 
   if (isAuthenticated) {
     if (profileData?.user_profile) {
@@ -119,8 +129,6 @@ useEffect(() => {
       profilePicUrl = `${BASE_URL}${userProfile}`;
     }
   }
-
-
 
   return (
     <>
@@ -181,34 +189,7 @@ useEffect(() => {
                       <i className="fa-solid fa-lock"></i> Change Password
                     </Link>
                   </li>
-                  <li onClick={closeDropdown}>
-                    <Link to={allRouterLink.viewDocuments || "/view-documents"}>
-                      <i className="fa-solid fa-folder-open"></i> View Documents
-                    </Link>
-                  </li>
 
-                  {userRole === constants.roles.director && (
-                    <>
-                      <li onClick={closeDropdown}>
-                        <Link to={allRouterLink.registerUser}>
-                          <i className="fa-solid fa-user-plus"></i> Create User
-                        </Link>
-                      </li>
-                      <li onClick={closeDropdown}>
-                        <Link to={allRouterLink.allTeacherAssignment}>
-                          <i className="fa-solid fa-book"></i> Teacher Assignments
-                        </Link>
-                      </li>
-                    </>
-                  )}
-
-                  {userRole === constants.roles.teacher && (
-                    <li onClick={closeDropdown}>
-                      <Link to={allRouterLink.attendance}>
-                        <i className="fa-solid fa-book"></i> Attendance
-                      </Link>
-                    </li>
-                  )}
 
                   <li
                     onClick={() => {
@@ -216,7 +197,7 @@ useEffect(() => {
                       setShowLogoutModal(true);
                     }}
                   >
-                    <a className="text-orange-600 cursor-pointer">
+                    <a className="cursor-pointer">
                       <i className="fa-solid fa-arrow-right-from-bracket"></i>{" "}
                       Logout
                     </a>
