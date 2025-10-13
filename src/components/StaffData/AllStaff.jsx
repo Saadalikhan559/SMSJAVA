@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { fetchOfficeStaff, fetchTeachers } from "../../services/api/Api";
+import { AuthContext } from "../../context/AuthContext";
+import { constants } from "../../global/constants";
+import { allRouterLink } from "../../router/AllRouterLinks";
 
 const AllStaff = () => {
   const [officestaff, setofficestaff] = useState([]);
@@ -11,6 +14,7 @@ const AllStaff = () => {
   const [staffSearch, setStaffSearch] = useState("");
   const [activeTab, setActiveTab] = useState("teachers");
 
+  const { userRole } = useContext(AuthContext);
   // Helper function to get full name for sorting
   const getFullName = (record) => {
     return [record.first_name, record.middle_name, record.last_name]
@@ -83,29 +87,34 @@ const AllStaff = () => {
         <div className="flex gap-4 ">
           <button
             onClick={() => setActiveTab("teachers")}
-            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "teachers"
-              ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1] dark:text-gray-300 dark:hover:text-[#9575cd]"
-              }`}
+            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
+              activeTab === "teachers"
+                ? "border-[#5E35B1] textTheme"
+                : "border-transparent text-gray-600 hover:text-[#5E35B1] dark:text-gray-300 dark:hover:text-[#9575cd]"
+            }`}
           >
-            <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
+            <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i>{" "}
+            Teachers
           </button>
           <button
             onClick={() => setActiveTab("staff")}
-            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${activeTab === "staff"
-              ? "border-[#5E35B1] textTheme"
-              : "border-transparent text-gray-600 hover:text-[#5E35B1] dark:text-gray-300 dark:hover:text-[#9575cd]"
-              }`}
+            className={`px-6 py-2 font-semibold rounded-t-lg border-b-2 ${
+              activeTab === "staff"
+                ? "border-[#5E35B1] textTheme"
+                : "border-transparent text-gray-600 hover:text-[#5E35B1] dark:text-gray-300 dark:hover:text-[#9575cd]"
+            }`}
           >
-            <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+            <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office
+            Staff
           </button>
-        </div><br/>
+        </div>
 
         {/* Teachers Tab */}
         {activeTab === "teachers" && (
           <>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
-              <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i> Teachers
+              <i className="fa-solid fa-person-chalkboard mr-2 text-3xl"></i>{" "}
+              Teachers
             </h1>
             <div className="flex justify-end mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
               <input
@@ -113,9 +122,16 @@ const AllStaff = () => {
                 placeholder="Search Teacher Name"
                 value={teacherSearch}
                 onChange={(e) => setTeacherSearch(e.target.value.trimStart())}
-                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-
+                className="border px-3 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray me-2"
               />
+              {userRole === constants.roles.director && (
+                <Link
+                  to={allRouterLink.registerUser}
+                  className="btn bgTheme text-white"
+                >
+                  <i className="fa-solid fa-user-plus"></i> Add Teacher
+                </Link>
+              )}
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg overflow-hidden">
               <table className="min-w-full table-auto  rounded-lg">
@@ -130,7 +146,10 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredTeachers.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                      <td
+                        colSpan="4"
+                        className="text-center py-6 text-gray-500 dark:text-gray-400"
+                      >
                         No data found.
                       </td>
                     </tr>
@@ -140,29 +159,38 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{index + 1}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">
+                          {index + 1}
+                        </td>
                         <td className="px-4 py-3 capitalize dark:text-gray-100 text-nowrap">
                           <Link
                             to={`/staffDetail/teacher/${record.id}`}
                             state={{ level_name: record.level_name }}
                             className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
-
                           >
-                            {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
+                            {[
+                              record.first_name,
+                              record.middle_name,
+                              record.last_name,
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.joining_date}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">
+                          {record.joining_date}
+                        </td>
                         <td className="px-4 py-3 text-center">
                           <span
-                            className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${record.is_active
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                              }`}
+                            className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${
+                              record.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
                           >
                             {record.is_active ? "Active" : "InActive"}
                           </span>
                         </td>
-
                       </tr>
                     ))
                   )}
@@ -176,7 +204,8 @@ const AllStaff = () => {
         {activeTab === "staff" && (
           <>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-4">
-              <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i> Office Staff
+              <i className="fa-solid fa-clipboard-user mr-2 text-3xl"></i>{" "}
+              Office Staff
             </h1>
             <div className="flex justify-end mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
               <input
@@ -184,9 +213,16 @@ const AllStaff = () => {
                 placeholder="Search Staff Member Name"
                 value={staffSearch}
                 onChange={(e) => setStaffSearch(e.target.value.trimStart())}
-                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-
+                className="border px-3 rounded w-full sm:w-70 dark:bg-gray-700 dark:text-white dark:border-gray-600 mr-2"
               />
+              {userRole === constants.roles.director && (
+                <Link
+                  to={allRouterLink.registerUser}
+                  className="btn bgTheme text-white"
+                >
+                  <i className="fa-solid fa-user-plus"></i> Add Office Staff
+                </Link>
+              )}
             </div>
             <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
               <table className="min-w-full table-auto  rounded-lg">
@@ -201,7 +237,10 @@ const AllStaff = () => {
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {filteredOfficeStaff.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                      <td
+                        colSpan="4"
+                        className="text-center py-6 text-gray-500 dark:text-gray-400"
+                      >
                         No data found.
                       </td>
                     </tr>
@@ -211,23 +250,34 @@ const AllStaff = () => {
                         key={record.id || index}
                         className="hover:bg-gray-100 dark:hover:bg-gray-700 text-center"
                       >
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{index + 1}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">
+                          {index + 1}
+                        </td>
                         <td className="px-4 py-3 capitalize dark:text-gray-100 text-nowrap">
                           <Link
                             to={`/staffDetail/office/${record.id}`}
                             state={{ level_name: record.level_name }}
                             className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
                           >
-                            {[record.first_name, record.middle_name, record.last_name].filter(Boolean).join(" ")}
+                            {[
+                              record.first_name,
+                              record.middle_name,
+                              record.last_name,
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">{record.date_joined}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">
+                          {record.date_joined}
+                        </td>
                         <td className="px-4 py-3 text-center">
                           <span
-                            className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${record.is_active
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                              }`}
+                            className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${
+                              record.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
                           >
                             {record.is_active === true ? "Active" : "InActive"}
                           </span>
