@@ -31,7 +31,6 @@ const getAdmissionDetails = async () => {
 
     const stu = await axiosInstance.get("s/students/student_details/");
    setStudentData(normalizeStudents(stu.data));
-    console.log("students:", normalized);
   } catch (error) {
     console.log("failed to fetch admission details", error);
     setError(true);

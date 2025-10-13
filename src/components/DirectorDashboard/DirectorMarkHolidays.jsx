@@ -57,11 +57,23 @@ const DirectorMarkHolidays = () => {
       setShowModal(true);
       reset();
     } catch (err) {
-      setModalMessage(
-        err.response?.data?.message || err.message || "An error occurred"
-      );
-      setShowModal(true);
-    } finally {
+  const defaultMessage = "An error occurred";
+  const responseData = err.response?.data;
+
+  let message = defaultMessage;
+
+  if (responseData?.non_field_errors?.length) {
+    message = responseData.non_field_errors[0]; 
+  } else if (responseData?.message) {
+    message = responseData.message;
+  } else if (err.message) {
+    message = err.message;
+  }
+
+  setModalMessage(message);
+  setShowModal(true);
+}
+finally {
       setLoder(false);
     }
   };
