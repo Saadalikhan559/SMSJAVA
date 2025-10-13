@@ -58,6 +58,7 @@ export const AdmissionFees = () => {
   });
 
   const selectedStudentId = watch("student_id");
+  const selectedPaymentMode = watch("payment_mode")
   // const selectedMonth = watch("month");
 
   // Custom Loader JSX
@@ -156,6 +157,8 @@ export const AdmissionFees = () => {
   useEffect(() => {
     if (selectedClassId) {
       getStudents(selectedClassId);
+      setSelectedStudent("")
+      setSelectedStudentName("")
     } else {
       setStudents([]);
     }
@@ -581,7 +584,10 @@ export const AdmissionFees = () => {
                     {isLoading ? (
                       <p className="p-2">Loading students...</p>
                     ) : filteredStudents?.length > 0 ? (
-                      filteredStudents.map((student) => (
+                      filteredStudents.map((student) =>{ 
+                        console.log(student);
+                        
+                        return(
                         <p
                           key={student.student_id}
                           className="p-2"
@@ -596,7 +602,7 @@ export const AdmissionFees = () => {
                         >
                           {student.student_name} - {student.student_email}
                         </p>
-                      ))
+                      )})
                     ) : (
                       <p className="p-2">No students found.</p>
                     )}
@@ -642,8 +648,8 @@ export const AdmissionFees = () => {
                               const rowKey = `${monthData.month}-${fee.id}`;
                               const isSelectable = fee.status !== "Already Paid";
                               const isChecked = selectedFeeIds.includes(rowKey);
-                              let Due = (Number(fee.base_amount) - Number(fee.paid_amount) + Number(fee.late_fee)) || 0
-                              if (Due < 0) Due = 0
+                              // let Due = (Number(fee.base_amount) - Number(fee.paid_amount) + Number(fee.late_fee)) || 0
+                              // if (Due < 0) Due = 0
 
 
                               return (
@@ -657,7 +663,7 @@ export const AdmissionFees = () => {
                                     </td>
                                   )}
                                   <td>{fee.fee_type}</td>
-                                  <td>₹{fee.paid_amount ? Due : fee.base_amount}</td>
+                                  <td>₹{fee.base_amount}</td>
                                   <td >
                                     ₹{fee.paid_amount ? 0 : fee.late_fee}
                                   </td>
@@ -810,6 +816,7 @@ export const AdmissionFees = () => {
                   },
                 })}
                 value={watch("paid_amount")}
+                disabled={!selectedPaymentMode}
                 onChange={(e) => setValue("paid_amount", e.target.value)}
                 step="1"
               />
@@ -841,7 +848,7 @@ export const AdmissionFees = () => {
                   required: "Remarks are required",
                 })}
                 placeholder="Enter any remarks"
-                disabled={selectedFeeIds.length === 0}
+                disabled={!selectedPaymentMode}
               />
               {errors.remarks && (
                 <label className="label">
@@ -868,7 +875,7 @@ export const AdmissionFees = () => {
                   required: "Signature is required",
                 })}
                 placeholder="Enter your name as signature"
-                disabled={selectedFeeIds.length === 0}
+                disabled={!selectedPaymentMode}
               />
               {errors.received_by && (
                 <label className="label">
@@ -884,7 +891,10 @@ export const AdmissionFees = () => {
           <div className="flex justify-center mt-10">
             <button
               type="submit"
-              className="btn bgTheme text-white w-52"
+               className={`btn bgTheme text-white w-52 ${isSubmitting || selectedFeeIds.length === 0
+                                ? "opacity-50 cursor-not-allowed"
+                                : "hover:bg-purple-700"
+                                }`}
               disabled={isSubmitting || selectedFeeIds.length === 0}
             >
               {isSubmitting ? (
