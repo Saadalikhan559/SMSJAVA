@@ -268,7 +268,7 @@ export const AdmissionForm = () => {
       setSelectedGuardianType("");
       setIsRTE(false);
     } catch (error) {
-      alert(
+      setAlertMessage(
         `Failed to submit the form: ${error.response?.data?.message || error.message
         }`
       );

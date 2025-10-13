@@ -21,6 +21,7 @@ const EditDiscount = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Fetch student by ID
   useEffect(() => {
@@ -40,21 +41,31 @@ const EditDiscount = () => {
   }, [id, token]);
 
   const handleChange = (field, value) => {
+    if (field === "discount_reason" && value.length > 100) return;
     setFormData({ ...formData, [field]: value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitLoading(true);
-    try {
-      await updateDiscount(token, id, formData);
-      setModalOpen(true); 
-    } catch (err) {
-      console.error("Error updating discount:", err);
-    } finally {
-      setSubmitLoading(false);
+  e.preventDefault();
+  setSubmitLoading(true);
+  setErrorMessage(""); 
+  try {
+    await updateDiscount(token, id, formData);
+    setErrorMessage(""); 
+    setModalOpen(true); 
+  } catch (err) {
+    console.error("Error updating discount:", err);
+    let msg = "Something went wrong. Please try again.";
+    if (err.response && err.response.data) {
+      if (err.response.data.message) msg = err.response.data.message;
+      else msg = JSON.stringify(err.response.data);
     }
-  };
+    setErrorMessage(msg);
+    setModalOpen(true);
+  } finally {
+    setSubmitLoading(false);
+  }
+};
 
   const closeModal = () => {
     setModalOpen(false);
@@ -108,6 +119,21 @@ const EditDiscount = () => {
             type="text"
             className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
             value={formData.student_name}
+            disabled
+          />
+        </div>
+
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-200">
+              <i className="fa-solid fa-user-graduate text-sm"></i>
+              Class
+            </span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            value={formData.year_level}
             disabled
           />
         </div>
@@ -189,10 +215,10 @@ const EditDiscount = () => {
     {modalOpen && (
       <dialog className="modal modal-open">
         <div className="modal-box bg-white dark:bg-gray-800 dark:text-white">
-          <h3 className="font-bold text-lg">Success</h3>
+          <h3 className="font-bold text-lg">Edit Discount</h3>
           <p className="py-4">
-            Student’s discount record has been successfully updated.
-          </p>
+        {errorMessage || "Discount updated successfully."}
+      </p>
           <div className="modal-action">
             <button className="btn bgTheme text-white w-25" onClick={closeModal}>
               OK

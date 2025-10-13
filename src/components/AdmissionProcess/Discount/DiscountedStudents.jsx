@@ -45,9 +45,9 @@ const DiscountedStudents = () => {
     try {
       const { data } = await axiosInstance.get("/d/fee-discounts/");
       const sortedData = [...data].sort((a, b) =>
-      a.student_name.localeCompare(b.student_name)
-    );
-    setStudents(sortedData);
+        a.student_name.localeCompare(b.student_name)
+      );
+      setStudents(sortedData);
     } catch (err) {
       console.error("Error fetching students:", err);
       setError(true);
@@ -124,22 +124,30 @@ const DiscountedStudents = () => {
 
           <div className="p-2">
             <div className="flex flex-wrap justify-between items-end gap-4 mb-2 w-full border-b border-gray-300 dark:border-gray-600 pb-4">
-              <div className="w-full sm:w-xs">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                  Select Class:
-                </label>
-                <select
-                  className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
+              <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
+                <div className="w-full sm:w-xs">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                    Select Class
+                  </label>
+                  <select
+                    className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option value="">All Classes</option>
+                    {yearLevels.map((level) => (
+                      <option key={level.id} value={level.level_name}>
+                        {level.level_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  className="btn bgTheme text-white w-24"
+                  onClick={() => setSelectedClass("")}
                 >
-                  <option value="">All Classes</option>
-                  {yearLevels.map((level) => (
-                    <option key={level.id} value={level.level_name}>
-                      {level.level_name}
-                    </option>
-                  ))}
-                </select>
+                  Reset
+                </button>
               </div>
 
               <input
@@ -171,7 +179,7 @@ const DiscountedStudents = () => {
                   {filteredBysearch.length > 0 ? (
                     filteredBysearch.map((s) => (
                       <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 font-bold capitalize text-nowrap">{s.student_name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200  capitalize text-nowrap">{s.student_name}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 capitalize text-nowrap">{s.scholar_no}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">{s.year_level}</td>
                         <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap text-center">₹{s.admission_fee_discount}</td>
@@ -213,7 +221,7 @@ const DiscountedStudents = () => {
           <dialog className="modal modal-open">
             <div className="modal-box dark:bg-gray-800 dark:text-white">
               <h3 className="font-bold text-lg">Confirm Delete</h3>
-              <p className="py-4">Are you sure you want to continue?</p>
+              <p className="py-4">Are you sure you want to delete ?</p>
               <div className="modal-action">
                 <button className="btn bgTheme text-white" onClick={confirmDelete}>Continue</button>
                 <button className="btn btn-outline" onClick={() => setConfirmOpen(false)}>Cancel</button>

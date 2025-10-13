@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { constants } from "../../global/constants";
 // import { Loader } from "../../global/Loader"; // not used
 import { AuthContext } from "../../context/AuthContext";
+import { allRouterLink } from "../../router/AllRouterLinks";
+import { useNavigate } from "react-router-dom";
 
 export const ViewDocuments = () => {
   const [details, setDetails] = useState(null);
@@ -15,6 +17,7 @@ export const ViewDocuments = () => {
   const [searchInput, setSearchInput] = useState("");
   const [viewOption, setViewOption] = useState("my");
   const { axiosInstance } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // Logged-in user info
   const studentId = localStorage.getItem("studentId");
@@ -309,23 +312,37 @@ export const ViewDocuments = () => {
               )}
 
               {/* Search Input */}
-              <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
-                  Search Name:
-                </label>
-                <input
-                  type="text"
-                  placeholder="Search Name..."
-                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value.trimStart())}
-                />
+              <div className=" flex justify-end gap-2">
+                <div className="flex flex-col w-full sm:w-auto">
+                  <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                    Search Name:
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Search Name..."
+                    className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value.trimStart())}
+                  />
+                </div>
+                {(userRole === constants.roles.director ||
+                  userRole === constants.roles.officeStaff) && (
+                    <div className="pt-6">
+
+                      <button
+                        className="btn bgTheme text-white"
+                        onClick={() => navigate(allRouterLink.documentUpload)}
+                      >
+                        <i className="fa-solid fa-file-arrow-up w-5"></i> Upload Documents
+                      </button>
+                    </div>
+                  )}
               </div>
             </div>
           )}
 
         {/* Table */}
-        <div className="w-full overflow-x-auto rounded-lg no-scrollbar max-h-[70vh]">
+        <div className="w-full overflow-x-scroll rounded-lg max-h-[70vh]">
           <div className="inline-block min-w-full align-middle">
             <div className="shadow-sm rounded-lg">
               <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
@@ -383,7 +400,7 @@ export const ViewDocuments = () => {
                           {allDocTypes.map((type) => (
                             <td
                               key={type}
-                              className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400"
+                              className="px-4 py-3 text-sm text-blue-600 dark:text-blue-400 text-center"
                             >
                               {person.docs[type] && person.docs[type].length > 0 ? (
                                 person.docs[type].map((url, i) => (
@@ -399,7 +416,7 @@ export const ViewDocuments = () => {
                                   </div>
                                 ))
                               ) : (
-                                <p className="text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                                <p className="text-xs text-gray-400 dark:text-gray-200 text-nowrap">
                                   Not Available
                                 </p>
                               )}

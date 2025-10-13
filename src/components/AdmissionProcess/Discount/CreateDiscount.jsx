@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { fetchStudents1, fetchYearLevels } from "../../../services/api/Api";
 import { AuthContext } from "../../../context/AuthContext";
 
@@ -15,6 +15,8 @@ const CreateDiscount = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const dropdownRef = useRef(null);
+
 
   const [formData, setFormData] = useState({
     admission_fee_discount: "",
@@ -96,6 +98,7 @@ const CreateDiscount = () => {
   }, [formData]);
 
   const handleChange = (name, value) => {
+    if (name === "discount_reason" && value.length > 100) return;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -114,6 +117,11 @@ const CreateDiscount = () => {
       errors.discount =
         "Admission or Tuition Fee Discount must be greater than 0";
     }
+
+    if (formData.discount_reason && formData.discount_reason.length > 100) {
+      errors.discount_reason = "Discount reason cannot exceed 100 characters.";
+    }
+
 
     setFormErrors(errors);
 
@@ -148,14 +156,31 @@ const CreateDiscount = () => {
       console.log("error", err.response?.data);
       setAlertMessage(
         err.response?.data?.student_id ||
-          err.response?.data?.admission_fee_discount ||
-          err.response?.data?.tuition_fee_discount
+        err.response?.data?.admission_fee_discount ||
+        err.response?.data?.tuition_fee_discount
       );
       setShowAlert(true);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setShowStudentDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
   const filteredStudents = students.filter((studentObj) =>
     studentObj.student_name
@@ -191,8 +216,7 @@ const CreateDiscount = () => {
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
         <h1 className="text-3xl font-bold text-center mb-8">
-          Create Discount
-          <i className="fa-solid fa-indian-rupee-sign ml-2"></i>
+          <i className="fa-solid fa-indian-rupee-sign ml-2"></i> Create Discount
         </h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -228,7 +252,7 @@ const CreateDiscount = () => {
             </div>
 
             {/* Student Dropdown/Search */}
-            <div className="form-control relative">
+            <div className="form-control relative" ref={dropdownRef}>
               <label className="label">
                 <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <i className="fa-solid fa-user-graduate text-sm"></i>
@@ -243,9 +267,8 @@ const CreateDiscount = () => {
               >
                 {selectedStudentName || "Select Student"}
                 <i
-                  className={`fa-solid fa-chevron-${
-                    showStudentDropdown ? "up" : "down"
-                  } ml-2`}
+                  className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"
+                    } ml-2`}
                 ></i>
               </div>
 
@@ -315,7 +338,7 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                min={0}     
+                min={0}
                 className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                 placeholder="e.g. 100"
                 max={9999999}
@@ -372,6 +395,12 @@ const CreateDiscount = () => {
               value={formData.discount_reason}
               onChange={(e) => handleChange("discount_reason", e.target.value)}
             ></textarea>
+            {formErrors.discount_reason && (
+              <p className="text-sm text-red-500 mt-1">
+                {formErrors.discount_reason}
+              </p>
+            )}
+
           </div>
 
           {/* Submit Button */}
@@ -396,7 +425,7 @@ const CreateDiscount = () => {
         {showAlert && (
           <dialog open className="modal modal-open">
             <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
-              <h3 className="font-bold text-lg">{alertTitle}</h3>
+              <h3 className="font-bold text-lg">Create Discount</h3>
               <p className="py-4">{alertMessage}</p>
               <div className="modal-action">
                 <button
