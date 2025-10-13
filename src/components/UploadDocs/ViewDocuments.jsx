@@ -364,7 +364,7 @@ export const ViewDocuments = () => {
                           key={`${person.role}-${person.name}-${person.yearLevel}`}
                           className="hover:bg-gray-50 dark:hover:bg-gray-700 transition text-nowrap"
                         >
-                          <td className="px-4 py-3 font-bold text-sm text-gray-700 dark:text-gray-200 text-nowrap">
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200 text-nowrap">
                             {person.name}
                           </td>
                           <td className="px-4 py-3  text-sm text-gray-700 dark:text-gray-200 text-nowrap">
