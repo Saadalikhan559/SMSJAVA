@@ -73,6 +73,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
       payload.append("category", parseInt(data.category));
       payload.append("description", data.description || "");
       payload.append("school_year", parseInt(data.school_year));
+      payload.append("school_year_value", parseInt(data.school_year_value));
       payload.append("payment_method", data.payment_method);
       payload.append("status", data.status);
       if (parseInt(data.category) !== 1) payload.append("amount", data.amount);
@@ -84,6 +85,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
         category: parseInt(data.category),
         description: data.description || "",
         school_year: parseInt(data.school_year),
+        school_year_value: parseInt(data.school_year_value),
         payment_method: data.payment_method,
         status: data.status,
       };
