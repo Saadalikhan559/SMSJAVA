@@ -131,3 +131,15 @@
 .apexcharts-canvas .apexcharts-svg .apexcharts-yaxis-texts-g .apexcharts-text, .apexcharts-canvas .apexcharts-svg .apexcharts-xaxis-texts-g .apexcharts-text {
   fill: #5E35B1 !important;
 }
+
+
+
+.custom-select .arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 0.8em;
+  color: #333;
+}

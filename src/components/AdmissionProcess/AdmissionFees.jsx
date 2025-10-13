@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { constants } from "../../global/constants";
@@ -23,6 +23,7 @@ export const AdmissionFees = () => {
   const [setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
+
 
 
   const [selectedStudentName, setSelectedStudentName] = useState("");
@@ -58,6 +59,7 @@ export const AdmissionFees = () => {
   });
 
   const selectedStudentId = watch("student_id");
+  const selectedPaymentMode = watch("payment_mode")
   // const selectedMonth = watch("month");
 
   // Custom Loader JSX
@@ -156,6 +158,8 @@ export const AdmissionFees = () => {
   useEffect(() => {
     if (selectedClassId) {
       getStudents(selectedClassId);
+      setSelectedStudent("")
+      setSelectedStudentName("")
     } else {
       setStudents([]);
     }
@@ -435,14 +439,50 @@ export const AdmissionFees = () => {
 
 
   // Filter students by name or email based on input
- const filteredStudents = students
-  ?.filter((student) =>
-    `${student?.student_name || ""} ${student?.student_email || ""}`
-      .toLowerCase()
-      .includes(searchStudentInput.trim().toLowerCase())
-  )
-  .sort((a, b) => a.student_name.localeCompare(b.student_name));
+  const filteredStudents = students
+    ?.filter((student) =>
+      `${student?.student_name || ""} ${student?.student_email || ""}`
+        .toLowerCase()
+        .includes(searchStudentInput.trim().toLowerCase())
+    )
+    .sort((a, b) => a.student_name.localeCompare(b.student_name));
 
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowStudentDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+const handleMonthSelection = (monthData, isChecked) => {
+  const updatedSelectedFeeIds = [...selectedFeeIds];
+
+  monthData.fees.forEach((fee) => {
+    const rowKey = `${monthData.month}-${fee.id}`;
+    const isSelectable = fee.status !== "Already Paid";
+
+    if (isSelectable) {
+      const index = updatedSelectedFeeIds.indexOf(rowKey);
+
+      if (isChecked && index === -1) {
+        updatedSelectedFeeIds.push(rowKey);
+      } else if (!isChecked && index !== -1) {
+        updatedSelectedFeeIds.splice(index, 1);
+      }
+    }
+  });
+
+  setSelectedFeeIds(updatedSelectedFeeIds);
+};
 
 
 
@@ -533,7 +573,7 @@ export const AdmissionFees = () => {
             </div>
 
             {/* Student Selection */}
-            <div className="form-control relative">
+            <div className="form-control relative" ref={dropdownRef}>
               <label className="label">
                 <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <i className="fa-solid fa-user-graduate text-sm"></i>
@@ -541,7 +581,7 @@ export const AdmissionFees = () => {
                 </span>
               </label>
 
-         
+
               <div
                 className={`input input-bordered w-full flex items-center justify-between cursor-pointer ${!selectedClassId ? "cursor-not-allowed opacity-70" : ""}`}
                 onClick={() => {
@@ -549,7 +589,9 @@ export const AdmissionFees = () => {
                 }}
               >
                 {selectedStudentName || "Select Student"}
-                <i className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}></i>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for form submission */}
@@ -581,22 +623,26 @@ export const AdmissionFees = () => {
                     {isLoading ? (
                       <p className="p-2">Loading students...</p>
                     ) : filteredStudents?.length > 0 ? (
-                      filteredStudents.map((student) => (
-                        <p
-                          key={student.student_id}
-                          className="p-2"
-                          onClick={() => {
-                            const displayName = `${student.student_name} - ${student.student_email}`;
-                            setSelectedStudentName(displayName);
-                            setSearchStudentInput("");
-                            setShowStudentDropdown(false);
-                            setValue("student_id", student.student_id, { shouldValidate: true });
-                            clearErrors("student_id");
-                          }}
-                        >
-                          {student.student_name} - {student.student_email}
-                        </p>
-                      ))
+                      filteredStudents.map((student) => {
+                        console.log(student);
+
+                        return (
+                          <p
+                            key={student.student_id}
+                            className="p-2"
+                            onClick={() => {
+                              const displayName = `${student.student_name} - ${student.student_email}`;
+                              setSelectedStudentName(displayName);
+                              setSearchStudentInput("");
+                              setShowStudentDropdown(false);
+                              setValue("student_id", student.student_id, { shouldValidate: true });
+                              clearErrors("student_id");
+                            }}
+                          >
+                            {student.student_name} - {student.student_email}
+                          </p>
+                        )
+                      })
                     ) : (
                       <p className="p-2">No students found.</p>
                     )}
@@ -642,8 +688,8 @@ export const AdmissionFees = () => {
                               const rowKey = `${monthData.month}-${fee.id}`;
                               const isSelectable = fee.status !== "Already Paid";
                               const isChecked = selectedFeeIds.includes(rowKey);
-                              let Due = (Number(fee.base_amount) - Number(fee.paid_amount) + Number(fee.late_fee)) || 0
-                              if (Due < 0) Due = 0
+                              // let Due = (Number(fee.base_amount) - Number(fee.paid_amount) + Number(fee.late_fee)) || 0
+                              // if (Due < 0) Due = 0
 
 
                               return (
@@ -651,14 +697,37 @@ export const AdmissionFees = () => {
                                   {index === 0 && (
                                     <td
                                       rowSpan={monthData.fees.length}
-                                      className="font-semibold bg-base-100 align-top"
+                                      className="font-semibold bg-base-100 align-top px-4 py-2"
                                     >
-                                      {monthData.month}
+                                      <div className="flex items-center gap-2">
+                                        <span>{monthData.month}</span>
+                                        <input
+                                          type="checkbox"
+                                          className="checkbox checkbox-sm checkbox-primary"
+                                          checked={monthData.fees
+                                            .filter((fee) => fee.status !== "Already Paid")
+                                            .every((fee) => selectedFeeIds.includes(`${monthData.month}-${fee.id}`))
+                                          }
+                                          onChange={(e) => handleMonthSelection(monthData, e.target.checked)}
+                                        />
+                                      </div>
                                     </td>
                                   )}
+
+
                                   <td>{fee.fee_type}</td>
-                                  <td>₹{fee.paid_amount ? Due : fee.base_amount}</td>
-                                  <td className={fee.late_fee > 0 ? "text-warning" : ""}>
+                                  <td>
+                                    ₹
+                                    {
+                                      fee.status === "Already Paid"
+                                        ? fee.base_amount
+                                        : fee.status === "Pending"
+                                          ? fee.base_amount
+                                          : fee.base_amount - fee.paid_amount
+                                    }
+                                  </td>
+
+                                  <td >
                                     ₹{fee.paid_amount ? 0 : fee.late_fee}
                                   </td>
                                   <td>
@@ -799,8 +868,7 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="number"
-                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
-                  }`}
+                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"}`}
                 {...register("paid_amount", {
                   required: "Amount is required",
                   min: { value: 0, message: "Amount must be positive" },
@@ -810,9 +878,19 @@ export const AdmissionFees = () => {
                   },
                 })}
                 value={watch("paid_amount")}
-                onChange={(e) => setValue("paid_amount", e.target.value)}
+                disabled={!selectedPaymentMode}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  if (value > totalAmount.totalAmount) {
+                    setValue("paid_amount", totalAmount.totalAmount);
+                  } else {
+                    setValue("paid_amount", e.target.value);
+                  }
+                }}
                 step="1"
+                max={totalAmount.totalAmount}
               />
+
               {errors.paid_amount && (
                 <label className="label">
                   <span className="label-text-alt text-error">
@@ -835,17 +913,26 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="text"
+                maxLength={25}
                 className={`input w-full focus:outline-none ${errors.remarks ? "input-error" : "input-bordered"
                   }`}
                 {...register("remarks", {
                   required: "Remarks are required",
+                  minLength: {
+                    value: 3,
+                    message: "Remarks must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 25,
+                    message: "Remarks cannot exceed 25 characters",
+                  },
                 })}
                 placeholder="Enter any remarks"
-                disabled={selectedFeeIds.length === 0}
+                disabled={!selectedPaymentMode}
               />
               {errors.remarks && (
                 <label className="label">
-                  <span className="label-text-alt text-error">
+                  <span className="label-text-alt text-sm text-error">
                     {errors.remarks.message}
                   </span>
                 </label>
@@ -862,17 +949,26 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="text"
+                maxLength={15}
                 className={`input w-full focus:outline-none ${errors.received_by ? "input-error" : "input-bordered"
                   }`}
                 {...register("received_by", {
                   required: "Signature is required",
+                  minLength: {
+                    value: 3,
+                    message: "Name must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 15,
+                    message: "Name cannot exceed 15 characters",
+                  },
                 })}
                 placeholder="Enter your name as signature"
-                disabled={selectedFeeIds.length === 0}
+                disabled={!selectedPaymentMode}
               />
               {errors.received_by && (
                 <label className="label">
-                  <span className="label-text-alt text-error">
+                  <span className="label-text-alt text-sm text-error">
                     {errors.received_by.message}
                   </span>
                 </label>
@@ -880,12 +976,17 @@ export const AdmissionFees = () => {
             </div>
           </div>
 
+
+
           {/* Submit Button */}
           <div className="flex justify-center mt-10">
             <button
               type="submit"
-              className="btn bgTheme text-white w-52"
-              disabled={isSubmitting || selectedFeeIds.length === 0}
+              className={`btn bgTheme text-white w-52 ${isSubmitting || !selectedPaymentMode
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-purple-700"
+                }`}
+              disabled={isSubmitting || !selectedPaymentMode}
             >
               {isSubmitting ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>

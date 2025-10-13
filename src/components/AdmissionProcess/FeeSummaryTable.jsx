@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useMemo } from "react";
 import { fetchYearLevels } from "../../services/api/Api";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { Link } from "react-router-dom";
@@ -15,6 +15,8 @@ const FeeSummaryTable = () => {
   const [yearLevels, setYearLevels] = useState([]);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [allStudents, setAllStudents] = useState([]);
+
 
   const getYearLevels = async () => {
     try {
@@ -25,46 +27,30 @@ const FeeSummaryTable = () => {
     }
   };
 
-  const getFeeData = async () => {
-    setLoading(true);
-    setError(null);
-    setStudents([]);
+ const getFeeData = async () => {
+  setLoading(true);
+  setError(null);
 
-    try {
-      const params = {};
-      if (selectedMonth) params.month = selectedMonth;
-      if (selectedClass) params.year_level = selectedClass;
-      if (selectedSchoolYear) params.school_year = selectedSchoolYear;
+  try {
+    const response = await axiosInstance.get("/d/fee-record/monthly-summary/");
+    const data = response.data;
 
-      const response = await axiosInstance.get("/d/fee-record/monthly-summary/", { params });
-
-      const data = response.data;
-
-      if (data && typeof data === "object" && data.detail === "No records found.") {
-        setStudents([]);
-      } else if (Array.isArray(data)) {
-        setStudents(data);
-      } else {
-        setError("Unexpected response from server.");
-      }
-    } catch (err) {
-      console.error("Error fetching fee records:", err);
-
-      if (err.response) {
-        if (err.response.status === 404) {
-          setError("No data found (404 Not Found).");
-        } else {
-          setError(`Server error: ${err.response.status} ${err.response.statusText}`);
-        }
-      } else {
-        setError("Network error. Please check your connection.");
-      }
-
+    if (data && typeof data === "object" && data.detail === "No records found.") {
+      setAllStudents([]);
       setStudents([]);
+    } else if (Array.isArray(data)) {
+      setAllStudents(data); 
+      setStudents(data);     
+    } else {
+      setError("Unexpected response from server.");
     }
+  } catch (err) {
+    // error handling
+  }
 
-    setLoading(false);
-  };
+  setLoading(false);
+};
+
 
   useEffect(() => {
     getYearLevels();
@@ -81,23 +67,33 @@ const FeeSummaryTable = () => {
     setSearchTerm("");
   };
 
-  const filteredStudents = students
-    .filter((student) => {
-      const matchName = student.student_name
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
+ const filteredStudents = allStudents
+  .filter((student) => {
+    const matchName = student.student_name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
-      const matchYear =
-        !selectedSchoolYear ||
-        student.school_year?.toLowerCase() === selectedSchoolYear.toLowerCase();
+    const matchYear =
+      !selectedSchoolYear ||
+      student.school_year?.toLowerCase() === selectedSchoolYear.toLowerCase();
 
-      return matchName && matchYear;
-    })
-    .sort((a, b) => {
-      if (!a.student_name) return 1;
-      if (!b.student_name) return -1;
-      return a.student_name.localeCompare(b.student_name);
-    });
+    const matchClass =
+      !selectedClass || student.year_level === selectedClass;
+
+    const matchMonth =
+      !selectedMonth || student.month === selectedMonth;
+
+    return matchName && matchYear && matchClass && matchMonth;
+  })
+  .sort((a, b) => {
+    if (!a.student_name) return 1;
+    if (!b.student_name) return -1;
+    return a.student_name.localeCompare(b.student_name);
+  });
+
+const schoolYears = useMemo(() => {
+  return [...new Set(allStudents.map((s) => s.school_year))];
+}, [allStudents]);
 
 
   if (loading) {
@@ -113,14 +109,14 @@ const FeeSummaryTable = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
-        <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+  //       <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+  //       <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
@@ -139,7 +135,7 @@ const FeeSummaryTable = () => {
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Class Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Class:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Class</label>
                 <select
                   className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={selectedClass}
@@ -147,14 +143,14 @@ const FeeSummaryTable = () => {
                 >
                   <option value="">All Classes</option>
                   {yearLevels.map((level) => (
-                    <option key={level.id} value={level.id}>{level.level_name}</option>
+                    <option key={level.id} value={level.level_name}>{level.level_name}</option>
                   ))}
                 </select>
               </div>
 
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Month:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Month</label>
                 <select
                   className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={selectedMonth}
@@ -170,17 +166,18 @@ const FeeSummaryTable = () => {
                 </select>
               </div>
 
-              {/* Year Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Year:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Year</label>
                 <select
                   className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
                   value={selectedSchoolYear}
                   onChange={(e) => setSelectedSchoolYear(e.target.value)}
                 >
                   <option value="">All Years</option>
-                  {[...new Set(students.map((s) => s.school_year))].map((year) => (
-                    <option key={year} value={year}>{year}</option>
+                  {schoolYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -246,7 +243,7 @@ const FeeSummaryTable = () => {
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}</td>
-                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100 font-bold">{record.student_name}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.student_name}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.year_level}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.school_year}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.month}</td>
