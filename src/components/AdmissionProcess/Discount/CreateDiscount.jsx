@@ -4,7 +4,6 @@ import { AuthContext } from "../../../context/AuthContext";
 
 const CreateDiscount = () => {
   const { axiosInstance } = useContext(AuthContext);
-  
 
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -111,11 +110,10 @@ const CreateDiscount = () => {
     const admission = parseFloat(formData.admission_fee_discount || 0);
     const tuition = parseFloat(formData.tuition_fee_discount || 0);
 
-    if ( tuition <= 0 && admission <= 0) {
+    if (tuition <= 0 && admission <= 0) {
       errors.discount =
         "Admission or Tuition Fee Discount must be greater than 0";
     }
-
 
     setFormErrors(errors);
 
@@ -148,7 +146,11 @@ const CreateDiscount = () => {
     } catch (err) {
       setAlertTitle("Error");
       console.log("error", err.response?.data);
-      setAlertMessage(err.response?.data?.student_id || "Something went wrong");
+      setAlertMessage(
+        err.response?.data?.student_id ||
+          err.response?.data?.admission_fee_discount ||
+          err.response?.data?.tuition_fee_discount
+      );
       setShowAlert(true);
     } finally {
       setIsSubmitting(false);
@@ -160,7 +162,6 @@ const CreateDiscount = () => {
       .toLowerCase()
       .includes(searchStudentInput.toLowerCase())
   );
-
 
   if (pageLoading) {
     return (
@@ -314,10 +315,10 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                min="0"
-                step="0.01"
+                min={0}     
                 className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                 placeholder="e.g. 100"
+                max={9999999}
                 value={formData.admission_fee_discount}
                 onChange={(e) =>
                   handleChange("admission_fee_discount", e.target.value)
@@ -339,10 +340,10 @@ const CreateDiscount = () => {
               </label>
               <input
                 type="number"
-                min="0"
-                step="0.01"
+                min={0}
                 className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                 placeholder="e.g. 500"
+                max={9999999}
                 value={formData.tuition_fee_discount}
                 onChange={(e) =>
                   handleChange("tuition_fee_discount", e.target.value)
