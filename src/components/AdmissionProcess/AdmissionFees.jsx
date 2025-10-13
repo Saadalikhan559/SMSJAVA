@@ -681,7 +681,17 @@ export const AdmissionFees = () => {
                                     </td>
                                   )}
                                   <td>{fee.fee_type}</td>
-                                  <td>₹{fee.base_amount}</td>
+                                  <td>
+                                    ₹
+                                    {
+                                      fee.status === "Already Paid"
+                                        ? fee.base_amount
+                                        : fee.status === "Pending"
+                                          ? fee.base_amount
+                                          : fee.base_amount - fee.paid_amount
+                                    }
+                                  </td>
+
                                   <td >
                                     ₹{fee.paid_amount ? 0 : fee.late_fee}
                                   </td>

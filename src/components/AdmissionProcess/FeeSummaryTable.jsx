@@ -39,8 +39,8 @@ const FeeSummaryTable = () => {
       setAllStudents([]);
       setStudents([]);
     } else if (Array.isArray(data)) {
-      setAllStudents(data); // 🔁 Full dataset
-      setStudents(data);     // You can also use filtering here later if needed
+      setAllStudents(data); 
+      setStudents(data);     
     } else {
       setError("Unexpected response from server.");
     }
@@ -143,7 +143,7 @@ const schoolYears = useMemo(() => {
                 >
                   <option value="">All Classes</option>
                   {yearLevels.map((level) => (
-                    <option key={level.id} value={level.id}>{level.level_name}</option>
+                    <option key={level.id} value={level.level_name}>{level.level_name}</option>
                   ))}
                 </select>
               </div>
