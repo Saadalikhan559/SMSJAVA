@@ -823,8 +823,7 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="number"
-                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"
-                  }`}
+                className={`input w-full focus:outline-none ${errors.paid_amount ? "input-error" : "input-bordered"}`}
                 {...register("paid_amount", {
                   required: "Amount is required",
                   min: { value: 0, message: "Amount must be positive" },
@@ -835,9 +834,18 @@ export const AdmissionFees = () => {
                 })}
                 value={watch("paid_amount")}
                 disabled={!selectedPaymentMode}
-                onChange={(e) => setValue("paid_amount", e.target.value)}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  if (value > totalAmount.totalAmount) {
+                    setValue("paid_amount", totalAmount.totalAmount);
+                  } else {
+                    setValue("paid_amount", e.target.value);
+                  }
+                }}
                 step="1"
+                max={totalAmount.totalAmount}
               />
+
               {errors.paid_amount && (
                 <label className="label">
                   <span className="label-text-alt text-error">
@@ -860,7 +868,7 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="text"
-                maxLength={25} 
+                maxLength={25}
                 className={`input w-full focus:outline-none ${errors.remarks ? "input-error" : "input-bordered"
                   }`}
                 {...register("remarks", {
@@ -896,7 +904,7 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="text"
-                maxLength={15} 
+                maxLength={15}
                 className={`input w-full focus:outline-none ${errors.received_by ? "input-error" : "input-bordered"
                   }`}
                 {...register("received_by", {
