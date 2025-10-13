@@ -658,7 +658,7 @@ export const AdmissionFees = () => {
                                   )}
                                   <td>{fee.fee_type}</td>
                                   <td>₹{fee.paid_amount ? Due : fee.base_amount}</td>
-                                  <td className={fee.late_fee > 0 ? "text-warning" : ""}>
+                                  <td >
                                     ₹{fee.paid_amount ? 0 : fee.late_fee}
                                   </td>
                                   <td>
