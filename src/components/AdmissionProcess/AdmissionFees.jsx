@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { constants } from "../../global/constants";
@@ -438,14 +438,29 @@ export const AdmissionFees = () => {
 
 
   // Filter students by name or email based on input
- const filteredStudents = students
-  ?.filter((student) =>
-    `${student?.student_name || ""} ${student?.student_email || ""}`
-      .toLowerCase()
-      .includes(searchStudentInput.trim().toLowerCase())
-  )
-  .sort((a, b) => a.student_name.localeCompare(b.student_name));
+  const filteredStudents = students
+    ?.filter((student) =>
+      `${student?.student_name || ""} ${student?.student_email || ""}`
+        .toLowerCase()
+        .includes(searchStudentInput.trim().toLowerCase())
+    )
+    .sort((a, b) => a.student_name.localeCompare(b.student_name));
 
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowStudentDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
 
 
@@ -536,7 +551,7 @@ export const AdmissionFees = () => {
             </div>
 
             {/* Student Selection */}
-            <div className="form-control relative">
+            <div className="form-control relative" ref={dropdownRef}>
               <label className="label">
                 <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <i className="fa-solid fa-user-graduate text-sm"></i>
@@ -544,7 +559,7 @@ export const AdmissionFees = () => {
                 </span>
               </label>
 
-         
+
               <div
                 className={`input input-bordered w-full flex items-center justify-between cursor-pointer ${!selectedClassId ? "cursor-not-allowed opacity-70" : ""}`}
                 onClick={() => {
@@ -552,7 +567,9 @@ export const AdmissionFees = () => {
                 }}
               >
                 {selectedStudentName || "Select Student"}
-                <i className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}></i>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for form submission */}
@@ -584,25 +601,26 @@ export const AdmissionFees = () => {
                     {isLoading ? (
                       <p className="p-2">Loading students...</p>
                     ) : filteredStudents?.length > 0 ? (
-                      filteredStudents.map((student) =>{ 
+                      filteredStudents.map((student) => {
                         console.log(student);
-                        
-                        return(
-                        <p
-                          key={student.student_id}
-                          className="p-2"
-                          onClick={() => {
-                            const displayName = `${student.student_name} - ${student.student_email}`;
-                            setSelectedStudentName(displayName);
-                            setSearchStudentInput("");
-                            setShowStudentDropdown(false);
-                            setValue("student_id", student.student_id, { shouldValidate: true });
-                            clearErrors("student_id");
-                          }}
-                        >
-                          {student.student_name} - {student.student_email}
-                        </p>
-                      )})
+
+                        return (
+                          <p
+                            key={student.student_id}
+                            className="p-2"
+                            onClick={() => {
+                              const displayName = `${student.student_name} - ${student.student_email}`;
+                              setSelectedStudentName(displayName);
+                              setSearchStudentInput("");
+                              setShowStudentDropdown(false);
+                              setValue("student_id", student.student_id, { shouldValidate: true });
+                              clearErrors("student_id");
+                            }}
+                          >
+                            {student.student_name} - {student.student_email}
+                          </p>
+                        )
+                      })
                     ) : (
                       <p className="p-2">No students found.</p>
                     )}
@@ -842,17 +860,26 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="text"
+                maxLength={25} 
                 className={`input w-full focus:outline-none ${errors.remarks ? "input-error" : "input-bordered"
                   }`}
                 {...register("remarks", {
                   required: "Remarks are required",
+                  minLength: {
+                    value: 3,
+                    message: "Remarks must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 25,
+                    message: "Remarks cannot exceed 25 characters",
+                  },
                 })}
                 placeholder="Enter any remarks"
                 disabled={!selectedPaymentMode}
               />
               {errors.remarks && (
                 <label className="label">
-                  <span className="label-text-alt text-error">
+                  <span className="label-text-alt text-sm text-error">
                     {errors.remarks.message}
                   </span>
                 </label>
@@ -869,17 +896,26 @@ export const AdmissionFees = () => {
               </label>
               <input
                 type="text"
+                maxLength={15} 
                 className={`input w-full focus:outline-none ${errors.received_by ? "input-error" : "input-bordered"
                   }`}
                 {...register("received_by", {
                   required: "Signature is required",
+                  minLength: {
+                    value: 3,
+                    message: "Name must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 15,
+                    message: "Name cannot exceed 15 characters",
+                  },
                 })}
                 placeholder="Enter your name as signature"
                 disabled={!selectedPaymentMode}
               />
               {errors.received_by && (
                 <label className="label">
-                  <span className="label-text-alt text-error">
+                  <span className="label-text-alt text-sm text-error">
                     {errors.received_by.message}
                   </span>
                 </label>
@@ -887,15 +923,17 @@ export const AdmissionFees = () => {
             </div>
           </div>
 
+
+
           {/* Submit Button */}
           <div className="flex justify-center mt-10">
             <button
               type="submit"
-               className={`btn bgTheme text-white w-52 ${isSubmitting || selectedFeeIds.length === 0
-                                ? "opacity-50 cursor-not-allowed"
-                                : "hover:bg-purple-700"
-                                }`}
-              disabled={isSubmitting || selectedFeeIds.length === 0}
+              className={`btn bgTheme text-white w-52 ${isSubmitting || !selectedPaymentMode
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-purple-700"
+                }`}
+              disabled={isSubmitting || !selectedPaymentMode}
             >
               {isSubmitting ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
