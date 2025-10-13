@@ -243,7 +243,7 @@ const schoolYears = useMemo(() => {
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}</td>
-                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100 font-bold">{record.student_name}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.student_name}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.year_level}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.school_year}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.month}</td>
