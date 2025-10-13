@@ -150,7 +150,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Month */}
-            {/* <div className="form-control">
+            <div className="form-control">
               <label className="label">
                 <span className="label-text dark:text-gray-200">
                   Month <span className="text-error">*</span>
@@ -166,10 +166,10 @@ const UpdateIncome = ({ onClose, refreshData }) => {
                   <option key={idx} value={m}>{m}</option>
                 ))}
               </select>
-            </div> */}
+            </div>
 
             {/* Amount */}
-            {/* <div className="form-control">
+            <div className="form-control">
               <label className="label">
                 <span className="label-text dark:text-gray-200">
                   Amount <span className="text-error">*</span>
@@ -182,7 +182,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
                 readOnly={parseInt(selectedCategory) === 1}
                 disabled={true}
               />
-            </div> */}
+            </div>
 
             {/* Income Date */}
             <div className="form-control">
@@ -199,7 +199,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
             </div>
 
             {/* Category */}
-            {/* <div className="form-control">
+            <div className="form-control">
               <label className="label">
                 <span className="label-text dark:text-gray-200">
                   Category <span className="text-error">*</span>
@@ -212,7 +212,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
               >
                 <option value={Income.category}>{Income.category_name}</option>
               </select>
-            </div> */}
+            </div>
 
             {/* Description */}
             <div className="form-control">
@@ -228,7 +228,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
             </div>
 
             {/* School Year */}
-            {/* <div className="form-control">
+            <div className="form-control">
               <label className="label">
                 <span className="label-text dark:text-gray-200">
                   School Year <span className="text-error">*</span>
@@ -242,7 +242,7 @@ const UpdateIncome = ({ onClose, refreshData }) => {
                 <option value={Income.school_year_value}>{Income.school_year}</option>
               
               </select>
-            </div> */}
+            </div>
 
             {/* Payment Method */}
             <div className="form-control">
