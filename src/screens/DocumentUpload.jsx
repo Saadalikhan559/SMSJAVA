@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef } from "react";
 import {
   fetchDocumentType,
   fetchGuardians,
@@ -56,6 +56,12 @@ export const DocumentUpload = () => {
 
 
   const [role, setRole] = useState("");
+
+  const studentDropdownRef = useRef(null);
+const teacherDropdownRef = useRef(null);
+const guardianDropdownRef = useRef(null);
+const officeStaffDropdownRef = useRef(null);
+
 
   const [formData, setFormData] = useState({
     student: "",
@@ -471,9 +477,13 @@ export const DocumentUpload = () => {
       setStep(0);
       setApiErrors({});
       setSelectedTeacherName("")
+      setSearchTeacherInput("")
       setSelectedGuardianName("")
-      setSelectedStudentName("")
+      setSearchGuardianInput("")
       setSelectedOfficeStaffName("")
+      setSearchOfficeStaffInput("")
+      setSelectedStudentName("")
+      setSearchStudentInput("")
     } catch (err) {
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
@@ -486,9 +496,31 @@ export const DocumentUpload = () => {
       // setAlertMessage("Upload failed");
       // setShowAlert(true);
     } finally {
+      setSelectedTeacherName("")
+      setSearchTeacherInput("")
+      setSelectedGuardianName("")
+      setSearchGuardianInput("")
+      setSelectedOfficeStaffName("")
+      setSearchOfficeStaffInput("")
+      setSelectedStudentName("")
+      setSearchStudentInput("")
       setLoading(false);
     }
   };
+
+  const handleBack = () => {
+    setSelectedTeacherName("")
+    setSearchTeacherInput("")
+    setSelectedGuardianName("")
+    setSearchGuardianInput("")
+    setSelectedOfficeStaffName("")
+    setSearchOfficeStaffInput("")
+    setSelectedStudentName("")
+    setSearchStudentInput("")
+
+    prev()
+    setDisable(true)
+  }
 
 
   // --- SIDE EFFECTS ---
@@ -524,6 +556,44 @@ export const DocumentUpload = () => {
     .sort((a, b) =>
       a.name.toLowerCase().localeCompare(b.name.toLowerCase())
     );
+
+    useEffect(() => {
+  function handleClickOutside(event) {
+    if (
+      studentDropdownRef.current &&
+      !studentDropdownRef.current.contains(event.target)
+    ) {
+      setShowStudentDropdown(false);
+    }
+
+    if (
+      teacherDropdownRef.current &&
+      !teacherDropdownRef.current.contains(event.target)
+    ) {
+      setShowTeacherDropdown(false);
+    }
+
+    if (
+      guardianDropdownRef.current &&
+      !guardianDropdownRef.current.contains(event.target)
+    ) {
+      setShowGuardianDropdown(false);
+    }
+
+    if (
+      officeStaffDropdownRef.current &&
+      !officeStaffDropdownRef.current.contains(event.target)
+    ) {
+      setShowOfficeStaffDropdown(false);
+    }
+  }
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
 
   // --- RENDER ---
   return (
@@ -689,7 +759,7 @@ export const DocumentUpload = () => {
                 <div className="form-control w-full pt-6">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-id-card text-sm"></i> Identity
+                      <i className="fa-solid fa-id-card text-sm"></i> Identity  <span className="text-error">*</span>
                     </span>
                   </label>
                   <input
@@ -754,7 +824,7 @@ export const DocumentUpload = () => {
             {/* Role-based dropdowns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.student && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={studentDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-graduate text-sm"></i>{" "}
@@ -776,10 +846,9 @@ export const DocumentUpload = () => {
                       (loadingStudents
                         ? "Loading students..."
                         : "Select Student")}
-                    <i
-                      className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"
-                        } ml-2`}
-                    ></i>
+                   <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
                   </div>
 
                   {showStudentDropdown && (
@@ -830,7 +899,7 @@ export const DocumentUpload = () => {
               )}
 
               {role === constants.roles.teacher && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={teacherDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-chalkboard-teacher text-sm"></i>{" "}
@@ -847,9 +916,9 @@ export const DocumentUpload = () => {
                       onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
                     >
                       {selectedTeacherName || "Select Teacher"}
-                      <i
-                        className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
-                      ></i>
+                     <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
                     </div>
 
                     {/* Dropdown content */}
@@ -947,7 +1016,7 @@ export const DocumentUpload = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.guardian && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={guardianDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-shield text-sm"></i>{" "}
@@ -962,10 +1031,9 @@ export const DocumentUpload = () => {
                     }
                   >
                     {selectedGuardianName || "Select Guardian"}
-                    <i
-                      className={`fa-solid fa-chevron-${showGuardianDropdown ? "up" : "down"
-                        } ml-2`}
-                    ></i>
+                   <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
                   </div>
 
                   {showGuardianDropdown && (
@@ -1017,7 +1085,7 @@ export const DocumentUpload = () => {
               )}
 
               {role === constants.roles.officeStaff && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={officeStaffDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-briefcase text-sm"></i> Office
@@ -1032,10 +1100,9 @@ export const DocumentUpload = () => {
                     }
                   >
                     {selectedOfficeStaffName || "Select Office Staff"}
-                    <i
-                      className={`fa-solid fa-chevron-${showOfficeStaffDropdown ? "up" : "down"
-                        } ml-2`}
-                    ></i>
+                   <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
                   </div>
 
                   {showOfficeStaffDropdown && (
@@ -1114,7 +1181,7 @@ export const DocumentUpload = () => {
             <div className="flex-1 flex justify-end gap-4">
               <button
                 type="button"
-                onClick={prev}
+                onClick={handleBack}
                 className="btn bgTheme w-auto md:w-36 text-white  hover:bg-purple-700 flex items-center justify-center"
               >
                 <i className="fa-solid fa-arrow-left mr-2"></i> Back
