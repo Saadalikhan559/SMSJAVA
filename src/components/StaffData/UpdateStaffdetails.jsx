@@ -224,6 +224,7 @@ const UpdateStaffDetails = () => {
               <select
                 {...register("is_active", { required: "Status is required" })}
                 className="select select-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                disabled={true}
               >
                 <option value="">Select Status</option>
                 <option value="true">Active</option>
