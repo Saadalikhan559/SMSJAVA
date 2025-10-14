@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { constants } from "../../global/constants";
+import { useRef } from "react";
 
 //  Axios instance with interceptor
 const axiosInstance = axios.create({
@@ -51,6 +52,9 @@ const UploadExamPaper = () => {
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
   const [selectedSubjectName, setSelectedSubjectName] = useState("");
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
+  const examTypeRef = useRef(null);
+  const teacherRef = useRef(null);
+  const subjectRef = useRef(null);
 
 
 
@@ -223,6 +227,27 @@ const UploadExamPaper = () => {
     examTypeObj.name.toLowerCase().includes(searchExamTypeInput.toLowerCase())
   );
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (examTypeRef.current && !examTypeRef.current.contains(event.target)) {
+        setShowExamTypeDropdown(false);
+      }
+      if (teacherRef.current && !teacherRef.current.contains(event.target)) {
+        setShowTeacherDropdown(false);
+      }
+      if (subjectRef.current && !subjectRef.current.contains(event.target)) {
+        setShowSubjectDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
 
 
   if (loading) {
@@ -272,9 +297,9 @@ const UploadExamPaper = () => {
                 onClick={() => setShowExamTypeDropdown(!showExamTypeDropdown)}
               >
                 {selectedExamType || "Select Exam Type"}
-                <i
-                  className={`fa-solid fa-chevron-${showExamTypeDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <span className="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for react-hook-form */}
@@ -286,7 +311,7 @@ const UploadExamPaper = () => {
 
               {/* Dropdown */}
               {showExamTypeDropdown && (
-                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600" ref={examTypeRef}>
                   {/* Search input inside dropdown */}
                   <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
                     <input
@@ -394,9 +419,9 @@ const UploadExamPaper = () => {
                 onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
               >
                 {selectedTeacherName || "Select Teacher"}
-                <i
-                  className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <span className="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for react-hook-form */}
@@ -408,7 +433,7 @@ const UploadExamPaper = () => {
 
               {/* Dropdown */}
               {showTeacherDropdown && (
-                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600" ref={teacherRef}>
                   {/* Search input inside dropdown */}
                   <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
                     <input
@@ -473,9 +498,9 @@ const UploadExamPaper = () => {
                 onClick={() => setShowSubjectDropdown(!showSubjectDropdown)}
               >
                 {selectedSubjectName || "Select Subject"}
-                <i
-                  className={`fa-solid fa-chevron-${showSubjectDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <span className="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for react-hook-form */}
@@ -487,7 +512,7 @@ const UploadExamPaper = () => {
 
               {/* Dropdown */}
               {showSubjectDropdown && (
-                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
+                <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600" ref={subjectRef}>
                   {/* Search input inside dropdown */}
                   <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
                     <input
@@ -590,7 +615,7 @@ const UploadExamPaper = () => {
               <input
                 type="file"
                 className="file-input file-input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                accept=".pdf,.doc,.docx"
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                 {...register("uploaded_file", {
                   required: "File is required",
                   validate: {
@@ -601,7 +626,10 @@ const UploadExamPaper = () => {
                         "application/pdf",
                         "application/msword",
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                      ].includes(files[0]?.type) || "Only PDF and Word documents are allowed",
+                        "image/png",
+                        "image/jpg",
+                        "image/jpeg",
+                      ].includes(files[0]?.type) || "Only PDF, Word, or Image files (PNG/JPG/JPEG) are allowed",
                   },
                 })}
               />

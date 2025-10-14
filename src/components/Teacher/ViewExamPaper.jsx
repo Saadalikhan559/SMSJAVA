@@ -137,11 +137,6 @@ const ViewExamPaper = () => {
   return (
     <div className="min-h-screen p-5 mb-24 md:mb-10 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-800 max-w-7xl p-6 rounded-lg shadow-lg mx-auto">
-        <div className="flex justify-end">
-          <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white">
-            <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
-          </Link>
-        </div><br/>
 
         {/* Title */}
         <div className="mb-4">
@@ -181,7 +176,7 @@ const ViewExamPaper = () => {
                   <span>{selectedTeacher || "All Teachers"}</span>
                 </div>
                 {isOpen && (
-                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto mt-1">
+                  <div className="absolute z-4 w-full bg-white dark:bg-gray-700  rounded-md shadow max-h-60 overflow-y-auto mt-1">
                     {/* Search input */}
                     <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
                       <input
@@ -198,7 +193,7 @@ const ViewExamPaper = () => {
                       filteredTeachers.map((teacher, index) => (
                         <div
                           key={index}
-                          className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer ${selectedTeacher === teacher ? "bg-blue-50 dark:bg-blue-900" : ""
+                          className={`p-2 capitalize hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer ${selectedTeacher === teacher ? "bg-blue-50 dark:bg-blue-900" : ""
                             }`}
                           onClick={() => {
                             setSelectedTeacher(teacher);
@@ -253,6 +248,11 @@ const ViewExamPaper = () => {
                   onChange={(e) => setSearchInput(e.target.value.trimStart())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
+              </div>
+              <div className="flex justify-end">
+                <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white">
+                  <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
+                </Link>
               </div>
             </div>
           </div>
