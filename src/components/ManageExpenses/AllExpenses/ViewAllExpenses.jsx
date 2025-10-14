@@ -8,14 +8,16 @@ import { Loader } from "../../../global/Loader";
 import axios from "axios";
 import { constants } from "../../../global/constants";
 import { Error } from "../../../global/Error";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../../router/AllRouterLinks";
 import { SuccessModal } from "../../Modals/SuccessModal";
 import { ConfirmationModal } from "../../Modals/ConfirmationModal";
 import { AuthContext } from "../../../context/AuthContext";
 
+
 export const ViewAllExpenses = () => {
   const { axiosInstance } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [schoolExpense, setSchoolExpense] = useState([]);
   const [loading, setLoading] = useState(false);
   const [schoolYear, setSchoolYear] = useState([]);
@@ -36,6 +38,9 @@ export const ViewAllExpenses = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [currentSchoolYearId, setCurrentSchoolYearId] = useState(null);
   const [fileErrorModal, setFileErrorModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+
 
   const getSchoolYear = async () => {
     try {
@@ -110,8 +115,17 @@ export const ViewAllExpenses = () => {
   }, [selectedSchoolYear, selectedCategory]);
 
   const filteredExpenses = schoolExpense.filter((expense) => {
-    if (!selectedStatus) return true;
-    return expense.status.toLowerCase() === selectedStatus.toLowerCase();
+    // Status filter
+    const statusMatch = !selectedStatus || expense.status.toLowerCase() === selectedStatus.toLowerCase();
+
+    // Search filter across description, category, created_by_name
+    const searchMatch = searchQuery
+      ? expense.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      expense.category_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      expense.created_by_name.toLowerCase().includes(searchQuery.toLowerCase())
+      : true;
+
+    return statusMatch && searchMatch;
   });
 
   const handleAddCategoryClick = (e) => {
@@ -227,60 +241,99 @@ export const ViewAllExpenses = () => {
         )}
 
         {/* Filters */}
-        <div className="flex flex-col gap-2 md:flex-row mb-6 border-b pb-2 dark:border-gray-700">
-          {/* School Year Filter */}
-          <div className="form-control md:w-1/4">
-            <label className="label">
-              <span className="label-text dark:text-gray-200">Select School Year</span>
-            </label>
-            <select
-              value={selectedSchoolYear}
-              onChange={(e) => setSelectedSchoolYear(e.target.value)}
-              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
-              <option value="">Select School Year</option>
-              {schoolYear.map((year) => (
-                <option key={year.id} value={year.id}>
-                  {year.year_name}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 mb-6 border-b pb-2 dark:border-gray-700 w-full">
+
+          {/* Left side filters + search + reset */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap md:flex-row md:gap-2 items-end gap-2 w-full md:w-auto">
+
+            {/* School Year Filter */}
+            <div className="form-control w-full sm:w-40">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">School Year</span>
+              </label>
+              <select
+                value={selectedSchoolYear}
+                onChange={(e) => setSelectedSchoolYear(e.target.value)}
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value="">Select Year</option>
+                {schoolYear.map((year) => (
+                  <option key={year.id} value={year.id}>
+                    {year.year_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Category Filter */}
+            <div className="form-control w-full sm:w-40">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">Category</span>
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value="">All Categories</option>
+                {category.map((cate) => (
+                  <option key={cate.id} value={cate.id}>
+                    {cate.name.charAt(0).toUpperCase() + cate.name.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Status Filter */}
+            <div className="form-control w-full sm:w-32">
+              <label className="label">
+                <span className="label-text dark:text-gray-200">Status</span>
+              </label>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              >
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+
+            {/* Search + Reset */}
+            <div className="flex flex-col sm:flex-row sm:gap-2 w-full sm:w-auto items-end">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="input input-bordered w-full sm:w-48 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+              <button
+                className="btn bgTheme text-white w-full sm:w-auto mt-2 sm:mt-0"
+                onClick={() => {
+                  setSelectedSchoolYear("");
+                  setSelectedCategory("");
+                  setSelectedStatus("");
+                  setSearchQuery("");
+                }}
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
-          {/* Category Filter */}
-          <div className="form-control md:w-1/4">
-            <label className="label">
-              <span className="label-text dark:text-gray-200">Select Category</span>
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          {/* Right side Create Expense button */}
+          <div className="w-full md:w-auto flex justify-end mt-2 md:mt-0">
+            <button
+              className="btn bgTheme text-white w-full sm:w-auto"
+              onClick={() => navigate(allRouterLink.createExpenses)}
             >
-              <option value="">Category</option>
-              {category.map((cate) => (
-                <option key={cate.id} value={cate.id}>
-                  {cate.name}
-                </option>
-              ))}
-            </select>
+              Create Expense <i className="fa-solid fa-receipt ml-2"></i>
+            </button>
           </div>
-          {/* Status Filter */}
-          <div className="form-control md:w-1/4">
-            <label className="label">
-              <span className="label-text dark:text-gray-200">Select Status</span>
-            </label>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
-              <option value="">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
+
         </div>
 
         {/* Table */}
@@ -288,18 +341,18 @@ export const ViewAllExpenses = () => {
           <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600">
             <thead className="bgTheme text-white sticky top-0 z-10">
               <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Category</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Amount</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Description</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Expense Date</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Payment Method</th>
-                      <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Attachment</th>
-                      <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
-                      <th className="px-18 py-3 text-left text-sm font-semibold text-nowrap">Created At</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Created By</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Approved By</th>
-                      <th className="px-12 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
-                    </tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Category</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Amount</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Description</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Expense Date</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Payment Method</th>
+                <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Attachment</th>
+                <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
+                <th className="px-18 py-3 text-left text-sm font-semibold text-nowrap">Created At</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Created By</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Approved By</th>
+                <th className="px-12 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
+              </tr>
             </thead>
 
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
@@ -320,7 +373,7 @@ export const ViewAllExpenses = () => {
                       {expense.attachment ? (
                         <button
                           onClick={() => handleViewAttachment(expense.attachment)}
-                          className="textTheme font-bold underline"
+                          className="textTheme underline"
                         >
                           Open Attachment
                         </button>
@@ -333,10 +386,10 @@ export const ViewAllExpenses = () => {
                     <td className="px-4 py-3 text-sm">
                       <span
                         className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${expense.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : expense.status === "rejected"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-green-100 text-green-800"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : expense.status === "rejected"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-green-100 text-green-800"
                           }`}
                       >
                         {expense.status}
