@@ -1,4 +1,4 @@
-import React, { useEffect, useState ,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   fetchDocumentType,
   fetchGuardians,
@@ -52,15 +52,18 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
+  const [FilesErrors, setFilesErrors] = useState([]);
   const [apiErrors, setApiErrors] = useState({});
 
+  console.log(FilesErrors);
+  
 
   const [role, setRole] = useState("");
 
   const studentDropdownRef = useRef(null);
-const teacherDropdownRef = useRef(null);
-const guardianDropdownRef = useRef(null);
-const officeStaffDropdownRef = useRef(null);
+  const teacherDropdownRef = useRef(null);
+  const guardianDropdownRef = useRef(null);
+  const officeStaffDropdownRef = useRef(null);
 
 
   const [formData, setFormData] = useState({
@@ -324,7 +327,7 @@ const officeStaffDropdownRef = useRef(null);
     });
   };
 
-  console.log(formData);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -361,6 +364,7 @@ const officeStaffDropdownRef = useRef(null);
     // Clone errors arrays
     const newErrors = [...identityErrors];
     const newDocErrors = [...docTypeErrors];
+    const newFileErrors = [...FilesErrors];
 
     // Validate document type
     if (name === "document_types") {
@@ -368,6 +372,13 @@ const officeStaffDropdownRef = useRef(null);
         newDocErrors[index] = "Please select a document type";
       } else {
         newDocErrors[index] = "";
+      }
+    }
+    if (name === "files") {
+      if (!value) {
+        newFileErrors[index] = "Please select a file";
+      } else {
+        newFileErrors[index] = "";
       }
     }
 
@@ -382,8 +393,9 @@ const officeStaffDropdownRef = useRef(null);
 
     // Update state
     setIdentityErrors([...newErrors]);
-    setDocTypeErrors([...newDocErrors]); // Ensure a new array to trigger re-render
-    console.log("Document Type Error at index", index, ":", newDocErrors[index]);
+    setDocTypeErrors([...newDocErrors]); 
+    setFilesErrors([...newFileErrors]); 
+    console.log("Document Type Error at index", index, ":", newFileErrors);
 
   };
 
@@ -403,6 +415,7 @@ const officeStaffDropdownRef = useRef(null);
 
     const newDocErrors = [...docTypeErrors];
     const newIdentityErrors = [...identityErrors];
+    const newfileError = [...FilesErrors]
     let hasError = false;
 
     try {
@@ -418,8 +431,10 @@ const officeStaffDropdownRef = useRef(null);
 
         // Validate file
         if (!field.files) {
-          newDocErrors[index] = "Please upload a file";
+          newfileError[index] = "Please upload a file";
           hasError = true;
+        } else {
+          newfileError[index] = "";
         }
 
         // Validate identities
@@ -440,6 +455,7 @@ const officeStaffDropdownRef = useRef(null);
 
       setDocTypeErrors([...newDocErrors]);
       setIdentityErrors([...newIdentityErrors]);
+      setFilesErrors([...newfileError])
 
 
       if (hasError) {
@@ -484,14 +500,16 @@ const officeStaffDropdownRef = useRef(null);
       setSearchOfficeStaffInput("")
       setSelectedStudentName("")
       setSearchStudentInput("")
+      setDisable(true)
     } catch (err) {
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
+        
       }
       else if (err.pan_no) {
         setApiErrors({ identities: err.identities });
       }
-
+   setDisable(true)
       // console.error("Upload failed:", err);
       // setAlertMessage("Upload failed");
       // setShowAlert(true);
@@ -505,10 +523,19 @@ const officeStaffDropdownRef = useRef(null);
       setSelectedStudentName("")
       setSearchStudentInput("")
       setLoading(false);
+      setDisable(true);
     }
   };
 
   const handleBack = () => {
+      setUploadFields([{ files: null, document_types: "", identities: "" }]);
+      setFormData({
+        student: "",
+        teacher: "",
+        guardian: "",
+        office_staff: "",
+        year_level: "",
+      });
     setSelectedTeacherName("")
     setSearchTeacherInput("")
     setSelectedGuardianName("")
@@ -557,42 +584,42 @@ const officeStaffDropdownRef = useRef(null);
       a.name.toLowerCase().localeCompare(b.name.toLowerCase())
     );
 
-    useEffect(() => {
-  function handleClickOutside(event) {
-    if (
-      studentDropdownRef.current &&
-      !studentDropdownRef.current.contains(event.target)
-    ) {
-      setShowStudentDropdown(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        studentDropdownRef.current &&
+        !studentDropdownRef.current.contains(event.target)
+      ) {
+        setShowStudentDropdown(false);
+      }
+
+      if (
+        teacherDropdownRef.current &&
+        !teacherDropdownRef.current.contains(event.target)
+      ) {
+        setShowTeacherDropdown(false);
+      }
+
+      if (
+        guardianDropdownRef.current &&
+        !guardianDropdownRef.current.contains(event.target)
+      ) {
+        setShowGuardianDropdown(false);
+      }
+
+      if (
+        officeStaffDropdownRef.current &&
+        !officeStaffDropdownRef.current.contains(event.target)
+      ) {
+        setShowOfficeStaffDropdown(false);
+      }
     }
 
-    if (
-      teacherDropdownRef.current &&
-      !teacherDropdownRef.current.contains(event.target)
-    ) {
-      setShowTeacherDropdown(false);
-    }
-
-    if (
-      guardianDropdownRef.current &&
-      !guardianDropdownRef.current.contains(event.target)
-    ) {
-      setShowGuardianDropdown(false);
-    }
-
-    if (
-      officeStaffDropdownRef.current &&
-      !officeStaffDropdownRef.current.contains(event.target)
-    ) {
-      setShowOfficeStaffDropdown(false);
-    }
-  }
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
 
   // --- RENDER ---
@@ -708,7 +735,7 @@ const officeStaffDropdownRef = useRef(null);
                 {/* File Upload */}
                 <div className="form-control w-full">
                   <label className="label">
-                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1 pt-6">
                       <i className="fa-solid fa-file-upload text-sm"></i>{" "}
                       Document Upload
                       <span className="text-error">*</span>
@@ -722,6 +749,11 @@ const officeStaffDropdownRef = useRef(null);
                     required
                     onChange={(e) => handleFileChange(e, index)}
                   />
+                   <div className="h-5">
+                    <span className="text-red-500 text-sm leading-tight">
+                      {FilesErrors[index] || ""}
+                    </span>
+                  </div>
                 </div>
 
 
@@ -846,9 +878,9 @@ const officeStaffDropdownRef = useRef(null);
                       (loadingStudents
                         ? "Loading students..."
                         : "Select Student")}
-                   <div >
-                  <span class="arrow">&#9662;</span>
-                </div>
+                    <div >
+                      <span class="arrow">&#9662;</span>
+                    </div>
                   </div>
 
                   {showStudentDropdown && (
@@ -916,9 +948,9 @@ const officeStaffDropdownRef = useRef(null);
                       onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
                     >
                       {selectedTeacherName || "Select Teacher"}
-                     <div >
-                  <span class="arrow">&#9662;</span>
-                </div>
+                      <div >
+                        <span class="arrow">&#9662;</span>
+                      </div>
                     </div>
 
                     {/* Dropdown content */}
@@ -1031,9 +1063,9 @@ const officeStaffDropdownRef = useRef(null);
                     }
                   >
                     {selectedGuardianName || "Select Guardian"}
-                   <div >
-                  <span class="arrow">&#9662;</span>
-                </div>
+                    <div >
+                      <span class="arrow">&#9662;</span>
+                    </div>
                   </div>
 
                   {showGuardianDropdown && (
@@ -1100,9 +1132,9 @@ const officeStaffDropdownRef = useRef(null);
                     }
                   >
                     {selectedOfficeStaffName || "Select Office Staff"}
-                   <div >
-                  <span class="arrow">&#9662;</span>
-                </div>
+                    <div >
+                      <span class="arrow">&#9662;</span>
+                    </div>
                   </div>
 
                   {showOfficeStaffDropdown && (
