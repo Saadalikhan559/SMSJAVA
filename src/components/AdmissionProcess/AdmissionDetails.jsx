@@ -20,40 +20,40 @@ export const AdmissionDetails = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [error, setError] = useState(false);
 
-  
-const [studentData, setStudentData] = useState([]);
 
-const getAdmissionDetails = async () => {
-  try {
-    const data = await fetchAdmissionDetails();
-    setDetails(data);
-    setLoading(false);
+  const [studentData, setStudentData] = useState([]);
 
-    const stu = await axiosInstance.get("s/students/student_details/");
-   setStudentData(normalizeStudents(stu.data));
-  } catch (error) {
-    console.log("failed to fetch admission details", error);
-    setError(true);
-    setLoading(false);
-  }
-};
+  const getAdmissionDetails = async () => {
+    try {
+      const data = await fetchAdmissionDetails();
+      setDetails(data);
+      setLoading(false);
 
-const normalizeStudents = (data) => {
-  if (!data) return [];
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.results)) return data.results; 
-  if (Array.isArray(data?.data)) return data.data;    
-  if (typeof data === "object") {
-    // single object → wrap
-    if ("student_id" in data || "student_name" in data) return [data];
-    // object keyed by ids → take values that look like students
-    const vals = Object.values(data).filter(
-      v => v && typeof v === "object" && ("student_id" in v || "student_name" in v)
-    );
-    if (vals.length) return vals;
-  }
-  return [];
-};
+      const stu = await axiosInstance.get("s/students/student_details/");
+      setStudentData(normalizeStudents(stu.data));
+    } catch (error) {
+      console.log("failed to fetch admission details", error);
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  const normalizeStudents = (data) => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.results)) return data.results;
+    if (Array.isArray(data?.data)) return data.data;
+    if (typeof data === "object") {
+      // single object → wrap
+      if ("student_id" in data || "student_name" in data) return [data];
+      // object keyed by ids → take values that look like students
+      const vals = Object.values(data).filter(
+        v => v && typeof v === "object" && ("student_id" in v || "student_name" in v)
+      );
+      if (vals.length) return vals;
+    }
+    return [];
+  };
 
   useEffect(() => {
     getAdmissionDetails();
@@ -72,138 +72,138 @@ const normalizeStudents = (data) => {
   }, []);
 
 
- const handleDownloadStudentDataPDF = (input = []) => {
-  const data = normalizeStudents(input);
-  if (!data.length) {
-    return;
-  }
+  const handleDownloadStudentDataPDF = (input = []) => {
+    const data = normalizeStudents(input);
+    if (!data.length) {
+      return;
+    }
 
- 
-  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a3" });
 
-  const margin = 10;
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a3" });
 
-  // Header
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.text("Student Details Report", margin, 12);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - margin, 12, { align: "right" });
+    const margin = 10;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-  const fmtDate = (d) => {
-    if (!d) return "";
-    const date = new Date(d);
-    return isNaN(date)
-      ? String(d)
-      : date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+    // Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Student Details Report", margin, 12);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - margin, 12, { align: "right" });
+
+    const fmtDate = (d) => {
+      if (!d) return "";
+      const date = new Date(d);
+      return isNaN(date)
+        ? String(d)
+        : date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+    };
+    const fmtNumberIN = (n) => {
+      if (n === null || n === undefined || n === "" || n === "N/A") return "N/A";
+      const num = Number(n);
+      return Number.isNaN(num)
+        ? String(n)
+        : new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(num);
+    };
+    const safe = (v) => (v === null || v === undefined ? "" : String(v));
+
+    // Build one row per student. Some columns are multi-line to save width.
+    const body = data.map((s) => {
+      const id = safe(s.student_id ?? s.id);
+      const scholar = safe(s["scholar number"] ?? "");
+      const enroll = safe(s.enrollment_no ?? "");
+      const schEnroll = `S:${scholar}${scholar && enroll ? "  " : ""}E:${enroll}`.trim();
+      const name = safe(s.student_name);
+      const className = safe(s.class);
+      const age = s.age ?? "";
+      const gender = s.gender ? s.gender[0].toUpperCase() + s.gender.slice(1) : "";
+      const dob = fmtDate(s.date_of_birth);
+      const category = safe(s.category);
+      const religion = safe(s.religion);
+      const catRel = `Cat:${category}\nRel:${religion}`;
+      const siblings = s["no. of siblings"] ?? "";
+      const active = s.is_active ? "Yes" : "No";
+      const rteNo = s["rte number"] ?? "";
+      const rte = s.is_rte ? `Yes${rteNo ? `\n#${rteNo}` : ""}` : "No";
+      const phone = safe(s.contact_number);
+      const email = safe(s.email);
+      const father = safe(s.father_name);
+      const mother = safe(s.mother_name);
+      const parents = `F:${father}\nM:${mother}`;
+      const guardianName = safe(s.guardian_name);
+      const guardianPhone = safe(s["guardian's contact no."] ?? "");
+      const guardian = `G:${guardianName}\nC:${guardianPhone}`;
+      const address = safe(s.full_address);
+      const aadhaar = safe(s["adhaar number"] ?? s["aadhaar number"] ?? "");
+      const bankAcc = safe(s["bank details"]?.account_no ?? "N/A");
+      const ifsc = safe(s["bank details"]?.ifsc_code ?? "N/A");
+      const bank = `A/C:${bankAcc}\nIFSC:${ifsc}`;
+      const annualIncome = fmtNumberIN(s["annual income"] ?? s.annual_income);
+      const year = safe(s["school year"] ?? "");
+
+      return [
+        id, schEnroll, name, className, age, gender, dob, catRel, siblings, active,
+        rte, phone, email, parents, guardian, address, aadhaar, bank, annualIncome, year,
+      ];
+    });
+
+    autoTable(doc, {
+      startY: 18,
+      theme: "grid",
+      showHead: "everyPage",
+      rowPageBreak: "avoid",
+      head: [[
+        "ID", "Sch/En", "Name", "Class", "Age", "Gender", "DOB", "Cat/Rel", "Siblings", "Active",
+        "RTE", "Phone", "Email", "Parents", "Guardian", "Address", "Aadhaar", "Bank", "Income", "Year",
+      ]],
+      body,
+      margin: { top: 15, left: margin, right: margin },
+      styles: {
+        fontSize: 6.3,
+        cellPadding: 1.0,
+        overflow: "linebreak",
+        valign: "middle",
+      },
+      headStyles: {
+        fillColor: [30, 64, 175],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      columnStyles: {
+        0: { cellWidth: 10, halign: "center" }, // ID
+        1: { cellWidth: 24 },                   // Sch/En
+        2: { cellWidth: 30 },                   // Name
+        3: { cellWidth: 14 },                   // Class
+        4: { cellWidth: 8, halign: "center" },  // Age
+        5: { cellWidth: 12 },                   // Gender
+        6: { cellWidth: 16 },                   // DOB
+        7: { cellWidth: 20 },                   // Cat/Rel
+        8: { cellWidth: 20, halign: "center" }, // Siblings
+        9: { cellWidth: 10, halign: "center" }, // Active
+        10: { cellWidth: 16 },                  // RTE
+        11: { cellWidth: 20 },                  // Phone
+        12: { cellWidth: 24 },                  // Email
+        13: { cellWidth: 22 },                  // Parents
+        14: { cellWidth: 22 },                  // Guardian
+        15: { cellWidth: 50 },                  // Address
+        16: { cellWidth: 22 },                  // Aadhaar
+        17: { cellWidth: 26 },                  // Bank (A/C + IFSC)
+        18: { cellWidth: 18, halign: "right" }, // Income
+        19: { cellWidth: 14 },                  // Year
+      },
+      didDrawPage: (data) => {
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(8);
+        doc.setTextColor(100);
+        doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - margin, pageHeight - 6, { align: "right" });
+      },
+    });
+
+    doc.save("Student_Details_Report.pdf");
   };
-  const fmtNumberIN = (n) => {
-    if (n === null || n === undefined || n === "" || n === "N/A") return "N/A";
-    const num = Number(n);
-    return Number.isNaN(num)
-      ? String(n)
-      : new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(num);
-  };
-  const safe = (v) => (v === null || v === undefined ? "" : String(v));
-
-  // Build one row per student. Some columns are multi-line to save width.
-  const body = data.map((s) => {
-    const id = safe(s.student_id ?? s.id);
-    const scholar = safe(s["scholar number"] ?? "");
-    const enroll = safe(s.enrollment_no ?? "");
-    const schEnroll = `S:${scholar}${scholar && enroll ? "  " : ""}E:${enroll}`.trim();
-    const name = safe(s.student_name);
-    const className = safe(s.class);
-    const age = s.age ?? "";
-    const gender = s.gender ? s.gender[0].toUpperCase() + s.gender.slice(1) : "";
-    const dob = fmtDate(s.date_of_birth);
-    const category = safe(s.category);
-    const religion = safe(s.religion);
-    const catRel = `Cat:${category}\nRel:${religion}`;
-    const siblings = s["no. of siblings"] ?? "";
-    const active = s.is_active ? "Yes" : "No";
-    const rteNo = s["rte number"] ?? "";
-    const rte = s.is_rte ? `Yes${rteNo ? `\n#${rteNo}` : ""}` : "No";
-    const phone = safe(s.contact_number);
-    const email = safe(s.email);
-    const father = safe(s.father_name);
-    const mother = safe(s.mother_name);
-    const parents = `F:${father}\nM:${mother}`;
-    const guardianName = safe(s.guardian_name);
-    const guardianPhone = safe(s["guardian's contact no."] ?? "");
-    const guardian = `G:${guardianName}\nC:${guardianPhone}`;
-    const address = safe(s.full_address);
-    const aadhaar = safe(s["adhaar number"] ?? s["aadhaar number"] ?? "");
-    const bankAcc = safe(s["bank details"]?.account_no ?? "N/A");
-    const ifsc = safe(s["bank details"]?.ifsc_code ?? "N/A");
-    const bank = `A/C:${bankAcc}\nIFSC:${ifsc}`;
-    const annualIncome = fmtNumberIN(s["annual income"] ?? s.annual_income);
-    const year = safe(s["school year"] ?? "");
-
-    return [
-      id, schEnroll, name, className, age, gender, dob, catRel, siblings, active,
-      rte, phone, email, parents, guardian, address, aadhaar, bank, annualIncome, year,
-    ];
-  });
-
-  autoTable(doc, {
-    startY: 18,
-    theme: "grid",
-    showHead: "everyPage",
-    rowPageBreak: "avoid", 
-    head: [[
-      "ID","Sch/En","Name","Class","Age","Gender","DOB","Cat/Rel","Siblings","Active",
-      "RTE","Phone","Email","Parents","Guardian","Address","Aadhaar","Bank","Income","Year",
-    ]],
-    body,
-    margin: { top: 15, left: margin, right: margin },
-    styles: {
-      fontSize: 6.3,         
-      cellPadding: 1.0,
-      overflow: "linebreak",
-      valign: "middle",
-    },
-    headStyles: {
-      fillColor: [30, 64, 175],
-      textColor: 255,
-      fontStyle: "bold",
-    },
-    alternateRowStyles: { fillColor: [248, 250, 252] },
-    columnStyles: {
-      0: { cellWidth: 10, halign: "center" }, // ID
-      1: { cellWidth: 24 },                   // Sch/En
-      2: { cellWidth: 30 },                   // Name
-      3: { cellWidth: 14 },                   // Class
-      4: { cellWidth: 8, halign: "center" },  // Age
-      5: { cellWidth: 12 },                   // Gender
-      6: { cellWidth: 16 },                   // DOB
-      7: { cellWidth: 20 },                   // Cat/Rel
-      8: { cellWidth: 20, halign: "center" }, // Siblings
-      9: { cellWidth: 10, halign: "center" }, // Active
-      10: { cellWidth: 16 },                  // RTE
-      11: { cellWidth: 20 },                  // Phone
-      12: { cellWidth: 24 },                  // Email
-      13: { cellWidth: 22 },                  // Parents
-      14: { cellWidth: 22 },                  // Guardian
-      15: { cellWidth: 50 },                  // Address
-      16: { cellWidth: 22 },                  // Aadhaar
-      17: { cellWidth: 26 },                  // Bank (A/C + IFSC)
-      18: { cellWidth: 18, halign: "right" }, // Income
-      19: { cellWidth: 14 },                  // Year
-    },
-    didDrawPage: (data) => {
-      const pageCount = doc.internal.getNumberOfPages();
-      doc.setFontSize(8);
-      doc.setTextColor(100);
-      doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - margin, pageHeight - 6, { align: "right" });
-    },
-  });
-
-  doc.save("Student_Details_Report.pdf");
-};
 
 
   if (error) {
@@ -216,7 +216,18 @@ const normalizeStudents = (data) => {
       </div>
     );
   }
-
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+        </div>
+        <p className="mt-2 text-gray-500 text-sm">Loading...</p>
+      </div>
+    );
+  }
   if (!details) {
     return <div className="p-4 text-center">No admission records found</div>;
   }
