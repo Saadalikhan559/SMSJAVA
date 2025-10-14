@@ -54,7 +54,6 @@ export const DocumentUpload = () => {
   const [docTypeErrors, setDocTypeErrors] = useState([]);
   const [apiErrors, setApiErrors] = useState({});
 
-
   const [role, setRole] = useState("");
 
   const [formData, setFormData] = useState({
@@ -147,8 +146,7 @@ export const DocumentUpload = () => {
       return panRegex.test(identity)
         ? ""
         : "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)";
-    }
-    else if (name === "migration certificate") {
+    } else if (name === "migration certificate") {
       const migrationRegex = /^[A-Z]{2,10}\/\d{4}\/\d{3,6}$/;
       return migrationRegex.test(identity)
         ? ""
@@ -173,8 +171,6 @@ export const DocumentUpload = () => {
         : "Domicile Certificate format: CODE/YYYY/SERIAL (e.g. DC/2022/000123)";
     }
 
-
-
     // Driving License
     else if (name === "driving license") {
       const dlRegex = /^[A-Z]{2}[ -]?\d{2}[ -]?\d{2,4}[ -]?\d{6,7}$/;
@@ -193,9 +189,6 @@ export const DocumentUpload = () => {
 
     return "";
   };
-
-
-
 
   // --- API FETCH FUNCTIONS ---
   const getRoles = async () => {
@@ -291,9 +284,13 @@ export const DocumentUpload = () => {
     if (!yearLevelID) return;
     setLoadingStudents(true);
     try {
-      const allStudentsByClass = await fetchStudentYearLevelByClass(yearLevelID);
+      const allStudentsByClass = await fetchStudentYearLevelByClass(
+        yearLevelID
+      );
       const sortedStudents = [...allStudentsByClass].sort((a, b) =>
-        a.student_name.localeCompare(b.student_name, "en", { sensitivity: "base" })
+        a.student_name.localeCompare(b.student_name, "en", {
+          sensitivity: "base",
+        })
       );
 
       setStudents(sortedStudents);
@@ -303,7 +300,6 @@ export const DocumentUpload = () => {
       setLoadingStudents(false);
     }
   };
-
 
   // --- HANDLERS ---
   const handleRoleChange = (e) => {
@@ -370,17 +366,23 @@ export const DocumentUpload = () => {
     const currentDocType = newFields[index]?.document_types || "";
 
     if (name === "document_types" || name === "identities") {
-      const validationError = validateIdentity(currentIdentities, currentDocType);
+      const validationError = validateIdentity(
+        currentIdentities,
+        currentDocType
+      );
       newErrors[index] = validationError || ""; // Ensure it's a string
     }
 
     // Update state
     setIdentityErrors([...newErrors]);
     setDocTypeErrors([...newDocErrors]); // Ensure a new array to trigger re-render
-    console.log("Document Type Error at index", index, ":", newDocErrors[index]);
-
+    console.log(
+      "Document Type Error at index",
+      index,
+      ":",
+      newDocErrors[index]
+    );
   };
-
 
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
@@ -400,7 +402,6 @@ export const DocumentUpload = () => {
     let hasError = false;
 
     try {
-
       for (const [index, field] of uploadFields.entries()) {
         // Validate document type
         if (!field.document_types) {
@@ -417,14 +418,16 @@ export const DocumentUpload = () => {
         }
 
         // Validate identities
-        const identityError = validateIdentity(field.identities, field.document_types);
+        const identityError = validateIdentity(
+          field.identities,
+          field.document_types
+        );
         if (identityError) {
           newIdentityErrors[index] = identityError;
           hasError = true;
         } else {
           newIdentityErrors[index] = "";
         }
-
 
         console.log(`Validation result for index ${index}:`, {
           docError: newDocErrors[index],
@@ -434,7 +437,6 @@ export const DocumentUpload = () => {
 
       setDocTypeErrors([...newDocErrors]);
       setIdentityErrors([...newIdentityErrors]);
-
 
       if (hasError) {
         setLoading(false);
@@ -446,11 +448,16 @@ export const DocumentUpload = () => {
         formDataToSend.append("files", field.files);
         formDataToSend.append("document_types", field.document_types);
 
-        if (formData.student) formDataToSend.append("student", formData.student);
-        if (formData.teacher) formDataToSend.append("teacher", formData.teacher);
-        if (formData.guardian) formDataToSend.append("guardian", formData.guardian);
-        if (formData.office_staff) formDataToSend.append("office_staff", formData.office_staff);
-        if (field.identities) formDataToSend.append("identities", field.identities);
+        if (formData.student)
+          formDataToSend.append("student", formData.student);
+        if (formData.teacher)
+          formDataToSend.append("teacher", formData.teacher);
+        if (formData.guardian)
+          formDataToSend.append("guardian", formData.guardian);
+        if (formData.office_staff)
+          formDataToSend.append("office_staff", formData.office_staff);
+        if (field.identities)
+          formDataToSend.append("identities", field.identities);
 
         await axios.post(`${constants.baseUrl}/d/Document/`, formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -470,15 +477,14 @@ export const DocumentUpload = () => {
       setRole("");
       setStep(0);
       setApiErrors({});
-      setSelectedTeacherName("")
-      setSelectedGuardianName("")
-      setSelectedStudentName("")
-      setSelectedOfficeStaffName("")
+      setSelectedTeacherName("");
+      setSelectedGuardianName("");
+      setSelectedStudentName("");
+      setSelectedOfficeStaffName("");
     } catch (err) {
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
-      }
-      else if (err.pan_no) {
+      } else if (err.pan_no) {
         setApiErrors({ identities: err.identities });
       }
 
@@ -489,7 +495,6 @@ export const DocumentUpload = () => {
       setLoading(false);
     }
   };
-
 
   // --- SIDE EFFECTS ---
   useEffect(() => {
@@ -514,18 +519,52 @@ export const DocumentUpload = () => {
     if (yearLevelID) getStudentsYearLevel();
   }, [yearLevelID]);
 
-  const filteredRoles = allRoles.filter(
-    (role) =>
-      role.name === constants.roles.teacher ||
-      role.name === constants.roles.officeStaff ||
-      role.name === constants.roles.student ||
-      role.name === constants.roles.guardian
-  )
-    .sort((a, b) =>
-      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-    );
+  const filteredRoles = allRoles
+    .filter(
+      (role) =>
+        role.name === constants.roles.teacher ||
+        role.name === constants.roles.officeStaff ||
+        role.name === constants.roles.student ||
+        role.name === constants.roles.guardian
+    )
+    .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
-  // --- RENDER ---
+  // Helper function to get max length based on document type
+const getIdentityMaxLength = (docTypeId) => {
+  if (!docTypeId) return undefined;
+  
+  const selectedDoc = documentType.find(
+    (doc) => doc.id.toString() === docTypeId.toString()
+  );
+  if (!selectedDoc) return undefined;
+
+  const name = selectedDoc.name.trim().toLowerCase();
+
+  // Define max lengths for different document types
+  const maxLengths = {
+    "adharcard": 12,
+    "pan card": 10,
+    "passport": 8,
+    "driving license": 20,
+    "caste certificate": 15,
+    "birth certificate": 15,
+    "transfer certificate": 15,
+    "bonafide certificate": 20,
+    "migration certificate": 20,
+    "date of birth certificate": 20,
+    "income certificate": 20,
+    "domicile certificate": 20,
+    "library card": 15,
+    "other": 50 // Default max length for other documents
+  };
+
+  // Find matching document type (with some flexibility in naming)
+  const matchedType = Object.keys(maxLengths).find(key => 
+    name.includes(key) || key.includes(name)
+  );
+
+  return matchedType ? maxLengths[matchedType] : 50; // Default to 50 if not found
+};
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <form
@@ -562,7 +601,8 @@ export const DocumentUpload = () => {
         {step === 0 && (
           <div className="w-full max-w-6xl mx-auto p-6">
             <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
-              Upload Documents<i className="fa-solid fa-cloud-upload-alt ml-2"></i>
+              Upload Documents
+              <i className="fa-solid fa-cloud-upload-alt ml-2"></i>
               <p className="text-2xl m-1"> Select Your Role</p>
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -654,7 +694,6 @@ export const DocumentUpload = () => {
                   />
                 </div>
 
-
                 {/* Document Type */}
                 <div className="form-control w-full">
                   <label className="label">
@@ -681,11 +720,8 @@ export const DocumentUpload = () => {
                       {docTypeErrors[index] || ""}
                     </span>
                   </div>
-
                 </div>
-
                 {/* Identity */}
-
                 <div className="form-control w-full pt-6">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
@@ -699,13 +735,20 @@ export const DocumentUpload = () => {
                     onChange={(e) => handleUploadChange(e, index)}
                     placeholder="Enter identity ID"
                     className="input input-bordered w-full bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none"
+                    maxLength={
+                      field.document_types
+                        ? getIdentityMaxLength(field.document_types)
+                        : undefined
+                    }
                   />
                   <div className="h-5">
                     <span className="text-red-500 text-sm leading-tight">
                       {identityErrors[index] || ""}
                       {/* React Hook Form Error */}
                       {apiErrors.identities && (
-                        <span className="text-error text-sm">{apiErrors.identities.message}</span>
+                        <span className="text-error text-sm">
+                          {apiErrors.identities.message}
+                        </span>
                       )}
 
                       {/* Backend API Error */}
@@ -724,10 +767,11 @@ export const DocumentUpload = () => {
                   {index === 0 ? (
                     <button
                       type="button"
-                      className={`btn bgTheme text-white w-auto md:w-36  ${AddField === 3
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-purple-700"
-                        }`}
+                      className={`btn bgTheme text-white w-auto md:w-36  ${
+                        AddField === 3
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-purple-700"
+                      }`}
                       onClick={handleAddField}
                       disabled={AddField === 3}
                     >
@@ -777,8 +821,9 @@ export const DocumentUpload = () => {
                         ? "Loading students..."
                         : "Select Student")}
                     <i
-                      className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"
-                        } ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showStudentDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -839,16 +884,18 @@ export const DocumentUpload = () => {
                   </label>
 
                   <div className="form-control relative">
-
-
                     {/* Clickable dropdown box */}
                     <div
                       className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-                      onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
+                      onClick={() =>
+                        setShowTeacherDropdown(!showTeacherDropdown)
+                      }
                     >
                       {selectedTeacherName || "Select Teacher"}
                       <i
-                        className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
+                        className={`fa-solid fa-chevron-${
+                          showTeacherDropdown ? "up" : "down"
+                        } ml-2`}
                       ></i>
                     </div>
 
@@ -862,7 +909,9 @@ export const DocumentUpload = () => {
                             placeholder="Search Teacher..."
                             className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-500"
                             value={searchTeacherInput}
-                            onChange={(e) => setSearchTeacherInput(e.target.value)}
+                            onChange={(e) =>
+                              setSearchTeacherInput(e.target.value)
+                            }
                             autoComplete="off"
                           />
                         </div>
@@ -894,7 +943,6 @@ export const DocumentUpload = () => {
                       </div>
                     )}
                   </div>
-
 
                   {showTeacherDropdown && (
                     <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
@@ -963,8 +1011,9 @@ export const DocumentUpload = () => {
                   >
                     {selectedGuardianName || "Select Guardian"}
                     <i
-                      className={`fa-solid fa-chevron-${showGuardianDropdown ? "up" : "down"
-                        } ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showGuardianDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -1033,8 +1082,9 @@ export const DocumentUpload = () => {
                   >
                     {selectedOfficeStaffName || "Select Office Staff"}
                     <i
-                      className={`fa-solid fa-chevron-${showOfficeStaffDropdown ? "up" : "down"
-                        } ml-2`}
+                      className={`fa-solid fa-chevron-${
+                        showOfficeStaffDropdown ? "up" : "down"
+                      } ml-2`}
                     ></i>
                   </div>
 
@@ -1096,11 +1146,12 @@ export const DocumentUpload = () => {
               <button
                 type="button"
                 onClick={next}
-                className={`btn bgTheme text-white w-40 ${role.length === 0 ||
+                className={`btn bgTheme text-white w-40 ${
+                  role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-purple-700"
-                  }`}
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purple-700"
+                }`}
                 disabled={
                   role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
@@ -1122,10 +1173,11 @@ export const DocumentUpload = () => {
 
               <button
                 type="submit"
-                className={`btn bgTheme text-white w-auto md:w-36  ${Disable
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-purple-700"
-                  }`}
+                className={`btn bgTheme text-white w-auto md:w-36  ${
+                  Disable
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-purple-700"
+                }`}
                 disabled={Disable}
               >
                 {loading ? (
