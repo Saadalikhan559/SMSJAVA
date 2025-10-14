@@ -67,11 +67,23 @@ const FeeSummaryTable = () => {
     setSearchTerm("");
   };
 
- const filteredStudents = allStudents
+const filteredStudents = allStudents
   .filter((student) => {
+    const term = searchTerm.toLowerCase();
+
+    const matchScholarNo = student.scholar_number
+      ?.toString()
+      .toLowerCase()
+      .includes(term);
+
     const matchName = student.student_name
       ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      .includes(term);
+
+    const matchDueAmount = student.due_amount
+      ?.toString()
+      .toLowerCase()
+      .includes(term);
 
     const matchYear =
       !selectedSchoolYear ||
@@ -83,13 +95,17 @@ const FeeSummaryTable = () => {
     const matchMonth =
       !selectedMonth || student.month === selectedMonth;
 
-    return matchName && matchYear && matchClass && matchMonth;
+    return (matchScholarNo || matchName || matchDueAmount) &&
+      matchYear &&
+      matchClass &&
+      matchMonth;
   })
   .sort((a, b) => {
     if (!a.student_name) return 1;
     if (!b.student_name) return -1;
     return a.student_name.localeCompare(b.student_name);
   });
+
 
 const schoolYears = useMemo(() => {
   return [...new Set(allStudents.map((s) => s.school_year))];
@@ -198,7 +214,7 @@ const schoolYears = useMemo(() => {
               <div className="flex flex-col w-full sm:w-auto">
                 <input
                   type="text"
-                  placeholder="Enter student name"
+                  placeholder="Enter student name, scholar no, or due amount"    
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value.trimStart())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none"
@@ -213,13 +229,14 @@ const schoolYears = useMemo(() => {
             </div>
           </div>
         </div>
-
+    
         {/* Table Section */}
         <div className="w-full overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
           <table className="min-w-full rounded-lg">
             <thead className="bgTheme text-white z-2 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">S.No</th>
+                <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Scholar No.</th>
                 <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Student Name</th>
                 <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Class</th>
                 <th className="px-4 py-3 text-left text-nowrap whitespace-nowrap">Year</th>
@@ -243,6 +260,7 @@ const schoolYears = useMemo(() => {
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{index + 1}</td>
+                    <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.scholar_number}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.student_name}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.year_level}</td>
                     <td className="px-4 py-3 text-nowrap text-gray-800 dark:text-gray-100">{record.school_year}</td>

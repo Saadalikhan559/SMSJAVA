@@ -503,10 +503,12 @@ export const DocumentUpload = () => {
       setDisable(true)
     } catch (err) {
       if (err.response && err.response.data) {
+        setDisable(true)
         setApiErrors(err.response.data);
         
       }
       else if (err.pan_no) {
+         setDisable(true)
         setApiErrors({ identities: err.identities });
       }
    setDisable(true)
@@ -1221,11 +1223,11 @@ export const DocumentUpload = () => {
 
               <button
                 type="submit"
-                className={`btn bgTheme text-white w-auto md:w-36  ${Disable
+                className={`btn bgTheme text-white w-auto md:w-36  ${Disable || apiErrors
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-purple-700"
                   }`}
-                disabled={Disable}
+                disabled={Disable || apiErrors}
               >
                 {loading ? (
                   <>
