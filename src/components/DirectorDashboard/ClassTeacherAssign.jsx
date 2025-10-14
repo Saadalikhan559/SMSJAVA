@@ -163,7 +163,7 @@ const ClassTeacherAssign = () => {
             className="btn bgTheme text-white"
             onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
           >
-            View Allocated Class <span>&rarr;</span>
+            View Allocated Class
           </button>
         </div>
 
