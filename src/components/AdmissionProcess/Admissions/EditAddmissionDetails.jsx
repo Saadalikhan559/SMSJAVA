@@ -653,6 +653,7 @@ const filteredCountries = country
                 })}
                 className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.is_active ? "select-error" : ""
                   }`}
+                  disabled={true}
               >
                 <option value="">Select Status</option>
                 <option value="true">Active</option>

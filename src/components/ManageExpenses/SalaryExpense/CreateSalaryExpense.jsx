@@ -243,7 +243,7 @@ return (
           </div>
 
           {/* Joining Date */}
-          <div className="form-control">
+          {/* <div className="form-control">
             <label className="label">
               <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                 <i className="fa-solid fa-calendar-days text-sm"></i>
@@ -262,7 +262,7 @@ return (
                 {errors.joiningDate.message}
               </p>
             )}
-          </div>
+          </div> */}
 
           {/* Base Salary */}
           <div className="form-control">
