@@ -326,7 +326,7 @@ export const EditAddmissionDetails = () => {
       if (response.is_rte) setValue("is_rte", response.is_rte);
       if (response.rte_number) setValue("rte_number", response.rte_number);
       if (response.student_input.gender)
-        setValue("student.gender", response.student_input.gender.toLowerCase());
+        setValue("student.gender", response.student_input.gender);
       if (response.guardian_type) {
         setValue("guardian_type_input", response.guardian_type);
         setSelectedGuardianType(response.guardian_type.id);
@@ -683,7 +683,7 @@ const filteredCountries = country
                     notFuture: (value) => {
                       const selectedDate = new Date(value);
                       const today = new Date();
-                      today.setHours(0, 0, 0, 0); // Set to beginning of day for accurate comparison
+                      today.setHours(0, 0, 0, 0);
                       return (
                         selectedDate <= today ||
                         "Date of birth cannot be in the future"
@@ -691,7 +691,7 @@ const filteredCountries = country
                     },
                   },
                 })}
-                max={new Date().toISOString().split("T")[0]} // This sets the max date to today in the date picker
+                max={new Date().toISOString().split("T")[0]} 
                 className={`input input-bordered w-full focus:outline-none ${errors.student?.date_of_birth ? "input-error" : ""
                   }`}
               />
