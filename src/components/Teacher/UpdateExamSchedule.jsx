@@ -203,7 +203,14 @@ const UpdateExamSchedule = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm">
-        <div className=" flex justify-end">
+        
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="border-b border-gray-300 dark:border-gray-700 ">
+          <h1 className="text-3xl font-bold text-center mb-8">
+           <i className="fa-solid fa-pen-nib ml-2"></i> Update Exam Schedule 
+          </h1>
+          <div className=" flex justify-end pb-2">
 
           <button
             className="btn bgTheme text-white"
@@ -211,12 +218,7 @@ const UpdateExamSchedule = () => {
           >
            <i className="fa-solid fa-calendar-day ml-2"></i> Create Exam Schedule
           </button>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-3xl font-bold text-center mb-8">
-            Update Exam Schedule <i className="fa-solid fa-pen-nib ml-2"></i>
-          </h1>
+        </div></div>
 
           {error && (
             <div className="alert alert-error mb-6">

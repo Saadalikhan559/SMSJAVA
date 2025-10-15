@@ -203,13 +203,8 @@ const UploadExamPaper = () => {
       if (error.response?.data) {
         const errData = error.response.data;
         if (typeof errData === "object") {
-          backendMsg = Object.entries(errData)
-            .map(([key, val]) => {
-              if (Array.isArray(val)) {
-                return `${key}: ${val.join(", ")}`;
-              }
-              return `${key}: ${val}`;
-            })
+          backendMsg = Object.values(errData)
+            .map((val) => (Array.isArray(val) ? val.join(", ") : val))
             .join("\n");
         } else if (typeof errData === "string") {
           backendMsg = errData;
@@ -218,7 +213,7 @@ const UploadExamPaper = () => {
         backendMsg = error.message;
       }
 
-      setAlertMessage(`${backendMsg}`);
+      setAlertMessage(backendMsg);
       setShowAlert(true);
     }
   };
