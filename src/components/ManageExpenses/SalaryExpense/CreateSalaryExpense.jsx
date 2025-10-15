@@ -331,19 +331,16 @@ export const CreateSalaryExpense = () => {
 
         <SuccessModal ref={modalRef} />
         {errorModalOpen && (
-          <dialog open className="modal">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg flex items-center gap-2">
-                <i className="fa-solid fa-circle-exclamation text-red-500"></i>
-                Error
-              </h3>
-              <p className="py-4 font-semibold">{errorMessage}</p>
+           <dialog open className="modal modal-open">
+            <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+              <h3 className="font-bold text-lg">Create Salary</h3>
+              <p className="py-4">{errorMessage}</p>
               <div className="modal-action">
                 <button
-                  className="btn"
+                  className="btn bgTheme text-white w-30"
                   onClick={() => setErrorModalOpen(false)}
                 >
-                  Close
+                  OK
                 </button>
               </div>
             </div>

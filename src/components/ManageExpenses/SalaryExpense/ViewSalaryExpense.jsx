@@ -105,37 +105,28 @@ export const ViewSalaryExpense = () => {
             <i className="fa-solid fa-wallet mr-2"></i> Salary
           </h1>
           <div className="flex flex-col sm:flex-row gap-2 sm:justify-between py-2 sm:items-center">
-            {/* Role Filter*/}
-            <select
-              className="select select-bordered w-full sm:max-w-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-            >
-              <option value="">All Roles</option>
-              <option value="teacher">Teacher</option>
-              <option value="office staff">Office Staff</option>
-            </select>
-            {/* Reset Button */}
-            <button
-              className="btn bgTheme text-white"
-              onClick={() => {
-                setRoleFilter("");
-                setSearchName("");
-              }}
-            >
-              Reset
-            </button>
-            <div className="flex flex-row gap-2">
-              {/* Create Salary Button */}
-              <button
-                onClick={() => navigate(allRouterLink.createSalaryExpense)}
-                className="btn bgTheme text-white"
+            {/* Left side: Dropdown + Reset */}
+            <div className="flex items-center gap-1.5">
+              <select
+                className="select select-bordered w-full sm:w-64 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
               >
-                <i className="fa-solid fa-plus mr-2"></i>
-                Create Salary
-              </button>
+                <option value="">All Roles</option>
+                <option value="teacher">Teacher</option>
+                <option value="office staff">Office Staff</option>
+              </select>
 
-              {/* Search Bar */}
+              <button
+                className="btn bgTheme text-white w-24"
+                onClick={() => { setRoleFilter(""); setSearchName(""); }}
+              >
+                Reset
+              </button>
+            </div>
+
+            {/* Right side: Search + Create Salary */}
+            <div className="flex flex-row gap-2 sm:ml-auto">
               <input
                 type="text"
                 placeholder="Search Employee Name..."
@@ -143,6 +134,14 @@ export const ViewSalaryExpense = () => {
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value.trimStart())}
               />
+
+              <button
+                onClick={() => navigate(allRouterLink.createSalaryExpense)}
+                className="btn bgTheme text-white"
+              >
+                <i className="fa-solid fa-plus mr-2"></i>
+                Create Salary
+              </button>
             </div>
           </div>
 
