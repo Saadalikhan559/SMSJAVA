@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
+import { useRef } from "react";
 
 const ClassTeacherAssign = () => {
   const {
@@ -13,26 +14,28 @@ const ClassTeacherAssign = () => {
     handleSubmit,
     setError,
     clearErrors,
+    setValue, // ✅ add this
     formState: { errors },
   } = useForm();
 
   const navigate = useNavigate();
   const { authTokens } = useContext(AuthContext);
-
+  const teacherDropdownRef = useRef(null);
   const [teachers, setTeachers] = useState([]);
   const [yearLevels, setYearLevels] = useState([]);
   const [loadingTeachers, setLoadingTeachers] = useState(false);
   const [loadingYearLevels, setLoadingYearLevels] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState(false);
 
-  // State for custom teacher dropdown
+  // Teacher dropdown states
   const [selectedTeacherName, setSelectedTeacherName] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState(null);
   const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
   const [searchTeacherInput, setSearchTeacherInput] = useState("");
+
+  // Alert modal
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
@@ -82,12 +85,14 @@ const ClassTeacherAssign = () => {
         .includes(searchTeacherInput.toLowerCase())
     )
     .sort((a, b) =>
-      `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`)
+      `${a.first_name} ${a.last_name}`.localeCompare(
+        `${b.first_name} ${b.last_name}`
+      )
     );
 
   const handleSubmitForm = async (data) => {
     const payload = {
-      teacher: selectedTeacherId,
+      teacher: data.teacher_id, // ✅ use form value
       year_level: data.yearlevel_id,
     };
 
@@ -112,14 +117,10 @@ const ClassTeacherAssign = () => {
     } catch (error) {
       const res = error.response?.data;
       let errorMessage = "Failed to assign class teacher";
-
-      if (typeof res === "string") {
-        errorMessage = res;
-      } else if (res?.error) {
-        errorMessage = res.error;
-      } else if (res?.detail) {
-        errorMessage = res.detail;
-      } else if (typeof res === "object") {
+      if (typeof res === "string") errorMessage = res;
+      else if (res?.error) errorMessage = res.error;
+      else if (res?.detail) errorMessage = res.detail;
+      else if (typeof res === "object") {
         errorMessage = Object.values(res).flat().join(" | ");
       }
       setAlertMessage(errorMessage);
@@ -129,7 +130,25 @@ const ClassTeacherAssign = () => {
     }
   };
 
-  // --- Loading ---
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        teacherDropdownRef.current &&
+        !teacherDropdownRef.current.contains(event.target)
+      ) {
+        setShowTeacherDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
+  // --- Loading State ---
   if (pageLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -143,7 +162,7 @@ const ClassTeacherAssign = () => {
     );
   }
 
-  // --- Error ---
+  // --- Error State ---
   if (pageError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
@@ -158,46 +177,45 @@ const ClassTeacherAssign = () => {
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
-        <div className=" flex justify-end">
-          <button
-            className="btn bgTheme text-white"
-            onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
-          >
-            View Allocated Class <span>&rarr;</span>
-          </button>
-        </div><br/>
-
         <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white border-b border-gray-900 dark:border-gray-700 pb-4">
-              Allocate Teachers{" "}
-              <i className="fa-solid fa-square-poll-vertical w-5"></i>
-            </h1>
-          </div><br />
+          <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white border-b border-gray-900 dark:border-gray-700 pb-4">
+            Allocate Teachers{" "}
+            <i className="fa-solid fa-square-poll-vertical w-5"></i>
+            <div className="flex justify-end">
+              <button
+                className="btn bgTheme text-white"
+                onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
+              >
+                <i className="fa-solid fa-landmark"></i> View Allocated Class
+              </button>
+            </div>
+          </h1>
 
-          <div className="flex space-x-4 flex-col md:flex-row md:space-x-4">
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-6 md:space-y-0">
             {/* Teacher Dropdown */}
-            <div className="w-full md:w-1/2 relative">
+            <div className="w-full md:w-1/2 relative" ref={teacherDropdownRef}>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Teacher <span className="text-error">*</span>
               </label>
 
               <div
-                className={`w-full p-3 border rounded-md cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 flex justify-between items-center`}
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
                 onClick={() => {
                   loadTeachers();
                   setShowTeacherDropdown(!showTeacherDropdown);
                 }}
               >
-                {selectedTeacherName || "Select Teacher"}
-                <i
-                  className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <span className="text-gray-900 dark:text-gray-100">
+                  {selectedTeacherName || "Select Teacher"}
+                </span>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {showTeacherDropdown && (
                 <div className="absolute z-10 bg-white dark:bg-gray-700 rounded w-full mt-1 shadow-lg border border-gray-300 dark:border-gray-600">
-                  <div className="p-2 sticky top-0 shadow-sm bg-white dark:bg-gray-700">
+                  <div className="p-2 sticky top-0 bg-white dark:bg-gray-700">
                     <input
                       type="text"
                       placeholder="Search Teacher..."
@@ -208,12 +226,11 @@ const ClassTeacherAssign = () => {
                   </div>
 
                   <div className="max-h-40 overflow-y-auto">
-                    {loadingTeachers && (
+                    {loadingTeachers ? (
                       <p className="p-2 text-gray-500 dark:text-gray-400">
                         Loading teachers...
                       </p>
-                    )}
-                    {!loadingTeachers &&
+                    ) : filteredTeachers.length > 0 ? (
                       filteredTeachers.map((teacher) => (
                         <p
                           key={teacher.id}
@@ -224,13 +241,16 @@ const ClassTeacherAssign = () => {
                             setSelectedTeacherId(teacher.id);
                             setSearchTeacherInput("");
                             setShowTeacherDropdown(false);
-                            clearErrors(["teacher_id", "api"]);
+                            setValue("teacher_id", teacher.id, {
+                              shouldValidate: true, // ✅ updates form
+                            });
+                            clearErrors("teacher_id");
                           }}
                         >
                           {teacher.first_name} {teacher.last_name}
                         </p>
-                      ))}
-                    {!loadingTeachers && filteredTeachers.length === 0 && (
+                      ))
+                    ) : (
                       <p className="p-2 text-gray-500 dark:text-gray-400">
                         No teachers found.
                       </p>
@@ -239,46 +259,52 @@ const ClassTeacherAssign = () => {
                 </div>
               )}
 
-              {/* Hidden input for react-hook-form validation
               <input
                 type="hidden"
                 {...register("teacher_id", {
                   required: "Teacher is required",
-                  validate: () => selectedTeacherId !== null || "Teacher is required",
                 })}
-              /> */}
-
+              />
               {errors.teacher_id && (
-                <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+                <p className="text-red-500 text-sm mt-1">
                   {errors.teacher_id.message}
                 </p>
               )}
             </div>
 
-            {/* Year Level */}
-            <div className="w-full md:w-1/2">
+            {/* Year Level Dropdown */}
+            <div className="w-full md:w-1/2 relative">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Year Level <span className="text-error">*</span>
               </label>
-              <select
-                {...register("yearlevel_id", {
-                  required: "Year level is required",
-                })}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                onFocus={loadYearLevels}
-                onChange={() => clearErrors(["yearlevel_id", "api"])}
-              >
-                <option value="">
-                  {loadingYearLevels ? "Loading year levels..." : "Select Year Level"}
-                </option>
-                {yearLevels.map((level) => (
-                  <option key={level.id} value={level.id}>
-                    {level.level_name}
+
+              <div className="relative">
+                <select
+                  {...register("yearlevel_id", {
+                    required: "Year level is required",
+                  })}
+                  className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
+                  onFocus={loadYearLevels}
+                  onChange={() => clearErrors("yearlevel_id")}
+                >
+                  <option value="">
+                    {loadingYearLevels
+                      ? "Loading year levels..."
+                      : "Select Year Level"}
                   </option>
-                ))}
-              </select>
+                  {yearLevels.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {level.level_name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <span className="arrow text-gray-600 dark:text-gray-300">&#9662;</span>
+                </div>
+              </div>
+
               {errors.yearlevel_id && (
-                <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+                <p className="text-red-500 text-sm mt-1">
                   {errors.yearlevel_id.message}
                 </p>
               )}
@@ -289,8 +315,7 @@ const ClassTeacherAssign = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`btn text-white bgTheme w-30 py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-                }`}
+              className="btn bgTheme text-white w-30"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
@@ -300,11 +325,11 @@ const ClassTeacherAssign = () => {
                 "Assign"
               )}
             </button>
-
           </div>
         </form>
       </div>
-      {/* Modal */}
+
+      {/* Alert Modal */}
       {showAlert && (
         <dialog open className="modal modal-open">
           <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
