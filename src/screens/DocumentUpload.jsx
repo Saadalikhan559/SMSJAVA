@@ -1223,11 +1223,11 @@ export const DocumentUpload = () => {
 
               <button
                 type="submit"
-                className={`btn bgTheme text-white w-auto md:w-36  ${Disable || apiErrors
+                className={`btn bgTheme text-white w-auto md:w-36  ${Disable || apiErrors === true
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-purple-700"
                   }`}
-                disabled={Disable || apiErrors}
+                disabled={Disable || apiErrors === true}
               >
                 {loading ? (
                   <>
