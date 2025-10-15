@@ -661,22 +661,6 @@ export const Sidebar = () => {
                         </Link>
                       </li>
                     )}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff) && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(e, allRouterLink.createIncome)
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md 
-                         hover:bg-blue-100 dark:hover:bg-gray-700 
-                         transition text-gray-800 dark:text-gray-200"
-                        >
-                          <i className="fa-solid fa-money-check-dollar"></i>{" "}
-                          Create Income
-                        </Link>
-                      </li>
-                    )}
                   </ul>
                 </div>
               )}
@@ -690,24 +674,6 @@ export const Sidebar = () => {
                   </h3>
                   <ul className="space-y-1">
                     {/* Create Salary: director only */}
-                    {role === constants.roles.director && (
-                      <li>
-                        <Link
-                          onClick={(e) =>
-                            handleNavigation(
-                              e,
-                              allRouterLink.createSalaryExpense
-                            )
-                          }
-                          className="flex items-center gap-2 px-3 py-2 rounded-md 
-                         hover:bg-blue-100 dark:hover:bg-gray-700 
-                         transition text-gray-800 dark:text-gray-200"
-                        >
-                          <i className="fa-solid fa-money-bill-wave w-5"></i>{" "}
-                          Create Salary
-                        </Link>
-                      </li>
-                    )}
                     {(role === constants.roles.director || role === constants.roles.officeStaff) && (
                       <li>
                         <Link

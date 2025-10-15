@@ -142,7 +142,7 @@ const CreateIncome = () => {
               <input
                 type="date"
                 {...register("income_date", { required: "Income date is required" })}
-                className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+                 className="input input-bordered w-full focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
               />
               {errors.income_date && (
                 <p className="text-red-500 text-sm mt-1">{errors.income_date.message}</p>
@@ -169,29 +169,6 @@ const CreateIncome = () => {
                 <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
               )}
             </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Description
-              </label>
-              <input
-                type="text"
-                placeholder="Description"
-                {...register("description", {
-                  maxLength: {
-                    value: 50,
-                    message: "Description cannot exceed 50 characters",
-                  },
-                })}
-                className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-              />
-              {errors.description && (
-                <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
-              )}
-            </div>
-
-
             {/* School Year */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -223,8 +200,8 @@ const CreateIncome = () => {
                 className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
               >
                 <option value="">Select Payment Method</option>
-                <option value="bank">Bank</option>
-                <option value="cash">Cash</option>
+                <option value="bank">Cash</option>
+                <option value="cash">Cheque</option>
                 <option value="online">Online</option>
               </select>
               {errors.payment_method && (
@@ -259,8 +236,29 @@ const CreateIncome = () => {
                 type="file"
                 accept=".jpg,.jpeg,.png,.pdf"
                 {...register("attachment")}
-                className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+               className="file-input file-input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Description
+              </label>
+              <textarea
+                placeholder="Enter description"
+                rows={3}
+                maxLength={100}
+                {...register("description", {
+                  maxLength: {
+                    value: 100,
+                    message: "Description cannot exceed 50 characters",
+                  },
+                })}
+                className="textarea textarea-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+              ></textarea>
+
+              {errors.description && (
+                <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+              )}
             </div>
           </div>
 

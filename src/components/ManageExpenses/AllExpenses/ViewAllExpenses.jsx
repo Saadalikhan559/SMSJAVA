@@ -243,14 +243,12 @@ export const ViewAllExpenses = () => {
         {/* Filters */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 mb-6 border-b pb-2 dark:border-gray-700 w-full">
 
-          {/* Left side filters + search + reset */}
-          <div className="flex flex-col sm:flex-row sm:flex-wrap md:flex-row md:gap-2 items-end gap-2 w-full md:w-auto">
+          {/* Left side filters + reset */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap md:gap-2 items-end gap-2 w-full md:w-auto">
 
             {/* School Year Filter */}
             <div className="form-control w-full sm:w-40">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">School Year</span>
-              </label>
+              <label className="text-sm font-medium mb-1">Search by School Year</label>
               <select
                 value={selectedSchoolYear}
                 onChange={(e) => setSelectedSchoolYear(e.target.value)}
@@ -267,9 +265,7 @@ export const ViewAllExpenses = () => {
 
             {/* Category Filter */}
             <div className="form-control w-full sm:w-40">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">Category</span>
-              </label>
+              <label className="text-sm font-medium mb-1">Search by Category</label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
@@ -286,9 +282,7 @@ export const ViewAllExpenses = () => {
 
             {/* Status Filter */}
             <div className="form-control w-full sm:w-32">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">Status</span>
-              </label>
+              <label className="text-sm font-medium mb-1">Search by Status</label>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
@@ -301,39 +295,36 @@ export const ViewAllExpenses = () => {
               </select>
             </div>
 
-            {/* Search + Reset */}
-            <div className="flex flex-col sm:flex-row sm:gap-2 w-full sm:w-auto items-end">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="input input-bordered w-full sm:w-48 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-              <button
-                className="btn bgTheme text-white w-full sm:w-auto mt-2 sm:mt-0"
-                onClick={() => {
-                  setSelectedSchoolYear("");
-                  setSelectedCategory("");
-                  setSelectedStatus("");
-                  setSearchQuery("");
-                }}
-              >
-                Reset
-              </button>
-            </div>
+            {/* Reset Button (stays on left) */}
+            <button
+              className="btn bgTheme text-white w-full sm:w-auto mt-2 sm:mt-0"
+              onClick={() => {
+                setSelectedSchoolYear("");
+                setSelectedCategory("");
+                setSelectedStatus("");
+                setSearchQuery("");
+              }}
+            >
+              Reset
+            </button>
           </div>
 
-          {/* Right side Create Expense button */}
-          <div className="w-full md:w-auto flex justify-end mt-2 md:mt-0">
+          {/* Right side Search + Create button */}
+          <div className="flex flex-col sm:flex-row sm:items-end sm:gap-2 w-full md:w-auto justify-end mt-2 md:mt-0">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input input-bordered w-full sm:w-48 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
             <button
-              className="btn bgTheme text-white w-full sm:w-auto"
+              className="btn bgTheme text-white w-full sm:w-auto mt-2 sm:mt-0"
               onClick={() => navigate(allRouterLink.createExpenses)}
             >
               Create Expense <i className="fa-solid fa-receipt ml-2"></i>
             </button>
           </div>
-
         </div>
 
         {/* Table */}
