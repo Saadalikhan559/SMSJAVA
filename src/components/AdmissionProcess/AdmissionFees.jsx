@@ -441,7 +441,7 @@ export const AdmissionFees = () => {
   // Filter students by name or email based on input
   const filteredStudents = students
     ?.filter((student) =>
-      `${student?.student_name || ""} ${student?.student_email || ""}`
+      `${student?.student_name || ""} ${student?.scholar_number || ""}`
         .toLowerCase()
         .includes(searchStudentInput.trim().toLowerCase())
     )
@@ -631,7 +631,7 @@ const handleMonthSelection = (monthData, isChecked) => {
                             key={student.student_id}
                             className="p-2"
                             onClick={() => {
-                              const displayName = `${student.student_name} - ${student.student_email}`;
+                              const displayName = `${student.student_name} - ${student.scholar_number} (Scholar No)`;
                               setSelectedStudentName(displayName);
                               setSearchStudentInput("");
                               setShowStudentDropdown(false);
@@ -639,7 +639,7 @@ const handleMonthSelection = (monthData, isChecked) => {
                               clearErrors("student_id");
                             }}
                           >
-                            {student.student_name} - {student.student_email}
+                            {student.student_name} -  {student.scholar_number} (Scholar No)
                           </p>
                         )
                       })
