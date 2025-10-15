@@ -20,7 +20,7 @@ export const ChangePassword = () => {
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);z
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
