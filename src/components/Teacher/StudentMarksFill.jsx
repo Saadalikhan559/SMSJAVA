@@ -9,6 +9,7 @@ import {
   fetchStudents1,
 } from "../../services/api/Api";
 import { AuthContext } from "../../context/AuthContext";
+import { useRef } from "react";
 
 const StudentMarksFill = () => {
   const { axiosInstance } = useContext(AuthContext);
@@ -36,6 +37,9 @@ const StudentMarksFill = () => {
   const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
   const [selectedTeacherName, setSelectedTeacherName] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState("");
+  const subjectDropdownRef = useRef(null);
+  const teacherDropdownRef = useRef(null);
+  const studentDropdownRef = useRef(null);
 
 
 
@@ -116,9 +120,13 @@ const StudentMarksFill = () => {
     getSchool_year();
     getExamType();
   }, []);
+
   const handleClassChange = (e) => {
     const classId = e.target.value;
     setSelectedClassId(classId);
+    setSelectedStudentId("");
+    setSelectedStudentName("");
+    setValue("student", "");
   };
   useEffect(() => {
     if (selectedClassId) {
@@ -164,6 +172,12 @@ const StudentMarksFill = () => {
         setAlertMessage("Student marks filled successfully!");
         setShowAlert(true);
         reset();
+        setSelectedSubjectId("");
+        setSelectedSubjectName("");
+        setSelectedTeacherId("");
+        setSelectedTeacherName("");
+        setSelectedStudentId("");
+        setSelectedStudentName("");
       } else {
         throw new Error("Failed to create exam schedule");
       }
@@ -183,6 +197,37 @@ const StudentMarksFill = () => {
       setShowAlert(true);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        subjectDropdownRef.current &&
+        !subjectDropdownRef.current.contains(event.target)
+      ) {
+        setShowSubjectDropdown(false);
+      }
+      if (
+        teacherDropdownRef.current &&
+        !teacherDropdownRef.current.contains(event.target)
+      ) {
+        setShowTeacherDropdown(false);
+      }
+      if (
+        studentDropdownRef.current &&
+        !studentDropdownRef.current.contains(event.target)
+      ) {
+        setShowStudentDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
   const filteredStudents = students
     .filter((studentObj) =>
       studentObj.student_name.toLowerCase().includes(searchStudentInput.toLowerCase())
@@ -289,7 +334,7 @@ const StudentMarksFill = () => {
 
 
             {/* Subject */}
-            <div className="form-control relative">
+            <div className="form-control relative" ref={subjectDropdownRef}>
               <label className="label">
                 <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <i className="fa-solid fa-book text-sm"></i>
@@ -303,9 +348,9 @@ const StudentMarksFill = () => {
                 onClick={() => setShowSubjectDropdown(!showSubjectDropdown)}
               >
                 {selectedSubjectName || "Select Subject"}
-                <i
-                  className={`fa-solid fa-chevron-${showSubjectDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input to store selected subject ID */}
@@ -364,7 +409,7 @@ const StudentMarksFill = () => {
 
 
             {/* Teacher */}
-            <div className="form-control relative">
+            <div className="form-control relative" ref={teacherDropdownRef}>
               <label className="label">
                 <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <i className="fa-solid fa-chalkboard-user text-sm"></i>
@@ -378,9 +423,9 @@ const StudentMarksFill = () => {
                 onClick={() => setShowTeacherDropdown(!showTeacherDropdown)}
               >
                 {selectedTeacherName || "Select Teacher"}
-                <i
-                  className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for form data */}
@@ -441,7 +486,7 @@ const StudentMarksFill = () => {
 
 
             {/* Student */}
-            <div className="form-control relative">
+            <div className="form-control relative" ref={studentDropdownRef}>
               <label className="label">
                 <span className="label-text flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <i className="fa-solid fa-user-graduate text-sm"></i>
@@ -455,9 +500,9 @@ const StudentMarksFill = () => {
                 onClick={() => setShowStudentDropdown(!showStudentDropdown)}
               >
                 {selectedStudentName || "Select Student"}
-                <i
-                  className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"} ml-2`}
-                ></i>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {/* Hidden input for react-hook-form */}
@@ -528,7 +573,7 @@ const StudentMarksFill = () => {
                 Marks <span className="text-error">*</span>
               </label>
               <input
-                type="number"
+                type="float"
                 placeholder="Enter marks"
                 {...register("marks", {
                   required: "Marks is required",

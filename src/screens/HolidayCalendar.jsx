@@ -23,6 +23,9 @@ function HolidayCalendar() {
   const [userRole, setUserRole] = useState(null);
   const [modalMessage, setModalMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [jumpDate, setJumpDate] = useState("");
+  const [isMonthYearModalOpen, setIsMonthYearModalOpen] = useState(false);
+
 
   // new states for loading & error
   const [loading, setLoading] = useState(true);
@@ -346,8 +349,8 @@ function HolidayCalendar() {
                       onClick={handleImportHolidays}
                       disabled={isImporting}
                       className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${isImporting
-                          ? "bgTheme cursor-not-allowed"
-                          : "bgTheme hover:bg-[#4e1bb3]"
+                        ? "bgTheme cursor-not-allowed"
+                        : "bgTheme hover:bg-[#4e1bb3]"
                         }`}
                     >
                       {isImporting ? (
@@ -421,6 +424,7 @@ function HolidayCalendar() {
                       <input
                         type="date"
                         id="start-date"
+                        min={new Date().toISOString().split("T")[0]}
                         value={newEvent.start_date}
                         onChange={(e) =>
                           setNewEvent({ ...newEvent, start_date: e.target.value })
@@ -438,6 +442,7 @@ function HolidayCalendar() {
                       <input
                         type="date"
                         id="end-date"
+                        min={newEvent.start_date || new Date().toISOString().split("T")[0]}
                         value={newEvent.end_date}
                         onChange={(e) =>
                           setNewEvent({ ...newEvent, end_date: e.target.value })
@@ -476,9 +481,9 @@ function HolidayCalendar() {
                     <button
                       onClick={handleCreateEvent}
                       disabled={isCreatingEvent}
-                    className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${isCreatingEvent
-                          ? "bgTheme cursor-not-allowed"
-                          : "bgTheme hover:bg-[#4410ad]"
+                      className={`px-4 py-2 rounded-md text-sm font-medium text-white w-30 ${isCreatingEvent
+                        ? "bgTheme cursor-not-allowed"
+                        : "bgTheme hover:bg-[#4410ad]"
                         }`}
                     >
                       {isCreatingEvent ? (
@@ -497,33 +502,76 @@ function HolidayCalendar() {
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Calendar */}
               <div className="flex-1">
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div className="flex flex-col lg:flex-row gap-6 bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                   <Calendar
                     onChange={handleDateChange}
                     value={date}
                     tileContent={tileContent}
                     tileClassName={tileClassName}
-                    className="border-0 p-5 react-calendar" 
+                    className="border-0 p-5 react-calendar"
                     view="month"
                     next2Label={null}
                     prev2Label={null}
-                    onActiveStartDateChange={({ activeStartDate }) => {
-                      setYear(activeStartDate.getFullYear());
-                      setMonth(activeStartDate.getMonth() + 1);
-                    }}
-                    navigationLabel={({ date }) => (
-                      <span className="text-gray-800 dark:text-gray-200 font-semibold">
-                        {date.toLocaleDateString("en-US", {
-                          month: "long",
-                          year: "numeric",
-                        })}
+                    navigationLabel={({ date, label }) => (
+                      <span
+                        className="text-gray-800 dark:text-gray-200 font-semibold cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const currentMonthYear = `${date.getFullYear()}-${String(
+                            date.getMonth() + 1
+                          ).padStart(2, "0")}`;
+                          setJumpDate(currentMonthYear);
+                          setIsMonthYearModalOpen(true);
+                        }}
+                      >
+                        {date.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                       </span>
                     )}
+                    onActiveStartDateChange={({ activeStartDate, view }) => {
+                      if (!isMonthYearModalOpen) {
+                        setYear(activeStartDate.getFullYear());
+                        setMonth(activeStartDate.getMonth() + 1);
+                      }
+                    }}
                     formatShortWeekday={(locale, date) =>
                       ["S", "M", "T", "W", "T", "F", "S"][date.getDay()]
                     }
                   />
                 </div>
+                {/* Month/Year Modal */}
+                {isMonthYearModalOpen && (
+                  <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">
+                        Select Month/Year
+                      </h3>
+                      <input
+                        type="month"
+                        value={jumpDate}
+                        onChange={(e) => {
+                          const selectedDate = new Date(e.target.value);
+                          if (!isNaN(selectedDate)) {
+                            setJumpDate(e.target.value);
+                            setDate(selectedDate);
+                            setYear(selectedDate.getFullYear());
+                            setMonth(selectedDate.getMonth() + 1);
+                            getCalendar();
+                            setIsMonthYearModalOpen(false);
+                          }
+                        }}
+                        className="input w-full input-bordered focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 mb-4"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setIsMonthYearModalOpen(false)}
+                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Details */}

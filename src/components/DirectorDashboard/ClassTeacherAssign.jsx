@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
+import { useRef } from "react";
 
 const ClassTeacherAssign = () => {
   const {
@@ -19,7 +20,7 @@ const ClassTeacherAssign = () => {
 
   const navigate = useNavigate();
   const { authTokens } = useContext(AuthContext);
-
+  const teacherDropdownRef = useRef(null);
   const [teachers, setTeachers] = useState([]);
   const [yearLevels, setYearLevels] = useState([]);
   const [loadingTeachers, setLoadingTeachers] = useState(false);
@@ -129,6 +130,24 @@ const ClassTeacherAssign = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        teacherDropdownRef.current &&
+        !teacherDropdownRef.current.contains(event.target)
+      ) {
+        setShowTeacherDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
   // --- Loading State ---
   if (pageLoading) {
     return (
@@ -158,32 +177,29 @@ const ClassTeacherAssign = () => {
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md my-8">
-        <div className="flex justify-end">
-          <button
-            className="btn bgTheme text-white"
-            onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
-          >
-            View Allocated Class
-          </button>
-        </div>
-
         <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-6">
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white border-b border-gray-900 dark:border-gray-700 pb-4">
             Allocate Teachers{" "}
             <i className="fa-solid fa-square-poll-vertical w-5"></i>
+            <div className="flex justify-end">
+              <button
+                className="btn bgTheme text-white"
+                onClick={() => navigate(allRouterLink.ViewAllocatedClass)}
+              >
+                <i className="fa-solid fa-landmark"></i> View Allocated Class
+              </button>
+            </div>
           </h1>
 
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-6 md:space-y-0">
             {/* Teacher Dropdown */}
-            <div className="w-full md:w-1/2 relative">
+            <div className="w-full md:w-1/2 relative" ref={teacherDropdownRef}>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Teacher <span className="text-error">*</span>
               </label>
 
               <div
-                className={`relative w-full p-3 border rounded-md bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 flex justify-between items-center cursor-pointer ${
-                  errors.teacher_id ? "border-red-500" : ""
-                }`}
+                className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
                 onClick={() => {
                   loadTeachers();
                   setShowTeacherDropdown(!showTeacherDropdown);
@@ -192,11 +208,9 @@ const ClassTeacherAssign = () => {
                 <span className="text-gray-900 dark:text-gray-100">
                   {selectedTeacherName || "Select Teacher"}
                 </span>
-                <i
-                  className={`fa-solid fa-chevron-${
-                    showTeacherDropdown ? "up" : "down"
-                  } ml-2 text-gray-600 dark:text-gray-300`}
-                ></i>
+                <div >
+                  <span class="arrow">&#9662;</span>
+                </div>
               </div>
 
               {showTeacherDropdown && (
@@ -269,9 +283,7 @@ const ClassTeacherAssign = () => {
                   {...register("yearlevel_id", {
                     required: "Year level is required",
                   })}
-                  className={`appearance-none w-full p-3 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 cursor-pointer ${
-                    errors.yearlevel_id ? "border-red-500" : ""
-                  }`}
+                  className="input input-bordered w-full flex items-center justify-between cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
                   onFocus={loadYearLevels}
                   onChange={() => clearErrors("yearlevel_id")}
                 >
@@ -286,7 +298,9 @@ const ClassTeacherAssign = () => {
                     </option>
                   ))}
                 </select>
-                <i className="fa-solid fa-chevron-down absolute right-3 top-4 text-gray-600 dark:text-gray-300 pointer-events-none"></i>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <span className="arrow text-gray-600 dark:text-gray-300">&#9662;</span>
+                </div>
               </div>
 
               {errors.yearlevel_id && (
@@ -301,13 +315,11 @@ const ClassTeacherAssign = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`btn text-white bgTheme w-30 py-3 px-4 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-              }`}
+              className="btn bgTheme text-white w-30"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
-                  <i className="fa-solid fa-spinner fa-spin mr-2"></i> Assigning...
+                  <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 </span>
               ) : (
                 "Assign"
