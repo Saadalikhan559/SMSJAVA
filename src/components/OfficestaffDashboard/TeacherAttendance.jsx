@@ -172,7 +172,7 @@ const TeacherAttendance = () => {
             to={allRouterLink.teacherAttendanceRecord}
             className="btn bgTheme text-white"
           >
-            Attendance Record <span>&rarr;</span>
+            Attendance Record
           </Link>
         </div>
         <div className="mb-4">
