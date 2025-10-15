@@ -130,71 +130,87 @@ const ExamSchedule = () => {
   }, [watch("class_name"), watch("school_year")]);
 
   const onSubmit = async (data) => {
-    // Prevent creating schedule if one already exists
-    if (existingSchedules.length > 0) {
-      setAlertMessage(
-        "Exam schedule for this class and school year already exists!"
-      );
+  if (existingSchedules.length > 0) {
+    setAlertMessage(
+      "Exam schedule for this class and school year already exists!"
+    );
+    setShowAlert(true);
+    return;
+  }
+
+  try {
+    setError("");
+    setSuccess("");
+
+    const payload = {
+      class_name: Number(data.class_name),
+      school_year: Number(data.school_year),
+      exam_type: Number(data.exam_type),
+      papers: data.papers.map((paper) => ({
+        subject_id: Number(paper.subject_id),
+        exam_date: paper.exam_date,
+        start_time: paper.start_time,
+        end_time: paper.end_time,
+      })),
+    };
+
+    const response = await axiosInstance.post(
+      "/d/Exam-Schedule/create_timetable/",
+      payload
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      setAlertMessage("Exam schedule created successfully!");
       setShowAlert(true);
-      return;
-    }
-
-    try {
-      setError("");
-      setSuccess("");
-
-      const payload = {
-        class_name: Number(data.class_name),
-        school_year: Number(data.school_year),
-        exam_type: Number(data.exam_type),
-        papers: data.papers.map((paper) => ({
-          subject_id: Number(paper.subject_id),
-          exam_date: paper.exam_date,
-          start_time: paper.start_time,
-          end_time: paper.end_time,
-        })),
-      };
-
-      const response = await axiosInstance.post(
-        "/d/Exam-Schedule/create_timetable/",
-        payload
+      reset();
+    } else {
+      throw new Error(
+        response.data?.message || "Failed to create exam schedule"
       );
+    }
+  } catch (err) {
+    console.error("Backend error:", err);
+    let backendError = "Failed to create exam schedule";
 
-      if (response.status === 200 || response.status === 201) {
-        setAlertMessage("Exam schedule created successfully!");
-        setShowAlert(true);
-        reset();
+    if (err.response) {
+      const data = err.response.data;
+      if (typeof data === "string") {
+        backendError = data;
+      } else if (Array.isArray(data)) {
+        backendError = data.join("\n");
+      } else if (data?.message) {
+        backendError = data.message;
       } else {
-        throw new Error(
-          response.data.message || "Failed to create exam schedule"
-        );
+        backendError = Object.entries(data)
+          .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(", ") : messages}`)
+          .join("\n");
       }
-    } catch (err) {
-      setAlertMessage(
-        err.response?.data?.[0] ||
-          err.response?.data?.message ||
-          "Failed to create exam schedule"
-      );
-      setShowAlert(true);
     }
-  };
+
+    setAlertMessage(backendError);
+    setShowAlert(true);
+  }
+};
+
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen mb-24 md:mb-10  dark:bg-gray-900">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 rounded-box my-5 shadow-sm mb-10">
-        <div className=" flex justify-end">
+       
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="border-b border-gray-300 dark:border-gray-700 ">
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Create Exam Schedule <i className="fa-solid fa-calendar-day ml-2"></i>
+          </h1>
+           <div className=" flex justify-end pb-2">
           <button
             className="btn bgTheme text-white"
             onClick={handleNavigate}
           >
            <i className="fa-solid fa-pen-nib ml-2"></i> Update Exam Schedule
           </button>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-3xl font-bold text-center mb-8">
-            Create Exam Schedule <i className="fa-solid fa-calendar-day ml-2"></i>
-          </h1>
+        </div></div>
 
           {error && (
             <div className="alert alert-error mb-6">
@@ -218,7 +234,7 @@ const ExamSchedule = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Class *</span>
+                <span className="label-text">Class</span><span className="text-error">*</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -240,7 +256,7 @@ const ExamSchedule = () => {
 
             <div className="form-control">
               <label className="label">
-                <span className="label-text">School Year *</span>
+                <span className="label-text">School Year</span><span className="text-error">*</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -264,7 +280,7 @@ const ExamSchedule = () => {
 
             <div className="form-control">
               <label className="label">
-                <span className="label-text">Exam Type *</span>
+                <span className="label-text">Exam Type</span><span className="text-error">*</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -294,7 +310,7 @@ const ExamSchedule = () => {
                 className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6 bg-base-200 p-4 rounded-lg"
               >
                 <div className="form-control">
-                  <label className="label">Subject *</label>
+                  <label className="label">Subject</label><span className="text-error">*</span>
                   <select
                     className={`select select-bordered w-full ${
                       errors.papers?.[index]?.subject_id ? "select-error" : ""
@@ -318,7 +334,7 @@ const ExamSchedule = () => {
                 </div>
 
                 <div className="form-control">
-                  <label className="label">Exam Date *</label>
+                  <label className="label">Exam Date</label><span className="text-error">*</span>
                   <input
                     type="date"
                     className="input input-bordered w-full"
@@ -329,7 +345,7 @@ const ExamSchedule = () => {
                 </div>
 
                 <div className="form-control">
-                  <label className="label">Start Time *</label>
+                  <label className="label">Start Time</label><span className="text-error">*</span>
                   <input
                     type="time"
                     className="input input-bordered w-full"
@@ -340,7 +356,7 @@ const ExamSchedule = () => {
                 </div>
 
                 <div className="form-control">
-                  <label className="label">End Time *</label>
+                  <label className="label">End Time</label><span className="text-error">*</span>
                   <input
                     type="time"
                     className="input input-bordered w-full"

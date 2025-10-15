@@ -7,24 +7,28 @@ import {
   editTeachersdetails,
 } from "../../services/api/Api";
 import UpdateSuccessful from "../Modals/UpdateModal";
-import { useForm } from "react-hook-form";
 
 const UpdateStaffDetails = () => {
   const { id, type } = useParams();
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    email: "",
+    phone_no: "",
+    gender: "",
+    adhaar_no: "",
+    pan_no: "",
+    qualification: "",
+    category: "",
+    user_profile: null,
+  });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [UpdateModal, setUpdateModal] = useState(false);
-  const [profileFile, setProfileFile] = useState(null);
-  const [apiErrors, setApiErrors] = useState({});
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({ mode: "onChange" });
 
   const fetchStaff = async () => {
     try {
@@ -38,16 +42,18 @@ const UpdateStaffDetails = () => {
         return;
       }
 
-      Object.keys(data).forEach((key) => {
-        if (key === "banking_data" || key === "address_data") {
-          if (data[key] !== null) {
-            Object.keys(data[key]).forEach((subKey) => {
-              setValue(`${key}.${subKey}`, data[key][subKey]);
-            });
-          }
-        } else if (data[key] !== null && data[key] !== undefined) {
-          setValue(key, data[key]);
-        }
+      setFormData({
+        first_name: data.first_name || "",
+        middle_name: data.middle_name || "",
+        last_name: data.last_name || "",
+        email: data.email || "",
+        phone_no: data.phone_no || "",
+        gender: data.gender || "",
+        adhaar_no: data.adhaar_no || "",
+        pan_no: data.pan_no || "",
+        qualification: data.qualification || "",
+        category: data.category || "",
+        user_profile: null,
       });
     } catch (err) {
       setError("Failed to load staff data.");
@@ -60,59 +66,41 @@ const UpdateStaffDetails = () => {
     fetchStaff();
   }, [id, type]);
 
-  const onSubmit = async (formData) => {
-    const payload = new FormData();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    if (formData.is_active === "true") {
-      formData.is_active = true;
-    } else if (formData.is_active === "false") {
-      formData.is_active = false;
-    }
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      user_profile: e.target.files[0],
+    }));
+  };
 
-    if (formData.banking_data) {
-      payload.append("banking_data", JSON.stringify(formData.banking_data));
-    }
-    if (formData.address_data) {
-      payload.append("address_data", JSON.stringify(formData.address_data));
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formPayload = new FormData();
 
     for (const key in formData) {
-      if (
-        key !== "user_profile" &&
-        key !== "banking_data" &&
-        key !== "address_data" &&
-        formData[key] !== null &&
-        formData[key] !== ""
-      ) {
-        payload.append(key, formData[key]);
+      if (formData[key] !== null) {
+        formPayload.append(key, formData[key]);
       }
-    }
-
-    // File append
-    if (profileFile) {
-      payload.append("user_profile", profileFile);
     }
 
     try {
       if (type === "teacher") {
-        await editTeachersdetails(id, payload);
+        await editTeachersdetails(id, formPayload);
       } else if (type === "office") {
-        await editOfficeStaffdetails(id, payload);
+        await editOfficeStaffdetails(id, formPayload);
+      } else {
+        setError("Invalid staff type.");
+        return;
       }
       setUpdateModal(true);
-      setApiErrors({});
     } catch (err) {
-      console.error("Failed to update staff details:", err);
-
-      if (err.response && err.response.data) {
-        setApiErrors(err.response.data);
-      } else if (err.pan_no) {
-        setApiErrors({ pan_no: err.pan_no });
-      } else if (err.adhaar_no) {
-        setApiErrors({ adhaar_no: err.adhaar_no });
-      } else {
-        setError("Failed to update staff details.");
-      }
+      console.error("Submit error:", err);
+      setError("Failed to update staff details.");
     }
   };
 
@@ -140,308 +128,146 @@ const UpdateStaffDetails = () => {
 
   return (
     <>
-      <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
-        <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
+      <div className="p-6 bg-gray-100 min-h-screen">
+        <div className="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow">
           <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
             <i className="fa-solid fa-pen-to-square mr-2"></i>{" "}
             {type?.toLowerCase() === "teacher" ? "Update Teacher Details" : "Update Staff Details"}
           </h1>
 
+
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             encType="multipart/form-data"
           >
-            {/* First Name */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">First Name</label>
               <input
                 type="text"
-                placeholder="Enter First Name"
-                {...register("first_name", { required: "First Name is required" })}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
+                placeholder="First Name"
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.first_name && <span className="text-error text-sm">{errors.first_name.message}</span>}
             </div>
 
-            {/* Middle Name */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">Middle Name</label>
               <input
                 type="text"
-                placeholder="Enter Middle Name"
-                {...register("middle_name")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                name="middle_name"
+                value={formData.middle_name}
+                onChange={handleChange}
+                placeholder="Middle Name"
+                className="input input-bordered w-full focus:outline-none"
               />
             </div>
 
-            {/* Last Name */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">Last Name</label>
               <input
                 type="text"
-                placeholder="Enter Last Name"
-                {...register("last_name", { required: "Last Name is required" })}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+                placeholder="Last Name"
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.last_name && <span className="text-error text-sm">{errors.last_name.message}</span>}
             </div>
 
-            {/* Email */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">Email</label>
               <input
-                type="email"
-                placeholder="Enter Email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" },
-                })}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                type="text"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.email && <span className="text-error text-sm">{errors.email.message}</span>}
             </div>
 
-            {/* Phone */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">Phone Number</label>
               <input
-                type="tel"
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
                 placeholder="Phone Number"
-                {...register("phone_no", {
-                  required: "Phone number is required",
-                  pattern: { value: /^\d{10}$/, message: "Phone number must be exactly 10 digits" },
-                  maxLength: { value: 10, message: "Phone number cannot exceed 10 digits" },
-                })}
-                className={`input input-bordered w-full  dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:outline-none ${errors.phone_no ? "input-error" : ""}`}
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.phone_no && <span className="text-error text-sm">{errors.phone_no.message}</span>}
             </div>
 
-            {/* Status */}
-            <div>
-              <label className="label">Status</label>
-              <select
-                {...register("is_active", { required: "Status is required" })}
-                className="select select-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              >
-                <option value="">Select Status</option>
-                <option value="true">Active</option>
-                <option value="false">InActive</option>
-              </select>
-              {errors.is_active && <span className="text-error text-sm">{errors.is_active.message}</span>}
-            </div>
-
-            {/* Gender */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">Gender</label>
-              <select
-                {...register("gender", { required: "Gender is required" })}
-                className="select select-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              >
-                <option value="">Select Gender</option>
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-                <option value="Other">Other</option>
-              </select>
-              {errors.gender && <span className="text-error text-sm">{errors.gender.message}</span>}
+              <input
+                type="text"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                placeholder="Gender"
+                className="input input-bordered w-full focus:outline-none"
+              />
             </div>
 
-            {/* Aadhaar */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">Aadhaar Number</label>
               <input
                 type="text"
-                placeholder="Enter Aadhaar Number"
-                {...register("adhaar_no", {
-                  pattern: { value: /^\d{12}$/, message: "Aadhaar must be 12 digits" },
-                })}
-                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.adhaar_no || apiErrors.adhaar_no ? "input-error" : ""}`}
+                name="adhaar_no"
+                value={formData.adhaar_no}
+                onChange={handleChange}
+                placeholder="Aadhaar Number"
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.adhaar_no && <span className="text-error text-sm">{errors.adhaar_no.message}</span>}
-              {apiErrors.adhaar_no &&
-                apiErrors.adhaar_no.map((msg, idx) => (
-                  <span key={idx} className="text-error text-sm">{msg}</span>
-                ))}
             </div>
 
-            {/* PAN */}
-            <div>
+            <div className="flex flex-col">
               <label className="label">PAN Number</label>
               <input
                 type="text"
-                placeholder="Enter PAN Number"
-                {...register("pan_no", {
-                  pattern: {
-                    value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-                    message: "PAN format: 5 letters + 4 digits + 1 letter",
-                  },
-                })}
-                className={`input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 ${errors.pan_no || apiErrors.pan_no ? "input-error" : ""}`}
-              />
-              {errors.pan_no && <span className="text-error text-sm">{errors.pan_no.message}</span>}
-              {apiErrors.pan_no &&
-                apiErrors.pan_no.map((msg, idx) => (
-                  <span key={idx} className="text-error text-sm">{msg}</span>
-                ))}
-            </div>
-
-            {/* Account Number */}
-            <div>
-              <label className="label">Account Number</label>
-              <input
-                type="text"
-                {...register("banking_data.account_no")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* IFSC Code */}
-            <div>
-              <label className="label">IFSC Code</label>
-              <input
-                type="text"
-                {...register("banking_data.ifsc_code")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Account Holder Name */}
-            <div>
-              <label className="label">Account Holder Name</label>
-              <input
-                type="text"
-                {...register("banking_data.holder_name")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-              {/* House No */}
-            <div>
-              <label className="label">House No</label>
-              <input
-                type="text"
-                {...register("address_data.house_no")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Habitation */}
-            <div>
-              <label className="label">Habitation</label>
-              <input
-                type="text"
-                {...register("address_data.habitation")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Ward No */}
-            <div>
-              <label className="label">Ward No</label>
-              <input
-                type="text"
-                {...register("address_data.ward_no")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Zone No */}
-            <div>
-              <label className="label">Zone No</label>
-              <input
-                type="text"
-                {...register("address_data.zone_no")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Block */}
-            <div>
-              <label className="label">Block</label>
-              <input
-                type="text"
-                {...register("address_data.block")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* District */}
-            <div>
-              <label className="label">District</label>
-              <input
-                type="text"
-                {...register("address_data.district")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Division */}
-            <div>
-              <label className="label">Division</label>
-              <input
-                type="text"
-                {...register("address_data.division")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Area Code */}
-            <div>
-              <label className="label">Area Code</label>
-              <input
-                type="text"
-                {...register("address_data.area_code")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Address Line */}
-            <div>
-              <label className="label">Address Line</label>
-              <input
-                type="text"
-                {...register("address_data.address_line")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* Country */}
-            <div>
-              <label className="label">Country</label>
-              <input
-                type="text"
-                {...register("address_data.country_name")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* State */}
-            <div>
-              <label className="label">State</label>
-              <input
-                type="text"
-                {...register("address_data.state_name")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-              />
-            </div>
-            {/* City */}
-            <div>
-              <label className="label">City</label>
-              <input
-                type="text"
-                {...register("address_data.city_name")}
-                className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                name="pan_no"
+                value={formData.pan_no}
+                onChange={handleChange}
+                placeholder="PAN Number"
+                className="input input-bordered w-full focus:outline-none"
               />
             </div>
 
-            {/* Profile Picture */}
-            <div className="md:col-span-2 lg:col-span-3">
-              <label className="block mb-2 font-medium text-gray-700 dark:text-gray-200">
-                Update Profile Picture
-              </label>
+            {type === "teacher" && (
+              <div className="flex flex-col">
+                <label cclassName="label">Qualification</label>
+                <input
+                  type="text"
+                  name="qualification"
+                  value={formData.qualification}
+                  onChange={handleChange}
+                  placeholder="Qualification"
+                  className="input input-bordered w-full focus:outline-none"
+                />
+              </div>
+            )}
+
+            <div className="md:col-span-2 lg:col-span-3 flex flex-col">
+              <label className="label">Update Profile Picture</label>
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setProfileFile(e.target.files[0] || null)}
-                className="file-input file-input-bordered w-full focus:outline-none dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+                onChange={handleFileChange}
+                className="file-input file-input-bordered w-full focus:outline-none"
               />
             </div>
 
-            {/* Submit */}
             <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center mt-6">
               <button type="submit" className="btn bgTheme text-white">
                 <i className="fa-solid fa-floppy-disk mr-2"></i> Save Changes
               </button>
             </div>
           </form>
+
         </div>
       </div>
 
@@ -456,4 +282,3 @@ const UpdateStaffDetails = () => {
 };
 
 export default UpdateStaffDetails;
-
