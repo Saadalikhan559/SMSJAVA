@@ -165,7 +165,7 @@ const UnpaidFeesList = () => {
             <div className="flex flex-wrap items-end gap-4 w-full sm:w-auto">
               {/* Month Filter */}
               <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-sm font-medium mb-1">Search by Month:</label>
+                <label className="text-sm font-medium mb-1">Search by Month</label>
                 <select
                   className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                   value={selectedMonth}
@@ -184,7 +184,7 @@ const UnpaidFeesList = () => {
               {/* Class Filter (Director/Office Staff only) */}
               {(userRole === constants.roles.director || userRole === constants.roles.officeStaff) && (
                 <div className="flex flex-col w-full sm:w-auto">
-                  <label className="text-sm font-medium mb-1">Search by Class:</label>
+                  <label className="text-sm font-medium mb-1">Search by Class</label>
                   <select
                     className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
                     value={selectedClass}

@@ -8,15 +8,18 @@ import { Error } from "../../global/Error";
 import { SuccessModal } from "../Modals/SuccessModal";
 import { ConfirmationModal } from "../Modals/ConfirmationModal";
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const SchoolIncome = () => {
   const { axiosInstance, authTokens } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [incomeDetails, setIncomeDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [schoolYears, setSchoolYears] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedSchoolYear, setSelectedSchoolYear] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
   const [error, setError] = useState("");
   const [apiError, setApiError] = useState("");
 
@@ -57,22 +60,13 @@ export const SchoolIncome = () => {
     }
   };
 
-  const handleViewAttachment = async (filePath) => {
+  const handleViewAttachment = (filePath) => {
     if (!filePath) {
       setFileErrorModal(true);
       return;
     }
-
-    const url = filePath.replace(/^http:\/\/localhost:8000/, constants.baseUrl);
-
-    try {
-      await axiosInstance.get(url, { responseType: "blob" });
-      window.open(url, "_blank");
-    } catch (err) {
-      setFileErrorModal(true);
-    }
+    window.open(filePath, "_blank");
   };
-
 
   // Internal API using axiosInstance
   const getCategories = async () => {
@@ -91,6 +85,7 @@ export const SchoolIncome = () => {
       const params = {};
       if (selectedSchoolYear) params.school_year = selectedSchoolYear;
       if (selectedCategory) params.category = selectedCategory;
+      if (selectedMonth) params.month = selectedMonth;
 
       const res = await axiosInstance.get("/d/school-income/", { params });
       setIncomeDetails(res.data);
@@ -109,7 +104,7 @@ export const SchoolIncome = () => {
 
   useEffect(() => {
     getIncomeDetails();
-  }, [selectedSchoolYear, selectedCategory]);
+  }, [selectedSchoolYear, selectedCategory, selectedMonth]);
 
   const handleDeleteIncome = async (id) => {
     try {
@@ -139,57 +134,88 @@ export const SchoolIncome = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-6 border-b border-gray-300 dark:border-gray-700 pb-2 items-end">
-          {/* School Year Filter */}
-          <div className="form-control w-48">
-            <label className="label">
-              <span className="label-text text-gray-700 dark:text-gray-300">
-                Select School Year
-              </span>
-            </label>
-            <select
-              value={selectedSchoolYear}
-              onChange={(e) => setSelectedSchoolYear(e.target.value)}
-              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            >
-              <option value="">Select School Year</option>
-              {schoolYears.map((year) => (
-                <option key={year.id} value={year.id}>
-                  {year.year_name}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-wrap items-end gap-4 mb-6 border-b border-gray-300 dark:border-gray-700 pb-2 justify-between">
+          {/* Left Filters + Reset Button */}
+          <div className="flex flex-wrap gap-4 items-end">
+            {/* School Year Filter */}
+            <div className="form-control w-48">
+              <label className="text-sm font-medium mb-1">
+                  Select School Year
+              </label>
+              <select
+                value={selectedSchoolYear}
+                onChange={(e) => setSelectedSchoolYear(e.target.value)}
+                className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+              >
+                <option value="">Select School Year</option>
+                {schoolYears.map((year) => (
+                  <option key={year.id} value={year.id}>
+                    {year.year_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Category Filter */}
+            <div className="form-control w-48">
+              <label className="text-sm font-medium mb-1">
+                  Select Category
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+              >
+                <option value="">Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Month Filter */}
+            <div className="form-control w-48">
+              <label className="text-sm font-medium mb-1">
+                  Select Month
+              </label>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+              >
+                <option value="">All Months</option>
+                {[
+                  "January", "February", "March", "April", "May", "June", "July", "August",
+                  "September", "October", "November", "December"
+                ].map((month) => (
+                  <option key={month} value={month}>{month}</option>
+                ))}
+              </select>
+            </div>
+
+            {/*Reset Filter Button */}
+            <div className="form-control mt-6 md:mt-0">
+              <button
+                onClick={() => {
+                  setSelectedSchoolYear("");
+                  setSelectedCategory("");
+                  setSelectedMonth("");
+                }}
+                className="btn bgTheme text-white"
+              >
+                Reset Filter
+              </button>
+            </div>
           </div>
 
-          {/* Category Filter */}
-          <div className="form-control w-48">
-            <label className="label">
-              <span className="label-text text-gray-700 dark:text-gray-300">Select Category</span>
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="select select-bordered w-full focus:outline-none bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            >
-              <option value="">Category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Reset Filter Button */}
+          {/* Create Income Button*/}
           <div className="form-control mt-6 md:mt-0">
             <button
-              onClick={() => {
-                setSelectedSchoolYear("");
-                setSelectedCategory("");
-              }}
-              className="btn bgTheme text-white"
+              onClick={() => navigate(allRouterLink.createIncome)}
+              className="btn btn-primary bgTheme text-white"
             >
-              Reset Filter
+              Create Income
             </button>
           </div>
         </div>
@@ -269,7 +295,7 @@ export const SchoolIncome = () => {
                 <tr>
                   <td colSpan="10" className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                     <i className="fa-solid fa-inbox text-4xl mb-2 text-gray-400 dark:text-gray-600"></i>
-                    <p>No income records found for the selected criteria</p>
+                    <p>No income records found for the selected category</p>
                   </td>
                 </tr>
               )}
