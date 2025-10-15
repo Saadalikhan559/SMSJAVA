@@ -110,7 +110,7 @@ const TeacherAttendanceRecord = () => {
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
-            <i className="fa-solid fa-clipboard-list w-5"></i> Attendance Records
+            <i className="fa-solid fa-clipboard-list w-5"></i> Teacher Attendance Record
           </h1>
         </div>
 
@@ -179,7 +179,7 @@ const TeacherAttendanceRecord = () => {
                   .sort((a, b) => a.teacher_name.localeCompare(b.teacher_name))
                   .map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
-                      <td className="px-4 py-3 font-bold text-nowrap capitalize text-gray-700 dark:text-white">
+                      <td className="px-4 py-3 text-nowrap capitalize text-gray-700 dark:text-white">
                         {record.teacher_name}
                       </td>
                       <td className="px-4 py-3 text-gray-700 text-nowrap dark:text-gray-300">{record.date}</td>
