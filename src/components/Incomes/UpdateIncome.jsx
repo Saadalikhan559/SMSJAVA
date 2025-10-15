@@ -151,10 +151,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Month */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Month <span className="text-error">*</span>
-                </span>
               </label>
               <select
                 {...register("month", { required: "Month is required" })}
@@ -170,10 +168,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Amount */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Amount <span className="text-error">*</span>
-                </span>
               </label>
               <input
                 type="number"
@@ -186,10 +182,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Income Date */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Income Date <span className="text-error">*</span>
-                </span>
               </label>
               <input
                 type="date"
@@ -200,10 +194,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Category */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Category <span className="text-error">*</span>
-                </span>
               </label>
               <select
                 {...register("category", { required: "Category is required" })}
@@ -216,8 +208,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Description */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">Description</span>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Description
               </label>
               <input
                 type="text"
@@ -229,10 +221,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* School Year */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   School Year <span className="text-error">*</span>
-                </span>
               </label>
               <select
                 {...register("school_year", { required: "School Year is required" })}
@@ -246,10 +236,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Payment Method */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Payment Method <span className="text-error">*</span>
-                </span>
               </label>
               <select
                 {...register("payment_method", { required: "Payment Method is required" })}
@@ -263,10 +251,8 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Status */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Status <span className="text-error">*</span>
-                </span>
               </label>
               <select
                 {...register("status", { required: "Status is required" })}
@@ -279,11 +265,9 @@ const UpdateIncome = ({ onClose, refreshData }) => {
 
             {/* Attachment */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text flex items-center gap-1 dark:text-gray-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   <i className="fa-solid fa-paperclip text-sm"></i>
                   Attachment
-                </span>
               </label>
               <input
                 type="file"
