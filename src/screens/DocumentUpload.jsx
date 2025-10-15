@@ -348,7 +348,7 @@ export const DocumentUpload = () => {
     setUploadFields(newFields);
   };
 
- const handleUploadChange = (e, index) => {
+const handleUploadChange = (e, index) => {
   const { name, value } = e.target;
 
   // Update the field value
@@ -377,14 +377,25 @@ export const DocumentUpload = () => {
   if (name === "document_types" || name === "identities") {
     const validationError = validateIdentity(currentIdentities, currentDocType);
     newErrors[index] = validationError || "";
+
+
+    setApiErrors((prev) => {
+      const updated = { ...prev };
+      if (updated.identities) {
+        delete updated.identities;
+      }
+      return updated;
+    });
   }
 
   // Update state
   setIdentityErrors(newErrors);
   setDocTypeErrors(newDocErrors);
-  setFilesErrors(newFileErrors); // ✅ Only set an array, not an object
+  setFilesErrors(newFileErrors);
+
   console.log("Document Type Error at index", index, ":", newFileErrors);
 };
+
 
 
   const getAvailableDocumentTypes = (currentIndex) => {
@@ -494,7 +505,6 @@ export const DocumentUpload = () => {
       setSearchStudentInput("")
       setDisable(true)
     } catch (err) {
-      
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
          setDisable(true)
@@ -506,14 +516,14 @@ export const DocumentUpload = () => {
 
 
     finally {
-      setSelectedTeacherName("")
-      setSearchTeacherInput("")
-      setSelectedGuardianName("")
-      setSearchGuardianInput("")
-      setSelectedOfficeStaffName("")
-      setSearchOfficeStaffInput("")
-      setSelectedStudentName("")
-      setSearchStudentInput("")
+      // setSelectedTeacherName("")
+      // setSearchTeacherInput("")
+      // setSelectedGuardianName("")
+      // setSearchGuardianInput("")
+      // setSelectedOfficeStaffName("")
+      // setSearchOfficeStaffInput("")
+      // setSelectedStudentName("")
+      // setSearchStudentInput("")
       setLoading(false);
       setDisable(true);
     }
@@ -543,7 +553,7 @@ export const DocumentUpload = () => {
   }
 
 
-  // --- SIDE EFFECTS ---
+ 
   useEffect(() => {
     getRoles();
     getDocumentTypes();
@@ -614,6 +624,40 @@ export const DocumentUpload = () => {
   }, []);
 
 
+
+useEffect(() => {
+  const hasNoDocTypeErrors = uploadFields.every((field, index) => {
+    return field.document_types && !docTypeErrors[index];
+  });
+
+  const hasNoFileErrors = uploadFields.every((field, index) => {
+    return field.files && !FilesErrors[index];
+  });
+
+  const hasNoIdentityErrors = uploadFields.every((field, index) => {
+    return !identityErrors[index]; // Empty string means no error
+  });
+
+  const hasSelectedIdentity =
+    formData.student ||
+    formData.teacher ||
+    formData.guardian ||
+    formData.office_staff;
+
+  const hasNoApiErrors = Object.keys(apiErrors).length === 0;
+
+  const isFormValid =
+    hasNoDocTypeErrors &&
+    hasNoFileErrors &&
+    hasNoIdentityErrors &&
+    hasSelectedIdentity &&
+    hasNoApiErrors;
+
+  setDisable(!isFormValid); // Disable if NOT valid
+}, [uploadFields, docTypeErrors, FilesErrors, identityErrors, formData, apiErrors]);
+
+
+
   // --- RENDER ---
   // Helper function to get max length based on document type
   const getIdentityMaxLength = (docTypeId) => {
@@ -641,15 +685,15 @@ export const DocumentUpload = () => {
       "income certificate": 20,
       "domicile certificate": 20,
       "library card": 15,
-      "other": 50 // Default max length for other documents
+      "other": 50 
     };
 
-    // Find matching document type (with some flexibility in naming)
+
     const matchedType = Object.keys(maxLengths).find(key =>
       name.includes(key) || key.includes(name)
     );
 
-    return matchedType ? maxLengths[matchedType] : 50; // Default to 50 if not found
+    return matchedType ? maxLengths[matchedType] : 50; 
   };
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
@@ -1257,11 +1301,11 @@ export const DocumentUpload = () => {
 
               <button
                 type="submit"
-                className={`btn bgTheme text-white w-auto md:w-36  ${Disable 
+                className={`btn bgTheme text-white w-auto md:w-36  ${Disable
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-purple-700"
                   }`}
-                disabled={Disable }
+                disabled={Disable}
               >
                 {loading ? (
                   <>
