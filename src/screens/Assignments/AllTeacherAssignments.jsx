@@ -55,6 +55,8 @@ export const AllTeacherAssignments = () => {
     }
   };
 
+  console.log(teacherAssignments);
+
   // Substitute assignments fetched from API file
   const getSubAssignments = async () => {
     try {
@@ -204,10 +206,16 @@ export const AllTeacherAssignments = () => {
                     </div>
 
                     {data.assignments.length > 0 ? (
-                      data.assignments.map((assignment, idx) => (
-                        <div className="p-4" key={idx}>
-                          <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                            {assignment.periods.map((period, idx2) => (
+                      <div className="p-4">
+                        <ul className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                          {data.assignments
+                            .flatMap((assignment) =>
+                              assignment.periods.map((period) => ({
+                                ...period,
+                                year_level_name: assignment.year_level_name || 'Unknown Class',
+                              }))
+                            )
+                            .map((period, idx2) => (
                               <li
                                 className="bg-gray-100 dark:bg-gray-600 p-3 rounded-md border border-gray-200 dark:border-gray-500 flex justify-between"
                                 key={idx2}
@@ -228,12 +236,12 @@ export const AllTeacherAssignments = () => {
                                 </div>
                               </li>
                             ))}
-                          </ul>
-                        </div>
-                      ))
+                        </ul>
+                      </div>
                     ) : (
                       <ErrorMessage text="No current assignments" />
                     )}
+
                   </div>
                 ))}
               </div>
