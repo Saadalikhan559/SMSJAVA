@@ -354,20 +354,22 @@ const handleSubmitForm = async (data) => {
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-base-100 dark:bg-gray-800 rounded-box my-5 shadow-sm">
-        <div className=" flex justify-end">
+        <form onSubmit={handleSubmit(handleSubmitForm)}>
+        <div className="mb-4 border-b border-gray-300 dark:border-gray-700">
+
+          <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
+            Assign Subjects <i className="fa-solid fa-book ml-2" />
+          </h1>
+          <div className=" flex justify-end pb-2">
           <button
             className="btn text-white bgTheme"
             onClick={handleNavigate}
           >
             Teacher Assignments <span>&rarr;</span>
           </button>
+          </div>
 
-        </div><br></br>
-
-        <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
-            Assign Subjects <i className="fa-solid fa-book ml-2" />
-          </h1>
+        </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             {/* Teacher Dropdown with Search */}
             <div className="form-control relative" ref={teacherRef}>
@@ -388,7 +390,7 @@ const handleSubmitForm = async (data) => {
                   </span>
                 </div>
                 {isTeacherOpen && (
-                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700  rounded-md shadow max-h-60 overflow-y-auto">
                     {/* Search Bar for Teachers */}
                     <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
                       <input
@@ -469,7 +471,7 @@ const handleSubmitForm = async (data) => {
                   </span>
                 </div>
                 {isYearLevelOpen && (
-                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700  rounded-md shadow max-h-60 overflow-y-auto">
                     {/* Search Bar for Year Levels */}
                     <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
                       <input
@@ -551,7 +553,7 @@ const handleSubmitForm = async (data) => {
                   </span>
                 </div>
                 {isSubjectOpen && (
-                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 rounded-md shadow max-h-60 overflow-y-auto">
                     {/* Search Bar (separate container, sticky) */}
                     <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
                       <input
@@ -620,7 +622,7 @@ const handleSubmitForm = async (data) => {
                   </span>
                 </div>
                 {isPeriodOpen && (
-                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border dark:border-gray-600 rounded-md shadow max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full bg-white dark:bg-gray-700  rounded-md shadow max-h-60 overflow-y-auto">
                     {/* Search Bar for Periods */}
                     <div className="p-2 sticky top-0 bg-white dark:bg-gray-700 z-10 border-b border-gray-200 dark:border-gray-600">
                       <input

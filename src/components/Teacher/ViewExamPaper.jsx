@@ -232,15 +232,14 @@ const ViewExamPaper = () => {
 
               {/* Reset Button */}
               <div className="mt-1 w-full sm:w-auto">
-                <button onClick={resetFilters} className="btn bgTheme text-white">
+                <button onClick={resetFilters} className="btn bgTheme text-white w-full sm:w-auto">
                   Reset Filters
                 </button>
               </div>
             </div>
 
             {/* Right Side: Search */}
-            <div className="flex items-end gap-2 w-full sm:w-auto justify-end">
-              <div className="flex flex-col w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2 w-full sm:w-auto justify-end">
                 <input
                   type="text"
                   placeholder="Search by Subject"
@@ -248,12 +247,9 @@ const ViewExamPaper = () => {
                   onChange={(e) => setSearchInput(e.target.value.trimStart())}
                   className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
-              </div>
-              <div className="flex justify-end">
-                <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white">
+                <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white w-full sm:w-auto flex justify-center items-center">
                   <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
                 </Link>
-              </div>
             </div>
           </div>
         </div>

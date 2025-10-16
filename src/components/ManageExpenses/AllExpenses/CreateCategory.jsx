@@ -140,7 +140,13 @@ const CreateCategory = () => {
                                 className="w-full btn bgTheme text-white rounded-md py-2"
                                 disabled={addLoading}
                             >
-                                {addLoading ? 'Adding...' : 'Add'}
+
+                                {addLoading ? (
+                                    <i className="fa-solid fa-spinner fa-spin mr-2" />
+                                ) : (
+                                    <i className="fa-solid fa-upload mr-2" />
+                                )}
+                                {addLoading ? " " : "Add"}
                             </button>
                         </form>
                     </div>
@@ -175,7 +181,12 @@ const CreateCategory = () => {
                                 className="w-full btn border border-yellow-300 bg-yellow-50 text-yellow-700 rounded-md py-2"
                                 disabled={editLoading}
                             >
-                                {editLoading ? 'Updating...' : 'Update'}
+                                {editLoading ? (
+                                    <i className="fa-solid fa-spinner fa-spin mr-2" />
+                                ) : (
+                                    <i className="fa-solid fa-upload mr-2" />
+                                )}
+                                {editLoading ? " " : "Update"}
                             </button>
                         </form>
                     </div>
@@ -203,7 +214,14 @@ const CreateCategory = () => {
                                 className="w-full btn border border-red-300 bg-red-50 text-red-700 rounded-md py-2"
                                 disabled={deleteLoading}
                             >
-                                {deleteLoading ? 'Deleting...' : 'Delete'}
+                                {/* {deleteLoading ? 'Deleting...' : 'Delete'} */}
+                                {deleteLoading ? (
+                                    <i className="fa-solid fa-spinner fa-spin mr-2" />
+                                ) : (
+                                    <i className="fa-solid fa-upload mr-2" />
+                                )}
+                                {deleteLoading ? " " : "Delete"}
+
                             </button>
                         </form>
                     </div>
