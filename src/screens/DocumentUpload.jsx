@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   fetchDocumentType,
   fetchGuardians,
@@ -52,9 +52,17 @@ export const DocumentUpload = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [docTypeErrors, setDocTypeErrors] = useState([]);
+  const [FilesErrors, setFilesErrors] = useState([]);
   const [apiErrors, setApiErrors] = useState({});
 
+
   const [role, setRole] = useState("");
+
+  const studentDropdownRef = useRef(null);
+  const teacherDropdownRef = useRef(null);
+  const guardianDropdownRef = useRef(null);
+  const officeStaffDropdownRef = useRef(null);
+
 
   const [formData, setFormData] = useState({
     student: "",
@@ -121,7 +129,7 @@ export const DocumentUpload = () => {
       const bcRegex = /^BRN-\d{4}-\d{3,}$/;
       return bcRegex.test(identity)
         ? ""
-        : "Birth Certificate format: BRN-YYYY-XXX (e.g. BRN-2021-000123)";
+        : "Birth: BRN-2021-000123";
     }
 
     // Transfer Certificate
@@ -129,7 +137,7 @@ export const DocumentUpload = () => {
       const tcRegex = /^TC-\d{4}-\d{3,}$/;
       return tcRegex.test(identity)
         ? ""
-        : "Transfer Certificate format: TC-YYYY-XXX (e.g. TC-2022-00123)";
+        : "TC: TC-YYYY-XXX (e.g. TC-2022-00123)";
     }
 
     // Bonafide Certificate
@@ -137,7 +145,7 @@ export const DocumentUpload = () => {
       const bonafideRegex = /^BONAFIDE-\d{4}-\d{3,}$/;
       return bonafideRegex.test(identity)
         ? ""
-        : "Bonafide format: BONAFIDE-YYYY-XXX (e.g. BONAFIDE-2023-001)";
+        : "Bonafide: BONAFIDE-2023-001";
     }
 
     // PAN Card
@@ -145,12 +153,12 @@ export const DocumentUpload = () => {
       const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
       return panRegex.test(identity)
         ? ""
-        : "PAN format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)";
+        : "PAN: AAAAA9999A (format)";
     } else if (name === "migration certificate") {
       const migrationRegex = /^[A-Z]{2,10}\/\d{4}\/\d{3,6}$/;
       return migrationRegex.test(identity)
         ? ""
-        : "Migration Certificate format: BOARDCODE/YYYY/SERIAL (e.g. CBSE/2020/123456)";
+        : "Migration: CBSE/2020/123456";
     }
     const normalized = name.trim().toLowerCase();
 
@@ -158,17 +166,17 @@ export const DocumentUpload = () => {
       const dobCertRegex = /^[A-Z\-\/]{2,10}[\-\/]?\d{4}[\-\/]?\d{3,6}$/;
       return dobCertRegex.test(identity)
         ? ""
-        : "DOB Certificate format: CODE/YYYY/SERIAL (e.g. MC/2020/123456)";
+        : "DOB: CODE/YYYY/SERIAL (e.g. MC/2020/123456)";
     } else if (normalized === "income certificate") {
       const incomeCertRegex = /^[A-Z\/\-]{2,10}[\-\/]?\d{4}[\-\/]?\d{3,6}$/;
       return incomeCertRegex.test(identity)
         ? ""
-        : "Income Certificate format: CODE/YYYY/SERIAL (e.g. IC/2021/123456)";
+        : "Income: IC/2021/123456 (format)";
     } else if (normalized === "domicile certificate") {
       const domicileCertRegex = /^[A-Z\/\-]{2,10}[\-\/]?\d{4}[\-\/]?\d{3,6}$/;
       return domicileCertRegex.test(identity)
         ? ""
-        : "Domicile Certificate format: CODE/YYYY/SERIAL (e.g. DC/2022/000123)";
+        : "Domicile: DC/2022/000123 (format)";
     }
 
     // Driving License
@@ -176,7 +184,7 @@ export const DocumentUpload = () => {
       const dlRegex = /^[A-Z]{2}[ -]?\d{2}[ -]?\d{2,4}[ -]?\d{6,7}$/;
       return dlRegex.test(identity)
         ? ""
-        : "Driving License: 2 letters (State) + 2 digits (RTO) + Year + Number. Example: MH12 2011 0012345 or DL-01-2017-001234";
+        : "DL: XX00-YYYY-Number (e.g. DL01-2017-001234)";
     }
 
     // Caste Certificate
@@ -184,7 +192,7 @@ export const DocumentUpload = () => {
       const casteRegex = /^CASTE-\d{4}-\d{3,}$/;
       return casteRegex.test(identity)
         ? ""
-        : "Caste Certificate format: CASTE-YYYY-XXX (e.g. CASTE-2023-001)";
+        : "Caste: CASTE-2023-001 (format)";
     }
 
     return "";
@@ -314,7 +322,7 @@ export const DocumentUpload = () => {
     });
   };
 
-  console.log(formData);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -340,49 +348,55 @@ export const DocumentUpload = () => {
     setUploadFields(newFields);
   };
 
-  const handleUploadChange = (e, index) => {
-    const { name, value } = e.target;
+const handleUploadChange = (e, index) => {
+  const { name, value } = e.target;
 
-    // Update the field value
-    const newFields = [...uploadFields];
-    newFields[index][name] = value;
-    setUploadFields(newFields);
+  // Update the field value
+  const newFields = [...uploadFields];
+  newFields[index][name] = value;
+  setUploadFields(newFields);
 
-    // Clone errors arrays
-    const newErrors = [...identityErrors];
-    const newDocErrors = [...docTypeErrors];
+  // Clone errors arrays
+  const newErrors = [...identityErrors];
+  const newDocErrors = [...docTypeErrors];
+  const newFileErrors = Array.isArray(FilesErrors) ? [...FilesErrors] : [];
 
-    // Validate document type
-    if (name === "document_types") {
-      if (!value) {
-        newDocErrors[index] = "Please select a document type";
-      } else {
-        newDocErrors[index] = "";
+  // Validate document type
+  if (name === "document_types") {
+    newDocErrors[index] = value ? "" : "Please select a document type";
+  }
+
+  if (name === "files") {
+    newFileErrors[index] = value ? "" : "Please select a file";
+  }
+
+  // Validate identity fields only if both fields exist
+  const currentIdentities = newFields[index]?.identities || "";
+  const currentDocType = newFields[index]?.document_types || "";
+
+  if (name === "document_types" || name === "identities") {
+    const validationError = validateIdentity(currentIdentities, currentDocType);
+    newErrors[index] = validationError || "";
+
+
+    setApiErrors((prev) => {
+      const updated = { ...prev };
+      if (updated.identities) {
+        delete updated.identities;
       }
-    }
+      return updated;
+    });
+  }
 
-    // Validate identity fields only if both fields exist
-    const currentIdentities = newFields[index]?.identities || "";
-    const currentDocType = newFields[index]?.document_types || "";
+  // Update state
+  setIdentityErrors(newErrors);
+  setDocTypeErrors(newDocErrors);
+  setFilesErrors(newFileErrors);
 
-    if (name === "document_types" || name === "identities") {
-      const validationError = validateIdentity(
-        currentIdentities,
-        currentDocType
-      );
-      newErrors[index] = validationError || ""; // Ensure it's a string
-    }
+  console.log("Document Type Error at index", index, ":", newFileErrors);
+};
 
-    // Update state
-    setIdentityErrors([...newErrors]);
-    setDocTypeErrors([...newDocErrors]); // Ensure a new array to trigger re-render
-    console.log(
-      "Document Type Error at index",
-      index,
-      ":",
-      newDocErrors[index]
-    );
-  };
+
 
   const getAvailableDocumentTypes = (currentIndex) => {
     const selectedDocTypes = uploadFields
@@ -399,6 +413,7 @@ export const DocumentUpload = () => {
 
     const newDocErrors = [...docTypeErrors];
     const newIdentityErrors = [...identityErrors];
+    const newfileError = [...FilesErrors]
     let hasError = false;
 
     try {
@@ -413,8 +428,10 @@ export const DocumentUpload = () => {
 
         // Validate file
         if (!field.files) {
-          newDocErrors[index] = "Please upload a file";
+          newfileError[index] = "Please upload a file";
           hasError = true;
+        } else {
+          newfileError[index] = "";
         }
 
         // Validate identities
@@ -437,6 +454,7 @@ export const DocumentUpload = () => {
 
       setDocTypeErrors([...newDocErrors]);
       setIdentityErrors([...newIdentityErrors]);
+      setFilesErrors([...newfileError])
 
       if (hasError) {
         setLoading(false);
@@ -477,26 +495,65 @@ export const DocumentUpload = () => {
       setRole("");
       setStep(0);
       setApiErrors({});
-      setSelectedTeacherName("");
-      setSelectedGuardianName("");
-      setSelectedStudentName("");
-      setSelectedOfficeStaffName("");
+      setSelectedTeacherName("")
+      setSearchTeacherInput("")
+      setSelectedGuardianName("")
+      setSearchGuardianInput("")
+      setSelectedOfficeStaffName("")
+      setSearchOfficeStaffInput("")
+      setSelectedStudentName("")
+      setSearchStudentInput("")
+      setDisable(true)
     } catch (err) {
       if (err.response && err.response.data) {
         setApiErrors(err.response.data);
+         setDisable(true)
       } else if (err.pan_no) {
         setApiErrors({ identities: err.identities });
+         setDisable(true)
       }
+    }
 
-      // console.error("Upload failed:", err);
-      // setAlertMessage("Upload failed");
-      // setShowAlert(true);
-    } finally {
+
+    finally {
+      // setSelectedTeacherName("")
+      // setSearchTeacherInput("")
+      // setSelectedGuardianName("")
+      // setSearchGuardianInput("")
+      // setSelectedOfficeStaffName("")
+      // setSearchOfficeStaffInput("")
+      // setSelectedStudentName("")
+      // setSearchStudentInput("")
       setLoading(false);
+      setDisable(true);
     }
   };
 
-  // --- SIDE EFFECTS ---
+  const handleBack = () => {
+    setUploadFields([{ files: null, document_types: "", identities: "" }]);
+    setFormData({
+      student: "",
+      teacher: "",
+      guardian: "",
+      office_staff: "",
+      year_level: "",
+    });
+    setSelectedTeacherName("")
+    setSearchTeacherInput("")
+    setSelectedGuardianName("")
+    setSearchGuardianInput("")
+    setSelectedOfficeStaffName("")
+    setSearchOfficeStaffInput("")
+    setSelectedStudentName("")
+    setSearchStudentInput("")
+    setApiErrors({});
+
+    prev()
+    setDisable(true)
+  }
+
+
+ 
   useEffect(() => {
     getRoles();
     getDocumentTypes();
@@ -529,42 +586,115 @@ export const DocumentUpload = () => {
     )
     .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        studentDropdownRef.current &&
+        !studentDropdownRef.current.contains(event.target)
+      ) {
+        setShowStudentDropdown(false);
+      }
+
+      if (
+        teacherDropdownRef.current &&
+        !teacherDropdownRef.current.contains(event.target)
+      ) {
+        setShowTeacherDropdown(false);
+      }
+
+      if (
+        guardianDropdownRef.current &&
+        !guardianDropdownRef.current.contains(event.target)
+      ) {
+        setShowGuardianDropdown(false);
+      }
+
+      if (
+        officeStaffDropdownRef.current &&
+        !officeStaffDropdownRef.current.contains(event.target)
+      ) {
+        setShowOfficeStaffDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
+
+useEffect(() => {
+  const hasNoDocTypeErrors = uploadFields.every((field, index) => {
+    return field.document_types && !docTypeErrors[index];
+  });
+
+  const hasNoFileErrors = uploadFields.every((field, index) => {
+    return field.files && !FilesErrors[index];
+  });
+
+  const hasNoIdentityErrors = uploadFields.every((field, index) => {
+    return !identityErrors[index]; // Empty string means no error
+  });
+
+  const hasSelectedIdentity =
+    formData.student ||
+    formData.teacher ||
+    formData.guardian ||
+    formData.office_staff;
+
+  const hasNoApiErrors = Object.keys(apiErrors).length === 0;
+
+  const isFormValid =
+    hasNoDocTypeErrors &&
+    hasNoFileErrors &&
+    hasNoIdentityErrors &&
+    hasSelectedIdentity &&
+    hasNoApiErrors;
+
+  setDisable(!isFormValid); // Disable if NOT valid
+}, [uploadFields, docTypeErrors, FilesErrors, identityErrors, formData, apiErrors]);
+
+
+
+  // --- RENDER ---
   // Helper function to get max length based on document type
-const getIdentityMaxLength = (docTypeId) => {
-  if (!docTypeId) return undefined;
-  
-  const selectedDoc = documentType.find(
-    (doc) => doc.id.toString() === docTypeId.toString()
-  );
-  if (!selectedDoc) return undefined;
+  const getIdentityMaxLength = (docTypeId) => {
+    if (!docTypeId) return undefined;
 
-  const name = selectedDoc.name.trim().toLowerCase();
+    const selectedDoc = documentType.find(
+      (doc) => doc.id.toString() === docTypeId.toString()
+    );
+    if (!selectedDoc) return undefined;
 
-  // Define max lengths for different document types
-  const maxLengths = {
-    "adharcard": 12,
-    "pan card": 10,
-    "passport": 8,
-    "driving license": 20,
-    "caste certificate": 15,
-    "birth certificate": 15,
-    "transfer certificate": 15,
-    "bonafide certificate": 20,
-    "migration certificate": 20,
-    "date of birth certificate": 20,
-    "income certificate": 20,
-    "domicile certificate": 20,
-    "library card": 15,
-    "other": 50 // Default max length for other documents
+    const name = selectedDoc.name.trim().toLowerCase();
+
+    // Define max lengths for different document types
+    const maxLengths = {
+      "adharcard": 12,
+      "pan card": 10,
+      "passport": 8,
+      "driving license": 20,
+      "caste certificate": 15,
+      "birth certificate": 15,
+      "transfer certificate": 15,
+      "bonafide certificate": 20,
+      "migration certificate": 20,
+      "date of birth certificate": 20,
+      "income certificate": 20,
+      "domicile certificate": 20,
+      "library card": 15,
+      "other": 50 
+    };
+
+
+    const matchedType = Object.keys(maxLengths).find(key =>
+      name.includes(key) || key.includes(name)
+    );
+
+    return matchedType ? maxLengths[matchedType] : 50; 
   };
-
-  // Find matching document type (with some flexibility in naming)
-  const matchedType = Object.keys(maxLengths).find(key => 
-    name.includes(key) || key.includes(name)
-  );
-
-  return matchedType ? maxLengths[matchedType] : 50; // Default to 50 if not found
-};
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
       <form
@@ -678,7 +808,7 @@ const getIdentityMaxLength = (docTypeId) => {
                 {/* File Upload */}
                 <div className="form-control w-full">
                   <label className="label">
-                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                    <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1 pt-6">
                       <i className="fa-solid fa-file-upload text-sm"></i>{" "}
                       Document Upload
                       <span className="text-error">*</span>
@@ -692,6 +822,11 @@ const getIdentityMaxLength = (docTypeId) => {
                     required
                     onChange={(e) => handleFileChange(e, index)}
                   />
+                  <div className="h-5">
+                    <span className="text-red-500 text-sm leading-tight">
+                      {FilesErrors[index] || ""}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Document Type */}
@@ -725,7 +860,7 @@ const getIdentityMaxLength = (docTypeId) => {
                 <div className="form-control w-full pt-6">
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                      <i className="fa-solid fa-id-card text-sm"></i> Identity
+                      <i className="fa-solid fa-id-card text-sm"></i> Identity  <span className="text-error">*</span>
                     </span>
                   </label>
                   <input
@@ -742,7 +877,7 @@ const getIdentityMaxLength = (docTypeId) => {
                     }
                   />
                   <div className="h-5">
-                    <span className="text-red-500 text-sm leading-tight">
+                    <span className="text-error text-sm block mt-1">
                       {identityErrors[index] || ""}
                       {/* React Hook Form Error */}
                       {apiErrors.identities && (
@@ -753,11 +888,14 @@ const getIdentityMaxLength = (docTypeId) => {
 
                       {/* Backend API Error */}
                       {apiErrors.identities &&
+                        Array.isArray(apiErrors.identities) &&
                         apiErrors.identities.map((msg, idx) => (
-                          <span key={idx} className="text-error text-sm">
+                          <span key={idx} className="text-error text-sm block mt-1">
                             {msg}
                           </span>
                         ))}
+
+
                     </span>
                   </div>
                 </div>
@@ -767,11 +905,10 @@ const getIdentityMaxLength = (docTypeId) => {
                   {index === 0 ? (
                     <button
                       type="button"
-                      className={`btn bgTheme text-white w-auto md:w-36  ${
-                        AddField === 3
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-purple-700"
-                      }`}
+                      className={`btn bgTheme text-white w-auto md:w-36  ${AddField === 3
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-purple-700"
+                        }`}
                       onClick={handleAddField}
                       disabled={AddField === 3}
                     >
@@ -798,7 +935,7 @@ const getIdentityMaxLength = (docTypeId) => {
             {/* Role-based dropdowns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.student && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={studentDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-graduate text-sm"></i>{" "}
@@ -820,11 +957,9 @@ const getIdentityMaxLength = (docTypeId) => {
                       (loadingStudents
                         ? "Loading students..."
                         : "Select Student")}
-                    <i
-                      className={`fa-solid fa-chevron-${
-                        showStudentDropdown ? "up" : "down"
-                      } ml-2`}
-                    ></i>
+                    <div >
+                      <span class="arrow">&#9662;</span>
+                    </div>
                   </div>
 
                   {showStudentDropdown && (
@@ -875,7 +1010,7 @@ const getIdentityMaxLength = (docTypeId) => {
               )}
 
               {role === constants.roles.teacher && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={teacherDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-chalkboard-teacher text-sm"></i>{" "}
@@ -892,11 +1027,9 @@ const getIdentityMaxLength = (docTypeId) => {
                       }
                     >
                       {selectedTeacherName || "Select Teacher"}
-                      <i
-                        className={`fa-solid fa-chevron-${
-                          showTeacherDropdown ? "up" : "down"
-                        } ml-2`}
-                      ></i>
+                      <div >
+                        <span class="arrow">&#9662;</span>
+                      </div>
                     </div>
 
                     {/* Dropdown content */}
@@ -995,7 +1128,7 @@ const getIdentityMaxLength = (docTypeId) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               {role === constants.roles.guardian && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={guardianDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-user-shield text-sm"></i>{" "}
@@ -1010,11 +1143,9 @@ const getIdentityMaxLength = (docTypeId) => {
                     }
                   >
                     {selectedGuardianName || "Select Guardian"}
-                    <i
-                      className={`fa-solid fa-chevron-${
-                        showGuardianDropdown ? "up" : "down"
-                      } ml-2`}
-                    ></i>
+                    <div >
+                      <span class="arrow">&#9662;</span>
+                    </div>
                   </div>
 
                   {showGuardianDropdown && (
@@ -1066,7 +1197,7 @@ const getIdentityMaxLength = (docTypeId) => {
               )}
 
               {role === constants.roles.officeStaff && (
-                <div className="form-control relative">
+                <div className="form-control relative" ref={officeStaffDropdownRef}>
                   <label className="label">
                     <span className="label-text text-gray-700 dark:text-gray-300 flex items-center gap-1">
                       <i className="fa-solid fa-briefcase text-sm"></i> Office
@@ -1081,11 +1212,9 @@ const getIdentityMaxLength = (docTypeId) => {
                     }
                   >
                     {selectedOfficeStaffName || "Select Office Staff"}
-                    <i
-                      className={`fa-solid fa-chevron-${
-                        showOfficeStaffDropdown ? "up" : "down"
-                      } ml-2`}
-                    ></i>
+                    <div >
+                      <span class="arrow">&#9662;</span>
+                    </div>
                   </div>
 
                   {showOfficeStaffDropdown && (
@@ -1146,12 +1275,11 @@ const getIdentityMaxLength = (docTypeId) => {
               <button
                 type="button"
                 onClick={next}
-                className={`btn bgTheme text-white w-40 ${
-                  role.length === 0 ||
+                className={`btn bgTheme text-white w-40 ${role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-purple-700"
-                }`}
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-purple-700"
+                  }`}
                 disabled={
                   role.length === 0 ||
                   (role === constants.roles.student && !formData.year_level)
@@ -1165,7 +1293,7 @@ const getIdentityMaxLength = (docTypeId) => {
             <div className="flex-1 flex justify-end gap-4">
               <button
                 type="button"
-                onClick={prev}
+                onClick={handleBack}
                 className="btn bgTheme w-auto md:w-36 text-white  hover:bg-purple-700 flex items-center justify-center"
               >
                 <i className="fa-solid fa-arrow-left mr-2"></i> Back
@@ -1173,11 +1301,10 @@ const getIdentityMaxLength = (docTypeId) => {
 
               <button
                 type="submit"
-                className={`btn bgTheme text-white w-auto md:w-36  ${
-                  Disable
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-purple-700"
-                }`}
+                className={`btn bgTheme text-white w-auto md:w-36  ${Disable
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-purple-700"
+                  }`}
                 disabled={Disable}
               >
                 {loading ? (

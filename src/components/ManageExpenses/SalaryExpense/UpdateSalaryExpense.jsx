@@ -24,6 +24,7 @@ export const UpdateSalaryExpense = () => {
   const [objId, setObjId] = useState("");
   const [fetching, setFetching] = useState(false); // page loader
   const [submitting, setSubmitting] = useState(false); // button loader
+  const [schoolYears, setSchoolYears] = useState([]);
 
   const Status = ["paid", "pending"];
   const {
@@ -60,6 +61,19 @@ export const UpdateSalaryExpense = () => {
       setFetching(false);
     }
   };
+
+  const loadSchoolYears = async () => {
+    try {
+      const data = await fetchSchoolYear();
+      setSchoolYears(data);
+    } catch (err) {
+      console.error("Failed to fetch school years", err);
+    }
+  };
+
+  useEffect(() => {
+    loadSchoolYears();
+  }, [])
 
   useEffect(() => {
     getEmployeeDetails();
@@ -136,7 +150,6 @@ export const UpdateSalaryExpense = () => {
             </div>
           </div>
         )}
-
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Employee Name  */}
@@ -151,12 +164,13 @@ export const UpdateSalaryExpense = () => {
                 {employeeName || "N/A"}
               </p>
             </div>
+
             {/* Status */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-circle-check text-sm"></i>
-                  Status <span className="text-error"></span>
+                  Status
                 </span>
               </label>
               <select
@@ -169,16 +183,11 @@ export const UpdateSalaryExpense = () => {
                   (sta, idx) =>
                     sta && (
                       <option key={idx} value={sta}>
-                        {sta}
+                        {sta.charAt(0).toUpperCase() + sta.slice(1)}
                       </option>
                     )
                 )}
               </select>
-              {errors.expense_date && (
-                <p className="text-error text-sm mt-1">
-                  {errors.expense_date.message}
-                </p>
-              )}
             </div>
 
             {/* Payment Date */}
@@ -197,45 +206,52 @@ export const UpdateSalaryExpense = () => {
                   validate: (value) => {
                     const selectedDate = new Date(value);
                     const today = new Date();
-                    return (
-                      selectedDate <= today ||
-                      "Payment date cannot be in the future"
-                    );
+                    return selectedDate <= today || "Payment date cannot be in the future";
                   },
                 })}
               />
-              {errors.payment_date && (
-                <p className="text-error text-sm mt-1">
-                  {errors.payment_date.message}
-                </p>
-              )}
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-            {/* Description Field */}
+            {/* School Year */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-align-left text-sm"></i>
-                  Remarks <span className="text-error"></span>
+                  <i className="fa-solid fa-school text-sm"></i>
+                  School Year <span className="text-error">*</span>
                 </span>
               </label>
-              <textarea
-                placeholder="Enter your category description"
-                className="textarea textarea-bordered w-full focus:outline-none"
-                rows={5}
-                {...register("remarks")}
-              />
-              {errors.description && (
-                <p className="text-error text-sm mt-1">
-                  {errors.description.message}
-                </p>
-              )}
+              <select
+                className="select select-bordered w-full focus:outline-none"
+                {...register("school_year", { required: "School Year is required" })}
+              >
+                <option value="">Select School Year</option>
+                {schoolYears.map((year) => (
+                  <option key={year.id} value={year.year_name}>
+                    {year.year_name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-center pt-6 gap-4">
+          {/* Remarks */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text flex items-center gap-1">
+                <i className="fa-solid fa-align-left text-sm"></i>
+                Remarks
+              </span>
+            </label>
+            <textarea
+              placeholder="Enter your category description"
+              className="textarea textarea-bordered w-full focus:outline-none"
+              rows={5}
+              {...register("remarks")}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center pt-6">
             <button
               type="submit"
               className="btn bgTheme text-white w-full md:w-40"
@@ -249,6 +265,7 @@ export const UpdateSalaryExpense = () => {
             </button>
           </div>
         </form>
+
       </div>
       <SuccessModal
         ref={modalRef}

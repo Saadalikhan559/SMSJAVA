@@ -274,7 +274,7 @@ export const EditExpenses = () => {
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-paperclip text-sm"></i>
-                  Attachments <span className="text-error"></span>
+                  Attachment <span className="text-error"></span>
                 </span>
               </label>
 
