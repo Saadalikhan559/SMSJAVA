@@ -133,7 +133,7 @@ const AllStaff = () => {
                 </Link>
               )}
             </div>
-            <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg overflow-hidden">
+            <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg no-scrollbar">
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z-2">
                   <tr>
@@ -224,7 +224,7 @@ const AllStaff = () => {
                 </Link>
               )}
             </div>
-            <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg">
+            <div className="w-full overflow-x-auto max-h-[70vh] rounded-lg no-scrollbar">
               <table className="min-w-full table-auto  rounded-lg">
                 <thead className="bgTheme text-white text-center sticky top-0 z-2">
                   <tr>

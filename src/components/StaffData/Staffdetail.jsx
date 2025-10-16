@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { fetchOfficeStaff, fetchTeachers } from "../../services/api/Api";
 import { constants } from "../../global/constants";
+// import { AuthContext } from "../../context/AuthContext";
+
 
 const BASE_URL = constants.baseUrl;
 
@@ -10,6 +12,8 @@ const Staffdetail = () => {
   const [staffData, setStaffData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  // const {axiosInstance} = useContext(AuthContext)
 
   const getStaff = async () => {
     try {
@@ -33,6 +37,31 @@ const Staffdetail = () => {
   useEffect(() => {
     getStaff();
   }, [id, type]);
+
+// const handleTermination = async ()=>{
+//   const payload = {
+//     user_id:id
+//   }
+//   try {
+//      const response = await axiosInstance.post(
+//         `${BASE_URL}d/deactivate-user/`,
+//         payload,
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+//       console.log(response);
+      
+//   } catch (error) {
+//     console.log(error);
+    
+//   }
+
+   
+// }
+
 
   if (loading) {
     return (
@@ -61,11 +90,18 @@ const Staffdetail = () => {
     <div className="flex justify-center mb-24 md:mb-10">
       <div className="p-6 bg-gray-100 dark:bg-gray-900 w-full min-h-screen">
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg">
-          <div className="bgTheme text-white px-4 py-2 rounded-t-md">
+          <div className="bgTheme text-white px-4 py-2 rounded-t-md flex justify-between">
             <h2 className="text-3xl font-semibold capitalize">
               {type?.toLowerCase() === "teacher" ? "Teacher" : "Staff"} Profile - {staffData.first_name} {staffData.last_name}
             </h2>
 
+            {/* <button
+              type="button"
+               onClick={() => {setShowAlert(true),handleTermination()}}
+              className="inline-flex items-center px-3 py-1 shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-300 rounded-md"
+            >
+              Terminate
+            </button> */}
           </div>
 
           <div className="p-6">
@@ -111,6 +147,29 @@ const Staffdetail = () => {
           </div>
         </div>
       </div>
+
+
+       {/* {showAlert && (
+          <dialog className="modal modal-open">
+            <div className="modal-box bg-white dark:bg-gray-800">
+              <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">
+                Terminate User
+              </h3>
+              <p className="py-4 text-gray-700 dark:text-gray-200">
+               are you sure you want to terminate {staffData.first_name} {staffData.last_name} ?
+               
+              </p>
+              <div className="modal-action">
+                <button
+                  className="btn bgTheme text-white w-30"
+                  onClick={() => setShowAlert(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </dialog>
+        )} */}
     </div>
   );
 };
