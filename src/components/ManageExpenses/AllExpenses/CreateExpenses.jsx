@@ -171,8 +171,8 @@ export const CreateExpenses = () => {
             {/* School Year */}
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-calendar-days text-sm"></i>
-                  School Year <span className="text-error">*</span>
+                <i className="fa-solid fa-calendar-days text-sm"></i>
+                School Year <span className="text-error">*</span>
               </label>
               <select
                 disabled={loading}
@@ -180,18 +180,31 @@ export const CreateExpenses = () => {
                 {...register("school_year", { required: "School Year is required" })}
               >
                 <option value="">Select School Year</option>
-                {schoolYear?.map((year) => year && (
-                  <option key={year.id} value={year.id}>{year.year_name}</option>
-                ))}
+                {schoolYear
+                  ?.filter((year) => {
+                    const today = new Date();
+                    const start = new Date(year.start_date);
+                    const end = new Date(year.end_date);
+                    return today >= start && today <= end;
+                  })
+                  .map((year) => (
+                    <option key={year.id} value={year.id}>
+                      {year.year_name}
+                    </option>
+                  ))}
               </select>
-              {errors.school_year && <p className="text-error text-sm mt-1">{errors.school_year.message}</p>}
-            </div>
 
+              {errors.school_year && (
+                <p className="text-error text-sm mt-1">
+                  {errors.school_year.message}
+                </p>
+              )}
+            </div>
             {/* Category */}
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-tags text-sm"></i>
-                  Category <span className="text-error">*</span>
+                <i className="fa-solid fa-tags text-sm"></i>
+                Category <span className="text-error">*</span>
               </label>
               <select
                 disabled={loading}
@@ -209,8 +222,8 @@ export const CreateExpenses = () => {
             {/* Amount */}
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-money-bill-wave text-sm"></i>
-                  Amount <span className="text-error">*</span>
+                <i className="fa-solid fa-money-bill-wave text-sm"></i>
+                Amount <span className="text-error">*</span>
               </label>
               <input
                 disabled={loading}
@@ -226,7 +239,7 @@ export const CreateExpenses = () => {
             {/* Attachments */}
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-paperclip text-sm"></i> Attachments
+                <i className="fa-solid fa-paperclip text-sm"></i> Attachments
               </label>
 
               {!selectedFile ? (
@@ -271,8 +284,8 @@ export const CreateExpenses = () => {
             {/* Expense Date */}
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-calendar-day text-sm"></i>
-                  Expense Date <span className="text-error">*</span>
+                <i className="fa-solid fa-calendar-day text-sm"></i>
+                Expense Date <span className="text-error">*</span>
               </label>
               <input
                 disabled={loading}
@@ -287,8 +300,8 @@ export const CreateExpenses = () => {
             {/* Payment Method */}
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-credit-card text-sm"></i>
-                  Payment Method <span className="text-error">*</span>
+                <i className="fa-solid fa-credit-card text-sm"></i>
+                Payment Method <span className="text-error">*</span>
               </label>
               <select
                 disabled={loading}
@@ -308,8 +321,8 @@ export const CreateExpenses = () => {
           <div className="grid grid-cols-1 gap-6">
             <div className="form-control">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  <i className="fa-solid fa-align-left text-sm"></i>
-                  Description
+                <i className="fa-solid fa-align-left text-sm"></i>
+                Description
               </label>
               <textarea
                 disabled={loading}
