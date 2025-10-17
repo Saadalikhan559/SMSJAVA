@@ -140,8 +140,18 @@ export const SubjectAssignments = () => {
   }, [yearLevels, yearLevelSearch]);
 
   useEffect(() => {
-    setFilteredSubjects(filterSubjectsData(subjects, subjectSearch));
-  }, [subjects, subjectSearch]);
+    if (!selectedYearLevelId) {
+      setFilteredSubjects(filterSubjectsData(subjects, subjectSearch));
+    } else {
+      const classId = parseInt(selectedYearLevelId);
+      const filtered = subjects.filter((subject) =>
+        subject.year_levels.includes(classId)
+      );
+      const searched = filterSubjectsData(filtered, subjectSearch);
+      setFilteredSubjects(searched);
+    }
+  }, [selectedYearLevelId, subjects, subjectSearch]);
+
 
   useEffect(() => {
     setFilteredPeriods(filterPeriodsData(periods, periodSearch));
@@ -234,6 +244,7 @@ export const SubjectAssignments = () => {
     clearErrors("yearlevel_id");
     setIsYearLevelOpen(false);
     setYearLevelSearch(""); // Clear search when year level is selected
+    setSubjectIds([]);
   };
 
   const handleSubmitForm = async (data) => {
@@ -411,8 +422,8 @@ export const SubjectAssignments = () => {
                           <div
                             key={t.id}
                             className={`p-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer flex items-center ${selectedTeacherId === t.id.toString()
-                                ? "bg-blue-50 dark:bg-blue-900"
-                                : ""
+                              ? "bg-blue-50 dark:bg-blue-900"
+                              : ""
                               }`}
                             onClick={() => handleTeacherSelect(t.id, fullName)}
                           >
@@ -487,8 +498,8 @@ export const SubjectAssignments = () => {
                         <div
                           key={y.id}
                           className={`p-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer flex items-center ${selectedYearLevelId === y.id.toString()
-                              ? "bg-blue-50 dark:bg-blue-900"
-                              : ""
+                            ? "bg-blue-50 dark:bg-blue-900"
+                            : ""
                             }`}
                           onClick={() =>
                             handleYearLevelSelect(y.id, y.level_name)

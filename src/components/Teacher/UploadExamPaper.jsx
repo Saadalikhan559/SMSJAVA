@@ -74,6 +74,7 @@ const UploadExamPaper = () => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -87,6 +88,7 @@ const UploadExamPaper = () => {
       uploaded_file: null,
     },
   });
+  const selectedYearLevelId = watch("year_level");
 
   // fetch ExamType 
   const fetchExamType = async () => {
@@ -143,15 +145,32 @@ const UploadExamPaper = () => {
     fetchAllData();
   }, []);
 
+  useEffect(() => {
+  setSelectedSubjectId("");
+  setSelectedSubjectName("");
+  setValue("subject", "");
+}, [selectedYearLevelId]);
+
+
   const handleNavigate = () => {
     navigate(allRouterLink.UpdateExamPaper);
   };
 
   const filteredSubjects = subjects
-    .filter((subjectObj) =>
-      subjectObj.subject_name.toLowerCase().includes(searchSubjectInput.toLowerCase())
-    )
-    .sort((a, b) => a.subject_name.localeCompare(b.subject_name));
+  .filter((subjectObj) => {
+    const matchesSearch = subjectObj.subject_name
+      .toLowerCase()
+      .includes(searchSubjectInput.toLowerCase());
+
+    if (!selectedYearLevelId) {
+      return matchesSearch;
+    }
+
+    const yearLevelId = parseInt(selectedYearLevelId);
+    return matchesSearch && subjectObj.year_levels.includes(yearLevelId);
+  })
+  .sort((a, b) => a.subject_name.localeCompare(b.subject_name));
+
 
   const filteredTeachers = teachers
     .filter((teacherObj) =>
@@ -563,7 +582,7 @@ const UploadExamPaper = () => {
                 </span>
               </label>
               <input
-                type="number"
+                type="float"
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="Enter total marks"
                 {...register("total_marks", {
