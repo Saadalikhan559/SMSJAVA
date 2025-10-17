@@ -167,14 +167,6 @@ const TeacherAttendance = () => {
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen mb-24 md:mb-10">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 sm:p-6">
-        <div className=" flex justify-end">
-          <Link
-            to={allRouterLink.teacherAttendanceRecord}
-            className="btn bgTheme text-white"
-          >
-            Attendance Record
-          </Link>
-        </div>
         <div className="mb-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white text-center mb-2">
             <i className="fa-solid fa-clipboard-user w-5"></i> Teacher Attendance
@@ -190,6 +182,12 @@ const TeacherAttendance = () => {
             onChange={(e) => setSearchTerm(e.target.value.trimStart())}
             className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
+           <Link
+            to={allRouterLink.teacherAttendanceRecord}
+            className="btn bgTheme text-white"
+          >
+            <i className="fa-solid fa-clipboard-list w-5"></i> Attendance Record
+          </Link>
         </div>
 
         {/* Table */}

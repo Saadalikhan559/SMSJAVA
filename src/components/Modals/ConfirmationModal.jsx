@@ -12,7 +12,7 @@ export const ConfirmationModal = forwardRef(({ onConfirm, onCancel }, ref) => {
     <dialog ref={dialogRef} className="modal">
       <div className="modal-box">
         <h3 className="font-bold text-lg">Confirm Delete</h3>
-        <p className="py-4">Are you sure you want to continue?</p>
+        <p className="py-4">Are you sure you want to delete?</p>
         <div className="modal-action">
           <button
             className="btn bgTheme text-white"
