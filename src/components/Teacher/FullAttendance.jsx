@@ -77,8 +77,8 @@ const FullAttendance = () => {
 
       const matchesDate = dateFilter
         ? item[formattedDate] !== null &&
-        item[formattedDate] !== undefined &&
-        item[formattedDate] !== ''
+          item[formattedDate] !== undefined &&
+          item[formattedDate] !== ''
         : true;
 
       return matchesName && matchesDate;
@@ -88,31 +88,30 @@ const FullAttendance = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen dark:bg-gray-900">
         <div className="flex space-x-2">
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
         </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+        <p className="mt-2 text-gray-500 dark:text-gray-300 text-sm">Loading data...</p>
       </div>
     );
   }
 
-
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6 dark:bg-gray-900">
         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-        <p className="text-lg text-red-400 font-medium">Failed to load data, Try Again</p>
+        <p className="text-lg text-red-400 dark:text-red-300 font-medium">Failed to load data, Try Again</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen flex justify-center mb-24 md:mb-10">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-7xl overflow-x-auto">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen flex justify-center mb-24 md:mb-10">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-7xl overflow-x-auto">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">
           <i className="fa-solid fa-chalkboard-user mr-2" />
           Attendance Table
         </h1>
@@ -120,36 +119,40 @@ const FullAttendance = () => {
         {/* Filters */}
         <div className="flex flex-wrap justify-start gap-6 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Name:</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Filter by Name:
+            </label>
             <input
               type="text"
               placeholder="Enter student name"
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none"
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-800 dark:text-white px-3 py-2 rounded-md focus:outline-none w-60"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Date:</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Filter by Date:
+            </label>
             <input
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm w-60 focus:outline-none"
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-800 dark:text-white px-3 py-2 rounded-md focus:outline-none w-60"
             />
           </div>
         </div>
 
         {/* Table */}
         <div className="w-full overflow-auto">
-          <table className="min-w-[900px] w-full border-collapse rounded-lg overflow-hidden border border-gray-200">
-            <thead className="bgTheme text-white">
+          <table className="min-w-[900px] w-full border-collapse rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+            <thead className="bgTheme text-white dark:bg-gray-700">
               <tr>
                 {headers.map((header, idx) => (
                   <th
                     key={idx}
-                    className="px-4 py-3 text-center text-nowrap font-semibold border-b border-gray-300 whitespace-nowrap"
+                    className="px-4 py-3 text-center text-nowrap font-semibold border-b border-gray-300 dark:border-gray-500 whitespace-nowrap"
                     style={{ minWidth: '120px' }}
                   >
                     {header}
@@ -162,18 +165,18 @@ const FullAttendance = () => {
                 <tr>
                   <td
                     colSpan={headers.length}
-                    className="text-center text-nowrap py-6 text-gray-500"
+                    className="text-center text-nowrap py-6 text-gray-500 dark:text-gray-300"
                   >
                     Attendance Not Found.
                   </td>
                 </tr>
               ) : (
                 filteredData.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition">
+                  <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     {headers.map((header, i) => (
                       <td
                         key={i}
-                        className="px-4 py-3 text-nowrap text-center text-sm text-gray-800 border-t border-gray-200"
+                        className="px-4 py-3 text-nowrap text-center text-sm text-gray-800 dark:text-gray-100 border-t border-gray-200 dark:border-gray-600"
                         style={{ minWidth: '120px', wordBreak: 'break-word' }}
                       >
                         {item[header] || '--'}
@@ -189,49 +192,35 @@ const FullAttendance = () => {
         {/* Pagination */}
         {!dateFilter && (
           <div className="flex justify-center mt-6 gap-4">
-            {/* <button
+            <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
               disabled={page === 0}
-              className="bgTheme text-white text-sm px-4 py-2 rounded disa"
+              className={`text-white text-sm px-4 py-2 rounded ${
+                page === 0
+                  ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                  : 'bgTheme hover:opacity-90'
+              }`}
             >
               <i className="fa-solid fa-arrow-left mr-1" />
               Previous
-            </button> */}
-            <button
-  onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-  disabled={page === 0}
-  className={`text-white text-sm px-4 py-2 rounded ${
-    page === 0
-      ? "bg-gray-400 cursor-not-allowed"
-      : "bgTheme hover:opacity-90"
-  }`}
->
-  Previous
-</button>
+            </button>
 
-            <span className="text-sm text-gray-700 py-2">
+            <span className="text-sm text-gray-700 dark:text-gray-300 py-2">
               Page {page + 1} of {totalPages}
             </span>
-            {/* <button
+
+            <button
               onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
               disabled={page >= totalPages - 1}
-              className="bgTheme text-white text-sm px-4 py-2 rounded "
+              className={`text-white text-sm px-4 py-2 rounded ${
+                page >= totalPages - 1
+                  ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                  : 'bgTheme hover:opacity-90'
+              }`}
             >
               Next
               <i className="fa-solid fa-arrow-right ml-1" />
-            </button> */}
-            <button
-  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
-  disabled={page >= totalPages - 1}
-  className={`text-white text-sm px-4 py-2 rounded ${
-    page >= totalPages - 1
-      ? "bg-gray-400 cursor-not-allowed"
-      : "bgTheme hover:opacity-90"
-  }`}
->
-  Next
-</button>
-
+            </button>
           </div>
         )}
       </div>
@@ -240,4 +229,3 @@ const FullAttendance = () => {
 };
 
 export default FullAttendance;
-
