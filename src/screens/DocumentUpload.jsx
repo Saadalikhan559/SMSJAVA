@@ -348,53 +348,53 @@ export const DocumentUpload = () => {
     setUploadFields(newFields);
   };
 
-const handleUploadChange = (e, index) => {
-  const { name, value } = e.target;
+  const handleUploadChange = (e, index) => {
+    const { name, value } = e.target;
 
-  // Update the field value
-  const newFields = [...uploadFields];
-  newFields[index][name] = value;
-  setUploadFields(newFields);
+    // Update the field value
+    const newFields = [...uploadFields];
+    newFields[index][name] = value;
+    setUploadFields(newFields);
 
-  // Clone errors arrays
-  const newErrors = [...identityErrors];
-  const newDocErrors = [...docTypeErrors];
-  const newFileErrors = Array.isArray(FilesErrors) ? [...FilesErrors] : [];
+    // Clone errors arrays
+    const newErrors = [...identityErrors];
+    const newDocErrors = [...docTypeErrors];
+    const newFileErrors = Array.isArray(FilesErrors) ? [...FilesErrors] : [];
 
-  // Validate document type
-  if (name === "document_types") {
-    newDocErrors[index] = value ? "" : "Please select a document type";
-  }
+    // Validate document type
+    if (name === "document_types") {
+      newDocErrors[index] = value ? "" : "Please select a document type";
+    }
 
-  if (name === "files") {
-    newFileErrors[index] = value ? "" : "Please select a file";
-  }
+    if (name === "files") {
+      newFileErrors[index] = value ? "" : "Please select a file";
+    }
 
-  // Validate identity fields only if both fields exist
-  const currentIdentities = newFields[index]?.identities || "";
-  const currentDocType = newFields[index]?.document_types || "";
+    // Validate identity fields only if both fields exist
+    const currentIdentities = newFields[index]?.identities || "";
+    const currentDocType = newFields[index]?.document_types || "";
 
-  if (name === "document_types" || name === "identities") {
-    const validationError = validateIdentity(currentIdentities, currentDocType);
-    newErrors[index] = validationError || "";
+    if (name === "document_types" || name === "identities") {
+      const validationError = validateIdentity(currentIdentities, currentDocType);
+      newErrors[index] = validationError || "";
 
 
-    setApiErrors((prev) => {
-      const updated = { ...prev };
-      if (updated.identities) {
-        delete updated.identities;
-      }
-      return updated;
-    });
-  }
+      setApiErrors((prev) => {
+        const updated = { ...prev };
+        if (updated.identities) {
+          delete updated.identities;
+        }
+        return updated;
+      });
+    }
 
-  // Update state
-  setIdentityErrors(newErrors);
-  setDocTypeErrors(newDocErrors);
-  setFilesErrors(newFileErrors);
+    // Update state
+    setIdentityErrors(newErrors);
+    setDocTypeErrors(newDocErrors);
+    setFilesErrors(newFileErrors);
 
-  console.log("Document Type Error at index", index, ":", newFileErrors);
-};
+    console.log("Document Type Error at index", index, ":", newFileErrors);
+  };
 
 
 
@@ -505,12 +505,27 @@ const handleUploadChange = (e, index) => {
       setSearchStudentInput("")
       setDisable(true)
     } catch (err) {
+      setLoading(false); 
+
       if (err.response && err.response.data) {
-        setApiErrors(err.response.data);
-         setDisable(true)
-      } else if (err.pan_no) {
-        setApiErrors({ identities: err.identities });
-         setDisable(true)
+        const responseData = err.response.data;
+
+        // Check for the specific identity modification error
+        if (responseData.error === "You can't modify the identity of an existing document.") {
+          setAlertMessage("You can't modify the identity of an existing document.");
+          setShowAlert(true);
+          setDisable(true);
+          return; // Stop further processing
+        }
+
+        // Handle other API errors normally
+        setApiErrors(responseData);
+        setDisable(true);
+      } else {
+        // Fallback for unexpected errors
+        setAlertMessage("An unexpected error occurred. Please try again.");
+        setShowAlert(true);
+        setDisable(true);
       }
     }
 
@@ -553,7 +568,7 @@ const handleUploadChange = (e, index) => {
   }
 
 
- 
+
   useEffect(() => {
     getRoles();
     getDocumentTypes();
@@ -625,36 +640,36 @@ const handleUploadChange = (e, index) => {
 
 
 
-useEffect(() => {
-  const hasNoDocTypeErrors = uploadFields.every((field, index) => {
-    return field.document_types && !docTypeErrors[index];
-  });
+  useEffect(() => {
+    const hasNoDocTypeErrors = uploadFields.every((field, index) => {
+      return field.document_types && !docTypeErrors[index];
+    });
 
-  const hasNoFileErrors = uploadFields.every((field, index) => {
-    return field.files && !FilesErrors[index];
-  });
+    const hasNoFileErrors = uploadFields.every((field, index) => {
+      return field.files && !FilesErrors[index];
+    });
 
-  const hasNoIdentityErrors = uploadFields.every((field, index) => {
-    return !identityErrors[index]; // Empty string means no error
-  });
+    const hasNoIdentityErrors = uploadFields.every((field, index) => {
+      return !identityErrors[index] && field.identities.trim() !== "";
+    });
 
-  const hasSelectedIdentity =
-    formData.student ||
-    formData.teacher ||
-    formData.guardian ||
-    formData.office_staff;
+    const hasSelectedIdentity =
+      formData.student ||
+      formData.teacher ||
+      formData.guardian ||
+      formData.office_staff;
 
-  const hasNoApiErrors = Object.keys(apiErrors).length === 0;
+    const hasNoApiErrors = Object.keys(apiErrors).length === 0;
 
-  const isFormValid =
-    hasNoDocTypeErrors &&
-    hasNoFileErrors &&
-    hasNoIdentityErrors &&
-    hasSelectedIdentity &&
-    hasNoApiErrors;
+    const isFormValid =
+      hasNoDocTypeErrors &&
+      hasNoFileErrors &&
+      hasNoIdentityErrors &&
+      hasSelectedIdentity &&
+      hasNoApiErrors;
 
-  setDisable(!isFormValid); // Disable if NOT valid
-}, [uploadFields, docTypeErrors, FilesErrors, identityErrors, formData, apiErrors]);
+    setDisable(!isFormValid); // Disable if NOT valid
+  }, [uploadFields, docTypeErrors, FilesErrors, identityErrors, formData, apiErrors]);
 
 
 
@@ -685,7 +700,7 @@ useEffect(() => {
       "income certificate": 20,
       "domicile certificate": 20,
       "library card": 15,
-      "other": 50 
+      "other": 50
     };
 
 
@@ -693,7 +708,7 @@ useEffect(() => {
       name.includes(key) || key.includes(name)
     );
 
-    return matchedType ? maxLengths[matchedType] : 50; 
+    return matchedType ? maxLengths[matchedType] : 50;
   };
   return (
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 mb-24 md:mb-10">
@@ -1338,7 +1353,10 @@ useEffect(() => {
             <div className="modal-action">
               <button
                 className="btn bgTheme text-white w-30"
-                onClick={() => setShowAlert(false)}
+                onClick={() => {
+                  setShowAlert(false);
+                  setApiErrors({});
+                }}
               >
                 OK
               </button>
