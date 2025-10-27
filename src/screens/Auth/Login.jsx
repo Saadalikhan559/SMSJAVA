@@ -13,7 +13,7 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
- 
+
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -38,7 +38,9 @@ export const Login = () => {
         console.log("Role:", role, "TeacherId:", teacherId, "StudentId:", studentId);
 
         // Store in localStorage
-        localStorage.setItem("access", response.access);
+        // localStorage.setItem("access", response.access);
+        localStorage.setItem("access", response["Access Token"]);
+        localStorage.setItem("refresh", response["Refresh Token"]);
         localStorage.setItem("userRole", role);
         localStorage.setItem("userId", userId);
         if (studentId) localStorage.setItem("studentId", studentId);

@@ -36,9 +36,9 @@ export const ChangePassword = () => {
     setFormError("");
 
     const userData = {
-      current_password: data.currentPassword,
-      change_password: data.newPassword,
-      confirm_password: data.confirmPassword,
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+      confirmPassword: data.confirmPassword,
     };
 
     try {
