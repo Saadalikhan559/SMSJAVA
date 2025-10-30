@@ -10,7 +10,7 @@ export const ForgotPassword = () => {
   const instructions = `Enter your registered email address. We’ll send you OTP to reset
               your password on your registered email.`;
 
-              
+
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");

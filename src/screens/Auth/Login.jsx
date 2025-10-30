@@ -26,7 +26,8 @@ export const Login = () => {
       console.log("Login response:", response);
 
       if (response && response["Message"] === "User logged in successfully") {
-        const role = response.Roles?.[0] || "";
+        // const role = response.Roles?.[0] || "";
+        const role = response.roles?.[0] || "";
         const userId = response["User ID"] || "";
 
         // Fetch IDs for all roles
@@ -163,3 +164,4 @@ export const Login = () => {
     </>
   );
 };
+

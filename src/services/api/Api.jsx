@@ -2,16 +2,27 @@ import axios from "axios";
 import { constants } from "../../global/constants";
 
 const BASE_URL = constants.baseUrl;
+const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
 export const fetchRoles = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/roles/`);
+    const accessToken = localStorage.getItem("access");
+
+    const response = await axios.get(`${JAVA_BASE_URL}/roles/getAllRoles`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
     return response.data;
-  } catch (err) {
-    console.error("Failed to fetch roles:", err);
-    throw err;
+  } catch (error) {
+    console.error("Fetch roles error:", error.response?.data || error);
+    throw error;
   }
 };
+
 
 export const fetchSchoolYear = async () => {
   try {

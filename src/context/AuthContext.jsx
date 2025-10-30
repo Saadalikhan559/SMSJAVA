@@ -9,6 +9,7 @@ import axios from "axios";
 import { constants } from "../global/constants";
 
 const BASE_URL = constants.baseUrl;
+const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
 export const AuthContext = createContext(null);
 
@@ -111,13 +112,15 @@ export const AuthProvider = ({ children }) => {
           isRefreshing.current = true;
 
           try {
-            const response = await axios.post(`${BASE_URL}/auth/refresh/`, {
-              refresh: authTokensRef.current.refresh,
+            const response = await axios.post(`${JAVA_BASE_URL}/users/refresh`, {
+              refreshToken: authTokensRef.current.refresh,
+            }, {
+              headers: { "ngrok-skip-browser-warning": "true" },
             });
 
             const newTokens = {
-              access: response.data.access,
-              refresh: response.data.refresh,
+              access: response.data.accessToken,
+              refresh: response.data.refreshToken,
             };
 
             setAuthTokens(newTokens);
@@ -135,6 +138,7 @@ export const AuthProvider = ({ children }) => {
           } finally {
             isRefreshing.current = false;
           }
+
         }
 
         return Promise.reject(error);
@@ -147,7 +151,7 @@ export const AuthProvider = ({ children }) => {
   const LoginUser = async (userDetails) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/users/login`,
+        `${JAVA_BASE_URL}/users/login`,
         userDetails,
         {
           headers: { "ngrok-skip-browser-warning": "true" }
@@ -168,8 +172,9 @@ export const AuthProvider = ({ children }) => {
       // localStorage.setItem("userRole", data.Roles[0]);
 
       const role = data.roles?.[0] || "";
-setUserRole(role);
-localStorage.setItem("roles", role);
+      setUserRole(role);
+      // localStorage.setItem("roles", role);
+      localStorage.setItem("userRole", role);
 
 
       if (data["User ID"]) {
@@ -194,7 +199,7 @@ localStorage.setItem("roles", role);
 
   const LogoutUser = async () => {
     try {
-      await axios.post(`${BASE_URL}/users/logout`,
+      await axios.post(`${JAVA_BASE_URL}/users/logout`,
         { refresh_token: authTokens?.refresh },
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
@@ -218,72 +223,78 @@ localStorage.setItem("roles", role);
   // Other functions (RegisterUser, ResetPassword, ChangePassword) remain same
   const RegisterUser = async (userDetails) => {
     try {
+      const accessToken = localStorage.getItem("access");
+
       const response = await axios.post(
-        `${BASE_URL}/auth/users/`,
+        `${JAVA_BASE_URL}/users/create`,
         userDetails,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authTokens?.access}`,
+            Authorization: `Bearer ${accessToken}`,
+            "ngrok-skip-browser-warning": "true",
           },
         }
       );
-      if (userRole === constants.roles.director) return response.data;
+
+      return response.data;
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Registration error:", error.response?.data || error);
       throw error;
     }
   };
 
-const ResetPassword = async (userDetails) => {
-  try {
-    const payload = {
-      token: userDetails.otp,
-      newPassword: userDetails.newPassword || userDetails.newpassword,
-      confirmPassword: userDetails.confirmPassword,
-    };
 
-    const response = await axios.post(
-      `${BASE_URL}/users/resetPassword`,
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
-        },
-      }
-    );
 
-    return response;
-  } catch (error) {
-    console.error("Reset password error:", error.response ?? error);
-    throw error;
-  }
-};
-
- const ChangePassword = async (userDetails, id) => {
-  try {
-    const targetId = id || userID; 
-    const response = await axiosInstance.put(
-      `/users/changePassword/${targetId}`,
-      {
-        currentPassword: userDetails.currentPassword,
-        newPassword: userDetails.newPassword,
+  const ResetPassword = async (userDetails) => {
+    try {
+      const payload = {
+        token: userDetails.otp,
+        newPassword: userDetails.newPassword || userDetails.newpassword,
         confirmPassword: userDetails.confirmPassword,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
+      };
+
+      const response = await axios.post(
+        `${JAVA_BASE_URL}/users/resetPassword`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      console.error("Reset password error:", error.response ?? error);
+      throw error;
+    }
+  };
+
+  const ChangePassword = async (userDetails, id) => {
+    try {
+      const targetId = id || userID;
+      const response = await axiosInstance.put(
+        `${JAVA_BASE_URL}/users/changePassword/${targetId}`,
+        {
+          currentPassword: userDetails.currentPassword,
+          newPassword: userDetails.newPassword,
+          confirmPassword: userDetails.confirmPassword,
         },
-      }
-    );
-    return response;
-  } catch (error) {
-    console.error("Change password error:", error.response ?? error);
-    throw error;
-  }
-};
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
+      return response;
+    } catch (error) {
+      console.error("Change password error:", error.response ?? error);
+      throw error;
+    }
+  };
 
 
 

@@ -42,20 +42,39 @@ export const Register = () => {
   }, []);
 
   const filteredRoles = allRoles.filter(
-    (role) => role.name === "teacher" || role.name === "office staff"
+    roleItem => roleItem.roleName === "teacher"
+      || roleItem.roleName === "office_staff"
   );
+
 
   const onSubmit = async (data) => {
     setError("");
     setLoading(true);
 
+    // const userData = {
+    //   first_name: data.firstName,
+    //   last_name: data.lastName,
+    //   email: data.email,
+    //   password: data.password,
+    //   role: data.roleId,
+    // };
+
+
     const userData = {
-      first_name: data.firstName,
-      last_name: data.lastName,
+      firstName: data.firstName,
+      middleName: data.middleName || "",
+      lastName: data.lastName,
       email: data.email,
       password: data.password,
-      role: data.roleId,
+      phoneNo: data.phoneNo,
+      qualification: data.qualification,
+      gender: data.gender,
+      aadharNo: data.aadharNo,
+      panNo: data.panNo,
+      roles: [{ name: data.role }],
     };
+
+
 
     try {
       const isSuccess = await RegisterUser(userData);
@@ -107,6 +126,20 @@ export const Register = () => {
               )}
             </div>
 
+            {/* Middle Name */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Middle Name (Optional)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Middle Name"
+                autoComplete="on"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("middleName")}
+              />
+            </div>
+
             {/* Last Name */}
             <div className="form-control w-full">
               <label className="label">
@@ -154,7 +187,7 @@ export const Register = () => {
               <label className="label">
                 <span className="label-text">Role</span>
               </label>
-              <select
+              {/* <select
                 className="select select-bordered w-full focus:outline-none"
                 {...register("roleId", {
                   validate: (val) => validregisterrole(val) === "" || validregisterrole(val),
@@ -166,10 +199,139 @@ export const Register = () => {
                     {roleItem.name}
                   </option>
                 ))}
+              </select> */}
+              <select
+                {...register("role", { required: "Please select a role" })}
+                className="select select-bordered w-full focus:outline-none capitalize"
+              >
+                <option value="">Select Role</option>
+                {filteredRoles.map(roleItem => (
+                  <option className="capitalize" key={roleItem.id} value={roleItem.roleName}>
+                    {roleItem.roleName.replace("_", " ")}
+                  </option>
+                ))}
               </select>
+
               {errors.roleId && (
                 <span className="text-red-500 text-sm mt-1">
                   {errors.roleId.message || errors.roleId}
+                </span>
+              )}
+            </div>
+
+            {/* Phone Number */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Phone Number</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter 10-digit phone number"
+                autoComplete="on"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("phoneNo", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Enter a valid 10-digit phone number",
+                  },
+                })}
+              />
+              {errors.phoneNo && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.phoneNo.message}
+                </span>
+              )}
+            </div>
+
+            {/* Qualification */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Qualification</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your qualification"
+                autoComplete="on"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("qualification", {
+                  required: "Qualification is required",
+                })}
+              />
+              {errors.qualification && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.qualification.message}
+                </span>
+              )}
+            </div>
+
+            {/* Gender */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Gender</span>
+              </label>
+              <select
+                {...register("gender", { required: "Please select your gender" })}
+                className="select select-bordered w-full focus:outline-none"
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              {errors.gender && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.gender.message}
+                </span>
+              )}
+            </div>
+
+            {/* Aadhar Number */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">Aadhar Number</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter 12-digit Aadhar number"
+                autoComplete="on"
+                className="input input-bordered w-full focus:outline-none"
+                {...register("aadharNo", {
+                  required: "Aadhar number is required",
+                  pattern: {
+                    value: /^[0-9]{12}$/,
+                    message: "Enter a valid 12-digit Aadhar number",
+                  },
+                })}
+              />
+              {errors.aadharNo && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.aadharNo.message}
+                </span>
+              )}
+            </div>
+
+            {/* PAN Number */}
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text">PAN Number</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter PAN number (e.g., ABCDE1234F)"
+                autoComplete="on"
+                className="input input-bordered w-full focus:outline-none uppercase"
+                {...register("panNo", {
+                  required: "PAN number is required",
+                  pattern: {
+                    value: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+                    message: "Enter a valid PAN number",
+                  },
+                })}
+              />
+              {errors.panNo && (
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.panNo.message}
                 </span>
               )}
             </div>
@@ -185,7 +347,7 @@ export const Register = () => {
                       Password must be at least 8 characters, include one letter, one number, and one special character
                     </div>
                   </div>
-                </div>
+                </div>
               </label>
               <input
                 type={showPassword ? "password" : "text"}
@@ -216,7 +378,7 @@ export const Register = () => {
                 {loading ? (
                   <i className="fa-solid fa-spinner fa-spin mr-2"></i>
                 ) : (
-                  <i className="fa-solid fa-right-to-bracket mr-2"></i> 
+                  <i className="fa-solid fa-right-to-bracket mr-2"></i>
                 )}
                 {loading ? "" : "Register"}
               </button>
@@ -235,22 +397,22 @@ export const Register = () => {
 
       {/* Success Modal */}
       {/* Success Modal */}
-{registrationSuccess && (
-  <div className="modal modal-open">
-    <div className="modal-box">
-      <h3 className="font-bold text-lg">Registration Successful!</h3>
-      <p className="py-4">Your account has been created successfully.</p>
-      <div className="modal-action">
-        <button 
-          onClick={() => window.location.reload()} 
-          className="btn bgTheme text-white"
-        >
-          OK
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      {registrationSuccess && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Registration Successful!</h3>
+            <p className="py-4">Your account has been created successfully.</p>
+            <div className="modal-action">
+              <button
+                onClick={() => window.location.reload()}
+                className="btn bgTheme text-white"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
