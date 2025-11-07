@@ -22,21 +22,48 @@ const UpdateStudentDetail = () => {
     reValidateMode: "onChange",
   });
 
+  // const fetchStudent = async () => {
+  //   try {
+  //     const data = await fetchStudentById(id);
+  //     const { classes, ...rest } = data;
+  //     Object.keys(rest).forEach((key) => {
+  //       if (rest[key] !== null && rest[key] !== undefined) {
+  //         setValue(key, rest[key]);
+  //       }
+  //     });
+  //   } catch (err) {
+  //     setError("Failed to load student data.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchStudent = async () => {
-    try {
-      const data = await fetchStudentById(id);
-      const { classes, ...rest } = data;
-      Object.keys(rest).forEach((key) => {
-        if (rest[key] !== null && rest[key] !== undefined) {
+  try {
+    const data = await fetchStudentById(id);
+    const { classes, ...rest } = data;
+
+    // Map backend → frontend keys
+    setValue("first_name", rest.firstName || "");
+    setValue("middle_name", rest.middleName || "");
+    setValue("last_name", rest.lastName || "");
+
+    // For all other matching fields (auto-fill)
+    Object.keys(rest).forEach((key) => {
+      if (rest[key] !== null && rest[key] !== undefined) {
+        // Skip the ones we already mapped manually
+        if (!["firstName", "middleName", "lastName"].includes(key)) {
           setValue(key, rest[key]);
         }
-      });
-    } catch (err) {
-      setError("Failed to load student data.");
-    } finally {
-      setLoading(false);
-    }
-  };
+      }
+    });
+  } catch (err) {
+    setError("Failed to load student data.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchStudent();

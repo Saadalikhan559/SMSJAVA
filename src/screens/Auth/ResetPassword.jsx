@@ -31,10 +31,10 @@ export const ResetPassword = () => {
     setLoading(true);
 
     const userData = {
-      email: data.email,
+      // email: data.email,
       otp: data.otp,
-      new_password: data.newpassword,
-      confirm_password: data.confirmPassword,
+      newPassword: data.newpassword,
+      confirmPassword: data.confirmPassword,
     };
 
     try {
@@ -74,7 +74,7 @@ export const ResetPassword = () => {
             )}
 
             {/* Email */}
-            <div className="form-control w-full">
+            {/* <div className="form-control w-full">
               <label className="label">
                 <span className="label-text">
                   <i className="fa-solid fa-envelope text-sm mr-2"></i>Email
@@ -95,7 +95,7 @@ export const ResetPassword = () => {
                   {errors.email.message || errors.email}
                 </span>
               )}
-            </div>
+            </div> */}
 
             {/* OTP */}
             <div className="form-control w-full relative">

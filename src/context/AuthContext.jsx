@@ -9,6 +9,7 @@ import axios from "axios";
 import { constants } from "../global/constants";
 
 const BASE_URL = constants.baseUrl;
+const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
 export const AuthContext = createContext(null);
 
@@ -40,10 +41,10 @@ export const AuthProvider = ({ children }) => {
   const [yearLevelID, setYearLevelID] = useState(
     () => localStorage.getItem("year_level_id") || ""
   );
-    const [stuyearLevelID, setstuYearLevelID] = useState(
-      () => localStorage.getItem("stu_year_level_id") || "");
-    const [stuyearLevelName, setstuYearLevelName] = useState(
-      () => localStorage.getItem("stu_year_level_name") || "");
+  const [stuyearLevelID, setstuYearLevelID] = useState(
+    () => localStorage.getItem("stu_year_level_id") || "");
+  const [stuyearLevelName, setstuYearLevelName] = useState(
+    () => localStorage.getItem("stu_year_level_name") || "");
   const [loading, setLoading] = useState(true);
 
   // Ref to avoid stale tokens in interceptors
@@ -111,13 +112,15 @@ export const AuthProvider = ({ children }) => {
           isRefreshing.current = true;
 
           try {
-            const response = await axios.post(`${BASE_URL}/auth/refresh/`, {
-              refresh: authTokensRef.current.refresh,
+            const response = await axios.post(`${JAVA_BASE_URL}/users/refresh`, {
+              refreshToken: authTokensRef.current.refresh,
+            }, {
+              headers: { "ngrok-skip-browser-warning": "true" },
             });
 
             const newTokens = {
-              access: response.data.access,
-              refresh: response.data.refresh,
+              access: response.data.accessToken,
+              refresh: response.data.refreshToken,
             };
 
             setAuthTokens(newTokens);
@@ -135,6 +138,7 @@ export const AuthProvider = ({ children }) => {
           } finally {
             isRefreshing.current = false;
           }
+
         }
 
         return Promise.reject(error);
@@ -146,63 +150,46 @@ export const AuthProvider = ({ children }) => {
 
   const LoginUser = async (userDetails) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/login/`, userDetails);
+      const response = await axios.post(
+        `${JAVA_BASE_URL}/users/login`,
+        userDetails,
+        {
+          headers: { "ngrok-skip-browser-warning": "true" }
+        }
+      );
+
       const data = response.data;
 
-      const tokens = { access: data.access, refresh: data.refresh };
+      const tokens = {
+        access: data["Access Token"],
+        refresh: data["Refresh Token"]
+      };
       setAuthTokens(tokens);
       authTokensRef.current = tokens;
       localStorage.setItem("authTokens", JSON.stringify(tokens));
 
-      setUserRole(data.Roles[0]);
-      localStorage.setItem("userRole", data.Roles[0]);
+      // setUserRole(data.Roles[0]);
+      // localStorage.setItem("userRole", data.Roles[0]);
+
+      const role = data.roles?.[0] || "";
+      setUserRole(role);
+      // localStorage.setItem("roles", role);
+      localStorage.setItem("userRole", role);
+
 
       if (data["User ID"]) {
         setUserID(data["User ID"]);
         localStorage.setItem("user_id", data["User ID"]);
       }
-      if (data.teacher_id) {
-        setTeacherID(data.teacher_id);
-        localStorage.setItem("teacher_id", data.teacher_id);
-      }
-      if (data.guardian_id) {
-        setGuardianID(data.guardian_id);
-        setStudentID(data.student_id);
-        localStorage.setItem("guardian_id", data.guardian_id);
-        localStorage.setItem("student_id", data.student_id);
-      }
-      if (data.student_id) {
-        setStudentID(data.student_id);
-        localStorage.setItem("student_id", data.student_id);
-      }
-      if (data.students && Array.isArray(data.students)) {
-        localStorage.setItem(
-          "guardian_students",
-          JSON.stringify(data.students)
-        );
-      }
-      if (data.year_level_id) {
-        setYearLevelID(data.year_level_id);
-        localStorage.setItem("year_level_id", data.year_level_id);
-      }
       if (data.name) {
         setUserName(data.name);
         localStorage.setItem("user_name", data.name);
       }
-      if (data.user_profile) {
-        const normalizedProfile = normalizeProfileUrl(data.user_profile);
-        setUserProfile(normalizedProfile);
-        localStorage.setItem("user_profile", normalizedProfile);
-      }
+      if (data.director_id) localStorage.setItem("director_id", data.director_id);
+      if (data.student_id) localStorage.setItem("student_id", data.student_id);
+      if (data.year_level?.id) localStorage.setItem("stu_year_level_id", data.year_level.id);
+      if (data.year_level?.name) localStorage.setItem("stu_year_level_name", data.year_level.name);
 
-         if (data.year_level?.id) {
-        localStorage.setItem("stu_year_level_id", data.year_level.id);
-        setstuYearLevelID(data.year_level.id)
-      }
-      if (data.year_level?.name) {
-        localStorage.setItem("stu_year_level_name", data.year_level.name);
-        setstuYearLevelName(data.year_level.name)
-      }
       return data;
     } catch (error) {
       console.error("Login error:", error);
@@ -211,63 +198,106 @@ export const AuthProvider = ({ children }) => {
   };
 
   const LogoutUser = async () => {
-    setAuthTokens(null);
-    authTokensRef.current = null;
-    setUserRole("");
-    setUserID("");
-    setTeacherID("");
-    setGuardianID("");
-    setUserName("");
-    setUserProfile("");
-    setStudentID("");
-    setYearLevelID("");
-    localStorage.clear();
+    try {
+      await axios.post(`${JAVA_BASE_URL}/users/logout`,
+        { refresh_token: authTokens?.refresh },
+        { headers: { "ngrok-skip-browser-warning": "true" } }
+      );
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setAuthTokens(null);
+      authTokensRef.current = null;
+      setUserRole("");
+      setUserID("");
+      setTeacherID("");
+      setGuardianID("");
+      setUserName("");
+      setUserProfile("");
+      setStudentID("");
+      setYearLevelID("");
+      localStorage.clear();
+    }
   };
 
   // Other functions (RegisterUser, ResetPassword, ChangePassword) remain same
   const RegisterUser = async (userDetails) => {
     try {
+      const accessToken = localStorage.getItem("access");
+
       const response = await axios.post(
-        `${BASE_URL}/auth/users/`,
+        `${JAVA_BASE_URL}/users/create`,
         userDetails,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authTokens?.access}`,
+            Authorization: `Bearer ${accessToken}`,
+            "ngrok-skip-browser-warning": "true",
           },
         }
       );
-      if (userRole === constants.roles.director) return response.data;
+
+      return response.data;
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Registration error:", error.response?.data || error);
       throw error;
     }
   };
 
+
+
   const ResetPassword = async (userDetails) => {
     try {
-      return await axios.post(`${BASE_URL}/auth/reset_password/`, userDetails);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      const payload = {
+        token: userDetails.otp,
+        newPassword: userDetails.newPassword || userDetails.newpassword,
+        confirmPassword: userDetails.confirmPassword,
+      };
 
-  const ChangePassword = async (userDetails) => {
-    try {
-      return await axios.post(
-        `${BASE_URL}/auth/change_password/`,
-        userDetails,
+      const response = await axios.post(
+        `${JAVA_BASE_URL}/users/resetPassword`,
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authTokens?.access}`,
+            "ngrok-skip-browser-warning": "true",
           },
         }
       );
+
+      return response;
     } catch (error) {
-      console.error(error);
+      console.error("Reset password error:", error.response ?? error);
+      throw error;
     }
   };
+
+  const ChangePassword = async (userDetails, id) => {
+    try {
+      const targetId = id || userID;
+      const response = await axiosInstance.put(
+        `${JAVA_BASE_URL}/users/changePassword/${targetId}`,
+        {
+          currentPassword: userDetails.currentPassword,
+          newPassword: userDetails.newPassword,
+          confirmPassword: userDetails.confirmPassword,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
+      return response;
+    } catch (error) {
+      console.error("Change password error:", error.response ?? error);
+      throw error;
+    }
+  };
+
+
+
 
   useEffect(() => {
     const currentProfile = localStorage.getItem("user_profile");

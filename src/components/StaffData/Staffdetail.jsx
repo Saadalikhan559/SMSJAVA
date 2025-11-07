@@ -127,7 +127,7 @@ const Staffdetail = () => {
               <div><strong>Email:</strong><br />{staffData.email || "N/A"}</div>
               <div><strong>Phone:</strong><br />{staffData.phone_no || "N/A"}</div>
               <div className="capitalize"><strong>Gender:</strong><br />{staffData.gender || "N/A"}</div>
-              <div><strong>Aadhar No:</strong><br />{staffData.adhaar_no || "N/A"}</div>
+              <div><strong>Aadhar No:</strong><br />{staffData.aadhar_no || "N/A"}</div>
               <div><strong>PAN No:</strong><br />{staffData.pan_no || "N/A"}</div>
               {type === "teacher" && (
                 <div>
