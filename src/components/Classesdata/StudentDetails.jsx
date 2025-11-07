@@ -58,7 +58,7 @@ const StudentDetails = () => {
         <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg">
           <div className="bgTheme text-white px-4 py-2 rounded-t-md flex items-center justify-between">
             <h2 className="text-3xl font-semibold capitalize">
-              Student Profile - {student.first_name} {student.last_name}
+              Student Profile - {student.firstName} {student.middleName}{student.lastName}
             </h2>
           </div>
 
@@ -83,7 +83,7 @@ const StudentDetails = () => {
               <div className="capitalize">
                 <strong>Full Name:</strong>
                 <br />
-                {`${student.first_name} ${student.middle_name} ${student.last_name}`.replace(
+                {`${student.firstName} ${student.middleName} ${student.lastName}`.replace(
                   /\s+/g,
                   " "
                 ).trim()}
