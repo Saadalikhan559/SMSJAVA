@@ -61,7 +61,7 @@ const TeacherProfile = () => {
       formData.append("email", data.email);
       formData.append("phone_no", data.phone_no);
       formData.append("gender", data.gender);
-      formData.append("adhaar_no", data.adhaar_no);
+      formData.append("aadhar_no", data.aadhar_no);
       formData.append("pan_no", data.pan_no);
       formData.append("qualification", data.qualification);
       formData.append("middle_name", data.middle_name || "");
@@ -274,7 +274,7 @@ const TeacherProfile = () => {
                 </label>
                 <input
                   type="text"
-                  value={profileData.adhaar_no || "Not provided"}
+                  value={profileData.aadhar_no || "Not provided"}
                   className="input input-bordered w-full text-sm"
                   readOnly
                 />
@@ -606,15 +606,15 @@ const TeacherProfile = () => {
                         </label>
                         <input
                           type="text"
-                          {...register("adhaar_no", {
+                          {...register("aadhar_no", {
                             required: "Aadhaar number is required",
                           })}
                           className="input input-bordered w-full text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                           disabled={true}
                         />
-                        {errors.adhaar_no && (
+                        {errors.aadhar_no && (
                           <p className="text-red-500 text-xs mt-1">
-                            {errors.adhaar_no.message}
+                            {errors.aadhar_no.message}
                           </p>
                         )}
                       </div>

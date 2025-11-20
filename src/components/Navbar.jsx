@@ -209,7 +209,7 @@ export const Navbar = () => {
           ) : (
             <Link
               to="/login"
-              className="btn btn-primary btn-sm md:btn-md text-white normal-case"
+              className="btn bgTheme text-white btn-sm md:btn-md normal-case"
             >
               Login
             </Link>

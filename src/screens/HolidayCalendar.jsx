@@ -25,6 +25,8 @@ function HolidayCalendar() {
   const [showModal, setShowModal] = useState(false);
   const [jumpDate, setJumpDate] = useState("");
   const [isMonthYearModalOpen, setIsMonthYearModalOpen] = useState(false);
+  const [isMonthLoading, setIsMonthLoading] = useState(false);
+
 
 
   // new states for loading & error
@@ -36,25 +38,34 @@ function HolidayCalendar() {
     setUserRole(role);
   }, []);
 
-  const getCalendar = async () => {
+  const getCalendar = async (isInitial = false) => {
     try {
-      setLoading(true);
+      if (isInitial) setLoading(true);
+      else setIsMonthLoading(true);
+
       setError(false);
       const data = await fetchCalendar(month, year);
       setCalendar(data);
-      setLoading(false);
     } catch (error) {
       console.log("Failed to get calendar data", error);
       setError(true);
-      setLoading(false);
+    } finally {
+      if (isInitial) setLoading(false);
+      else setIsMonthLoading(false);
     }
   };
 
+
+  useEffect(() => {
+    getCalendar(true);
+  }, []);
+
   useEffect(() => {
     if (year && month) {
-      getCalendar();
+      getCalendar(false);
     }
-  }, []);
+  }, [year, month]);
+
 
   // Loader UI
   if (loading) {
@@ -127,15 +138,26 @@ function HolidayCalendar() {
     );
   };
 
+
   const isHoliday = (date) => {
-    return calendarData?.holidays?.some((holiday) => {
+    const compareDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
+
+    const custom = calendarData?.custom_holidays?.some((holiday) => {
+      const startDate = parseAPIDate(holiday.start_date);
+      const endDate = parseAPIDate(holiday.end_date);
+      return compareDate >= startDate && compareDate <= endDate;
+    });
+
+    const school = calendarData?.school_holidays?.some((holiday) => {
       const holidayDate = parseAPIDate(holiday.date);
-      const compareDate = new Date(
-        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-      );
       return holidayDate.getTime() === compareDate.getTime();
     });
+
+    return custom || school;
   };
+
 
   const hasEvent = (date) => {
     return calendarData?.events?.some((event) => {
@@ -162,16 +184,28 @@ function HolidayCalendar() {
   };
 
   const getHolidaysForDate = (date) => {
-    return (
-      calendarData?.holidays?.filter((holiday) => {
-        const holidayDate = parseAPIDate(holiday.date);
-        const compareDate = new Date(
-          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-        );
-        return holidayDate.getTime() === compareDate.getTime();
-      }) || []
+    const compareDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
     );
+
+    // custom holidays
+    const custom =
+      calendarData?.custom_holidays?.filter((holiday) => {
+        const startDate = parseAPIDate(holiday.start_date);
+        const endDate = parseAPIDate(holiday.end_date);
+        return compareDate >= startDate && compareDate <= endDate;
+      }) || [];
+
+    // school holidays
+    const school =
+      calendarData?.school_holidays?.filter((holiday) => {
+        const holidayDate = parseAPIDate(holiday.date);
+        return holidayDate.getTime() === compareDate.getTime();
+      }) || [];
+
+    return [...custom, ...school];
   };
+
 
   const tileContent = ({ date, view }) => {
     if (view === "month") {

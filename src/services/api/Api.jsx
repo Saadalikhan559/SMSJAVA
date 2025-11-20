@@ -4,11 +4,37 @@ import { constants } from "../../global/constants";
 const BASE_URL = constants.baseUrl;
 const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
+// export const fetchRoles = async () => {
+//   try {
+//     const accessToken = localStorage.getItem("access");
+//     console.log("Access token:", accessToken);
+
+
+//     const response = await axios.get(`${JAVA_BASE_URL}/roles/getAllRoles`, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${accessToken}`,
+//         "ngrok-skip-browser-warning": "true",
+//       },
+//     });
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Fetch roles error:", error.response?.data || error);
+//     throw error;
+//   }
+// };
+
+
 export const fetchRoles = async () => {
   try {
-    const accessToken = localStorage.getItem("access");
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+    console.log(accessToken)
 
-    const response = await axios.get(`${JAVA_BASE_URL}/roles/getAllRoles`, {
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(`${JAVA_BASE_URL}/roles/getAllRole`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -22,6 +48,7 @@ export const fetchRoles = async () => {
     throw error;
   }
 };
+
 
 
 export const fetchSchoolYear = async () => {
@@ -442,12 +469,37 @@ export const fetchStudentDashboard = async (id) => {
 
 // Teacher Dashboard
 
+// export const fetchTeacherDashboard = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch Teacher Dashboard:", err);
+//     throw err;
+//   }
+// };
+
+
+
 export const fetchTeacherDashboard = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
+    // Get tokens from localStorage using the same keys as AuthContext
+    const authTokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = authTokens?.access; // same key as in AuthContext
+
+    if (!accessToken) {
+      throw new Error("No access token found in localStorage");
+    }
+
+    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
     return response.data;
   } catch (err) {
-    console.error("Failed to fetch Teacher Dashboard:", err);
+    console.error("Failed to fetch Teacher Dashboard:", err.response?.data || err);
     throw err;
   }
 };
@@ -1249,6 +1301,89 @@ export const createEvent = async (eventData) => {
     }
   }
 };
+
+
+// Helper to get token
+// const getAccessToken = () => {
+//   const authTokens = localStorage.getItem("authTokens");
+//   return authTokens ? JSON.parse(authTokens).access : null;
+// };
+
+// export const fetchCalendar = async (month, year) => {
+//   try {
+//     const token = getAccessToken();
+//     if (!token) throw new Error("No access token found. Please login.");
+
+//     const response = await axios.get(
+//       `${BASE_URL}/a/calendar/?month=${month}&year=${year}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     console.log(response.data);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch calendar:", err);
+//     throw err;
+//   }
+// };
+
+// export const importHolidays = async (year) => {
+//   try {
+//     const token = getAccessToken(); // your function to get access token
+//     if (!token) throw new Error("No access token found. Please login.");
+
+//     const response = await axios.post(
+//       `${BASE_URL}/a/holidays/import`, // just the endpoint, no query param
+//       { year }, // send year in body exactly like this
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     return response.data;
+//   } catch (error) {
+//     if (error.response) {
+//       throw new Error(
+//         error.response.data.message || "Failed to import holidays"
+//       );
+//     } else if (error.request) {
+//       throw new Error("No response received from server");
+//     } else {
+//       throw new Error(error.message);
+//     }
+//   }
+// };
+
+// export const createEvent = async (eventData) => {
+//   try {
+//     const token = getAccessToken();
+//     if (!token) throw new Error("No access token found. Please login.");
+
+//     const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     return response.data;
+//   } catch (error) {
+//     if (error.response) {
+//       throw new Error(error.response.data.message || "Failed to create event");
+//     } else if (error.request) {
+//       throw new Error("No response received from server");
+//     } else {
+//       throw new Error(error.message || "Failed to create event");
+//     }
+//   }
+// };
+
 
 // DISCOUNT API
 
