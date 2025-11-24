@@ -380,16 +380,39 @@ export const fetchAllocatedClasses = async (token) => {
 
 // DASHBOARD
 
-// Director Dashboard
+// export const fetchDirectorDashboard = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to load director Dashboard:", err);
+//     throw err;
+//   }
+// };
 export const fetchDirectorDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+
+    // Check correct key based on your AuthContext
+    const access = tokens?.access || tokens?.access_token;
+
+    const response = await axios.get(
+      `${BASE_URL}/d/director-dashboard/`,
+      {
+        headers: {
+          Authorization: `Bearer ${access}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
     return response.data;
   } catch (err) {
-    console.error("Failed to load director Dashboard:", err);
+    console.error("Failed to load director dashboard:", err);
     throw err;
   }
 };
+
 
 // Student Category Dashboard
 
@@ -972,8 +995,33 @@ export const updateDiscount = async (accessToken, id, payload) => {
 };
 
 // teacher attendances
+// export const saveTeacherAttendance = async (teachers, attendance) => {
+//   try {
+//     for (const teacher of teachers) {
+//       const data = {
+//         date: attendance[teacher.id].date,
+//         status: attendance[teacher.id].status,
+//         teacher_id: teacher.id,
+//         teacher_name: `${teacher.first_name} ${teacher.last_name}`,
+//       };
+
+//       await axios.post(`${BASE_URL}/t/teacher-attendance/post/`, data);
+//     }
+//     return true;
+//   } catch (error) {
+//     console.error(
+//       "Error saving teacher attendance:",
+//       error.response?.data || error
+//     );
+//     throw error;
+//   }
+// };
+
 export const saveTeacherAttendance = async (teachers, attendance) => {
   try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const access = tokens?.access;
+
     for (const teacher of teachers) {
       const data = {
         date: attendance[teacher.id].date,
@@ -982,31 +1030,64 @@ export const saveTeacherAttendance = async (teachers, attendance) => {
         teacher_name: `${teacher.first_name} ${teacher.last_name}`,
       };
 
-      await axios.post(`${BASE_URL}/t/teacher-attendance/post/`, data);
+      await axios.post(
+        `${BASE_URL}/t/teacher-attendance/post/`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+            // "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
     }
+
     return true;
   } catch (error) {
     console.error(
       "Error saving teacher attendance:",
-      error.response?.data || error
+      error?.response?.data || error
     );
     throw error;
   }
 };
 
+
 export const saveAllTeacherAttendance = saveTeacherAttendance;
 
 
 //  Techer attendance records
+// export const fetchTeacherAttendanceRecords = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching attendance records:", error);
+//     throw error;
+//   }
+// };
+
 export const fetchTeacherAttendanceRecords = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`);
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log("Full axios response:", response);
+    console.log("Data received:", response.data);
+
     return response.data;
   } catch (error) {
     console.error("Error fetching attendance records:", error);
     throw error;
   }
 };
+
 
 export const fetchSchoolIncome = async (filters = {}) => {
   try {

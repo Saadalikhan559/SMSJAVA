@@ -556,7 +556,7 @@ export const AuthProvider = ({ children }) => {
   // ===== Other functions remain the same =====
   const RegisterUser = async (userDetails) => {
     try {
-      const accessToken = localStorage.getItem("access");
+      const accessToken = localStorage.getItem("authTokens");
       const response = await axios.post(
         `${JAVA_BASE_URL}/users/create`,
         userDetails,
