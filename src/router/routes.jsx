@@ -248,7 +248,7 @@ export const routes = [
     path: allRouterLink.ExamSchedule,
     element: <ExamSchedule />,
     protected: true,
-    allowedRoles: [constants.roles.teacher],
+    allowedRoles: [constants.roles.teacher, constants.roles.officeStaff, constants.roles.director],
   },
   {
     path: allRouterLink.UpdateExamSchedule,
@@ -596,24 +596,24 @@ export const routes = [
   },
   {
     path: allRouterLink.editIncom,
-    element: <UpdateIncome/>,
+    element: <UpdateIncome />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.privacyPolicy,
-    element: <PrivacyPolicy/>,
+    element: <PrivacyPolicy />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.managecategory,
-    element: <CreateCategory/>,
+    element: <CreateCategory />,
     protected: true,
   },
   {
     path: allRouterLink.studentAdmissionFees,
-    element: <StudentAdmissionFees/>,
+    element: <StudentAdmissionFees />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },

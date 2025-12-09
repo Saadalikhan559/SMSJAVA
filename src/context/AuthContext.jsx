@@ -554,26 +554,51 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ===== Other functions remain the same =====
+  // const RegisterUser = async (userDetails) => {
+  //   try {
+  //     const accessToken = localStorage.getItem("authTokens");
+  //     const response = await axios.post(
+  //       `${JAVA_BASE_URL}/users/create`,
+  //       userDetails,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${accessToken}`,
+  //           "ngrok-skip-browser-warning": "true",
+  //         },
+  //       }
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Registration error:", error.response?.data || error);
+  //     throw error;
+  //   }
+  // };
+
   const RegisterUser = async (userDetails) => {
-    try {
-      const accessToken = localStorage.getItem("authTokens");
-      const response = await axios.post(
-        `${JAVA_BASE_URL}/users/create`,
-        userDetails,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Registration error:", error.response?.data || error);
-      throw error;
-    }
-  };
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;   // <-- correct token
+
+    const response = await axios.post(
+      `${JAVA_BASE_URL}/users/create`,
+      userDetails,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Registration error:", error.response?.data || error);
+    throw error;
+  }
+};
+
 
   const ResetPassword = async (userDetails) => {
     try {

@@ -9,6 +9,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { AuthContext } from "../../context/AuthContext";
+import { constants } from "../../global/constants";
 
 const UpdateExamPaper = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const UpdateExamPaper = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [loadingPaper, setLoadingPaper] = useState(false);
   const [currentPaper, setCurrentPaper] = useState(null);
+  const BASE_URL = constants.baseUrl;
 
   // Dropdown states
   const [showExamTypeDropdown, setShowExamTypeDropdown] = useState(false);
@@ -168,7 +170,19 @@ const UpdateExamPaper = () => {
           throw new Error("Exam paper not found.");
         }
 
-        setCurrentPaper(foundPaper);
+        // setCurrentPaper(foundPaper);
+        // setCurrentPaper({
+        //   ...foundPaper,
+        //   uploaded_file_url: foundPaper.uploaded_file || null, // 👈 add this
+        // });
+        setCurrentPaper({
+          ...foundPaper,
+          uploaded_file_url: foundPaper.uploaded_file
+            ? foundPaper.uploaded_file.replace(/^http:\/\/localhost:8000/, BASE_URL)
+            : null,
+        });
+
+
 
         const examTypeItem = examTypesData.find(
           (et) =>
@@ -240,7 +254,7 @@ const UpdateExamPaper = () => {
     }
 
     try {
-       const response = await axiosInstance.put(
+      const response = await axiosInstance.put(
         "/d/Exam-Paper/update_exampaper/",
         formData,
         {
@@ -276,6 +290,19 @@ const UpdateExamPaper = () => {
 
   const getSubjectDisplay = (subject) => {
     return subject?.subject_name || "Select Subject";
+  };
+
+
+  const handleViewPaper = () => {
+    const fileUrl = currentPaper?.uploaded_file_url;
+
+    if (!fileUrl) {
+      setAlertMessage("No file uploaded for this exam paper.");
+      setShowAlert(true);
+      return;
+    }
+
+    window.open(fileUrl, "_blank"); // file ko new tab me khol dega
   };
 
   // ➤ LOADING STATE
@@ -315,13 +342,12 @@ const UpdateExamPaper = () => {
               >
                 {watch("exam_type")
                   ? getExamTypeDisplay(
-                      examType.find((et) => String(et.id) === String(watch("exam_type")))
-                    )
+                    examType.find((et) => String(et.id) === String(watch("exam_type")))
+                  )
                   : "Select Exam Type"}
                 <i
-                  className={`fa-solid fa-chevron-${
-                    showExamTypeDropdown ? "up" : "down"
-                  } ml-2`}
+                  className={`fa-solid fa-chevron-${showExamTypeDropdown ? "up" : "down"
+                    } ml-2`}
                 ></i>
               </div>
 
@@ -381,13 +407,12 @@ const UpdateExamPaper = () => {
               >
                 {watch("subject")
                   ? getSubjectDisplay(
-                      subjects.find((s) => String(s.id) === String(watch("subject")))
-                    )
+                    subjects.find((s) => String(s.id) === String(watch("subject")))
+                  )
                   : "Select Subject"}
                 <i
-                  className={`fa-solid fa-chevron-${
-                    showSubjectDropdown ? "up" : "down"
-                  } ml-2`}
+                  className={`fa-solid fa-chevron-${showSubjectDropdown ? "up" : "down"
+                    } ml-2`}
                 ></i>
               </div>
 
@@ -447,13 +472,12 @@ const UpdateExamPaper = () => {
               >
                 {watch("teacher")
                   ? getTeacherFullName(
-                      teachers.find((t) => String(t.id) === String(watch("teacher")))
-                    )
+                    teachers.find((t) => String(t.id) === String(watch("teacher")))
+                  )
                   : "Select Teacher"}
                 <i
-                  className={`fa-solid fa-chevron-${
-                    showTeacherDropdown ? "up" : "down"
-                  } ml-2`}
+                  className={`fa-solid fa-chevron-${showTeacherDropdown ? "up" : "down"
+                    } ml-2`}
                 ></i>
               </div>
 
@@ -615,7 +639,7 @@ const UpdateExamPaper = () => {
                   },
                 })}
               />
-              {!watch("uploaded_file") && currentPaper?.uploaded_file_url && (
+              {/* {!watch("uploaded_file") && currentPaper?.uploaded_file_url && (
                 <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                   Current file:{" "}
                   <a
@@ -627,7 +651,21 @@ const UpdateExamPaper = () => {
                     {currentPaper.paper_code || "Download Current File"}
                   </a>
                 </div>
+              )} */}
+              {!watch("uploaded_file") && currentPaper?.uploaded_file_url && (
+                <div className="mt-2 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                  <span>Current file: {currentPaper.paper_code || "Download Current File"}</span>
+                  <button
+                    type="button"
+                    className="textTheme"
+                    onClick={() => window.open(currentPaper.uploaded_file_url, "_blank")}
+                  >
+                    View Current Paper
+                  </button>
+                </div>
               )}
+
+
               {errors.uploaded_file && (
                 <p className="text-error text-sm mt-1">
                   {errors.uploaded_file.message}

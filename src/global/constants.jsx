@@ -1,21 +1,13 @@
 export const constants = {
   isOnline: true,
   isOffline: true,
-  
-  JAVA_BASE_URL: "https://taylor-unirritant-latina.ngrok-free.dev", //JAVA 
-  // baseUrl: "https://5wwr4nvl-8000.inc1.devtunnels.ms", //Python
-  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms/", //Python 
-  // baseUrl: "https://smsproject1.pythonanywhere.com/", //deployed for testing    
-  // baseUrl: "https://smsproject.pythonanywhere.com/", //deployed for school   
-  // baseUrl: "https://187gwsw1-8000.inc1.devtunnels.ms/", //farha     
-  // baseUrl: "https://9gqxjbjg-8000.inc1.devtunnels.ms/", //tahur      
-  // baseUrl: "https://gl8tx74f-7000.inc1.devtunnels.ms", //farheen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  // baseUrl: "https://2gqlk571-8000.inc1.devtunnels.ms", //saqib
-  // baseUrl:"https://958cp4w5-8000.inc1.devtunnels.ms/", //saba
-  // baseUrl: "https://94f38xkg-8000.inc1.devtunnels.ms", //naaz
+
+  // JAVA_BASE_URL: "https://taylor-unirritant-latina.ngrok-free.dev", //JAVA Musa
+  // JAVA_BASE_URL: "https://fungistatic-saronic-lynda.ngrok-free.dev", //JAVA 
+    JAVA_BASE_URL: "https://gr0zqthz-8080.inc1.devtunnels.ms", //JAVA 
   // baseUrl:"https://g1nfj2jq-8000.inc1.devtunnels.ms", //shahbaz
-  // baseUrl:"https://187gwsw1-8000.inc1.devtunnels.ms/", //farha
-    baseUrl:"https://jx8cn3gh-8000.inc1.devtunnels.ms", //DRF
+  baseUrl: "https://jx8cn3gh-8000.inc1.devtunnels.ms", //DRF
+  //  baseUrl: "https://p94lwlb3-8000.inc1.devtunnels.ms", //DRF Musa
 
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,   

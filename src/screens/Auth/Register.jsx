@@ -47,9 +47,10 @@ export const Register = () => {
   // );
 
 
-  const filteredRoles = allRoles.filter(
-  roleItem => roleItem.name === "teacher" || roleItem.name === "office_staff"
+const filteredRoles = allRoles.filter(
+  roleItem => roleItem.name === "teacher" || roleItem.name === "office staff"
 );
+
 
 
   const onSubmit = async (data) => {

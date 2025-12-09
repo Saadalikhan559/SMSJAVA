@@ -23,6 +23,7 @@ export const AdmissionFees = () => {
   const [setAvailableMonths] = useState([]);
   const [apiError, setApiError] = useState("");
   const { axiosInstance } = useContext(AuthContext);
+  const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
 
 
@@ -93,7 +94,7 @@ export const AdmissionFees = () => {
       setApiError("");
 
       const response = await axiosInstance.get(
-        `${BASE_URL}/d/fee-record/fee-preview/?student_id=${studentId}`,
+        `${JAVA_BASE_URL}/payments/preview/?student_id=${studentId}`,
         { headers: { "Content-Type": "application/json" } }
       );
 

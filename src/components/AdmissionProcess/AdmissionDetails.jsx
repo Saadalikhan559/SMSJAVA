@@ -55,22 +55,13 @@ export const AdmissionDetails = () => {
     }
   };
 
-  const normalizeStudents = (data) => {
-    if (!data) return [];
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.results)) return data.results;
-    if (Array.isArray(data?.data)) return data.data;
-    if (typeof data === "object") {
-      // single object → wrap
-      if ("student_id" in data || "student_name" in data) return [data];
-      // object keyed by ids → take values that look like students
-      const vals = Object.values(data).filter(
-        v => v && typeof v === "object" && ("student_id" in v || "student_name" in v)
-      );
-      if (vals.length) return vals;
-    }
-    return [];
-  };
+const normalizeStudents = (data) => {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (data.results && Array.isArray(data.results)) return data.results;
+  return [];
+};
+
 
   useEffect(() => {
     getAdmissionDetails();

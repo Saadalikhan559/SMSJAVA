@@ -329,17 +329,39 @@ export const fetchCity = async () => {
   }
 };
 
+// export const fetchPeriodsByYearLevel = async (yearLevelId) => {
+//   try {
+//     const response = await axios.get(
+//       `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`
+//     );
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch periods:", err);
+//     throw err;
+//   }
+// };
+
 export const fetchPeriodsByYearLevel = async (yearLevelId) => {
   try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const access = tokens?.access || tokens?.access_token;
+
     const response = await axios.get(
-      `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`
+      `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      }
     );
+
     return response.data;
   } catch (err) {
     console.error("Failed to fetch periods:", err);
     throw err;
   }
 };
+
 
 // fetchAbsentTeachers
 export const fetchAbsentTeachers = async (date) => {
@@ -401,7 +423,7 @@ export const fetchDirectorDashboard = async () => {
       {
         headers: {
           Authorization: `Bearer ${access}`,
-          "ngrok-skip-browser-warning": "true",
+          // "ngrok-skip-browser-warning": "true",
         },
       }
     );
@@ -480,15 +502,34 @@ export const getAttendanceByGuardianId = async (guardianId) => {
 
 // Guardian Dashboard
 
+// export const fetchStudentDashboard = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/student_dashboard/${id}/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch student Dashboard:", err);
+//     throw err;
+//   }
+// };
+
 export const fetchStudentDashboard = async (id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/student_dashboard/${id}/`);
-    return response.data;
+    const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+
+    const res = await axios.get(
+      `${BASE_URL}/d/student_dashboard/${id}/`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    return res.data;
   } catch (err) {
-    console.error("Failed to fetch student Dashboard:", err);
+    console.error("Student Dashboard fetch error:", err);
     throw err;
   }
 };
+
 
 // Teacher Dashboard
 

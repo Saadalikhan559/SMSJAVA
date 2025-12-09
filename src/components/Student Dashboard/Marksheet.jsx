@@ -314,7 +314,7 @@ const Marksheet = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {["Cleanliness", "Discipline", "Piuntuality", "Attention in Class"].map((trait) => (
+                  {["Cleanliness", "Discipline", "Punctuality", "Attention in Class"].map((trait) => (
                     <tr key={trait} className="bg-white">
                       <td className="border text-nowrap border-black px-1 py-0.5 text-left">{trait}</td>
                       <td className="border text-nowrap border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 1")?.grade || "-"}</td>
