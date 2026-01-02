@@ -8,22 +8,22 @@ const CreateDiscount = () => {
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
   const [classId, setClassId] = useState("");
+  const [feeStructures, setFeeStructures] = useState([]);
 
   const [loadingClasses, setLoadingClasses] = useState(false);
   const [loadingStudents, setLoadingStudents] = useState(false);
+  const [loadingFeeStructures, setLoadingFeeStructures] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const dropdownRef = useRef(null);
 
-
   const [formData, setFormData] = useState({
-    admission_fee_discount: "",
-    tuition_fee_discount: "",
-    discount_reason: "",
-    student_id: "",
-    is_allowed: true,
+    student_year_id: "",
+    fee_structure_id: "",
+    discount_name: "",
+    discounted_amount_percent: "",
   });
 
   const [btnDisabled, setBtnDisabled] = useState(true);
@@ -55,6 +55,22 @@ const CreateDiscount = () => {
     }
   };
 
+  const loadFeeStructures = async () => {
+    if (!classId) return;
+    setLoadingFeeStructures(true);
+    try {
+      const response = await axiosInstance.get(`/fee-structures/getById/${classId}/`);
+      setFeeStructures(response.data);
+      setError(false);
+    } catch (err) {
+      console.error("Failed to load fee structures:", err);
+      setError(true);
+      setFeeStructures([]);
+    } finally {
+      setLoadingFeeStructures(false);
+    }
+  };
+
   const loadStudents = async () => {
     if (!classId) return;
     setLoadingStudents(true);
@@ -77,28 +93,41 @@ const CreateDiscount = () => {
   };
 
   useEffect(() => {
-    if (classId) loadStudents();
+    if (classId) {
+      loadStudents();
+      loadFeeStructures();
+    }
     setSelectedStudentId("");
     setSelectedStudentName("");
     setSearchStudentInput("");
+    setFormData(prev => ({
+      ...prev,
+      fee_structure_id: "",
+      student_year_id: ""
+    }));
   }, [classId]);
 
   // Sync selected student to formData
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, student_id: selectedStudentId }));
+    setFormData((prev) => ({ ...prev, student_year_id: selectedStudentId }));
   }, [selectedStudentId]);
 
   useEffect(() => {
-    const hasValidDiscount =
-      parseFloat(formData.admission_fee_discount) > 0 ||
-      parseFloat(formData.tuition_fee_discount) > 0;
-
-    const isValid = formData.student_id && hasValidDiscount;
+    const isValid =
+      formData.student_year_id &&
+      formData.fee_structure_id &&
+      formData.discount_name &&
+      formData.discounted_amount_percent > 0 &&
+      formData.discounted_amount_percent <= 100;
     setBtnDisabled(!isValid);
   }, [formData]);
 
   const handleChange = (name, value) => {
-    if (name === "discount_reason" && value.length > 100) return;
+    if (name === "discount_name" && value.length > 100) return;
+    if (name === "discounted_amount_percent") {
+      const numValue = parseFloat(value);
+      if (numValue > 100) return;
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -108,20 +137,18 @@ const CreateDiscount = () => {
     const errors = {};
 
     if (!classId) errors.classId = "Class is required.";
-    if (!selectedStudentId) errors.student_id = "Student is required.";
+    if (!selectedStudentId) errors.student_year_id = "Student is required.";
+    if (!formData.fee_structure_id) errors.fee_structure_id = "Fee type is required.";
+    if (!formData.discount_name) errors.discount_name = "Discount name is required.";
 
-    const admission = parseFloat(formData.admission_fee_discount || 0);
-    const tuition = parseFloat(formData.tuition_fee_discount || 0);
-
-    if (tuition <= 0 && admission <= 0) {
-      errors.discount =
-        "Admission or Tuition Fee Discount must be greater than 0";
+    const discountPercent = parseFloat(formData.discounted_amount_percent || 0);
+    if (discountPercent <= 0 || discountPercent > 100) {
+      errors.discounted_amount_percent = "Discount percent must be between 1 and 100";
     }
 
-    if (formData.discount_reason && formData.discount_reason.length > 100) {
-      errors.discount_reason = "Discount reason cannot exceed 100 characters.";
+    if (formData.discount_name && formData.discount_name.length > 100) {
+      errors.discount_name = "Discount name cannot exceed 100 characters.";
     }
-
 
     setFormErrors(errors);
 
@@ -130,36 +157,41 @@ const CreateDiscount = () => {
     setIsSubmitting(true);
 
     try {
-      const payload = { ...formData, is_allowed: true };
-      await axiosInstance.post("/d/fee-discounts/", payload);
+      const payload = {
+        student_year_id: parseInt(formData.student_year_id),
+        fee_structure_id: parseInt(formData.fee_structure_id),
+        discount_name: formData.discount_name,
+        discounted_amount_percent: parseFloat(formData.discounted_amount_percent)
+      };
 
-      setAlertTitle("Success");
-      setAlertMessage("Discount created successfully!");
+      await axiosInstance.post("/d/appliedfeediscounts/apply/", payload);
+
+      setAlertTitle("Create Discount");
+      setAlertMessage("Discount applied successfully!");
       setShowAlert(true);
 
       // Reset fields
       setFormData({
-        admission_fee_discount: "",
-        tuition_fee_discount: "",
-        discount_reason: "",
-        student_id: "",
-        is_allowed: true,
+        student_year_id: "",
+        fee_structure_id: "",
+        discount_name: "",
+        discounted_amount_percent: "",
       });
       setSelectedStudentId("");
       setSelectedStudentName("");
       setSearchStudentInput("");
       setClassId("");
       setStudents([]);
+      setFeeStructures([]);
       setFormErrors({});
     } catch (err) {
-      setAlertTitle("Error");
-      console.log("error", err.response?.data);
-      setAlertMessage(
-        err.response?.data?.student_id ||
-        err.response?.data?.admission_fee_discount ||
-        err.response?.data?.tuition_fee_discount
-      );
+      setAlertTitle("Create Discount");
+      let message = "Failed to create discount.";
+      if (err?.response?.data?.detail) {
+        message = err.response.data.detail;
+      }
       setShowAlert(true);
+      setAlertMessage(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -180,7 +212,6 @@ const CreateDiscount = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
 
   const filteredStudents = students.filter((studentObj) =>
     studentObj.student_name
@@ -216,7 +247,7 @@ const CreateDiscount = () => {
     <div className="min-h-screen p-5 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 mb-24 md:mb-10">
       <div className="w-full max-w-7xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-5">
         <h1 className="text-3xl font-bold text-center mb-8">
-          <i className="fa-solid fa-indian-rupee-sign ml-2"></i> Create Discount
+          <i className="fa-solid fa-indian-rupee-sign ml-2"></i> Create Fee Discount
         </h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -243,7 +274,7 @@ const CreateDiscount = () => {
                     {cls.level_name}
                   </option>
                 ))}
-              </select>{" "}
+              </select>
               {formErrors.classId && (
                 <p className="text-sm text-red-500 mt-1">
                   {formErrors.classId}
@@ -266,10 +297,7 @@ const CreateDiscount = () => {
                 onClick={() => setShowStudentDropdown(!showStudentDropdown)}
               >
                 {selectedStudentName || "Select Student"}
-                <i
-                  className={`fa-solid fa-chevron-${showStudentDropdown ? "up" : "down"
-                    } ml-2`}
-                ></i>
+              <span className="arrow">&#9662;</span>
               </div>
 
               {/* Dropdown */}
@@ -298,7 +326,7 @@ const CreateDiscount = () => {
                           key={studentObj.student_id}
                           className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-800 dark:text-gray-200 capitalize"
                           onClick={() => {
-                            setSelectedStudentId(studentObj.student_id);
+                            setSelectedStudentId(studentObj.id);
                             setSelectedStudentName(studentObj.student_name);
                             setSearchStudentInput("");
                             setShowStudentDropdown(false);
@@ -319,37 +347,41 @@ const CreateDiscount = () => {
               )}
 
               {/* Error display (external validation) */}
-              {formErrors.student_id && (
+              {formErrors.student_year_id && (
                 <p className="text-error text-sm mt-1">
-                  {formErrors.student_id}
+                  {formErrors.student_year_id}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Fee Discounts */}
+          {/* Fee Type and Discount Percent */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
                   <i className="fa-solid fa-tag text-sm"></i>
-                  Admission Fee Discount (₹)
+                  Fee Type <span className="text-error">*</span>
                 </span>
               </label>
-              <input
-                type="number"
-                min={0}
-                className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-                placeholder="e.g. 100"
-                max={9999999}
-                value={formData.admission_fee_discount}
-                onChange={(e) =>
-                  handleChange("admission_fee_discount", e.target.value)
-                }
-              />{" "}
-              {formErrors.discount && (
-                <p className="text-sm text-red-500 mt-1 col-span-2">
-                  {formErrors.discount}
+              <select
+                className="select select-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+                value={formData.fee_structure_id}
+                onChange={(e) => handleChange("fee_structure_id", e.target.value)}
+                disabled={!classId}
+              >
+                <option value="">
+                  {loadingFeeStructures ? "Loading fee types..." : "Select Fee Type"}
+                </option>
+                {feeStructures.map((fee) => (
+                  <option key={fee.id} value={fee.id}>
+                    {fee.fee_type} - ₹{fee.fee_amount}
+                  </option>
+                ))}
+              </select>
+              {formErrors.fee_structure_id && (
+                <p className="text-sm text-red-500 mt-1">
+                  {formErrors.fee_structure_id}
                 </p>
               )}
             </div>
@@ -357,64 +389,68 @@ const CreateDiscount = () => {
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-1">
-                  <i className="fa-solid fa-tags text-sm"></i>
-                  Tuition Fee Discount (₹)
+                  <i className="fa-solid fa-percent text-sm"></i>
+                  Discount Percentage <span className="text-error">*</span>
                 </span>
               </label>
               <input
                 type="number"
                 min={0}
+                max={100}
+                step="0.01"
                 className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-                placeholder="e.g. 500"
-                max={9999999}
-                value={formData.tuition_fee_discount}
+                placeholder="e.g. 25"
+                value={formData.discounted_amount_percent}
                 onChange={(e) =>
-                  handleChange("tuition_fee_discount", e.target.value)
+                  handleChange("discounted_amount_percent", e.target.value)
                 }
-              />{" "}
-              {formErrors.discount && (
-                <p className="text-sm text-red-500 mt-1 col-span-2">
-                  {formErrors.discount}
+              />
+              {formErrors.discounted_amount_percent && (
+                <p className="text-sm text-red-500 mt-1">
+                  {formErrors.discounted_amount_percent}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Discount Reason */}
+          {/* Discount Name */}
           <div className="form-control mt-6">
             <label className="label">
               <span className="label-text flex items-center gap-1">
                 <i className="fa-solid fa-comment-dots text-sm"></i>
-                Discount Reason
+                Discount Name <span className="text-error">*</span>
               </span>
             </label>
-            <textarea
-              className="textarea textarea-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
-              placeholder="e.g. Sibling concession"
-              rows={3}
-              value={formData.discount_reason}
-              onChange={(e) => handleChange("discount_reason", e.target.value)}
-            ></textarea>
-            {formErrors.discount_reason && (
+            <input
+              type="text"
+              className="input input-bordered w-full focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              placeholder="e.g. Scholarship Discount"
+              value={formData.discount_name}
+              onChange={(e) => handleChange("discount_name", e.target.value)}
+            />
+            {formErrors.discount_name && (
               <p className="text-sm text-red-500 mt-1">
-                {formErrors.discount_reason}
+                {formErrors.discount_name}
               </p>
             )}
-
           </div>
 
           {/* Submit Button */}
           <div className="flex justify-center pt-6">
             <button
               type="submit"
-              className="btn btn-primary w-full md:w-52 bgTheme text-white"
+              // className={`btn btn-primary w-full md:w-52 bgTheme text-white`}
+              className={`btn bgTheme text-white w-52 ${
+                btnDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"
+              }`}
+              disabled={btnDisabled}
             >
               {isSubmitting ? (
                 <i className="fa-solid fa-spinner fa-spin mr-2"></i>
               ) : (
                 <>
                   <i className="fa-solid fa-wand-magic-sparkles mr-2"></i>
-                  Create
+                  Create Discount
                 </>
               )}
             </button>
@@ -425,7 +461,7 @@ const CreateDiscount = () => {
         {showAlert && (
           <dialog open className="modal modal-open">
             <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
-              <h3 className="font-bold text-lg">Create Discount</h3>
+              <h3 className="font-bold text-lg">{alertTitle}</h3>
               <p className="py-4">{alertMessage}</p>
               <div className="modal-action">
                 <button

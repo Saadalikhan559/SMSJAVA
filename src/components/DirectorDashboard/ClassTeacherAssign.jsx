@@ -14,7 +14,7 @@ const ClassTeacherAssign = () => {
     handleSubmit,
     setError,
     clearErrors,
-    setValue, // ✅ add this
+    setValue, 
     formState: { errors },
   } = useForm();
 
@@ -92,7 +92,7 @@ const ClassTeacherAssign = () => {
 
   const handleSubmitForm = async (data) => {
     const payload = {
-      teacher: data.teacher_id, // ✅ use form value
+      teacher: data.teacher_id, 
       year_level: data.yearlevel_id,
     };
 
@@ -112,7 +112,6 @@ const ClassTeacherAssign = () => {
       if (response.status === 200 || response.status === 201) {
         setAlertMessage("Class teacher assigned successfully!");
         setShowAlert(true);
-        window.location.reload();
       }
     } catch (error) {
       const res = error.response?.data;
@@ -338,10 +337,15 @@ const ClassTeacherAssign = () => {
             <div className="modal-action">
               <button
                 className="btn bgTheme text-white w-30"
-                onClick={() => setShowAlert(false)}
+                onClick={() => {
+                  setShowAlert(false);
+                  navigate(allRouterLink.ViewAllocatedClass);
+                  // OR window.location.reload();
+                }}
               >
                 OK
               </button>
+
             </div>
           </div>
         </dialog>

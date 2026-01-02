@@ -805,6 +805,7 @@ export const AdmissionForm = () => {
                   required: "First name is required",
                   maxLength: { value: 100, message: "Max 100 characters" },
                 })}
+                placeholder="First Name"
                 className="input input-bordered w-full focus:outline-none"
               />
               {errors.guardian?.user_fields?.first_name && (

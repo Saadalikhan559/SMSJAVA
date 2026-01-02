@@ -8,7 +8,8 @@ import { allRouterLink } from "../../router/AllRouterLinks";
 import { useNavigate } from "react-router-dom";
 
 export const ViewDocuments = () => {
-  const [details, setDetails] = useState(null);
+  // const [details, setDetails] = useState(null);
+  const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedRole, setSelectedRole] = useState("All");
@@ -20,7 +21,9 @@ export const ViewDocuments = () => {
   const navigate = useNavigate();
 
   // Logged-in user info
-  const studentId = localStorage.getItem("studentId");
+  // const studentId = localStorage.getItem("studentId");
+  const studentId = localStorage.getItem("student_id");
+
   const guardianId = localStorage.getItem("guardianId");
   const teacherId = localStorage.getItem("teacherId");
   const officeStaffId = localStorage.getItem("officeStaffId");
@@ -40,8 +43,12 @@ export const ViewDocuments = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // const docs = await fetchViewDocuments();
+        // setDetails(docs);
+
         const docs = await fetchViewDocuments();
-        setDetails(docs);
+        setDetails(Array.isArray(docs) ? docs : []);
+
 
         if (userRole === "teacher") {
           const classes = await fetchTeacherYearLevel(teacherId);
@@ -83,9 +90,9 @@ export const ViewDocuments = () => {
     );
   }
 
-  if (!details || details.length === 0) {
-    return <div className="p-4 text-center">No documents available.</div>;
-  }
+  // if (!details || details.length === 0) {
+  //   return <div className="p-4 text-center">No documents available.</div>;
+  // }
 
   const allDocTypes = [
     ...new Set(
@@ -113,9 +120,29 @@ export const ViewDocuments = () => {
       doc.office_staff_name ||
       doc.teacher_name;
     const yearLevel = doc.year_level || "N/A";
-    const key = `${role}-${name}-${yearLevel}`;
+    // const key = `${role}-${name}-${yearLevel}`;
 
-    if (!grouped[key]) grouped[key] = { name, role, yearLevel, docs: {} };
+    const uniqueId =
+      doc.student_id ||
+      doc.teacher_id ||
+      doc.guardian_id ||
+      doc.office_staff_id;
+
+    const key = `${role}-${uniqueId}`;
+
+
+    // if (!grouped[key]) grouped[key] = { name, role, yearLevel, docs: {} };
+
+    if (!grouped[key]) {
+      grouped[key] = {
+        name,
+        role,
+        yearLevel,
+        docs: {},
+        student_id: doc.student_id || null,
+      };
+    }
+
 
     const fileUrls = (doc.files || []).map((file) =>
       (file?.file || "").replace("http://localhost:8000", `${constants.baseUrl}`)
@@ -148,17 +175,25 @@ export const ViewDocuments = () => {
       let match;
 
       if (userRole === "student") {
-        match = details.find(
-          (d) =>
-            d.student_id &&
-            d.student_id.toString() === studentId &&
-            d.student_name === person.name
-        );
-        if (person.role === "Student" && match) {
-          return { ...person, scholar_number: match.scholar_number };
+        const sid = Number(studentId);
+
+        //IMPORTANT: person.student_id must match login student
+        if (
+          person.role === "Student" &&
+          Number(person.student_id) === sid
+        ) {
+          return {
+            ...person,
+            scholar_number: details.find(
+              (d) => d.student_id === sid
+            )?.scholar_number,
+          };
         }
+
         return null;
       }
+
+
 
       if (userRole === "guardian") {
         match = details.find(

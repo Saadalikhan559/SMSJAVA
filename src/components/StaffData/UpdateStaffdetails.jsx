@@ -11,10 +11,14 @@ import {
 } from "../../services/api/Api";
 import { useForm } from "react-hook-form";
 import UpdateSuccessful from "../Modals/UpdateModal";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+
 
 const UpdateStaffDetails = () => {
   const { id, type } = useParams();
   const navigate = useNavigate();
+  const { authTokens } = useContext(AuthContext); 
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -153,11 +157,18 @@ const UpdateStaffDetails = () => {
         mapNested("address_input", formData.address_data);
       }
 
+      // if (type === "teacher") {
+      //   await editTeachersdetails(id, payload);
+      // } else {
+      //   await editOfficeStaffdetails(id, payload);
+      // }
+
       if (type === "teacher") {
-        await editTeachersdetails(id, payload);
-      } else {
-        await editOfficeStaffdetails(id, payload);
-      }
+  await editTeachersdetails(id, payload, authTokens);
+} else {
+  await editOfficeStaffdetails(id, payload, authTokens);
+}
+
 
       setUpdateModal(true);
       setFormErrors([]);

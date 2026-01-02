@@ -2,12 +2,8 @@ export const constants = {
   isOnline: true,
   isOffline: true,
 
-  // JAVA_BASE_URL: "https://taylor-unirritant-latina.ngrok-free.dev", //JAVA Musa
-  // JAVA_BASE_URL: "https://fungistatic-saronic-lynda.ngrok-free.dev", //JAVA 
-    JAVA_BASE_URL: "https://gr0zqthz-8080.inc1.devtunnels.ms", //JAVA 
-  // baseUrl:"https://g1nfj2jq-8000.inc1.devtunnels.ms", //shahbaz
-  baseUrl: "https://jx8cn3gh-8000.inc1.devtunnels.ms", //DRF
-  //  baseUrl: "https://p94lwlb3-8000.inc1.devtunnels.ms", //DRF Musa
+  JAVA_BASE_URL: "http://72.61.173.6/sms-java", //JAVA
+  baseUrl: "http://72.61.173.6", //DRF
 
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,   

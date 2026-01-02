@@ -494,7 +494,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("authTokens", JSON.stringify(tokens));
 
       // Save role
-      const role = data.roles?.[0] || "";
+      // const role = data.roles?.[0] || "";
+      const role = data.roles?.[0]?.toLowerCase() || "";
+
       setUserRole(role);
       localStorage.setItem("userRole", role);
 
@@ -519,7 +521,16 @@ export const AuthProvider = ({ children }) => {
 
       // Optional extra IDs
       if (data.director_id) localStorage.setItem("director_id", data.director_id);
-      if (data.student_id) localStorage.setItem("student_id", data.student_id);
+      // if (data.student_id) localStorage.setItem("student_id", data.student_id);
+      // ✅ STUDENT ID FROM roleEntities
+if (data.roleEntities?.studentId) {
+  setStudentID(data.roleEntities.studentId);
+  localStorage.setItem(
+    "student_id",
+    data.roleEntities.studentId
+  );
+}
+
       if (data.year_level?.id) localStorage.setItem("stu_year_level_id", data.year_level.id);
       if (data.year_level?.name) localStorage.setItem("stu_year_level_name", data.year_level.name);
 
