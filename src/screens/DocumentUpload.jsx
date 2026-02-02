@@ -310,17 +310,26 @@ export const DocumentUpload = () => {
   };
 
   // --- HANDLERS ---
-  const handleRoleChange = (e) => {
-    const selectedRole = e.target.value;
-    setRole(selectedRole);
-    setFormData({
-      student: "",
-      teacher: "",
-      guardian: "",
-      office_staff: "",
-      year_level: "",
-    });
-  };
+const handleRoleChange = (e) => {
+  const selectedRole = e.target.value.toLowerCase();
+
+  setRole(selectedRole);
+
+  setFormData({
+    student: "",
+    teacher: "",
+    guardian: "",
+    office_staff: "",
+    year_level: "",
+  });
+};
+
+
+  useEffect(() => {
+  console.log("Selected Role:", role);
+  console.log("Constant Guardian:", constants.roles.guardian);
+}, [role]);
+
 
 
 

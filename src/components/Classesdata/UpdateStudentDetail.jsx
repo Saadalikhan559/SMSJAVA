@@ -11,6 +11,7 @@ const UpdateStudentDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [UpdateModal, setUpdateModal] = useState(false);
+  const [updatedStudentId, setUpdatedStudentId] = useState(null);
 
   const {
     register,
@@ -22,48 +23,25 @@ const UpdateStudentDetail = () => {
     reValidateMode: "onChange",
   });
 
-  // const fetchStudent = async () => {
-  //   try {
-  //     const data = await fetchStudentById(id);
-  //     const { classes, ...rest } = data;
-  //     Object.keys(rest).forEach((key) => {
-  //       if (rest[key] !== null && rest[key] !== undefined) {
-  //         setValue(key, rest[key]);
-  //       }
-  //     });
-  //   } catch (err) {
-  //     setError("Failed to load student data.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchStudent = async () => {
-  try {
-    const data = await fetchStudentById(id);
-    const { classes, ...rest } = data;
-
-    // Map backend → frontend keys
-    setValue("first_name", rest.firstName || "");
-    setValue("middle_name", rest.middleName || "");
-    setValue("last_name", rest.lastName || "");
-
-    // For all other matching fields (auto-fill)
-    Object.keys(rest).forEach((key) => {
-      if (rest[key] !== null && rest[key] !== undefined) {
-        // Skip the ones we already mapped manually
-        if (!["firstName", "middleName", "lastName"].includes(key)) {
+    try {
+      const data = await fetchStudentById(id);
+      const { classes, ...rest } = data;
+      for (const key in rest) {
+        if (rest[key] !== null && rest[key] !== undefined) {
           setValue(key, rest[key]);
         }
       }
-    });
-  } catch (err) {
-    setError("Failed to load student data.");
-  } finally {
-    setLoading(false);
-  }
-};
 
+      // Ensure student stays active
+      setValue("is_active", data.is_active ?? true);
+      setValue("status", data.status ?? "active");
+    } catch (err) {
+      setError("Failed to load student data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchStudent();
@@ -71,15 +49,36 @@ const UpdateStudentDetail = () => {
 
   const onSubmit = async (formData) => {
     const payload = new FormData();
-    for (const key in formData) {
-      if (formData[key] !== null && formData[key] !== "") {
-        payload.append(key, formData[key]);
-      }
+
+    // ----------------- Directly append each field -----------------
+    if (formData.first_name) payload.append("first_name", formData.first_name);
+    if (formData.middle_name) payload.append("middle_name", formData.middle_name);
+    if (formData.last_name) payload.append("last_name", formData.last_name);
+    if (formData.email) payload.append("email", formData.email);
+    if (formData.date_of_birth) payload.append("date_of_birth", formData.date_of_birth);
+    if (formData.gender) payload.append("gender", formData.gender);
+    if (formData.height) payload.append("height", formData.height);
+    if (formData.weight) payload.append("weight", formData.weight);
+    if (formData.number_of_siblings !== undefined && formData.number_of_siblings !== "") {
+      payload.append("number_of_siblings", formData.number_of_siblings);
     }
+    if (formData.father_name) payload.append("father_name", formData.father_name);
+    if (formData.mother_name) payload.append("mother_name", formData.mother_name);
+    if (formData.image_file) payload.append("image_file", formData.image_file);
+
+    // ----------------- Ensure student remains active -----------------
+    payload.append("is_active", formData.is_active ?? true);
+    payload.append("status", formData.status ?? "active");
 
     try {
-      await updateStudentById(id, payload);
-      setUpdateModal(true);
+      const response = await updateStudentById(id, payload);
+
+      if (response && response.id) {
+        setUpdatedStudentId(response.id);
+        setUpdateModal(true);
+      } else {
+        setError("Failed to update student details.");
+      }
     } catch (err) {
       setError("Failed to update student details.");
     }
@@ -120,6 +119,7 @@ const UpdateStudentDetail = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             encType="multipart/form-data"
           >
+            {/* ------------------- ALL INPUTS ------------------- */}
             {/* First Name */}
             <div>
               <label className="label">First Name</label>
@@ -148,14 +148,12 @@ const UpdateStudentDetail = () => {
                 placeholder="Enter Middle Name"
                 {...register("middle_name", {
                   pattern: {
-                    value: /^[A-Za-z]+$/, // Only alphabets, no spaces allowed
+                    value: /^[A-Za-z]+$/,
                     message: "Only alphabets are allowed (no spaces)",
                   },
                 })}
                 onKeyDown={(e) => {
-                  if (e.key === " ") {
-                    e.preventDefault(); // Prevent space input
-                  }
+                  if (e.key === " ") e.preventDefault();
                 }}
                 className="input input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
@@ -163,7 +161,6 @@ const UpdateStudentDetail = () => {
                 <span className="text-red-400 text-sm mt-0">{errors.middle_name.message}</span>
               )}
             </div>
-
 
             {/* Last Name */}
             <div>
@@ -357,7 +354,7 @@ const UpdateStudentDetail = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setValue("user_profile", e.target.files[0])} // manual handling
+                onChange={(e) => setValue("image_file", e.target.files[0])}
                 className="file-input file-input-bordered w-full dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
               />
             </div>
@@ -372,10 +369,16 @@ const UpdateStudentDetail = () => {
         </div>
       </div>
 
+      {/* Update Modal */}
       {UpdateModal && (
         <UpdateSuccessful
           handleCloseOnly={() => setUpdateModal(false)}
-          handleCloseAndNavigate={() => navigate(`/studentDetails/${id}`)}
+          handleCloseAndNavigate={() => {
+            setUpdateModal(false);
+            if (updatedStudentId) {
+              navigate(`/studentDetails/${updatedStudentId}`);
+            }
+          }}
         />
       )}
     </>

@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import { fetchStudents1, fetchYearLevels } from "../../../services/api/Api";
 import { AuthContext } from "../../../context/AuthContext";
+import { constants } from "../../../global/constants";
 
 const CreateDiscount = () => {
   const { axiosInstance } = useContext(AuthContext);
@@ -18,6 +19,8 @@ const CreateDiscount = () => {
   const [error, setError] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const dropdownRef = useRef(null);
+  const JAVA_BASE_URL = constants.JAVA_BASE_URL;
+
 
   const [formData, setFormData] = useState({
     student_year_id: "",
@@ -55,13 +58,35 @@ const CreateDiscount = () => {
     }
   };
 
+  // const loadFeeStructures = async () => {
+  //   if (!classId) return;
+  //   setLoadingFeeStructures(true);
+  //   try {
+  //     const response = await axiosInstance.get(`/fee-structures/getById/${classId}/`);
+  //     setFeeStructures(response.data);
+  //     setError(false);
+  //   } catch (err) {
+  //     console.error("Failed to load fee structures:", err);
+  //     setError(true);
+  //     setFeeStructures([]);
+  //   } finally {
+  //     setLoadingFeeStructures(false);
+  //   }
+  // };
+
+
   const loadFeeStructures = async () => {
     if (!classId) return;
     setLoadingFeeStructures(true);
     try {
-      const response = await axiosInstance.get(`/fee-structures/getById/${classId}/`);
-      setFeeStructures(response.data);
-      setError(false);
+      const response = await axiosInstance.get(
+        `${JAVA_BASE_URL}/fee-structures/getAll?year_level_id=${classId}`
+      );
+
+      if (response.status === 200) {
+        setFeeStructures(response.data);
+        setError(false);
+      }
     } catch (err) {
       console.error("Failed to load fee structures:", err);
       setError(true);
@@ -70,7 +95,6 @@ const CreateDiscount = () => {
       setLoadingFeeStructures(false);
     }
   };
-
   const loadStudents = async () => {
     if (!classId) return;
     setLoadingStudents(true);
@@ -131,6 +155,73 @@ const CreateDiscount = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const errors = {};
+
+  //   if (!classId) errors.classId = "Class is required.";
+  //   if (!selectedStudentId) errors.student_year_id = "Student is required.";
+  //   if (!formData.fee_structure_id) errors.fee_structure_id = "Fee type is required.";
+  //   if (!formData.discount_name) errors.discount_name = "Discount name is required.";
+
+  //   const discountPercent = parseFloat(formData.discounted_amount_percent || 0);
+  //   if (discountPercent <= 0 || discountPercent > 100) {
+  //     errors.discounted_amount_percent = "Discount percent must be between 1 and 100";
+  //   }
+
+  //   if (formData.discount_name && formData.discount_name.length > 100) {
+  //     errors.discount_name = "Discount name cannot exceed 100 characters.";
+  //   }
+
+  //   setFormErrors(errors);
+
+  //   if (Object.keys(errors).length > 0) return;
+
+  //   setIsSubmitting(true);
+
+  //   try {
+  //     const payload = {
+  //       student_year_id: parseInt(formData.student_year_id),
+  //       fee_structure_id: parseInt(formData.fee_structure_id),
+  //       discount_name: formData.discount_name,
+  //       discounted_amount_percent: parseFloat(formData.discounted_amount_percent)
+  //     };
+
+  //     await axiosInstance.post("/d/appliedfeediscounts/apply/", payload);
+
+  //     setAlertTitle("Create Discount");
+  //     setAlertMessage("Discount applied successfully!");
+  //     setShowAlert(true);
+
+  //     // Reset fields
+  //     setFormData({
+  //       student_year_id: "",
+  //       fee_structure_id: "",
+  //       discount_name: "",
+  //       discounted_amount_percent: "",
+  //     });
+  //     setSelectedStudentId("");
+  //     setSelectedStudentName("");
+  //     setSearchStudentInput("");
+  //     setClassId("");
+  //     setStudents([]);
+  //     setFeeStructures([]);
+  //     setFormErrors({});
+  //   } catch (err) {
+  //     setAlertTitle("Create Discount");
+  //     let message = "Failed to create discount.";
+  //     if (err?.response?.data?.detail) {
+  //       message = err.response.data.detail;
+  //     }
+  //     setShowAlert(true);
+  //     setAlertMessage(message);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -164,32 +255,42 @@ const CreateDiscount = () => {
         discounted_amount_percent: parseFloat(formData.discounted_amount_percent)
       };
 
-      await axiosInstance.post("/d/appliedfeediscounts/apply/", payload);
+      const response = await axiosInstance.post(
+        `${JAVA_BASE_URL}/AppliedFeeDiscount/apply`,
+        payload
+      );
 
-      setAlertTitle("Create Discount");
-      setAlertMessage("Discount applied successfully!");
-      setShowAlert(true);
+      if (response.status === 200 || response.status === 201) {
+        setAlertTitle("Create Discount");
+        setAlertMessage("Discount applied successfully!");
+        setShowAlert(true);
 
-      // Reset fields
-      setFormData({
-        student_year_id: "",
-        fee_structure_id: "",
-        discount_name: "",
-        discounted_amount_percent: "",
-      });
-      setSelectedStudentId("");
-      setSelectedStudentName("");
-      setSearchStudentInput("");
-      setClassId("");
-      setStudents([]);
-      setFeeStructures([]);
-      setFormErrors({});
+        // Reset fields
+        setFormData({
+          student_year_id: "",
+          fee_structure_id: "",
+          discount_name: "",
+          discounted_amount_percent: "",
+        });
+        setSelectedStudentId("");
+        setSelectedStudentName("");
+        setSearchStudentInput("");
+        setClassId("");
+        setStudents([]);
+        setFeeStructures([]);
+        setFormErrors({});
+      }
     } catch (err) {
+      console.error("Failed to apply discount:", err);
       setAlertTitle("Create Discount");
+
       let message = "Failed to create discount.";
       if (err?.response?.data?.detail) {
         message = err.response.data.detail;
+      } else if (err?.response?.data?.message) {
+        message = err.response.data.message;
       }
+
       setShowAlert(true);
       setAlertMessage(message);
     } finally {
@@ -297,7 +398,7 @@ const CreateDiscount = () => {
                 onClick={() => setShowStudentDropdown(!showStudentDropdown)}
               >
                 {selectedStudentName || "Select Student"}
-              <span className="arrow">&#9662;</span>
+                <span className="arrow">&#9662;</span>
               </div>
 
               {/* Dropdown */}
@@ -440,9 +541,8 @@ const CreateDiscount = () => {
             <button
               type="submit"
               // className={`btn btn-primary w-full md:w-52 bgTheme text-white`}
-              className={`btn bgTheme text-white w-52 ${
-                btnDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"
-              }`}
+              className={`btn bgTheme text-white w-52 ${btnDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"
+                }`}
               disabled={btnDisabled}
             >
               {isSubmitting ? (

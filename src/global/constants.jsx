@@ -2,8 +2,10 @@ export const constants = {
   isOnline: true,
   isOffline: true,
 
-  JAVA_BASE_URL: "http://72.61.173.6/sms-java", //JAVA
+  // JAVA_BASE_URL: "http://72.61.173.6/sms-java", //JAVA
+   JAVA_BASE_URL: "http://72.61.173.6:8082/sms-java", //JAVA
   baseUrl: "http://72.61.173.6", //DRF
+  // baseUrl: "https://jx8cn3gh-8000.inc1.devtunnels.ms",
 
   hideEdgeRevealStyle: `
       input[type="password"]::-ms-reveal,   

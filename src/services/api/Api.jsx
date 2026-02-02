@@ -176,6 +176,7 @@ export const fetchTeacherDashboard = async (id) => {
   try {
     const authTokens = JSON.parse(localStorage.getItem("authTokens"));
     const accessToken = authTokens?.access;
+    // console.log("Access Token:", accessToken);
 
     if (!accessToken) {
       throw new Error("No access token found in localStorage");
@@ -200,27 +201,86 @@ export const fetchTeacherDashboard = async (id) => {
   }
 };
 
+// export const fetchFeeDashboard = async () => {
+//   try {
+//     const response = await axios.get(`${JAVA_BASE_URL}/student-fees/dashboard`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch fee Dashboard:", err);
+//     throw err;
+//   }
+// };
+
+
 export const fetchFeeDashboard = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/fee-dashboard/`);
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(
+      `${JAVA_BASE_URL}/student-fees/dashboard`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
     return response.data;
-  } catch (err) {
-    console.error("Failed to fetch fee Dashboard:", err);
-    throw err;
+  } catch (error) {
+    console.error(
+      "Failed to fetch fee Dashboard:",
+      error.response?.data || error
+    );
+    throw error;
   }
 };
 
+
+// export const fetchFeeDashboardByMonth = async (month) => {
+//   try {
+//     const response = await axios.get(
+//       `${BASE_URL}/d/fee-dashboard/?month=${month}`
+//     );
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch fee Dashboard by month:", err);
+//     throw err;
+//   }
+// };
+
 export const fetchFeeDashboardByMonth = async (month) => {
   try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    if (!accessToken) throw new Error("No access token found");
+
     const response = await axios.get(
-      `${BASE_URL}/d/fee-dashboard/?month=${month}`
+      `${JAVA_BASE_URL}/student-fees/dashboard?month=${month}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
     );
+
     return response.data;
-  } catch (err) {
-    console.error("Failed to fetch fee Dashboard by month:", err);
-    throw err;
+  } catch (error) {
+    console.error(
+      "Failed to fetch fee Dashboard by month:",
+      error.response?.data || error
+    );
+    throw error;
   }
 };
+
 
 /* ==========================================================================
    ACADEMIC CONFIG (Years, Subjects, Periods, Exams)
@@ -287,7 +347,7 @@ export const fetchPeriodsByYearLevel = async (yearLevelId) => {
     const access = tokens?.access || tokens?.access_token;
 
     const response = await axios.get(
-      `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`,
+      `${JAVA_BASE_URL}/class-periods/get?year_level_id=${yearLevelId}`,
       {
         headers: {
           Authorization: `Bearer ${access}`,
@@ -389,6 +449,7 @@ export const updateStudentById = async (id, formData) => {
     );
   }
 };
+
 
 export const fetchStudentYearLevel = async () => {
   try {
@@ -505,13 +566,46 @@ export const fetchAllTeachers = async () => {
   }
 };
 
-export const editTeachersdetails = async (id, formData) => {
+// export const editTeachersdetails = async (id, formData) => {
+//   try {
+//     const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formData, {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     });
+//     console.log("Teacher details updated response:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error(
+//       "Failed to update teacher details:",
+//       error.response?.data || error.message
+//     );
+//     throw (
+//       error.response?.data ||
+//       new Error("Something went wrong while updating teacher details.")
+//     );
+//   }
+// };
+
+export const editTeachersdetails = async (id, formData, authTokens) => {
   try {
-    const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const accessToken = authTokens?.access;
+
+    if (!accessToken) {
+      throw new Error("Access token missing");
+    }
+
+    const response = await axios.put(
+      `${BASE_URL}/t/teacher/${id}/`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+      }
+    );
+
     console.log("Teacher details updated response:", response.data);
     return response.data;
   } catch (error) {
@@ -519,12 +613,10 @@ export const editTeachersdetails = async (id, formData) => {
       "Failed to update teacher details:",
       error.response?.data || error.message
     );
-    throw (
-      error.response?.data ||
-      new Error("Something went wrong while updating teacher details.")
-    );
+    throw error;
   }
 };
+
 
 export const fetchAllTeacherAssignments = async (accessToken) => {
   try {
@@ -543,6 +635,17 @@ export const fetchAllTeacherAssignments = async (accessToken) => {
     throw err;
   }
 };
+
+// export const fetchAllTeacherClasses = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/a/teacher-classes/${id}/`);
+//     console.log(response.data);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch all teacher classes:", err);
+//     throw err;
+//   }
+// };
 
 export const fetchAllTeacherClasses = async (id) => {
   try {
@@ -604,6 +707,7 @@ export const fetchAbsentTeachers = async (date) => {
     console.error("API Error:", error);
     return [];
   }
+
 };
 
 export const fetchSubAssignments = async () => {
@@ -679,7 +783,8 @@ export const editOfficeStaffdetails = async (id, formData, authTokens) => {
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "multipart/form-data",
+          // "Content-Type": "multipart/form-data",
+             "Content-Type": "application/json"
         },
       }
     );
@@ -1084,7 +1189,7 @@ export const fetchDiscounts = async (accessToken) => {
     const token = accessToken?.trim();
     if (!token) throw new Error("No access token provided");
 
-    const response = await axios.get(`${JAVA_BASE_URL}/d/fee-discounts/`, {
+    const response = await axios.get(`${JAVA_BASE_URL}/AppliedFeeDiscount/list`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -1114,27 +1219,56 @@ export const deleteDiscount = async (accessToken, id) => {
   }
 };
 
+// export const updateDiscount = async (accessToken, id, payload) => {
+//   try {
+//     const token = accessToken?.trim();
+//     if (!token) throw new Error("No access token provided");
+
+//     const response = await axios.put(
+//       `${JAVA_BASE_URL}/AppliedFeeDiscount/update/${id}`,
+//       payload,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to update discount:", err);
+//     throw err;
+//   }
+// };
+
 export const updateDiscount = async (accessToken, id, payload) => {
   try {
     const token = accessToken?.trim();
     if (!token) throw new Error("No access token provided");
 
-    const response = await axios.put(
-      `${JAVA_BASE_URL}/AppliedFeeDiscount/update/${id}/`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const url = `${JAVA_BASE_URL}/AppliedFeeDiscount/update/${id}`;
+    console.log("Updating discount URL:", url);
+    console.log("Payload:", payload);
+    console.log("Token:", token);
 
+    const response = await axios.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Update response:", response);
     return response.data;
   } catch (err) {
     console.error("Failed to update discount:", err);
+    if (err.response) {
+      console.error("Response status:", err.response.status);
+      console.error("Response data:", err.response.data);
+    }
     throw err;
   }
 };
+
 
 export const createDiscount = async (accessToken, payload) => {
   try {
@@ -1389,7 +1523,7 @@ export const fetchSalaryExpense = async (accessToken) => {
 export const fetchSalaryExpenseById = async (accessToken, id) => {
   try {
     const response = await axios.get(
-      `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
+      `${JAVA_BASE_URL}/employees/getEmployee?id=${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -1424,7 +1558,7 @@ export const createSalary = async (accessToken, payload) => {
 export const editSalary = async (accessToken, payload, id) => {
   try {
     const response = await axios.put(
-      `${constants.baseUrl}/d/Employee/${id}/`,
+      `${JAVA_BASE_URL}/employees/update/${id}`,
       payload,
       {
         headers: {

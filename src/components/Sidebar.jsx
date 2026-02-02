@@ -552,81 +552,6 @@ export const Sidebar = () => {
                   </ul>
                 </div>
               )}
-
-            {/* Expense */}
-            {isAuthenticated &&
-              (role === constants.roles.director ||
-                role === constants.roles.officeStaff) && (
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                    Manage Expenses
-                  </h3>
-                  <ul className="space-y-1">
-                    {/* View Total Expenses */}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.viewAllExpenses)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md 
-                         hover:bg-blue-100 dark:hover:bg-gray-700 
-                         transition text-gray-800 dark:text-gray-200"
-                          >
-                            <i className="fa-solid fa-money-check-dollar"></i>{" "}
-                            View Total Expenses
-                          </Link>
-                        </li>
-                      )}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.managecategory)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md 
-                         hover:bg-blue-100 dark:hover:bg-gray-700 
-                         transition text-gray-800 dark:text-gray-200"
-                          >
-                            <i className="fa-solid fa-list-check"></i>{" "}
-                            Manage Category
-                          </Link>
-                        </li>
-                      )}
-                  </ul>
-                </div>
-              )}
-            {/* Income */}
-            {isAuthenticated &&
-              (role === constants.roles.director ||
-                role === constants.roles.officeStaff) && (
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">
-                    Incomes
-                  </h3>
-                  <ul className="space-y-1">
-                    {/* View Total Incomes */}
-                    {(role === constants.roles.director ||
-                      role === constants.roles.officeStaff) && (
-                        <li>
-                          <Link
-                            onClick={(e) =>
-                              handleNavigation(e, allRouterLink.schoolIncome)
-                            }
-                            className="flex items-center gap-2 px-3 py-2 rounded-md 
-                         hover:bg-blue-100 dark:hover:bg-gray-700 
-                         transition text-gray-800 dark:text-gray-200"
-                          >
-                            <i className="fa-solid fa-money-bills"></i>{" "}
-                            View Total Income
-                          </Link>
-                        </li>
-                      )}
-                  </ul>
-                </div>
-              )}
             {/* Salary */}
             {isAuthenticated &&
               (role === constants.roles.director ||
@@ -707,8 +632,8 @@ export const Sidebar = () => {
                          hover:bg-blue-100 dark:hover:bg-gray-700 
                          transition text-gray-800 dark:text-gray-200"
                           >
-                            <i className="fa-solid fa-fill-drip w-5"></i> Student
-                            Marks Fill
+                            <i className="fa-solid fa-fill-drip w-5"></i>
+                            Fill Student Marks
                           </Link>
                         </li>
                       )}

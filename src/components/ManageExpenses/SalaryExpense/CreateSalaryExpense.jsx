@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { fetchRoles } from "../../../services/api/Api";
 import { SuccessModal } from "../../Modals/SuccessModal";
 import { AuthContext } from "../../../context/AuthContext";
+import { constants } from "../../../global/constants";
 
 export const CreateSalaryExpense = () => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,7 @@ export const CreateSalaryExpense = () => {
   const [apiError, setApiError] = useState("");
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
   const modalRef = useRef();
   const dropdownRef = useRef();
@@ -70,7 +72,7 @@ export const CreateSalaryExpense = () => {
         const roleName = getRoleNameById(selectedRole);
         if (roleName) {
           const { data } = await axiosInstance.get(
-            `/d/Employee/get_emp/?role=${roleName}`
+            `${JAVA_BASE_URL}/employees/getEmployee?role=${roleName}`
           );
           const sortedEmployees = (data || []).sort((a, b) => {
             const nameA = `${a.first_name || ""} ${a.last_name || ""}`.trim().toLowerCase();
@@ -136,7 +138,7 @@ export const CreateSalaryExpense = () => {
         joining_date: data.joiningDate,
         base_salary: data.baseSalary,
       };
-      await axiosInstance.post("/d/Employee/create_emp/", payload);
+      await axiosInstance.post(`${JAVA_BASE_URL}/employees/create`, payload);
       modalRef.current.show(); // success modal
     } catch (err) {
       const msg = err.response?.data?.error || "Something Went Wrong. Try again";
@@ -331,7 +333,7 @@ export const CreateSalaryExpense = () => {
 
         <SuccessModal ref={modalRef} />
         {errorModalOpen && (
-           <dialog open className="modal modal-open">
+          <dialog open className="modal modal-open">
             <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
               <h3 className="font-bold text-lg">Create Salary</h3>
               <p className="py-4">{errorMessage}</p>
