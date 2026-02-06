@@ -96,14 +96,33 @@ const ViewExamPaper = () => {
     .sort((a, b) => a.subject_name.localeCompare(b.subject_name));
 
   // Handle View Paper click
-  const handleViewPaper = (filePath) => {
-    if (!filePath) {
+  // const handleViewPaper = (filePath) => {
+  //   if (!filePath) {
+  //     setFileErrorModal(true);
+  //     return;
+  //   }
+  //   const url = filePath.startsWith("http") ? filePath : `${constants.baseUrl}${filePath}`;
+  //   window.open(url, "_blank");
+  // };
+
+  const handleViewPaper = (paper) => {
+    const relativePath = paper.uploaded_file_url;
+
+    if (!relativePath) {
       setFileErrorModal(true);
       return;
     }
-    const url = filePath.startsWith("http") ? filePath : `${constants.baseUrl}${filePath}`;
-    window.open(url, "_blank");
+
+    // Get backend URL from axios instance (devtunnel)
+    const baseURL = axiosInstance.defaults.baseURL;
+
+    const finalURL = `${baseURL}${relativePath}`;
+
+    console.log("Opening file:", finalURL);
+
+    window.open(finalURL, "_blank");
   };
+
 
 
   if (loading) {
@@ -240,16 +259,16 @@ const ViewExamPaper = () => {
 
             {/* Right Side: Search */}
             <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2 w-full sm:w-auto justify-end">
-                <input
-                  type="text"
-                  placeholder="Search by Subject"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value.trimStart())}
-                  className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                />
-                <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white w-full sm:w-auto flex justify-center items-center">
-                  <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
-                </Link>
+              <input
+                type="text"
+                placeholder="Search by Subject"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value.trimStart())}
+                className="border px-3 py-2 rounded w-full sm:w-64 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
+              <Link to={`${allRouterLink.UploadExamPaper}`} className="btn bgTheme text-white w-full sm:w-auto flex justify-center items-center">
+                <i className="fa-solid fa-file-upload w-5"></i>Upload Exam Paper
+              </Link>
             </div>
           </div>
         </div>
@@ -308,12 +327,15 @@ const ViewExamPaper = () => {
                         Edit
                       </Link>
 
-                      <button
+                      {/* <button
                         className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1] text-nowrap"
                         onClick={() => handleViewPaper(paper.uploaded_file)}
                       >
                         View Paper
-                      </button>
+                      </button> */}
+                      <button className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5E35B1] text-nowrap"
+                        onClick={() => handleViewPaper(paper)}>View Paper</button>
+
                     </td>
                   </tr>
                 ))

@@ -41,10 +41,16 @@ export const Register = () => {
     getRoles();
   }, []);
 
-  const filteredRoles = allRoles.filter(
-    roleItem => roleItem.roleName === "teacher"
-      || roleItem.roleName === "office_staff"
-  );
+  // const filteredRoles = allRoles.filter(
+  //   roleItem => roleItem.roleName === "teacher"
+  //     || roleItem.roleName === "office_staff"
+  // );
+
+
+const filteredRoles = allRoles.filter(
+  roleItem => roleItem.name === "teacher" || roleItem.name === "office staff"
+);
+
 
 
   const onSubmit = async (data) => {
@@ -205,18 +211,30 @@ export const Register = () => {
                 className="select select-bordered w-full focus:outline-none capitalize"
               >
                 <option value="">Select Role</option>
-                {filteredRoles.map(roleItem => (
+                {/* {filteredRoles.map(roleItem => (
                   <option className="capitalize" key={roleItem.id} value={roleItem.roleName}>
                     {roleItem.roleName.replace("_", " ")}
                   </option>
-                ))}
-              </select>
+                ))} */}
+                {filteredRoles.map(roleItem => (
+  <option className="capitalize" key={roleItem.id} value={roleItem.name}>
+    {roleItem.name.replace("_", " ")}
+  </option>
+))}
 
+              </select>
+{/* 
               {errors.roleId && (
                 <span className="text-red-500 text-sm mt-1">
                   {errors.roleId.message || errors.roleId}
                 </span>
-              )}
+              )} */}
+              {errors.role && (
+  <span className="text-red-500 text-sm mt-1">
+    {errors.role.message || errors.role}
+  </span>
+)}
+
             </div>
 
             {/* Phone Number */}

@@ -9,6 +9,8 @@ import { constants } from "../../global/constants";
 import { useNavigate } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
+
 import { useForm } from "react-hook-form";
 
 export const SubjectAssignments = () => {
@@ -22,6 +24,7 @@ export const SubjectAssignments = () => {
     formState: { errors },
   } = useForm();
 
+  const JAVA_BASE_URL = constants.JAVA_BASE_URL;
   const navigate = useNavigate();
   const { axiosInstance } = useContext(AuthContext);
   const [teachers, setTeachers] = useState([]);
@@ -248,6 +251,16 @@ export const SubjectAssignments = () => {
   };
 
   const handleSubmitForm = async (data) => {
+
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+const accessToken = tokens?.access;
+
+if (!accessToken) {
+  setAlertMessage("Session expired. Please login again.");
+  setShowAlert(true);
+  return;
+}
+
     // Validate required fields
     if (!data.teacher_id) {
       setError("teacher_id", { message: "Teacher is required" });
@@ -277,11 +290,18 @@ export const SubjectAssignments = () => {
 
     setIsSubmitting(true);
 
+    console.log("ACCESS TOKEN SENT =>", accessToken);
+
+
     try {
-      const response = await axiosInstance.post(
-        `/t/teacher/assign-teacher-details/`,
-        finalPayload
-      );
+      // const response = await axiosInstance.post(
+      //   `/t/teacher/assign-teacher-details/`,
+      //   finalPayload
+      // );
+const response = await axiosInstance.post(
+  `${JAVA_BASE_URL}/class-periods/create`,
+  finalPayload
+);
 
       if (response.status === 200 || response.status === 201) {
         setAlertMessage("Subjects assigned successfully!");

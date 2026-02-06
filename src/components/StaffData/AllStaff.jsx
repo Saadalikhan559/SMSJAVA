@@ -183,7 +183,7 @@ const AllStaff = () => {
                         <td className="px-4 py-3 text-center">
                           <span
                             className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${
-                              record.active
+                              record.is_active
                                 ? "bg-green-100 text-green-800"
                                 : "bg-red-100 text-red-800"
                             }`}
@@ -260,9 +260,9 @@ const AllStaff = () => {
                             className="px-4 py-3 font-bold capitalize textTheme hover:underline text-nowrap"
                           >
                             {[
-                              record.firstName,
-                              record.middleName,
-                              record.lastName,
+                              record.first_name,
+                              record.middle_name,
+                              record.last_name,
                             ]
                               .filter(Boolean)
                               .join(" ")}
@@ -271,7 +271,7 @@ const AllStaff = () => {
                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300 text-nowrap">
                           {record.date_joined}
                         </td>
-                        <td className="px-4 py-3 text-center">
+                        {/* <td className="px-4 py-3 text-center">
                           <span
                             className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${
                               record.active
@@ -279,9 +279,21 @@ const AllStaff = () => {
                                 : "bg-red-100 text-red-800"
                             }`}
                           >
-                            {record.active === true ? "Active" : "InActive"}
+                            {record.is_active === true ? "Active" : "InActive"}
                           </span>
-                        </td>
+                        </td> */}
+                        <td className="px-4 py-3 text-center">
+  <span
+    className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${
+      record.is_active
+        ? "bg-green-100 text-green-800"
+        : "bg-red-100 text-red-800"
+    }`}
+  >
+    {record.is_active ? "Active" : "InActive"}
+  </span>
+</td>
+
                       </tr>
                     ))
                   )}

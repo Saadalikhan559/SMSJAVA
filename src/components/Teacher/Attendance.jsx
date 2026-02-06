@@ -10,7 +10,7 @@ export const Attendance = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("teacher_id");
+    const token = localStorage.getItem("teacherId");
     setTeacherID(token);
   }, []);
 

@@ -1,15 +1,21 @@
 import axios from "axios";
 import { constants } from "../../global/constants";
 
+/* ==========================================================================
+   CONFIG & CONSTANTS
+   ========================================================================== */
 const BASE_URL = constants.baseUrl;
 const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 
+/* ==========================================================================
+   AUTHENTICATION & ROLES
+   ========================================================================== */
+
+// Original commented-out implementation kept as requested
 // export const fetchRoles = async () => {
 //   try {
 //     const accessToken = localStorage.getItem("access");
 //     console.log("Access token:", accessToken);
-
-
 //     const response = await axios.get(`${JAVA_BASE_URL}/roles/getAllRoles`, {
 //       headers: {
 //         "Content-Type": "application/json",
@@ -17,7 +23,6 @@ const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 //         "ngrok-skip-browser-warning": "true",
 //       },
 //     });
-
 //     return response.data;
 //   } catch (error) {
 //     console.error("Fetch roles error:", error.response?.data || error);
@@ -25,12 +30,14 @@ const JAVA_BASE_URL = constants.JAVA_BASE_URL;
 //   }
 // };
 
-
+/**
+ * Fetches all available user roles.
+ */
 export const fetchRoles = async () => {
   try {
     const tokens = JSON.parse(localStorage.getItem("authTokens"));
     const accessToken = tokens?.access;
-    console.log(accessToken)
+    console.log(accessToken);
 
     if (!accessToken) throw new Error("No access token found");
 
@@ -49,7 +56,235 @@ export const fetchRoles = async () => {
   }
 };
 
+/* ==========================================================================
+   DASHBOARDS
+   ========================================================================== */
 
+/**
+ * Fetches data for the Director's main dashboard.
+ */
+// export const fetchDirectorDashboard = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to load director Dashboard:", err);
+//     throw err;
+//   }
+// };
+export const fetchDirectorDashboard = async () => {
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const access = tokens?.access || tokens?.access_token;
+
+    const response = await axios.get(`${BASE_URL}/d/director-dashboard/`, {
+      headers: {
+        Authorization: `Bearer ${access}`,
+        // "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load director dashboard:", err);
+    throw err;
+  }
+};
+
+export const fetchStudentCategoryDashboard = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/d/student-category-dashboard/`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load student category director Dashboard:", err);
+    throw err;
+  }
+};
+
+export const fetchIncomeDistributionDashboard = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/d/income-distribution-dashboard/`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load Income Distribution Dashboard:", err);
+    throw err;
+  }
+};
+
+export const fetchOfficeStaffDashboard = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/office-staff-dashboard/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to officeStaff Dashboard:", err);
+    throw err;
+  }
+};
+
+export const fetchGuardianDashboard = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to guardian Dashboard:", err);
+    throw err;
+  }
+};
+
+// Original commented-out Student Dashboard
+// export const fetchStudentDashboard = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/student_dashboard/${id}/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch student Dashboard:", err);
+//     throw err;
+//   }
+// };
+
+export const fetchStudentDashboard = async (id) => {
+  try {
+    const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+
+    const res = await axios.get(`${BASE_URL}/d/student_dashboard/${id}/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return res.data;
+  } catch (err) {
+    console.error("Student Dashboard fetch error:", err);
+    throw err;
+  }
+};
+
+// Original commented-out Teacher Dashboard
+// export const fetchTeacherDashboard = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch Teacher Dashboard:", err);
+//     throw err;
+//   }
+// };
+
+export const fetchTeacherDashboard = async (id) => {
+  try {
+    const authTokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = authTokens?.access;
+    // console.log("Access Token:", accessToken);
+
+    if (!accessToken) {
+      throw new Error("No access token found in localStorage");
+    }
+
+    const response = await axios.get(
+      `${BASE_URL}/d/teacher-dashboard/${id}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error(
+      "Failed to fetch Teacher Dashboard:",
+      err.response?.data || err
+    );
+    throw err;
+  }
+};
+
+// export const fetchFeeDashboard = async () => {
+//   try {
+//     const response = await axios.get(`${JAVA_BASE_URL}/student-fees/dashboard`);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch fee Dashboard:", err);
+//     throw err;
+//   }
+// };
+
+
+export const fetchFeeDashboard = async () => {
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(
+      `${JAVA_BASE_URL}/student-fees/dashboard`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to fetch fee Dashboard:",
+      error.response?.data || error
+    );
+    throw error;
+  }
+};
+
+
+// export const fetchFeeDashboardByMonth = async (month) => {
+//   try {
+//     const response = await axios.get(
+//       `${BASE_URL}/d/fee-dashboard/?month=${month}`
+//     );
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch fee Dashboard by month:", err);
+//     throw err;
+//   }
+// };
+
+export const fetchFeeDashboardByMonth = async (month) => {
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    if (!accessToken) throw new Error("No access token found");
+
+    const response = await axios.get(
+      `${JAVA_BASE_URL}/student-fees/dashboard?month=${month}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to fetch fee Dashboard by month:",
+      error.response?.data || error
+    );
+    throw error;
+  }
+};
+
+
+/* ==========================================================================
+   ACADEMIC CONFIG (Years, Subjects, Periods, Exams)
+   ========================================================================== */
 
 export const fetchSchoolYear = async () => {
   try {
@@ -61,38 +296,199 @@ export const fetchSchoolYear = async () => {
   }
 };
 
-export const fetchExpenseCategory = async (accessToken) => {
+export const fetchYearLevels = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/Expense-Category/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.get(`${constants.baseUrl}/d/year-levels/`);
     return response.data;
   } catch (err) {
-    console.error("Failed to fetch expense category:", err);
+    console.error("Failed to fetch year levels:", err);
+    throw err;
+  }
+};
+
+export const fetchyearLevelData = async (classId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/d/year-level-fee/${classId}/`
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Failed to load year level data. Please try again." + err);
+    throw err;
+  }
+};
+
+export const fetchPeriods = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/Period/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch periods:", err);
+    throw err;
+  }
+};
+
+// Original commented-out Periods by Year Level
+// export const fetchPeriodsByYearLevel = async (yearLevelId) => {
+//   try {
+//     const response = await axios.get(
+//       `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`
+//     );
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch periods:", err);
+//     throw err;
+//   }
+// };
+
+export const fetchPeriodsByYearLevel = async (yearLevelId) => {
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const access = tokens?.access || tokens?.access_token;
+
+    const response = await axios.get(
+      `${JAVA_BASE_URL}/class-periods/get?year_level_id=${yearLevelId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch periods:", err);
+    throw err;
+  }
+};
+
+export const fetchSubjects = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/subject/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch subjects:", err);
+    throw err;
+  }
+};
+
+export const fetchTerms = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/terms/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch subjects:", err);
     throw err;
   }
 };
 
 export const fetchExamType = async (accessToken) => {
   try {
-    // Add debug logging
     console.log("Access token being used:", accessToken);
-
-    // Trim the token in case it has whitespace
-
     const token = accessToken ? accessToken.trim() : "";
-
     if (!token) {
       throw new Error("No access token provided");
     }
-
     const response = await axios.get(`${BASE_URL}/d/Exam-Type/`, {
       headers: {
-        Authorization: `Bearer ${token}`, // Using trimmed token
+        Authorization: `Bearer ${token}`,
       },
     });
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
+/* ==========================================================================
+   STUDENT MANAGEMENT & MARKSHEETS
+   ========================================================================== */
+
+export const fetchStudents = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/students/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
+  }
+};
+
+export const fetchStudentById = async (student_id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch student details:", error);
+    throw error;
+  }
+};
+
+export const updateStudentById = async (id, formData) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/s/students/${id}/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("Student profile updated response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to update student profile:",
+      error.response?.data || error.message
+    );
+    throw (
+      error.response?.data ||
+      new Error("Something went wrong while updating student profile.")
+    );
+  }
+};
+
+
+export const fetchStudentYearLevel = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/studentYearLevels/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch all students:", err);
+    throw err;
+  }
+};
+
+export const fetchStudentYearLevelByClass = async (year_level_id) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/s/studentyearlevels/?level__id=${year_level_id}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch students:", err);
+    throw err;
+  }
+};
+
+// Duplicate or specific fetchers kept as is
+export const fetchStudents1 = async (classId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch roles:", err);
+    throw err;
+  }
+};
+
+export const fetchStudents2 = async (classId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch roles:", err);
@@ -146,57 +542,9 @@ export const fetchMarksheets = async (accessToken) => {
   }
 };
 
-export const fetchGuardianType = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/s/guardian-types/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch guardian type:", err);
-    throw err;
-  }
-};
-
-export const fetchDocumentType = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/DocumentType/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch document type:", err);
-    throw err;
-  }
-};
-
-export const fetchStudents = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/s/students/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch students:", err);
-    throw err;
-  }
-};
-
-export const fetchStudentYearLevel = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/s/studentYearLevels/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch all students:", err);
-    throw err;
-  }
-};
-
-export const fetchStudentYearLevelByClass = async (year_level_id) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevels/?level__id=${year_level_id}`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch students:", err);
-    throw err;
-  }
-};
+/* ==========================================================================
+   TEACHER & OFFICE STAFF MANAGEMENT
+   ========================================================================== */
 
 export const fetchTeachers = async (id) => {
   try {
@@ -204,28 +552,6 @@ export const fetchTeachers = async (id) => {
     return res.data;
   } catch (err) {
     console.error("Failed to fetch teachers:", err);
-    throw err;
-  }
-};
-
-export const fetchOfficeStaff = async (id) => {
-  try {
-    const res = await axios.get(
-      `${BASE_URL}/d/officestaff/${id ? `${id}/` : ""}`
-    );
-    return res.data;
-  } catch (err) {
-    console.error("Failed to fetch office staff:", err);
-    throw err;
-  }
-};
-
-export const fetchGuardians = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/s/guardian/`);
-    return response.data.results;
-  } catch (err) {
-    console.error("Failed to fetch guardians:", err);
     throw err;
   }
 };
@@ -240,35 +566,57 @@ export const fetchAllTeachers = async () => {
   }
 };
 
-export const fetchPeriods = async () => {
+// export const editTeachersdetails = async (id, formData) => {
+//   try {
+//     const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formData, {
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     });
+//     console.log("Teacher details updated response:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error(
+//       "Failed to update teacher details:",
+//       error.response?.data || error.message
+//     );
+//     throw (
+//       error.response?.data ||
+//       new Error("Something went wrong while updating teacher details.")
+//     );
+//   }
+// };
+
+export const editTeachersdetails = async (id, formData, authTokens) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/Period/`);
+    const accessToken = authTokens?.access;
+
+    if (!accessToken) {
+      throw new Error("Access token missing");
+    }
+
+    const response = await axios.put(
+      `${BASE_URL}/t/teacher/${id}/`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+      }
+    );
+
+    console.log("Teacher details updated response:", response.data);
     return response.data;
-  } catch (err) {
-    console.error("Failed to fetch periods:", err);
-    throw err;
+  } catch (error) {
+    console.error(
+      "Failed to update teacher details:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
 
-export const fetchSubjects = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/subject/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch subjects:", err);
-    throw err;
-  }
-};
-
-export const fetchTerms = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/terms/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch subjects:", err);
-    throw err;
-  }
-};
 
 export const fetchAllTeacherAssignments = async (accessToken) => {
   try {
@@ -288,6 +636,17 @@ export const fetchAllTeacherAssignments = async (accessToken) => {
   }
 };
 
+// export const fetchAllTeacherClasses = async (id) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/a/teacher-classes/${id}/`);
+//     console.log(response.data);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch all teacher classes:", err);
+//     throw err;
+//   }
+// };
+
 export const fetchAllTeacherClasses = async (id) => {
   try {
     const response = await axios.get(`${BASE_URL}/a/teacher-classes/${id}/`);
@@ -299,68 +658,6 @@ export const fetchAllTeacherClasses = async (id) => {
   }
 };
 
-export const fetchCountry = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/country/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch country:", err);
-    throw err;
-  }
-};
-
-export const fetchState = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/states/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch state:", err);
-    throw err;
-  }
-};
-
-export const fetchCity = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/city/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch city:", err);
-    throw err;
-  }
-};
-
-export const fetchPeriodsByYearLevel = async (yearLevelId) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/d/periods/?year_level_id=${yearLevelId}`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch periods:", err);
-    throw err;
-  }
-};
-
-// fetchAbsentTeachers
-export const fetchAbsentTeachers = async (date) => {
-  try {
-    const { data } = await axios.get(
-      `${BASE_URL}/t/absent-teacher/?date_value=${date}`
-    );
-    return data?.absent_teachers || [];
-  } catch (error) {
-    console.error("API Error:", error);
-    return [];
-  }
-};
-
-// substitute teacher
-export const fetchSubAssignments = async () => {
-  const response = await axios.get(`${BASE_URL}/t/substitute-assign/`);
-  return response.data;
-};
-
-// fetch Allocated Classes
 export const fetchAllocatedClasses = async (token) => {
   try {
     const response = await axios.get(
@@ -378,351 +675,179 @@ export const fetchAllocatedClasses = async (token) => {
   }
 };
 
-// DASHBOARD
-
-// Director Dashboard
-export const fetchDirectorDashboard = async () => {
+export const fetchTeacherYearLevel = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/director-dashboard/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to load director Dashboard:", err);
-    throw err;
-  }
-};
+    const tokens = localStorage.getItem("authTokens");
+    const accessToken = tokens ? JSON.parse(tokens).access : null;
 
-// Student Category Dashboard
+    if (!accessToken) {
+      throw new Error("No access token found for teacher. Please login again.");
+    }
 
-export const fetchStudentCategoryDashboard = async () => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/d/student-category-dashboard/`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to load student category director Dashboard:", err);
-    throw err;
-  }
-};
+    const response = await axios.get(`${BASE_URL}/t/teacheryearlevel/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-// Income Distribution Dashboard
-
-export const fetchIncomeDistributionDashboard = async () => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/d/income-distribution-dashboard/`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to load Income Distribution Dashboard:", err);
-    throw err;
-  }
-};
-
-// Office Staff Dashboard
-
-export const fetchOfficeStaffDashboard = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/office-staff-dashboard/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to officeStaff Dashboard:", err);
-    throw err;
-  }
-};
-
-// Guardian Dashboard
-
-export const fetchGuardianDashboard = async (id) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/guardian-dashboard/${id}/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to guardian Dashboard:", err);
-    throw err;
-  }
-};
-
-export const getAttendanceByGuardianId = async (guardianId) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/a/api/report/?guardian_id=${guardianId}`
-    );
     return response.data;
   } catch (error) {
-    console.error("Error fetching attendance data:", error);
+    console.error("Error fetching teacher year level:", error);
     throw error;
   }
 };
 
-// Guardian Dashboard
-
-export const fetchStudentDashboard = async (id) => {
+export const fetchAbsentTeachers = async (date) => {
   try {
-    const response = await axios.get(`${BASE_URL}/d/student_dashboard/${id}/`);
-    return response.data;
+    const { data } = await axios.get(
+      `${BASE_URL}/t/absent-teacher/?date_value=${date}`
+    );
+    return data?.absent_teachers || [];
+  } catch (error) {
+    console.error("API Error:", error);
+    return [];
+  }
+
+};
+
+export const fetchSubAssignments = async () => {
+  const response = await axios.get(`${BASE_URL}/t/substitute-assign/`);
+  return response.data;
+};
+
+export const assignSubstitute = async (payload) => {
+  try {
+    const { data } = await axios.post(
+      `${BASE_URL}/t/substitute-assign/`,
+      payload
+    );
+    return data;
+  } catch (error) {
+    console.error(
+      "API Error in assignSubstitute:",
+      error.response?.data || error
+    );
+    throw error;
+  }
+};
+
+export const fetchOfficeStaff = async (id) => {
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/d/officestaff/${id ? `${id}/` : ""}`
+    );
+    return res.data;
   } catch (err) {
-    console.error("Failed to fetch student Dashboard:", err);
+    console.error("Failed to fetch office staff:", err);
     throw err;
   }
 };
 
-// Teacher Dashboard
-
-// export const fetchTeacherDashboard = async (id) => {
+// Original commented-out implementation kept
+// export const editOfficeStaffdetails = async (id, formData) => {
 //   try {
-//     const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`);
+//     const response = await axios.put(
+//       `${BASE_URL}/d/officestaff/${id}/`,
+//       formData,
+//       {
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       }
+//     );
+//     console.log("Office staff updated response:", response.data);
 //     return response.data;
-//   } catch (err) {
-//     console.error("Failed to fetch Teacher Dashboard:", err);
-//     throw err;
+//   } catch (error) {
+//     console.error(
+//       "Failed to update office staff details:",
+//       error.response?.data || error.message
+//     );
+//     throw (
+//       error.response?.data ||
+//       new Error("Something went wrong while updating office staff details.")
+//     );
 //   }
 // };
 
-
-
-export const fetchTeacherDashboard = async (id) => {
+export const editOfficeStaffdetails = async (id, formData, authTokens) => {
   try {
-    // Get tokens from localStorage using the same keys as AuthContext
-    const authTokens = JSON.parse(localStorage.getItem("authTokens"));
-    const accessToken = authTokens?.access; // same key as in AuthContext
+    const accessToken = authTokens?.access;
 
     if (!accessToken) {
-      throw new Error("No access token found in localStorage");
+      throw new Error("Access token missing");
     }
 
-    const response = await axios.get(`${BASE_URL}/d/teacher-dashboard/${id}/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch Teacher Dashboard:", err.response?.data || err);
-    throw err;
-  }
-};
-
-// Fee Dashboard
-
-export const fetchFeeDashboard = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/fee-dashboard/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch fee Dashboard:", err);
-    throw err;
-  }
-};
-
-// Fee Dashboard by month
-
-export const fetchFeeDashboardByMonth = async (month) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/d/fee-dashboard/?month=${month}`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch fee Dashboard by month:", err);
-    throw err;
-  }
-};
-
-// admission detailos get api
-export const fetchAdmissionDetails = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/admission/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to admission details:", err);
-    throw err;
-  }
-};
-// admission details get api by id
-export const fetchAdmissionDetailsById = async (id) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/admission/${id}/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to admission details:", err);
-    throw err;
-  }
-};
-
-// fetch View upload documents api
-export const fetchViewDocuments = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/d/Document/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to load upload data details:", err);
-    throw err;
-  }
-};
-
-export const fetchStudents1 = async (classId) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/s/studentyearlevels/?level__id=${classId}`
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch roles:", err);
-    throw err;
-  }
-};
-
-export const fetchStudents2 = async (classId) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/s/studentyearlevels/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch roles:", err);
-    throw err;
-  }
-};
-
-export const fetchyearLevelData = async (classId) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/d/year-level-fee/${classId}/`
-    );
-    return response.data;
-  } catch (err) {
-    console.log("Failed to load year level data. Please try again." + err);
-    throw err;
-  }
-};
-
-export const fetchYearLevels = async () => {
-  try {
-    const response = await axios.get(`${constants.baseUrl}/d/year-levels/`);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch year levels:", err);
-    throw err;
-  }
-};
-
-export const fetchEmployee = async (accessToken, role) => {
-  try {
-    const response = await axios.get(
-      `${constants.baseUrl}/d/Employee/get_emp/?role=${role}`,
+    const response = await axios.put(
+      `${BASE_URL}/d/officestaff/${id}/`,
+      formData,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          // "Content-Type": "multipart/form-data",
+             "Content-Type": "application/json"
         },
       }
     );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch Employee:", err);
-    throw err;
-  }
-};
 
-export const fetchSchoolExpense = async (
-  accessToken,
-  schoolYear,
-  categoryId
-) => {
-  try {
-    const response = await axios.get(
-      `${constants.baseUrl}/d/School-Expense/?school_year=${schoolYear}&category=${categoryId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch Employee:", err);
-    throw err;
-  }
-};
-
-export const fetchSchoolExpenseById = async (accessToken, id) => {
-  try {
-    const response = await axios.get(`${constants.baseUrl}/d/School-Expense/${id}/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch Employee:", err);
-    throw err;
-  }
-};
-
-export const fetchSalaryExpense = async (accessToken) => {
-  try {
-    const response = await axios.get(
-      `${constants.baseUrl}/d/Employee/get_emp/`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch Employee:", err);
-    throw err;
-  }
-};
-
-export const fetchSalaryExpenseById = async (accessToken, id) => {
-  try {
-    const response = await axios.get(
-      `${constants.baseUrl}/d/Employee/get_emp/?id=${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch Employee:", err);
-    throw err;
-  }
-};
-
-export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
-  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
-
-  const params = {};
-  if (selectedMonth) params.month = selectedMonth;
-  if (selectedClass) params.year_level = selectedClass;
-
-  try {
-    const authTokens = localStorage.getItem("authTokens");
-    const accessToken = JSON.parse(authTokens).access;
-
-    const response = await axios.get(url, {
-      params,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
+    console.log("Office staff updated response:", response.data);
     return response.data;
   } catch (error) {
-    if (
-      error.response &&
-      (error.response.status === 404 ||
-        error.response.data?.detail === "No records found.")
-    ) {
-      return [];
-    }
-
+    console.error(
+      "Failed to update office staff details:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
+
+/* ==========================================================================
+   GUARDIAN MANAGEMENT
+   ========================================================================== */
+
+export const fetchGuardians = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/guardian/`);
+    return response.data.results;
+  } catch (err) {
+    console.error("Failed to fetch guardians:", err);
+    throw err;
+  }
+};
+
+export const fetchGuardianType = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/s/guardian-types/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch guardian type:", err);
+    throw err;
+  }
+};
+
+export const fetchGuardianChildren = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
+    if (!token) {
+      throw new Error("No auth token found. User might not be logged in.");
+    }
+    const response = await axios.get(
+      `${constants.baseUrl}/s/studentguardian/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch guardian's children:", err);
+    throw err;
+  }
+};
+
+/* ==========================================================================
+   ATTENDANCE
+   ========================================================================== */
 
 export const fetchAttendanceData = async (date = "") => {
   try {
@@ -769,12 +894,170 @@ export const fetchClassAttendance = async (className) => {
   }
 };
 
-export const fetchStudentById = async (student_id) => {
+export const getAttendanceByGuardianId = async (guardianId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/s/students/${student_id}/`);
+    const response = await axios.get(
+      `${BASE_URL}/a/api/report/?guardian_id=${guardianId}`
+    );
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch student details:", error);
+    console.error("Error fetching attendance data:", error);
+    throw error;
+  }
+};
+
+export const fetchGuardianAttendance = async (id, month, year) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/a/guardian/attendance/`, {
+      params: {
+        guardian_id: id,
+        month: month,
+        year: year,
+      },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch guardian attendance:", err);
+    throw err;
+  }
+};
+
+// Original commented-out Teacher Attendance save
+// export const saveTeacherAttendance = async (teachers, attendance) => {
+//   try {
+//     for (const teacher of teachers) {
+//       const data = {
+//         date: attendance[teacher.id].date,
+//         status: attendance[teacher.id].status,
+//         teacher_id: teacher.id,
+//         teacher_name: `${teacher.first_name} ${teacher.last_name}`,
+//       };
+//
+//       await axios.post(`${BASE_URL}/t/teacher-attendance/post/`, data);
+//     }
+//     return true;
+//   } catch (error) {
+//     console.error(
+//       "Error saving teacher attendance:",
+//       error.response?.data || error
+//     );
+//     throw error;
+//   }
+// };
+
+export const saveTeacherAttendance = async (teachers, attendance) => {
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const access = tokens?.access;
+
+    for (const teacher of teachers) {
+      const data = {
+        date: attendance[teacher.id].date,
+        status: attendance[teacher.id].status,
+        teacher_id: teacher.id,
+        teacher_name: `${teacher.first_name} ${teacher.last_name}`,
+      };
+
+      await axios.post(`${BASE_URL}/t/teacher-attendance/post/`, data, {
+        headers: {
+          Authorization: `Bearer ${access}`,
+          // "ngrok-skip-browser-warning": "true",
+        },
+      });
+    }
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Error saving teacher attendance:",
+      error?.response?.data || error
+    );
+    throw error;
+  }
+};
+
+export const saveAllTeacherAttendance = saveTeacherAttendance;
+
+// Original commented-out fetchTeacherAttendanceRecords
+// export const fetchTeacherAttendanceRecords = async () => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching attendance records:", error);
+//     throw error;
+//   }
+// };
+
+export const fetchTeacherAttendanceRecords = async () => {
+  try {
+    const tokens = JSON.parse(localStorage.getItem("authTokens"));
+    const accessToken = tokens?.access;
+
+    const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log("Full axios response:", response);
+    console.log("Data received:", response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching attendance records:", error);
+    throw error;
+  }
+};
+
+export const updateTeacherAttendance = async (id, payload) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/t/teacher-attendance/get/${id}/`,
+      payload
+    );
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+/* ==========================================================================
+   FINANCE (Fees, Income, Expenses, Discounts)
+   ========================================================================== */
+
+/**
+ * FEE MANAGEMENT
+ */
+export const fetchFeeSummary = async ({ selectedMonth, selectedClass }) => {
+  const url = `${constants.baseUrl}/d/fee-record/monthly-summary/`;
+
+  const params = {};
+  if (selectedMonth) params.month = selectedMonth;
+  if (selectedClass) params.year_level = selectedClass;
+
+  try {
+    const authTokens = localStorage.getItem("authTokens");
+    const accessToken = JSON.parse(authTokens).access;
+
+    const response = await axios.get(url, {
+      params,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    if (
+      error.response &&
+      (error.response.status === 404 ||
+        error.response.data?.detail === "No records found.")
+    ) {
+      return [];
+    }
+
     throw error;
   }
 };
@@ -808,27 +1091,6 @@ export const fetchStudentFee = async (student_id) => {
       data: error.response?.data,
     });
     throw error;
-  }
-};
-
-export const fetchGuardianChildren = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("authTokens"))?.access;
-    if (!token) {
-      throw new Error("No auth token found. User might not be logged in.");
-    }
-    const response = await axios.get(
-      `${constants.baseUrl}/s/studentguardian/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch guardian's children:", err);
-    throw err;
   }
 };
 
@@ -889,35 +1151,45 @@ export const fetchUnpaidFees = async ({
   }
 };
 
-export const fetchTeacherYearLevel = async () => {
+export const sendDueFeeNotifications = async () => {
   try {
-    const tokens = localStorage.getItem("authTokens");
-    const accessToken = tokens ? JSON.parse(tokens).access : null;
+    const authTokens = localStorage.getItem("authTokens");
+    if (!authTokens) throw new Error("No access token found. Please login.");
 
-    if (!accessToken) {
-      throw new Error("No access token found for teacher. Please login again.");
-    }
+    const accessToken = JSON.parse(authTokens).access;
+    if (!accessToken) throw new Error("Access token missing. Please login.");
 
-    const response = await axios.get(`${BASE_URL}/t/teacheryearlevel/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    console.log("Access Token:", accessToken);
+
+    const response = await axios.get(
+      `${BASE_URL}/d/fee-record/student_unpaid_fees/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return response.data;
-  } catch (error) {
-    console.error("Error fetching teacher year level:", error);
-    throw error;
+  } catch (err) {
+    console.error(
+      "API sendDueFeeNotifications error:",
+      err.response?.data || err.message
+    );
+    throw err;
   }
 };
 
-// Fetch all discounts
+/**
+ * DISCOUNTS
+ */
 export const fetchDiscounts = async (accessToken) => {
   try {
     const token = accessToken?.trim();
     if (!token) throw new Error("No access token provided");
 
-    const response = await axios.get(`${BASE_URL}/d/fee-discounts/`, {
+    const response = await axios.get(`${JAVA_BASE_URL}/AppliedFeeDiscount/list`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -930,13 +1202,12 @@ export const fetchDiscounts = async (accessToken) => {
   }
 };
 
-// Delete discount by ID
 export const deleteDiscount = async (accessToken, id) => {
   try {
     const token = accessToken?.trim();
     if (!token) throw new Error("No access token provided");
 
-    await axios.delete(`${BASE_URL}/d/fee-discounts/${id}/`, {
+    await axios.delete(`${JAVA_BASE_URL}/d/fee-discounts/${id}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -948,63 +1219,140 @@ export const deleteDiscount = async (accessToken, id) => {
   }
 };
 
-// Update discount by ID
+// export const updateDiscount = async (accessToken, id, payload) => {
+//   try {
+//     const token = accessToken?.trim();
+//     if (!token) throw new Error("No access token provided");
+
+//     const response = await axios.put(
+//       `${JAVA_BASE_URL}/AppliedFeeDiscount/update/${id}`,
+//       payload,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to update discount:", err);
+//     throw err;
+//   }
+// };
+
 export const updateDiscount = async (accessToken, id, payload) => {
   try {
     const token = accessToken?.trim();
     if (!token) throw new Error("No access token provided");
 
-    const response = await axios.put(
-      `${BASE_URL}/d/fee-discounts/${id}/`,
+    const url = `${JAVA_BASE_URL}/AppliedFeeDiscount/update/${id}`;
+    console.log("Updating discount URL:", url);
+    console.log("Payload:", payload);
+    console.log("Token:", token);
+
+    const response = await axios.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Update response:", response);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update discount:", err);
+    if (err.response) {
+      console.error("Response status:", err.response.status);
+      console.error("Response data:", err.response.data);
+    }
+    throw err;
+  }
+};
+
+
+export const createDiscount = async (accessToken, payload) => {
+  try {
+    if (!payload) {
+      throw new Error("Payload is required");
+    }
+
+    const response = await axios.post(
+      `${JAVA_BASE_URL}/AppliedFeeDiscount/create`,
       payload,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
 
     return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    } else if (error.request) {
+      throw { non_field_errors: ["No response received from server"] };
+    } else {
+      throw {
+        non_field_errors: [error.message || "Failed to create discount"],
+      };
+    }
+  }
+};
+
+/**
+ * INCOME & EXPENSES
+ */
+
+export const fetchExpenseCategory = async (accessToken) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/Expense-Category/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
   } catch (err) {
-    console.error("Failed to update discount:", err);
+    console.error("Failed to fetch expense category:", err);
     throw err;
   }
 };
 
-// teacher attendances
-export const saveTeacherAttendance = async (teachers, attendance) => {
+export const fetchSchoolExpense = async (
+  accessToken,
+  schoolYear,
+  categoryId
+) => {
   try {
-    for (const teacher of teachers) {
-      const data = {
-        date: attendance[teacher.id].date,
-        status: attendance[teacher.id].status,
-        teacher_id: teacher.id,
-        teacher_name: `${teacher.first_name} ${teacher.last_name}`,
-      };
-
-      await axios.post(`${BASE_URL}/t/teacher-attendance/post/`, data);
-    }
-    return true;
-  } catch (error) {
-    console.error(
-      "Error saving teacher attendance:",
-      error.response?.data || error
+    const response = await axios.get(
+      `${constants.baseUrl}/d/School-Expense/?school_year=${schoolYear}&category=${categoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
-    throw error;
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
   }
 };
 
-export const saveAllTeacherAttendance = saveTeacherAttendance;
-
-
-//  Techer attendance records
-export const fetchTeacherAttendanceRecords = async () => {
+export const fetchSchoolExpenseById = async (accessToken, id) => {
   try {
-    const response = await axios.get(`${BASE_URL}/t/teacher-attendance/get/`);
+    const response = await axios.get(
+      `${constants.baseUrl}/d/School-Expense/${id}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     return response.data;
-  } catch (error) {
-    console.error("Error fetching attendance records:", error);
-    throw error;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
   }
 };
 
@@ -1046,76 +1394,6 @@ export const fetchIncomeCategories = async () => {
   }
 };
 
-// Notification api
-export const sendDueFeeNotifications = async () => {
-  try {
-    const authTokens = localStorage.getItem("authTokens");
-    if (!authTokens) throw new Error("No access token found. Please login.");
-
-    const accessToken = JSON.parse(authTokens).access;
-    if (!accessToken) throw new Error("Access token missing. Please login.");
-
-    console.log("Access Token:", accessToken);
-
-    const response = await axios.get(
-      `${BASE_URL}/d/fee-record/student_unpaid_fees/`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    return response.data;
-  } catch (err) {
-    console.error(
-      "API sendDueFeeNotifications error:",
-      err.response?.data || err.message
-    );
-    throw err;
-  }
-};
-
-// POST APIS
-
-export const createSalary = async (accessToken, payload) => {
-  try {
-    const response = await axios.post(
-      `${constants.baseUrl}/d/Employee/create_emp/`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("Failed to create Employee:", err);
-    throw err;
-  }
-};
-
-export const handleAdmissionForm = async (formData) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
-      headers: {
-        "Content-Type": "application/json",
-        // "Content-Type": "multipart/form-data",
-      },
-    });
-    if (response.status === 200 || response.status === 201) {
-      // alert("successfully submitted the form");
-    }
-
-    return response.data;
-  } catch (err) {
-    throw err;
-  }
-};
-
-
 export const createSchoolIncome = async (payload) => {
   try {
     const authTokens = localStorage.getItem("authTokens");
@@ -1135,338 +1413,6 @@ export const createSchoolIncome = async (payload) => {
     throw error;
   }
 };
-
-// EDIT APIS
-
-export const handleEditAdmissionForm = async (formData, id) => {
-  try {
-    const response = await axios.put(
-      `${BASE_URL}/d/admission/${id}/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          // "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const updateStudentById = async (id, formData) => {
-  try {
-    const response = await axios.put(
-      `${BASE_URL}/s/students/${id}/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    console.log("Student profile updated response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Failed to update student profile:",
-      error.response?.data || error.message
-    );
-    throw (
-      error.response?.data ||
-      new Error("Something went wrong while updating student profile.")
-    );
-  }
-};
-
-export const editTeachersdetails = async (id, formData) => {
-  try {
-    const response = await axios.put(`${BASE_URL}/t/teacher/${id}/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    console.log("Teacher details updated response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Failed to update teacher details:",
-      error.response?.data || error.message
-    );
-    throw (
-      error.response?.data ||
-      new Error("Something went wrong while updating teacher details.")
-    );
-  }
-};
-
-export const editOfficeStaffdetails = async (id, formData) => {
-  try {
-    const response = await axios.put(
-      `${BASE_URL}/d/officestaff/${id}/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    console.log("Office staff updated response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Failed to update office staff details:",
-      error.response?.data || error.message
-    );
-    throw (
-      error.response?.data ||
-      new Error("Something went wrong while updating office staff details.")
-    );
-  }
-};
-
-export const fetchGuardianAttendance = async (id, month, year) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/a/guardian/attendance/`, {
-      params: {
-        guardian_id: id,
-        month: month,
-        year: year,
-      },
-    });
-    console.log(response.data);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch guardian attendance:", err);
-    throw err;
-  }
-};
-
-export const fetchCalendar = async (month, year) => {
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/a/calendar/?month=${month}&year=${year}`
-    );
-    console.log(response.data);
-    return response.data;
-  } catch (err) {
-    console.error("Failed to fetch calendar:", err);
-    throw err;
-  }
-};
-
-export const importHolidays = async (year) => {
-  try {
-    const response = await axios.post(
-      `${BASE_URL}a/holidays/import?year=${year}`,
-      { year },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data.message || "Failed to import holidays"
-      );
-    } else if (error.request) {
-      throw new Error("No response received from server");
-    } else {
-      throw new Error(error.message);
-    }
-  }
-};
-
-export const createEvent = async (eventData) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(error.response.data.message || "Failed to create event");
-    } else if (error.request) {
-      throw new Error("No response received from server");
-    } else {
-      throw new Error(error.message || "Failed to create event");
-    }
-  }
-};
-
-
-// Helper to get token
-// const getAccessToken = () => {
-//   const authTokens = localStorage.getItem("authTokens");
-//   return authTokens ? JSON.parse(authTokens).access : null;
-// };
-
-// export const fetchCalendar = async (month, year) => {
-//   try {
-//     const token = getAccessToken();
-//     if (!token) throw new Error("No access token found. Please login.");
-
-//     const response = await axios.get(
-//       `${BASE_URL}/a/calendar/?month=${month}&year=${year}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     console.log(response.data);
-//     return response.data;
-//   } catch (err) {
-//     console.error("Failed to fetch calendar:", err);
-//     throw err;
-//   }
-// };
-
-// export const importHolidays = async (year) => {
-//   try {
-//     const token = getAccessToken(); // your function to get access token
-//     if (!token) throw new Error("No access token found. Please login.");
-
-//     const response = await axios.post(
-//       `${BASE_URL}/a/holidays/import`, // just the endpoint, no query param
-//       { year }, // send year in body exactly like this
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
-
-//     return response.data;
-//   } catch (error) {
-//     if (error.response) {
-//       throw new Error(
-//         error.response.data.message || "Failed to import holidays"
-//       );
-//     } else if (error.request) {
-//       throw new Error("No response received from server");
-//     } else {
-//       throw new Error(error.message);
-//     }
-//   }
-// };
-
-// export const createEvent = async (eventData) => {
-//   try {
-//     const token = getAccessToken();
-//     if (!token) throw new Error("No access token found. Please login.");
-
-//     const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     return response.data;
-//   } catch (error) {
-//     if (error.response) {
-//       throw new Error(error.response.data.message || "Failed to create event");
-//     } else if (error.request) {
-//       throw new Error("No response received from server");
-//     } else {
-//       throw new Error(error.message || "Failed to create event");
-//     }
-//   }
-// };
-
-
-// DISCOUNT API
-
-export const createDiscount = async (accessToken, payload) => {
-  try {
-    if (!payload) {
-      throw new Error("Payload is required");
-    }
-
-    const response = await axios.post(`${BASE_URL}/d/fee-discounts/`, payload, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    if (error.response && error.response.data) {
-      // Return full backend error object for field-wise handling
-      throw error.response.data;
-    } else if (error.request) {
-      throw { non_field_errors: ["No response received from server"] };
-    } else {
-      throw {
-        non_field_errors: [error.message || "Failed to create discount"],
-      };
-    }
-  }
-};
-
-// Assign substitute
-export const assignSubstitute = async (payload) => {
-  try {
-    const { data } = await axios.post(
-      `${BASE_URL}/t/substitute-assign/`,
-      payload
-    );
-    return data;
-  } catch (error) {
-    console.error(
-      "API Error in assignSubstitute:",
-      error.response?.data || error
-    );
-    throw error;
-  }
-};
-
-// EDIT API
-
-export const editSalary = async (accessToken, payload, id) => {
-  try {
-    const response = await axios.put(
-      `${constants.baseUrl}/d/Employee/${id}/`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    if (response.status == 200 || response.status == 201) {
-      return response.data;
-    }
-  } catch (err) {
-    console.error("Failed to create Employee:", err);
-    throw err;
-  }
-};
-
-// Update  teacher attendance
-export const updateTeacherAttendance = async (id, payload) => {
-  try {
-    const response = await axios.put(
-      `${BASE_URL}/t/teacher-attendance/get/${id}/`,
-      payload
-    );
-    return response.data;
-  } catch (err) {
-    throw err;
-  }
-};
-
-// Update School Income
 
 export const updateSchoolIncome = async (id, payload) => {
   try {
@@ -1493,12 +1439,14 @@ export const updateSchoolIncome = async (id, payload) => {
 
     return response.data;
   } catch (err) {
-    console.error("API updateSchoolIncome error:", err.response?.data || err.message);
+    console.error(
+      "API updateSchoolIncome error:",
+      err.response?.data || err.message
+    );
     throw err;
   }
 };
 
-// Delete School Income
 export const deleteSchoolIncome = async (accessToken, id) => {
   try {
     const token = accessToken?.trim();
@@ -1514,7 +1462,6 @@ export const deleteSchoolIncome = async (accessToken, id) => {
     throw err;
   }
 };
-
 
 export const fetchSchoolIncomeById = async (id) => {
   try {
@@ -1535,3 +1482,359 @@ export const fetchSchoolIncomeById = async (id) => {
   }
 };
 
+/**
+ * EMPLOYEE & SALARY
+ */
+
+export const fetchEmployee = async (accessToken, role) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/Employee/get_emp/?role=${role}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
+
+export const fetchSalaryExpense = async (accessToken) => {
+  try {
+    const response = await axios.get(
+      `${constants.baseUrl}/d/Employee/get_emp/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
+
+export const fetchSalaryExpenseById = async (accessToken, id) => {
+  try {
+    const response = await axios.get(
+      `${JAVA_BASE_URL}/employees/getEmployee?id=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch Employee:", err);
+    throw err;
+  }
+};
+
+export const createSalary = async (accessToken, payload) => {
+  try {
+    const response = await axios.post(
+      `${constants.baseUrl}/d/Employee/create_emp/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to create Employee:", err);
+    throw err;
+  }
+};
+
+export const editSalary = async (accessToken, payload, id) => {
+  try {
+    const response = await axios.put(
+      `${JAVA_BASE_URL}/employees/update/${id}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    }
+  } catch (err) {
+    console.error("Failed to create Employee:", err);
+    throw err;
+  }
+};
+
+/* ==========================================================================
+   ADMISSIONS & DOCUMENTS
+   ========================================================================== */
+
+export const fetchAdmissionDetails = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/admission/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to admission details:", err);
+    throw err;
+  }
+};
+
+export const fetchAdmissionDetailsById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/admission/${id}/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to admission details:", err);
+    throw err;
+  }
+};
+
+export const handleAdmissionForm = async (formData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/d/admission/`, formData, {
+      headers: {
+        "Content-Type": "application/json",
+        // "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.status === 200 || response.status === 201) {
+      // alert("successfully submitted the form");
+    }
+
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const handleEditAdmissionForm = async (formData, id) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/d/admission/${id}/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const fetchDocumentType = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/DocumentType/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch document type:", err);
+    throw err;
+  }
+};
+
+export const fetchViewDocuments = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/Document/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to load upload data details:", err);
+    throw err;
+  }
+};
+
+/* ==========================================================================
+   CALENDAR & EVENTS
+   ========================================================================== */
+
+export const fetchCalendar = async (month, year) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/a/calendar/?month=${month}&year=${year}`
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch calendar:", err);
+    throw err;
+  }
+};
+
+// Commented out Calendar helper (user requested keeping commented code)
+// export const fetchCalendar = async (month, year) => {
+//   try {
+//     const token = getAccessToken();
+//     if (!token) throw new Error("No access token found. Please login.");
+//
+//     const response = await axios.get(
+//       `${BASE_URL}/a/calendar/?month=${month}&year=${year}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+//
+//     console.log(response.data);
+//     return response.data;
+//   } catch (err) {
+//     console.error("Failed to fetch calendar:", err);
+//     throw err;
+//   }
+// };
+
+export const importHolidays = async (year) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/a/holidays/import?year=${year}`,
+      { year },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to import holidays"
+      );
+    } else if (error.request) {
+      throw new Error("No response received from server");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+};
+
+// Commented out Holidays helper
+// export const importHolidays = async (year) => {
+//   try {
+//     const token = getAccessToken(); // your function to get access token
+//     if (!token) throw new Error("No access token found. Please login.");
+//
+//     const response = await axios.post(
+//       `${BASE_URL}/a/holidays/import`, // just the endpoint, no query param
+//       { year }, // send year in body exactly like this
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+//
+//     return response.data;
+//   } catch (error) {
+//     if (error.response) {
+//       throw new Error(
+//         error.response.data.message || "Failed to import holidays"
+//       );
+//     } else if (error.request) {
+//       throw new Error("No response received from server");
+//     } else {
+//       throw new Error(error.message);
+//     }
+//   }
+// };
+
+export const createEvent = async (eventData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Failed to create event");
+    } else if (error.request) {
+      throw new Error("No response received from server");
+    } else {
+      throw new Error(error.message || "Failed to create event");
+    }
+  }
+};
+
+// Commented out Event helper
+// export const createEvent = async (eventData) => {
+//   try {
+//     const token = getAccessToken();
+//     if (!token) throw new Error("No access token found. Please login.");
+//
+//     const response = await axios.post(`${BASE_URL}/a/events/`, eventData, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     return response.data;
+//   } catch (error) {
+//     if (error.response) {
+//       throw new Error(error.response.data.message || "Failed to create event");
+//     } else if (error.request) {
+//       throw new Error("No response received from server");
+//     } else {
+//       throw new Error(error.message || "Failed to create event");
+//     }
+//   }
+// };
+
+/* ==========================================================================
+   GENERAL CONFIGURATION (Locations, etc.)
+   ========================================================================== */
+
+export const fetchCountry = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/country/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch country:", err);
+    throw err;
+  }
+};
+
+export const fetchState = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/states/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch state:", err);
+    throw err;
+  }
+};
+
+export const fetchCity = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/d/city/`);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch city:", err);
+    throw err;
+  }
+};
+
+/* ==========================================================================
+   HELPERS & UTILS
+   ========================================================================== */
+
+// Helper to get token (commented out in original)
+// const getAccessToken = () => {
+//   const authTokens = localStorage.getItem("authTokens");
+//   return authTokens ? JSON.parse(authTokens).access : null;
+// };

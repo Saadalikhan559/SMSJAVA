@@ -58,72 +58,57 @@ export const AdmissionForm = () => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      student: {
-        first_name: "",
-        middle_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        father_name: "",
-        mother_name: "",
-        date_of_birth: "",
-        gender: "",
-        religion: "",
-        category: null,
-        height: null,
-        weight: null,
-        blood_group: "",
-        number_of_siblings: "",
-        roll_number: null,
-        scholar_number: null,
-        contact_number: "",
+      "student": {
+        "father_name": "",
+        "mother_name": "",
+        "date_of_birth": "",
+        "religion": "",
+        "category": "",
+        "height": 0,
+        "weight": 0,
+        "blood_group": "",
+        "number_of_siblings": 0,
+        "roll_number": "",
+        "classes": "",
+        "user_fields": {
+          "first_name": "",
+          "middle_name": "",
+          "last_name": "",
+          "email": "",
+          "password": "",
+          "phone_no": "",
+          "gender": "",
+          "qualification": "",
+          "aadhar_no": "",
+          "pan_no": "",
+          "active": true,
+          "roles": ["student"]
+        }
       },
-      guardian: {
-        first_name: "",
-        middle_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        phone_no: "",
-        annual_income: "",
-        means_of_livelihood: "",
-        qualification: "",
-        occupation: "",
-        designation: "",
-      },
-      address_input: {
-        house_no: "",
-        habitation: "",
-        ward_no: "",
-        zone_no: "",
-        block: "",
-        district: "",
-        division: "",
-        area_code: "",
-        country: "",
-        state: "",
-        city: "",
-        address_line: "",
-      },
-      banking_detail_input: {
-        account_no: "",
-        ifsc_code: "",
-        holder_name: "",
-      },
-      guardian_type_input: "",
-      year_level: "",
-      school_year: "",
-      previous_school_name: "",
-      previous_standard_studied: "",
-      tc_letter: "",
-      emergency_contact_no: "",
-      entire_road_distance_from_home_to_school: "",
-      obtain_marks: "",
-      total_marks: "",
-      is_rte: false,
-      rte_number: "",
-    },
+      "guardian": {
+        "annual_income": 0,
+        "means_of_livelihood": "",
+        "occupation": "",
+        "designation": "",
+        "user_fields": {
+          "first_name": "",
+          "middle_name": "",
+          "last_name": "",
+          "email": "",
+          "password": "",
+          "phone_no": "",
+          "qualification": "",
+          "gender": "",
+          "aadhar_no": "",
+          "pan_no": "",
+          "active": true,
+          "roles": ["guardian"]
+        }
+      }
+    }
   });
+
+
 
   const handleShowPassword = () => setShowPassword(!showPassword);
   const handleShowGuardianPassword = () =>
@@ -224,45 +209,33 @@ export const AdmissionForm = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const submitFormData = new FormData();
-
-    data.student.roll_number = null;
-    data.student.scholar_number = null;
-    data.student.contact_number = data.guardian.phone_no;
-
-    // Append all payload data to FormData
-    Object.entries(data).forEach(([key, value]) => {
-      if (typeof value === "object" && value !== null) {
-        Object.entries(value).forEach(([subKey, subValue]) => {
-          submitFormData.append(`${key}[${subKey}]`, subValue);
-        });
-      } else {
-        submitFormData.append(key, value);
-      }
-    });
-
-    // Append files separately
-    if (data.student_user_profile) {
-      submitFormData.append(
-        "student[profile_picture]",
-        data.student_user_profile[0]
-      );
-    }
-    if (data.guardian_user_profile) {
-      submitFormData.append(
-        "guardian[profile_picture]",
-        data.guardian_user_profile[0]
-      );
-    }
 
     try {
-      const debugPayload = {};
-      for (let [key, value] of submitFormData.entries()) {
-        debugPayload[key] = value;
+      // extra fields set kar lo
+
+      // roll_number, scholar_number, classes (agar chahiye)
+      data.student.roll_number = null;
+      data.student.scholar_number = null;
+      data.student.classes = data.year_level || "";
+
+      // student ka phone_no ko guardian ke phone_no se link karna ho to:
+      data.student.user_fields.phone_no =
+        data.guardian.user_fields.phone_no || null;
+
+      // previous_percentage calculate kar sakte ho
+      const obtain = Number(data.obtain_marks || 0);
+      const total = Number(data.total_marks || 0);
+      data.previous_percentage =
+        obtain && total ? (obtain / total) * 100 : null;
+
+      // RTE checkbox already data.is_rte me aa raha hai
+      if (!data.is_rte) {
+        data.rte_number = "";
       }
-      console.log("FormData Payload:", debugPayload);
-      await handleAdmissionForm(submitFormData);
-      // Show success modal after successful submission
+
+      // Yahin se direct JSON body bhej do
+      await handleAdmissionForm(data);
+
       setShowAdmissionSuccessModal(true);
       reset();
       setSelectedGuardianType("");
@@ -373,7 +346,7 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("student.first_name", {
+                {...register("student.user_fields.first_name", {
                   required: "First name is required",
                   maxLength: {
                     value: 100,
@@ -381,12 +354,13 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="First Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.first_name ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.user_fields?.first_name ? "input-error" : ""
                   }`}
               />
-              {errors.student?.first_name && (
+
+              {errors.student?.user_fields?.first_name && (
                 <span className="text-error text-sm">
-                  {errors.student.first_name.message}
+                  {errors.student.user_fields.first_name.message}
                 </span>
               )}
             </div>
@@ -399,7 +373,7 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("student.middle_name", {
+                {...register("student.user_fields.middle_name", {
                   maxLength: {
                     value: 100,
                     message: "Middle name cannot exceed 100 characters",
@@ -408,9 +382,9 @@ export const AdmissionForm = () => {
                 placeholder="Middle Name"
                 className="input input-bordered w-full focus:outline-none"
               />
-              {errors.student?.middle_name && (
+              {errors.student?.user_fields?.middle_name && (
                 <span className="text-error text-sm">
-                  {errors.student.middle_name.message}
+                  {errors.student.user_fields.middle_name.message}
                 </span>
               )}
             </div>
@@ -423,7 +397,7 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("student.last_name", {
+                {...register("student.user_fields.last_name", {
                   required: "Last name is required",
                   maxLength: {
                     value: 100,
@@ -434,9 +408,9 @@ export const AdmissionForm = () => {
                 className={`input input-bordered w-full focus:outline-none ${errors.student?.last_name ? "input-error" : ""
                   }`}
               />
-              {errors.student?.last_name && (
+              {errors.student?.user_fields?.last_name && (
                 <span className="text-error text-sm">
-                  {errors.student.last_name.message}
+                  {errors.student.user_fields.last_name.message}
                 </span>
               )}
             </div>
@@ -451,7 +425,7 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="email"
-                {...register("student.email", {
+                {...register("student.user_fields.email", {
                   required: "Email is required",
                   pattern: {
                     value: /^\S+@\S+\.\S+$/,
@@ -459,15 +433,16 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="student@example.com"
-                className={`input input-bordered w-full focus:outline-none ${errors.student?.email ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.student?.user_fields?.email ? "input-error" : ""
                   }`}
               />
-              {errors.student?.email && (
+              {errors.student?.user_fields?.email && (
                 <span className="text-error text-sm">
-                  {errors.student.email.message}
+                  {errors.student.user_fields.email.message}
                 </span>
               )}
             </div>
+
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -476,8 +451,8 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <input
-                type={showPassword ? "password" : "text"}
-                {...register("student.password", {
+                type={showPassword ? "text" : "password"}
+                {...register("student.user_fields.password", {
                   required: "Password is required",
                   maxLength: {
                     value: 100,
@@ -491,7 +466,7 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg : Password@123"
-                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.student?.password ? "input-error" : ""
+                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.student?.user_fields?.password ? "input-error" : ""
                   }`}
               />
               <button
@@ -500,16 +475,16 @@ export const AdmissionForm = () => {
                 onClick={handleShowPassword}
               >
                 <i
-                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
+                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}
                 ></i>
               </button>
-              {errors.student?.password && (
+              {errors.student?.user_fields?.password && (
                 <span className="text-error text-sm">
-                  {errors.student.password.message}
+                  {errors.student.user_fields.password.message}
                 </span>
               )}
             </div>
+
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <div className="form-control">
@@ -551,10 +526,10 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <select
-                {...register("student.gender", {
+                {...register("student.user_fields.gender", {
                   required: "Gender is required",
                 })}
-                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.gender ? "select-error" : ""
+                className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.student?.user_fields?.gender ? "select-error" : ""
                   }`}
               >
                 <option value="">Select Gender</option>
@@ -563,12 +538,13 @@ export const AdmissionForm = () => {
                 <option value="Other">Other</option>
               </select>
 
-              {errors.student?.gender && (
+              {errors.student?.user_fields?.gender && (
                 <span className="text-error text-sm">
-                  {errors.student.gender.message}
+                  {errors.student.user_fields.gender.message}
                 </span>
               )}
             </div>
+
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <div className="form-control">
@@ -813,7 +789,9 @@ export const AdmissionForm = () => {
         {/* Guardian Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Guardian Information</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* First Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -823,23 +801,21 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("guardian.first_name", {
+                {...register("guardian.user_fields.first_name", {
                   required: "First name is required",
-                  maxLength: {
-                    value: 100,
-                    message: "First name cannot exceed 100 characters",
-                  },
+                  maxLength: { value: 100, message: "Max 100 characters" },
                 })}
                 placeholder="First Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.first_name ? "input-error" : ""
-                  }`}
+                className="input input-bordered w-full focus:outline-none"
               />
-              {errors.guardian?.first_name && (
+              {errors.guardian?.user_fields?.first_name && (
                 <span className="text-error text-sm">
-                  {errors.guardian.first_name.message}
+                  {errors.guardian.user_fields.first_name.message}
                 </span>
               )}
             </div>
+
+            {/* Middle Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -849,21 +825,20 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("guardian.middle_name", {
-                  maxLength: {
-                    value: 100,
-                    message: "Middle name cannot exceed 100 characters",
-                  },
+                {...register("guardian.user_fields.middle_name", {
+                  maxLength: { value: 100, message: "Middle name cannot exceed 100 characters" },
                 })}
                 placeholder="Middle Name"
                 className="input input-bordered w-full focus:outline-none"
               />
-              {errors.guardian?.middle_name && (
+              {errors.guardian?.user_fields?.middle_name && (
                 <span className="text-error text-sm">
-                  {errors.guardian.middle_name.message}
+                  {errors.guardian.user_fields.middle_name.message}
                 </span>
               )}
             </div>
+
+            {/* Last Name */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -873,25 +848,24 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("guardian.last_name", {
+                {...register("guardian.user_fields.last_name", {
                   required: "Last name is required",
-                  maxLength: {
-                    value: 100,
-                    message: "Last name cannot exceed 100 characters",
-                  },
+                  maxLength: { value: 100, message: "Last name cannot exceed 100 characters" },
                 })}
                 placeholder="Last Name"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.last_name ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.user_fields?.last_name ? "input-error" : ""
                   }`}
               />
-              {errors.guardian?.last_name && (
+              {errors.guardian?.user_fields?.last_name && (
                 <span className="text-error text-sm">
-                  {errors.guardian.last_name.message}
+                  {errors.guardian.user_fields.last_name.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -901,23 +875,22 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="email"
-                {...register("guardian.email", {
+                {...register("guardian.user_fields.email", {
                   required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+\.\S+$/,
-                    message: "Invalid email format",
-                  },
+                  pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email format" },
                 })}
                 placeholder="guardian@example.com"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.email ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.user_fields?.email ? "input-error" : ""
                   }`}
               />
-              {errors.guardian?.email && (
+              {errors.guardian?.user_fields?.email && (
                 <span className="text-error text-sm">
-                  {errors.guardian.email.message}
+                  {errors.guardian.user_fields.email.message}
                 </span>
               )}
             </div>
+
+            {/* Password */}
             <div className="form-control relative">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -926,13 +899,10 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <input
-                type={showGuardianPassword ? "password" : "text"}
-                {...register("guardian.password", {
+                type={showGuardianPassword ? "text" : "password"}
+                {...register("guardian.user_fields.password", {
                   required: "Password is required",
-                  maxLength: {
-                    value: 100,
-                    message: "Password cannot exceed 100 characters",
-                  },
+                  maxLength: { value: 100, message: "Password cannot exceed 100 characters" },
                   pattern: {
                     value:
                       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
@@ -941,7 +911,7 @@ export const AdmissionForm = () => {
                   },
                 })}
                 placeholder="eg: Password@123"
-                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.guardian?.password ? "input-error" : ""
+                className={`input input-bordered w-full pr-10 focus:outline-none ${errors.guardian?.user_fields?.password ? "input-error" : ""
                   }`}
               />
               <button
@@ -949,17 +919,16 @@ export const AdmissionForm = () => {
                 className="passwordEyes text-gray-500"
                 onClick={handleShowGuardianPassword}
               >
-                <i
-                  className={`fa-solid ${showGuardianPassword ? "fa-eye-slash" : "fa-eye"
-                    }`}
-                ></i>
+                <i className={`fa-solid ${showGuardianPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
               </button>
-              {errors.guardian?.password && (
+              {errors.guardian?.user_fields?.password && (
                 <span className="text-error text-sm">
-                  {errors.guardian.password.message}
+                  {errors.guardian.user_fields.password.message}
                 </span>
               )}
             </div>
+
+            {/* Guardian Type */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -968,9 +937,7 @@ export const AdmissionForm = () => {
                 </span>
               </label>
               <select
-                {...register("guardian_type_input", {
-                  required: "Guardian type is required",
-                })}
+                {...register("guardian_type_input", { required: "Guardian type is required" })}
                 className={`select select-bordered w-full focus:outline-none cursor-pointer ${errors.guardian_type_input ? "select-error" : ""
                   }`}
                 value={selectedGuardianType}
@@ -984,11 +951,11 @@ export const AdmissionForm = () => {
                 ))}
               </select>
               {errors.guardian_type_input && (
-                <span className="text-error text-sm">
-                  {errors.guardian_type_input.message}
-                </span>
+                <span className="text-error text-sm">{errors.guardian_type_input.message}</span>
               )}
             </div>
+
+            {/* Phone Number */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -998,77 +965,37 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="tel"
-                {...register("guardian.phone_no", {
+                {...register("guardian.user_fields.phone_no", {
                   required: "Phone number is required",
                   pattern: {
                     value: /^[6789]\d{9}$/,
                     message:
                       "Phone number must start with 6, 7, 8, or 9 and be exactly 10 digits",
                   },
-                  minLength: {
-                    value: 10,
-                    message: "Phone number must be exactly 10 digits",
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: "Phone number must be exactly 10 digits",
-                  },
+                  minLength: { value: 10, message: "Phone number must be exactly 10 digits" },
+                  maxLength: { value: 10, message: "Phone number must be exactly 10 digits" },
                   validate: {
                     validStart: (value) =>
-                      /^[6789]/.test(value) ||
-                      "Phone number must start with 6, 7, 8, or 9",
+                      /^[6789]/.test(value) || "Phone number must start with 6, 7, 8, or 9",
                   },
                 })}
                 placeholder="Phone Number"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.phone_no ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.user_fields?.phone_no ? "input-error" : ""
                   }`}
                 onInput={(e) => {
-                  // Remove any non-digit characters
-                  e.target.value = e.target.value.replace(/\D/g, "");
-                  // Limit to 10 digits
-                  if (e.target.value.length > 10) {
-                    e.target.value = e.target.value.slice(0, 10);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  // Prevent typing of non-numeric characters except Backspace, Tab, Delete, Arrow keys
-                  if (
-                    !/[\d]|Backspace|Tab|Delete|ArrowLeft|ArrowRight|ArrowUp|ArrowDown/.test(
-                      e.key
-                    )
-                  ) {
-                    e.preventDefault();
-                  }
-
-                  // Prevent typing if first character is not 6,7,8,9 when at position 0
-                  if (e.target.selectionStart === 0 && /[0-5]/.test(e.key)) {
-                    e.preventDefault();
-                  }
-                }}
-                onPaste={(e) => {
-                  // Get pasted data
-                  const pastedData = e.clipboardData
-                    .getData("text")
-                    .replace(/\D/g, "");
-
-                  // Check if pasted data starts with valid digit
-                  if (!/^[6789]/.test(pastedData)) {
-                    e.preventDefault();
-                    // Optional: Show a temporary message
-                    alert("Pasted phone number must start with 6, 7, 8, or 9");
-                  }
+                  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
                 }}
               />
-              {errors.guardian?.phone_no && (
+              {errors.guardian?.user_fields?.phone_no && (
                 <span className="text-error text-sm">
-                  {errors.guardian.phone_no.type === "validStart"
-                    ? errors.guardian.phone_no.message
-                    : errors.guardian.phone_no.message}
+                  {errors.guardian.user_fields.phone_no.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {/* Annual Income */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1080,21 +1007,18 @@ export const AdmissionForm = () => {
                 type="number"
                 {...register("guardian.annual_income", {
                   required: "Annual income is required",
-                  min: {
-                    value: 0,
-                    message: "Annual income cannot be negative",
-                  },
+                  min: { value: 0, message: "Annual income cannot be negative" },
                 })}
                 placeholder="Annual Income"
                 className={`input input-bordered w-full focus:outline-none ${errors.guardian?.annual_income ? "input-error" : ""
                   }`}
               />
               {errors.guardian?.annual_income && (
-                <span className="text-error text-sm">
-                  {errors.guardian.annual_income.message}
-                </span>
+                <span className="text-error text-sm">{errors.guardian.annual_income.message}</span>
               )}
             </div>
+
+            {/* Means of Livelihood */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1111,6 +1035,8 @@ export const AdmissionForm = () => {
                 <option value="Non-Govt">Non-Government</option>
               </select>
             </div>
+
+            {/* Qualification */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1120,25 +1046,24 @@ export const AdmissionForm = () => {
               </label>
               <input
                 type="text"
-                {...register("guardian.qualification", {
+                {...register("guardian.user_fields.qualification", {
                   required: "Qualification is required",
-                  maxLength: {
-                    value: 300,
-                    message: "Qualification cannot exceed 300 characters",
-                  },
+                  maxLength: { value: 300, message: "Qualification cannot exceed 300 characters" },
                 })}
                 placeholder="Qualification"
-                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.qualification ? "input-error" : ""
+                className={`input input-bordered w-full focus:outline-none ${errors.guardian?.user_fields?.qualification ? "input-error" : ""
                   }`}
               />
-              {errors.guardian?.qualification && (
+              {errors.guardian?.user_fields?.qualification && (
                 <span className="text-error text-sm">
-                  {errors.guardian.qualification.message}
+                  {errors.guardian.user_fields.qualification.message}
                 </span>
               )}
             </div>
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Occupation */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1150,21 +1075,18 @@ export const AdmissionForm = () => {
                 type="text"
                 {...register("guardian.occupation", {
                   required: "Occupation is required",
-                  maxLength: {
-                    value: 300,
-                    message: "Occupation cannot exceed 300 characters",
-                  },
+                  maxLength: { value: 300, message: "Occupation cannot exceed 300 characters" },
                 })}
                 placeholder="Occupation"
                 className={`input input-bordered w-full focus:outline-none ${errors.guardian?.occupation ? "input-error" : ""
                   }`}
               />
               {errors.guardian?.occupation && (
-                <span className="text-error text-sm">
-                  {errors.guardian.occupation.message}
-                </span>
+                <span className="text-error text-sm">{errors.guardian.occupation.message}</span>
               )}
             </div>
+
+            {/* Designation */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text flex items-center gap-2">
@@ -1175,23 +1097,17 @@ export const AdmissionForm = () => {
               <input
                 type="text"
                 {...register("guardian.designation", {
-                  maxLength: {
-                    value: 300,
-                    message: "Designation cannot exceed 300 characters",
-                  },
+                  maxLength: { value: 300, message: "Designation cannot exceed 300 characters" },
                 })}
                 placeholder="Designation"
                 className="input input-bordered w-full focus:outline-none"
               />
               {errors.guardian?.designation && (
-                <span className="text-error text-sm">
-                  {errors.guardian.designation.message}
-                </span>
+                <span className="text-error text-sm">{errors.guardian.designation.message}</span>
               )}
             </div>
           </div>
         </div>
-
         {/* Academic Information Section */}
         <div className="bg-base-200 p-6 rounded-box mb-6">
           <h2 className="text-2xl font-bold mb-4">Academic Information</h2>
@@ -2102,23 +2018,23 @@ export const AdmissionForm = () => {
           handleCloseAndNavigate={handleCloseAndNavigate}
         />
       )}
-       {/* Modal */}
-        {showAlert && (
-          <dialog open className="modal modal-open">
-            <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
-              <h3 className="font-bold text-lg">Admission Form</h3>
-              <p className="py-4">{alertMessage}</p>
-              <div className="modal-action">
-                <button
-                  className="btn bgTheme text-white w-30"
-                  onClick={() => setShowAlert(false)}
-                >
-                  OK
-                </button>
-              </div>
+      {/* Modal */}
+      {showAlert && (
+        <dialog open className="modal modal-open">
+          <div className="modal-box dark:bg-gray-800 dark:text-gray-100">
+            <h3 className="font-bold text-lg">Admission Form</h3>
+            <p className="py-4">{alertMessage}</p>
+            <div className="modal-action">
+              <button
+                className="btn bgTheme text-white w-30"
+                onClick={() => setShowAlert(false)}
+              >
+                OK
+              </button>
             </div>
-          </dialog>
-        )}
+          </div>
+        </dialog>
+      )}
     </div>
   );
 };

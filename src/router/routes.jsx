@@ -57,6 +57,7 @@ import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
 import Marksheet from "../components/Student Dashboard/Marksheet";
+import EditMarksheet from "../components/Student Dashboard/EditMarksheet";
 import ClassTeacherAssign from "../components/DirectorDashboard/ClassTeacherAssign";
 import ViewAllocatedClass from "../components/DirectorDashboard/ViewAllocatedClass";
 import MarksheetsTable from "../components/Student Dashboard/MarksheetsTable";
@@ -244,11 +245,21 @@ export const routes = [
       constants.roles.student,
     ],
   },
+    {
+    path: allRouterLink.editMarksheet,
+    element: <EditMarksheet editableRemark={true} />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
+    ],
+  },
   {
     path: allRouterLink.ExamSchedule,
     element: <ExamSchedule />,
     protected: true,
-    allowedRoles: [constants.roles.teacher],
+    allowedRoles: [constants.roles.teacher, constants.roles.officeStaff, constants.roles.director],
   },
   {
     path: allRouterLink.UpdateExamSchedule,
@@ -596,24 +607,24 @@ export const routes = [
   },
   {
     path: allRouterLink.editIncom,
-    element: <UpdateIncome/>,
+    element: <UpdateIncome />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.privacyPolicy,
-    element: <PrivacyPolicy/>,
+    element: <PrivacyPolicy />,
     protected: true,
     allowedRoles: [constants.roles.director],
   },
   {
     path: allRouterLink.managecategory,
-    element: <CreateCategory/>,
+    element: <CreateCategory />,
     protected: true,
   },
   {
     path: allRouterLink.studentAdmissionFees,
-    element: <StudentAdmissionFees/>,
+    element: <StudentAdmissionFees />,
     protected: true,
     allowedRoles: [constants.roles.director, constants.roles.officeStaff],
   },

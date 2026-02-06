@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { fetchAdmissionDetails, fetchYearLevels } from "../../services/api/Api";
 import { Link } from "react-router-dom";
 import { allRouterLink } from "../../router/AllRouterLinks";
 import { AuthContext } from "../../context/AuthContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
-
-
+import * as XLSX from "xlsx";
 
 
 export const AdmissionDetails = () => {
@@ -19,14 +17,33 @@ export const AdmissionDetails = () => {
   const [searchInput, setSearchInput] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [error, setError] = useState(false);
+  const [showDownloadOptions, setShowDownloadOptions] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDownloadOptions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
 
 
   const [studentData, setStudentData] = useState([]);
 
   const getAdmissionDetails = async () => {
     try {
-      const data = await fetchAdmissionDetails();
+      // const data = await fetchAdmissionDetails();
+      // setDetails(data);
+      const data = normalizeStudents(await fetchAdmissionDetails());
       setDetails(data);
+
       setLoading(false);
 
       const stu = await axiosInstance.get("s/students/student_details/");
@@ -38,22 +55,13 @@ export const AdmissionDetails = () => {
     }
   };
 
-  const normalizeStudents = (data) => {
-    if (!data) return [];
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.results)) return data.results;
-    if (Array.isArray(data?.data)) return data.data;
-    if (typeof data === "object") {
-      // single object → wrap
-      if ("student_id" in data || "student_name" in data) return [data];
-      // object keyed by ids → take values that look like students
-      const vals = Object.values(data).filter(
-        v => v && typeof v === "object" && ("student_id" in v || "student_name" in v)
-      );
-      if (vals.length) return vals;
-    }
-    return [];
-  };
+const normalizeStudents = (data) => {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (data.results && Array.isArray(data.results)) return data.results;
+  return [];
+};
+
 
   useEffect(() => {
     getAdmissionDetails();
@@ -70,6 +78,50 @@ export const AdmissionDetails = () => {
   useEffect(() => {
     getYearLevels();
   }, []);
+
+
+
+  const handleDownloadExcel = (input = []) => {
+    const data = normalizeStudents(input);
+    if (!data.length) {
+      return;
+    }
+
+    const formattedData = data.map((s) => ({
+      ID: s.student_id ?? s.id ?? "",
+      "Scholar No": s["scholar number"] ?? "",
+      "Enrollment No": s.enrollment_no ?? "",
+      Name: s.student_name ?? "",
+      Class: s.class ?? "",
+      Age: s.age ?? "",
+      Gender: s.gender ?? "",
+      "Date of Birth": s.date_of_birth ?? "",
+      Category: s.category ?? "",
+      Religion: s.religion ?? "",
+      "No. of Siblings": s["no. of siblings"] ?? "",
+      Active: s.is_active ? "Yes" : "No",
+      "RTE Status": s.is_rte ? "Yes" : "No",
+      "RTE Number": s["rte number"] ?? "",
+      Phone: s.contact_number ?? "",
+      Email: s.email ?? "",
+      Father: s.father_name ?? "",
+      Mother: s.mother_name ?? "",
+      Guardian: s.guardian_name ?? "",
+      "Guardian Phone": s["guardian's contact no."] ?? "",
+      Address: s.full_address ?? "",
+      Aadhaar: s["adhaar number"] ?? s["aadhaar number"] ?? "",
+      "Bank Account": s["bank details"]?.account_no ?? "N/A",
+      IFSC: s["bank details"]?.ifsc_code ?? "N/A",
+      "Annual Income": s["annual income"] ?? s.annual_income ?? "",
+      "School Year": s["school year"] ?? "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+
+    XLSX.writeFile(workbook, "Student_Details_Report.xlsx");
+  };
 
 
   const handleDownloadStudentDataPDF = (input = []) => {
@@ -233,9 +285,11 @@ export const AdmissionDetails = () => {
   }
 
   const filterData = details.filter((detail) => {
-    const matchesClass = detail.year_level
+
+    const matchesClass = (detail.year_level ?? "")
       .toLowerCase()
       .includes(selectedClass.toLowerCase());
+
 
     const matchesDate = selectedDate
       ? detail.admission_date === selectedDate
@@ -247,22 +301,23 @@ export const AdmissionDetails = () => {
 
   const filterBysearch = filterData.filter((detail) => {
     const search = searchInput.toLowerCase();
-    const studentName = `${detail.student_input.first_name} ${detail.student_input.last_name}`.toLowerCase();
-    const guardianName = `${detail.guardian_input.first_name} ${detail.guardian_input.last_name}`.toLowerCase();
+
+    // Ensure student_input and guardian_input are always objects
+    const student = detail.student_input || {};
+    const guardian = detail.guardian_input || {};
+
+    const studentName = `${student.first_name ?? ""} ${student.last_name ?? ""}`.toLowerCase();
+    const guardianName = `${guardian.first_name ?? ""} ${guardian.last_name ?? ""}`.toLowerCase();
+
     return studentName.includes(search) || guardianName.includes(search);
   });
 
-  const resetFilters = () => {
-    setSelectedMonth("");
-    setSelectedClass("");
-    setSearchTerm("");
-  };
-
   const sortedData = [...filterBysearch].sort((a, b) => {
-    const nameA = `${a.student_input.first_name} ${a.student_input.last_name}`.toLowerCase();
-    const nameB = `${b.student_input.first_name} ${b.student_input.last_name}`.toLowerCase();
+    const nameA = `${a.student_input?.first_name ?? ""} ${a.student_input?.last_name ?? ""}`.toLowerCase();
+    const nameB = `${b.student_input?.first_name ?? ""} ${b.student_input?.last_name ?? ""}`.toLowerCase();
     return nameA.localeCompare(nameB);
   });
+
   console.log(sortedData);
 
   return (
@@ -324,18 +379,38 @@ export const AdmissionDetails = () => {
                   Reset Filters
                 </button>
               </div>
-
-              {/* PDF Download Button */}
-              <div className="mt-1 w-full sm:w-auto">
+              <div className="mt-1 w-full sm:w-auto relative group" ref={dropdownRef}>
                 <button
-                  onClick={() => handleDownloadStudentDataPDF(studentData)}
-                  className="btn bgTheme text-white "
+                  className="btn bgTheme text-white flex items-center"
+                  onClick={() => setShowDownloadOptions(prev => !prev)}
                 >
-                  <i className="fa-solid fa-file-pdf mr-2"></i> Download All Student Info
+                  <i className="fa-solid fa-file-arrow-down mr-2"></i> Download All Student Info
+                  <i className="fa-solid fa-caret-down ml-2"></i>
                 </button>
+
+                {showDownloadOptions && (
+                  <div className="absolute z-10 mt-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg">
+                    <button
+                      onClick={() => {
+                        handleDownloadStudentDataPDF(studentData);
+                        setShowDownloadOptions(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    >
+                      Download as PDF
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleDownloadExcel(studentData);
+                        setShowDownloadOptions(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    >
+                      Download as Excel (.xlsx)
+                    </button>
+                  </div>
+                )}
               </div>
-
-
             </div>
 
             {/* Right Side: Search */}
@@ -358,88 +433,108 @@ export const AdmissionDetails = () => {
           <div className="overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
             <div className="inline-block min-w-full align-middle rounded-lg">
               <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
-                <table className="min-w-full  divide-gray-300 dark:divide-gray-700">
-                  <thead className="bgTheme text-white z-2 sticky top-0">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Parent/Guardian</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Date of Birth</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Gender</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Class</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">RTE</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Date</th>
-                      <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
-                      <th className="px-10 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                    {sortedData.length > 0 ? (
-                      sortedData.map((detail) => (
-                        <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                            {detail.student_input.first_name} {detail.student_input.last_name}
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {detail.guardian_input.first_name} {detail.guardian_input.last_name} ({detail.guardian_type || "N/A"})
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {detail.student_input.date_of_birth}
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {detail.student_input.gender}
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {detail.year_level}
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {detail.is_rte ? "Yes" : "No"}
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            {new Date(detail.admission_date)
-                              .toLocaleDateString("en-GB")
-                              .replaceAll("/", "-")}
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
-                            <span
-                              className={`inline-flex flex-col items-center px-4 py-1 w-20 rounded-full text-xs font-medium text-nowrap capitalize ${detail.student_input.is_active
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                                }`}
-                            >
-                              {detail.student_input.is_active ? "Active" : "InActive"}
+                <div className="overflow-x-auto no-scrollbar max-h-[70vh] rounded-lg">
+                  <div className="inline-block min-w-full align-middle rounded-lg">
+                    <div className="shadow-sm ring-1 ring-black ring-opacity-5 rounded-lg">
+                      <table className="min-w-full divide-gray-300 dark:divide-gray-700">
+                        <thead className="bgTheme text-white z-2 sticky top-0">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Student Name</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Parent/Guardian</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Date of Birth</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Gender</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Class</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">RTE</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-nowrap">Admission Date</th>
+                            <th className="px-8 py-3 text-left text-sm font-semibold text-nowrap">Status</th>
+                            <th className="px-10 py-3 text-left text-sm font-semibold text-nowrap">Actions</th>
+                          </tr>
+                        </thead>
 
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap text-nowrap px-4 py-3 text-sm">
-                            <div className="flex space-x-2">
-                              <Link
-                                to={allRouterLink.editAddmisionDetails.replace(":id", detail.id)}
-                                className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
-                              >
-                                Edit
-                              </Link>
-                              <Link
-                                to={allRouterLink.addmissionDetailsById.replace(":id", detail.id)}
-                                className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100"
-                              >
-                                View
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="9"
-                          className="text-center py-6 text-gray-500 dark:text-gray-400"
-                        >
-                          No data found.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                          {sortedData.length > 0 ? (
+                            sortedData.map((detail) => (
+                              <tr key={detail.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                {/* Student Name */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                                  {detail.student_input?.first_name ?? ""} {detail.student_input?.last_name ?? ""}
+                                </td>
+
+                                {/* Parent/Guardian */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  {detail.guardian_input?.first_name ?? ""} {detail.guardian_input?.last_name ?? ""} ({detail.guardian_type || "N/A"})
+                                </td>
+
+                                {/* Date of Birth */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  {detail.student_input?.date_of_birth ?? ""}
+                                </td>
+
+                                {/* Gender */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  {detail.student_input?.gender ?? ""}
+                                </td>
+
+                                {/* Class */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  {detail.year_level ?? ""}
+                                </td>
+
+                                {/* RTE */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  {detail.is_rte ? "Yes" : "No"}
+                                </td>
+
+                                {/* Admission Date */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  {detail.admission_date
+                                    ? new Date(detail.admission_date).toLocaleDateString("en-GB").replaceAll("/", "-")
+                                    : ""}
+                                </td>
+
+                                {/* Status */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 dark:text-gray-300">
+                                  <span
+                                    className={`inline-flex items-center px-4 py-1 rounded-full text-xs font-medium ${detail.student_input?.is_active
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-red-100 text-red-800"
+                                      }`}
+                                  >
+                                    {detail.student_input?.is_active ? "Active" : "InActive"}
+                                  </span>
+                                </td>
+
+                                {/* Actions */}
+                                <td className="whitespace-nowrap px-4 py-3 text-sm">
+                                  <div className="flex space-x-2">
+                                    <Link
+                                      to={allRouterLink.editAddmisionDetails.replace(":id", detail.id)}
+                                      className="inline-flex items-center px-3 py-1 border border-yellow-300 rounded-md shadow-sm text-sm font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                                    >
+                                      Edit
+                                    </Link>
+                                    <Link
+                                      to={allRouterLink.addmissionDetailsById.replace(":id", detail.id)}
+                                      className="inline-flex items-center px-3 py-1 border border-[#5E35B1] rounded-md shadow-sm text-sm font-medium textTheme bg-blue-50 hover:bg-blue-100"
+                                    >
+                                      View
+                                    </Link>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="9" className="text-center py-6 text-gray-500 dark:text-gray-400">
+                                No data found.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -448,3 +543,4 @@ export const AdmissionDetails = () => {
     </div>
   );
 };
+

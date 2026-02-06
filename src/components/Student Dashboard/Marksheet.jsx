@@ -1,6 +1,638 @@
+// import React, { useState, useEffect, useRef, useContext } from "react";
+// import { useParams } from "react-router-dom";
+// import { AuthContext } from "../../context/AuthContext";
+// import { toPng } from "html-to-image";
+// import jsPDF from "jspdf";
+
+// const Marksheet = () => {
+//   const printRef = useRef();
+//   const { id } = useParams();
+//   const [marksheet, setMarksheet] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const { axiosInstance } = useContext(AuthContext);
+//   const [downloading, setDownloading] = useState(false);
+
+//   // Hardcoded static fields (since they are not available in the provided JSON)
+//   const hardcodedFields = {
+//     sssmId: "1727456484",
+//     aadhaarNo: "89675475854",
+//     penNo: "21258294654",
+//     aapaarId: "124748344697",
+//   };
+
+//   const getMarksheet = async () => {
+//     try {
+//       setLoading(true);
+//       setError(null);
+
+//       if (!id) throw new Error("No id available");
+
+//       const response = await axiosInstance.get(`/d/report-cards/${id}/`);
+//       setMarksheet(response.data);
+//     } catch (err) {
+//       console.error("Failed to load marksheet:", err);
+//       setError(err.message || "Failed to load marksheet data");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     getMarksheet();
+//   }, [id]);
+
+//   // PDF Download Function
+//   const handleDownload = async () => {
+//     setDownloading(true);
+
+//     try {
+//       // wait for layout to settle
+//       await new Promise((res) => setTimeout(res, 300));
+
+//       const element = printRef.current;
+
+//       const dataUrl = await toPng(element, {
+//         quality: 1,
+//         pixelRatio: 3,
+//         backgroundColor: "#ffffff",
+//       });
+
+//       const pdf = new jsPDF("p", "mm", "a4");
+
+//       const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+//       const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
+
+//       const img = new Image();
+//       img.src = dataUrl;
+
+//       await new Promise((res) => (img.onload = res));
+
+//       const imgWidth = pageWidth;
+//       const imgHeight = (img.height * imgWidth) / img.width;
+
+//       let heightLeft = imgHeight;
+//       let position = 0;
+
+//       // First page
+//       pdf.addImage(dataUrl, "PNG", 0, position, imgWidth, imgHeight);
+//       heightLeft -= pageHeight;
+
+//       // Remaining pages
+//       while (heightLeft > 0) {
+//         position = heightLeft - imgHeight;
+//         pdf.addPage();
+//         pdf.addImage(dataUrl, "PNG", 0, position, imgWidth, imgHeight);
+//         heightLeft -= pageHeight;
+//       }
+
+//       const fileName = marksheet?.student_name
+//         ? `marksheet_${marksheet.student_name.replace(/\s+/g, "_")}.pdf`
+//         : `marksheet_${id}.pdf`;
+
+//       pdf.save(fileName);
+//     } catch (err) {
+//       console.error("PDF download failed:", err);
+//     } finally {
+//       setDownloading(false);
+//     }
+//   };
+
+//   const safeString = (value) =>
+//     value === null || value === undefined || value === "null" || value === ""
+//       ? "—"
+//       : value;
+
+//   if (loading) {
+//     return (
+//       <div className="flex flex-col items-center justify-center min-h-screen">
+//         <div className="flex space-x-2">
+//           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
+//           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+//           <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
+//         </div>
+//         <p className="mt-2 text-gray-500 dark:text-gray-300 text-sm">
+//           Loading data...
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="flex flex-col items-center justify-center min-h-screen text-center p-6">
+//         <i className="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+//         <p className="text-lg text-red-400 font-medium">
+//           Failed to load data, Try Again
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   if (!marksheet) {
+//     return (
+//       <div className="flex justify-center items-center min-h-screen bg-white dark:bg-gray-100">
+//         <p className="text-gray-600">No marksheet data available</p>
+//       </div>
+//     );
+//   }
+
+//   const data = marksheet;
+
+//   // Get all unique subjects from all exam types
+//   const allSubjects = Array.from(
+//     new Set(
+//       data.subjects.flatMap((exam) =>
+//         exam.subjects ? Object.keys(exam.subjects) : []
+//       )
+//     )
+//   ).sort();
+
+//   // Helper to get exam-specific data
+//   const getExamData = (examType) =>
+//     data.subjects.find((e) => e.exam_type === examType);
+
+//   // Get subject scores safely for all exams and average
+//   const getSubjectScores = (subjectName) => {
+//     const fa1 = getExamData("FA1")?.subjects?.[subjectName] ?? "-";
+//     const fa2 = getExamData("FA2")?.subjects?.[subjectName] ?? "-";
+//     const sa1 = getExamData("SA1")?.subjects?.[subjectName] ?? "-";
+//     const fa3 = getExamData("FA3")?.subjects?.[subjectName] ?? "-";
+//     const sa2 = getExamData("SA2")?.subjects?.[subjectName] ?? "-";
+
+//     let avg = "-";
+//     if (
+//       data.subject_avg &&
+//       typeof data.subject_avg === "object" &&
+//       !data.subject_avg.error
+//     ) {
+//       avg = data.subject_avg[subjectName] ?? "-";
+//     }
+
+//     // Format score to 2 decimal places if it's a number, otherwise keep it as is
+//     const formatScore = (score) => {
+//       if (typeof score === "number") {
+//         return score % 1 !== 0 ? score.toFixed(2) : score;
+//       }
+//       return score;
+//     };
+
+//     return [
+//       formatScore(fa1),
+//       formatScore(fa2),
+//       formatScore(sa1),
+//       formatScore(fa3),
+//       formatScore(sa2),
+//       formatScore(avg),
+//     ];
+//   };
+
+//   return (
+//     <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 min-h-screen p-2 sm:p-4 md:p-6 pb-24 md:pb-10">
+//       <div className="flex flex-col items-center">
+//         <div className="w-full overflow-x-auto flex flex-col items-center">
+// <div 
+//   ref={printRef} 
+//   className="w-max max-w-none mx-auto border-2 sm:border-3 border-[#b91c1c] p-2 sm:p-3 md:p-4 bg-white font-sans text-xs sm:text-sm m-2 sm:m-4"
+// >
+//   {/* Header */}
+//   <div className="border-2 border-black">
+//     <div className="flex items-center justify-start bg-[#fbbf24] border-b-2 border-black px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 relative">
+//       <div className="absolute -left-2 sm:-left-2.5 md:-left-3 top-1/2 transform -translate-y-1/2 rotate-45 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 bg-[#b91c1c] flex items-center justify-center border border-black z-0 ml-2 sm:ml-4 md:ml-8">
+//         <span className="rotate-[315deg] text-[#fde047] font-extrabold text-sm sm:text-xl md:text-4xl">
+//           4S
+//         </span>
+//       </div>
+//       <div className="flex-1 text-center ml-8 sm:ml-14 md:ml-18">
+//         <h1 className="text-sm sm:text-lg md:text-2xl font-extrabold uppercase text-[#b91c1c] tracking-tight sm:tracking-wider leading-tight">
+//           New Progressive Education Public School
+//         </h1>
+//       </div>
+//     </div>
+
+//     <div className="px-2 sm:px-3 py-0.5">
+//       <p className="text-[9px] sm:text-xxs md:text-xs text-black ml-12 sm:ml-24 md:ml-32 font-bold leading-tight sm:leading-normal">
+//         10, Prince Colony, Behind Old Civil Court, Lower Idgah Hills, Bhopal
+//       </p>
+//     </div>
+
+//     <div className="text-center py-1 bg-[#dbeafe] text-[#1e40af] font-bold tracking-wider text-xs sm:text-sm border-t border-[#374151]">
+//       ANNUAL RESULT {safeString(data.academic_year)}
+//     </div>
+//   </div>
+
+//   {/* Student Info */}
+//   <div className="border border-black text-[9px] sm:text-xxs md:text-xs font-sans mt-2 sm:mt-3">
+//     {/* Responsive student info rows */}
+//     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-0">
+//       {/* Row 1 */}
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Name:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           {safeString(data.student_name)}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Scholar No.:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide border border-black px-0.5 sm:px-1 py-0.5 ml-0.5 rounded-sm bg-white">
+//           {safeString(data.scholar_number)}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           SSSM ID:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           {hardcodedFields.sssmId}
+//         </span>
+//       </div>
+
+//       {/* Row 2 */}
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Father's Name:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           Mr. {safeString(data.father_name)}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Class:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide border border-black px-0.5 sm:px-1 py-0.5 ml-0.5 rounded-sm bg-white">
+//           {safeString(data.standard)}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Aadhaar No.:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           {hardcodedFields.aadhaarNo}
+//         </span>
+//       </div>
+
+//       {/* Row 3 */}
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Mother's Name:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           Mrs. {safeString(data.mother_name)}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           DOB:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide border border-black px-0.5 sm:px-1 py-0.5 ml-0.5 rounded-sm bg-white">
+//           {data.date_of_birth
+//             ? new Date(data.date_of_birth).toLocaleDateString("en-GB")
+//             : "—"}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Pen No.:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           {hardcodedFields.penNo}
+//         </span>
+//       </div>
+
+//       {/* Row 4 */}
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1 sm:col-span-2 lg:col-span-1">
+//         <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+//           Mobile No.:
+//         </span>
+//         <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+//           {safeString(data.contact_number)}
+//         </span>
+//       </div>
+//       <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1 sm:col-span-2 lg:col-span-2">
+//         <span className="w-[20%] sm:w-[22.5%] text-black tracking-tight font-bold">
+//           Aapaar ID:
+//         </span>
+//         <span className="w-[80%] sm:w-[77.5%] text-[#1f2937] italic font-medium tracking-wide">
+//           {hardcodedFields.aapaarId}
+//         </span>
+//       </div>
+//     </div>
+//   </div>
+
+//   {/* Scholastic Table */}
+//   <div className="mb-2 sm:mb-3 md:mb-4 mt-2 sm:mt-3">
+//     <h2 className="text-center bg-[#dbeafe] text-[#1e40af] font-bold tracking-wider text-xs sm:text-sm border-t border-b border-[#374151] py-1">
+//       Scholastic Evaluation
+//     </h2>
+//     <div className="w-full">
+//       <table className="w-full border border-black text-[9px] sm:text-xxs md:text-xs text-center border-collapse min-w-[800px]">
+//         <thead className="bg-[#e5e7eb]">
+//           <tr>
+//             {[
+//               "Subject",
+//               "FA1",
+//               "FA2",
+//               "SA1",
+//               "FA3",
+//               "SA2",
+//               "Avg SA1+SA2",
+//             ].map((h, i) => (
+//               <th
+//                 key={i}
+//                 className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black"
+//               >
+//                 {h}
+//               </th>
+//             ))}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {allSubjects.map((subject) => {
+//             const [fa1, fa2, sa1, fa3, sa2, avg] =
+//               getSubjectScores(subject);
+//             return (
+//               <tr key={subject} className="bg-white">
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-center text-[#dc2626] font-bold whitespace-nowrap">
+//                   {subject.toUpperCase()}
+//                 </td>
+//                 {[fa1, fa2, sa1, fa3, sa2, avg].map((score, idx) => (
+//                   <td
+//                     key={idx}
+//                     className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black"
+//                   >
+//                     {score}
+//                   </td>
+//                 ))}
+//               </tr>
+//             );
+//           })}
+          
+//           {/* Summary Rows */}
+//           {["TOTAL", "PERCENTAGE", "GRADE", "RANK", "ATTENDANCE", "DIVISION"].map((rowLabel, rowIndex) => (
+//             <tr key={rowLabel} className="bg-white">
+//               <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-center text-[#dc2626] font-bold whitespace-nowrap">
+//                 {rowLabel}
+//               </td>
+//               {["FA1", "FA2", "SA1", "FA3", "SA2"].map((exam) => {
+//                 const examData = getExamData(exam);
+//                 switch(rowLabel) {
+//                   case "TOTAL":
+//                     return (
+//                       <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                         {safeString(examData?.total_obtained)}/
+//                         {safeString(examData?.total_possible)}
+//                       </td>
+//                     );
+//                   case "PERCENTAGE":
+//                     const percentage = safeString(examData?.percentage);
+//                     return (
+//                       <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                         {percentage !== "—" ? `${percentage}%` : percentage}
+//                       </td>
+//                     );
+//                   case "GRADE":
+//                     return (
+//                       <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                         {safeString(examData?.grade)}
+//                       </td>
+//                     );
+//                   case "RANK":
+//                     return (
+//                       <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                         {safeString(examData?.rank)}
+//                       </td>
+//                     );
+//                   case "ATTENDANCE":
+//                     return (
+//                       <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                         {safeString(examData?.attendance)}
+//                       </td>
+//                     );
+//                   case "DIVISION":
+//                     return (
+//                       <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                         {safeString(examData?.division)}
+//                       </td>
+//                     );
+//                   default:
+//                     return null;
+//                 }
+//               })}
+//               <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 {rowLabel === "TOTAL" ? `${safeString(data.total_marks)}/${safeString(data.max_marks)}` :
+//                  rowLabel === "PERCENTAGE" ? `${safeString(data.percentage)}%` :
+//                  safeString(data[rowLabel.toLowerCase()])}
+//               </td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   </div>
+
+//   {/* Non-Scholastic & Personal/Social */}
+//   <div className="mb-2 sm:mb-3 md:mb-4">
+//     <h2 className="text-center bg-[#dbeafe] text-[#1e40af] font-bold tracking-wider text-xs sm:text-sm border-t border-b border-[#374151] py-1">
+//       <span className="block sm:inline">NON-SCHOLASTIC EVALUATION</span>
+//       <span className="hidden sm:inline mx-4">|</span>
+//       <span className="block sm:inline mt-1 sm:mt-0">PERSONAL & SOCIAL QUALITIES</span>
+//     </h2>
+    
+//     <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 mt-2 sm:mt-3 min-w-[800px]">
+//       {/* Non-Scholastic Table */}
+//       <div className="flex-1">
+//         <table className="w-full text-[9px] sm:text-xxs md:text-xs border border-black text-center border-collapse">
+//           <thead className="bg-[#e5e7eb]">
+//             <tr>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 SUBJECT
+//               </th>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 I Term
+//               </th>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 II Term
+//               </th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {[
+//               "GK/Moral/EVS",
+//               "Conversation",
+//               "Computer",
+//               "Drawing/Craft",
+//             ].map((subj) => (
+//               <tr key={subj} className="bg-white">
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-left text-black">
+//                   {subj}
+//                 </td>
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-black">
+//                   {safeString(
+//                     data.non_scholastic.find(
+//                       (item) =>
+//                         item.subject === subj && item.term === "Term 1"
+//                     )?.grade
+//                   )}
+//                 </td>
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-black">
+//                   {safeString(
+//                     data.non_scholastic.find(
+//                       (item) =>
+//                         item.subject === subj && item.term === "Term 2"
+//                     )?.grade
+//                   )}
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* Personal & Social Table */}
+//       <div className="flex-1">
+//         <table className="w-full text-[9px] sm:text-xxs md:text-xs border border-black border-collapse">
+//           <thead className="bg-[#e5e7eb]">
+//             <tr>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 SUBJECT
+//               </th>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 I Term
+//               </th>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 II Term
+//               </th>
+//               <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+//                 Remarks
+//               </th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {[
+//               "Cleanliness",
+//               "Discipline",
+//               "Punctuality",
+//               "Attention In Class",
+//             ].map((trait, index) => (
+//               <tr key={trait} className="bg-white">
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-left text-black">
+//                   {trait}
+//                 </td>
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-center text-black">
+//                   {safeString(
+//                     data.personal_social.find(
+//                       (item) =>
+//                         item.quality === trait && item.term === "Term 1"
+//                     )?.grade
+//                   )}
+//                 </td>
+//                 <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-center text-black">
+//                   {safeString(
+//                     data.personal_social.find(
+//                       (item) =>
+//                         item.quality === trait && item.term === "Term 2"
+//                     )?.grade
+//                   )}
+//                 </td>
+//                 {index === 0 && (
+//                   <td
+//                     className="border border-black p-1 text-left align-top text-[8px] sm:text-xs italic text-black"
+//                     rowSpan={4}
+//                   >
+//                     {safeString(data.teacher_remark)}
+//                   </td>
+//                 )}
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   </div>
+
+//   {/* Footer */}
+//   <div className="border-t-2 border-black pt-2 sm:pt-3 text-[9px] sm:text-xxs md:text-xs mt-2 sm:mt-3 min-w-[800px]">
+//     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-2 sm:mb-3">
+//       <div className="text-black">
+//         <strong>Pass/Promoted to Class:</strong>{" "}
+//         {safeString(data.promoted_to_class)}
+//       </div>
+//       <div className="text-black">
+//         <strong>Supplementary In:</strong>{" "}
+//         {data.supplementary_in && data.supplementary_in.length > 0
+//           ? data.supplementary_in.join(", ")
+//           : "—"}
+//       </div>
+//       <div className="text-black">
+//         <strong>School Re-opens on:</strong>{" "}
+//         {data.school_reopen_date
+//           ? new Date(data.school_reopen_date).toLocaleDateString("en-GB")
+//           : "—"}
+//       </div>
+//     </div>
+//     <div className="grid grid-cols-1 sm:grid-cols-3 text-center pt-2 sm:pt-4 border-t border-[#9ca3af] font-semibold text-[#b91c1c] gap-3 sm:gap-0">
+//       <div className="space-y-1">
+//         <p className="text-xs sm:text-sm text-[#b91c1c]">Sign of Class Teacher</p>
+//         <div className="h-12 sm:h-16 md:h-22 mx-auto flex items-end justify-center border-b-2 border-[#d1d5db] pb-1">
+//           <span className="text-[#9ca3af] text-[8px] sm:text-xs">
+//             (Signature Area)
+//           </span>
+//         </div>
+//       </div>
+//       <div className="space-y-1">
+//         <p className="text-xs sm:text-sm text-[#b91c1c]">Sign of Principal</p>
+//         <div className="h-12 sm:h-16 md:h-22 mx-auto flex items-end justify-center border-b-2 border-[#d1d5db] pb-1">
+//           <span className="text-[#9ca3af] text-[8px] sm:text-xs">
+//             (Signature Area)
+//           </span>
+//         </div>
+//       </div>
+//       <div className="space-y-1">
+//         <p className="text-xs sm:text-sm text-[#b91c1c]">Parent's/Guardian's Sign</p>
+//         <div className="h-12 sm:h-16 md:h-22 mx-auto flex items-end justify-center border-b-2 border-[#d1d5db] pb-1">
+//           <span className="text-[#9ca3af] text-[8px] sm:text-xs">
+//             (Signature Area)
+//           </span>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// </div>
+//         </div>
+
+//         <div className="md:mt-4 md:mb-10 mt-6">
+//           <div className="flex justify-center">
+//             <button
+//               onClick={handleDownload}
+//               disabled={downloading}
+//               className="btn bgTheme text-white"
+//             >
+//               {downloading ? "Downloading..." : "Download PDF"}
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Marksheet;
+
+
+
+
+
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { toPng } from "html-to-image";
+import jsPDF from "jspdf";
 
 const Marksheet = () => {
   const printRef = useRef();
@@ -9,6 +641,15 @@ const Marksheet = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { axiosInstance } = useContext(AuthContext);
+  const [downloading, setDownloading] = useState(false);
+
+  // Hardcoded static fields
+  const hardcodedFields = {
+    sssmId: "1727456484",
+    aadhaarNo: "89675475854",
+    penNo: "21258294654",
+    aapaarId: "124748344697",
+  };
 
   const getMarksheet = async () => {
     try {
@@ -18,6 +659,7 @@ const Marksheet = () => {
       if (!id) throw new Error("No id available");
 
       const response = await axiosInstance.get(`/d/report-cards/${id}/`);
+      console.log("API Response:", response.data); // Debug log
       setMarksheet(response.data);
     } catch (err) {
       console.error("Failed to load marksheet:", err);
@@ -29,30 +671,77 @@ const Marksheet = () => {
 
   useEffect(() => {
     getMarksheet();
-  }, []);
+  }, [id]);
 
-  const handlePrint = () => {
-    const originalContents = document.body.innerHTML;
-    const printContents = printRef.current.innerHTML;
+  // PDF Download Function
+  const handleDownload = async () => {
+    setDownloading(true);
 
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-    window.location.reload();
+    try {
+      await new Promise((res) => setTimeout(res, 300));
+
+      const element = printRef.current;
+
+      const dataUrl = await toPng(element, {
+        quality: 1,
+        pixelRatio: 3,
+        backgroundColor: "#ffffff",
+      });
+
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const img = new Image();
+      img.src = dataUrl;
+
+      await new Promise((res) => (img.onload = res));
+
+      const imgWidth = pageWidth;
+      const imgHeight = (img.height * imgWidth) / img.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(dataUrl, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(dataUrl, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const fileName = marksheet?.student_name
+        ? `marksheet_${marksheet.student_name.replace(/\s+/g, "_")}.pdf`
+        : `marksheet_${id}.pdf`;
+
+      pdf.save(fileName);
+    } catch (err) {
+      console.error("PDF download failed:", err);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const safeString = (value) =>
-    value === null || value === undefined || value === "null" ? "—" : value;
+    value === null || value === undefined || value === "null" || value === ""
+      ? "—"
+      : value;
 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="flex space-x-2">
           <div className="w-3 h-3 bgTheme rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full [animation-delay:-0.2s] animate-bounce"></div>
-          <div className="w-3 h-3 bgTheme rounded-full [animation-delay:-0.4s] animate-bounce"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.2s]"></div>
+          <div className="w-3 h-3 bgTheme rounded-full animate-bounce [animation-delay:-0.4s]"></div>
         </div>
-        <p className="mt-2 text-gray-500 text-sm">Loading data...</p>
+        <p className="mt-2 text-gray-500 dark:text-gray-300 text-sm">
+          Loading data...
+        </p>
       </div>
     );
   }
@@ -70,7 +759,7 @@ const Marksheet = () => {
 
   if (!marksheet) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen bg-white dark:bg-gray-100">
         <p className="text-gray-600">No marksheet data available</p>
       </div>
     );
@@ -78,313 +767,515 @@ const Marksheet = () => {
 
   const data = marksheet;
 
-  // Get all subjects from SA1/SA2/FA exams
+  // ✅ FIX 1: Changed from data.subjects to data.scholastic
   const allSubjects = Array.from(
     new Set(
-      data.subjects.flatMap((exam) =>
+      (data.scholastic || []).flatMap((exam) =>
         exam.subjects ? Object.keys(exam.subjects) : []
       )
     )
-  );
+  ).sort();
 
-  // Get subject scores safely
+  // ✅ FIX 2: Changed from data.subjects to data.scholastic
+  const getExamData = (examType) =>
+    (data.scholastic || []).find((e) => e.exam_type === examType);
+
+  // Get subject scores safely for all exams and average
   const getSubjectScores = (subjectName) => {
-    const fa1 = data.subjects.find((e) => e.exam_type === "fa1")?.subjects?.[subjectName] ?? "-";
-    const fa2 = data.subjects.find((e) => e.exam_type === "fa2")?.subjects?.[subjectName] ?? "-";
-    const sa1 = data.subjects.find((e) => e.exam_type === "sa1")?.subjects?.[subjectName] ?? "-";
-    const fa3 = data.subjects.find((e) => e.exam_type === "fa3")?.subjects?.[subjectName] ?? "-";
-    const sa2 = data.subjects.find((e) => e.exam_type === "sa2")?.subjects?.[subjectName] ?? "-";
+    const fa1 = getExamData("FA1")?.subjects?.[subjectName] ?? "-";
+    const fa2 = getExamData("FA2")?.subjects?.[subjectName] ?? "-";
+    const sa1 = getExamData("SA1")?.subjects?.[subjectName] ?? "-";
+    const fa3 = getExamData("FA3")?.subjects?.[subjectName] ?? "-";
+    const sa2 = getExamData("SA2")?.subjects?.[subjectName] ?? "-";
 
-    let avg = "-";
-    if (data.subject_avg && typeof data.subject_avg === "object" && !data.subject_avg.error) {
-      avg = data.subject_avg[subjectName] ?? "-";
-    }
+    // Calculate average from available scores
+    const scores = [fa1, fa2, sa1, fa3, sa2].filter(s => typeof s === 'number');
+    const avg = scores.length > 0 
+      ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2) 
+      : "-";
 
-    return [fa1, fa2, sa1, fa3, sa2, avg];
+    const formatScore = (score) => {
+      if (typeof score === "number") {
+        return score % 1 !== 0 ? score.toFixed(2) : score;
+      }
+      return score;
+    };
+
+    return [
+      formatScore(fa1),
+      formatScore(fa2),
+      formatScore(sa1),
+      formatScore(fa3),
+      formatScore(sa2),
+      formatScore(avg),
+    ];
   };
 
+  // ✅ FIX 3: Calculate totals from scholastic data
+  const calculateTotals = () => {
+    const scholastic = data.scholastic || [];
+    let totalMarks = 0;
+    let maxMarks = 0;
+    
+    scholastic.forEach(exam => {
+      totalMarks += exam.total || 0;
+      maxMarks += exam.max_marks || 0;
+    });
+    
+    const percentage = maxMarks > 0 ? ((totalMarks / maxMarks) * 100).toFixed(2) : 0;
+    
+    return { totalMarks, maxMarks, percentage };
+  };
+
+  const totals = calculateTotals();
+
   return (
-    <div className="bg-gray-100 min-h-screen p-2 md:p-6 mb-24 md:mb-10">
-      <div ref={printRef}>
-        <div className="max-w-2xl mx-auto border-3 border-red-700 p-4 bg-white shadow-xl font-sans text-sm m-4">
-          {/* Header */}
-          <div className="border-2 border-black">
-            <div className="flex items-center justify-start bg-yellow-400 border-b-2 border-black px-2 md:px-4 py-1 md:py-2 relative">
-              <div className="absolute -left-2 md:-left-3 top-1/2 transform -translate-y-1/2 rotate-45 w-8 h-8 md:w-12 md:h-12 bg-red-700 flex items-center justify-center border border-black z--1 ml-4 md:ml-8">
-                <span className="rotate-[315deg] text-yellow-300 font-extrabold text-xl md:text-4xl">
-                  4S
-                </span>
+    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 min-h-screen p-2 sm:p-4 md:p-6 pb-24 md:pb-10">
+      <div className="flex flex-col items-center">
+        <div className="w-full overflow-x-auto flex flex-col items-center">
+          <div 
+            ref={printRef} 
+            className="w-max max-w-none mx-auto border-2 sm:border-3 border-[#b91c1c] p-2 sm:p-3 md:p-4 bg-white font-sans text-xs sm:text-sm m-2 sm:m-4"
+          >
+            {/* Header */}
+            <div className="border-2 border-black">
+              <div className="flex items-center justify-start bg-[#fbbf24] border-b-2 border-black px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 relative">
+                <div className="absolute -left-2 sm:-left-2.5 md:-left-3 top-1/2 transform -translate-y-1/2 rotate-45 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 bg-[#b91c1c] flex items-center justify-center border border-black z-0 ml-2 sm:ml-4 md:ml-8">
+                  <span className="rotate-[315deg] text-[#fde047] font-extrabold text-sm sm:text-xl md:text-4xl">
+                    4S
+                  </span>
+                </div>
+                <div className="flex-1 text-center ml-8 sm:ml-14 md:ml-18">
+                  <h1 className="text-sm sm:text-lg md:text-2xl font-extrabold uppercase text-[#b91c1c] tracking-tight sm:tracking-wider leading-tight">
+                    New Progressive Education Public School
+                  </h1>
+                </div>
               </div>
-              <div className="flex-1 text-center ml-12 md:ml-18">
-                <h1 className="text-lg md:text-2xl font-extrabold uppercase text-red-700 tracking-wider">
-                  New Progressive Education Public School
-                </h1>
+
+              <div className="px-2 sm:px-3 py-0.5">
+                <p className="text-[9px] sm:text-xxs md:text-xs text-black ml-12 sm:ml-24 md:ml-32 font-bold leading-tight sm:leading-normal">
+                  10, Prince Colony, Behind Old Civil Court, Lower Idgah Hills, Bhopal
+                </p>
+              </div>
+
+              <div className="text-center py-1 bg-[#dbeafe] text-[#1e40af] font-bold tracking-wider text-xs sm:text-sm border-t border-[#374151]">
+                ANNUAL RESULT {safeString(data.academic_year)}
               </div>
             </div>
 
-            <div>
-              <p className="text-xxs md:text-xs text-black ml-20 md:ml-32 font-bold">
-                10, Prince Colony, Behind Old Civil Court, Lower Idgah Hills,
-                Bhopal
-              </p>
+            {/* Student Info */}
+            <div className="border border-black text-[9px] sm:text-xxs md:text-xs font-sans mt-2 sm:mt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-0">
+                {/* Row 1 */}
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Name:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    {safeString(data.student_name)}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Scholar No.:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide border border-black px-0.5 sm:px-1 py-0.5 ml-0.5 rounded-sm bg-white">
+                    {safeString(data.scholar_number)}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    SSSM ID:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    {hardcodedFields.sssmId}
+                  </span>
+                </div>
+
+                {/* Row 2 */}
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Father's Name:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    Mr. {safeString(data.father_name)}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Class:
+                  </span>
+                  {/* ✅ FIX 4: Changed from data.standard to data.class */}
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide border border-black px-0.5 sm:px-1 py-0.5 ml-0.5 rounded-sm bg-white">
+                    {safeString(data.class)}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Aadhaar No.:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    {hardcodedFields.aadhaarNo}
+                  </span>
+                </div>
+
+                {/* Row 3 */}
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Mother's Name:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    Mrs. {safeString(data.mother_name)}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    DOB:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide border border-black px-0.5 sm:px-1 py-0.5 ml-0.5 rounded-sm bg-white">
+                    {data.date_of_birth
+                      ? new Date(data.date_of_birth).toLocaleDateString("en-GB")
+                      : "—"}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Pen No.:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    {hardcodedFields.penNo}
+                  </span>
+                </div>
+
+                {/* Row 4 */}
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1 sm:col-span-2 lg:col-span-1">
+                  <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
+                    Mobile No.:
+                  </span>
+                  <span className="w-[60%] sm:w-[55%] text-[#1f2937] italic font-medium tracking-wide">
+                    {safeString(data.contact_number)}
+                  </span>
+                </div>
+                <div className="flex items-center border-b border-black px-1 sm:px-2 py-0.5 sm:py-1 sm:col-span-2 lg:col-span-2">
+                  <span className="w-[20%] sm:w-[22.5%] text-black tracking-tight font-bold">
+                    Aapaar ID:
+                  </span>
+                  <span className="w-[80%] sm:w-[77.5%] text-[#1f2937] italic font-medium tracking-wide">
+                    {hardcodedFields.aapaarId}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="text-center py-1 bg-blue-100 text-blue-800 font-bold tracking-wider text-xs md:text-sm border-t border-gray-700">
-              ANNUAL RESULT {safeString(data.academic_year)}
+            {/* Scholastic Table */}
+            <div className="mb-2 sm:mb-3 md:mb-4 mt-2 sm:mt-3">
+              <h2 className="text-center bg-[#dbeafe] text-[#1e40af] font-bold tracking-wider text-xs sm:text-sm border-t border-b border-[#374151] py-1">
+                Scholastic Evaluation
+              </h2>
+              <div className="w-full overflow-x-auto">
+                <table className="w-full border border-black text-[9px] sm:text-xxs md:text-xs text-center border-collapse min-w-[800px]">
+                  <thead className="bg-[#e5e7eb]">
+                    <tr>
+                      {[
+                        "Subject",
+                        "FA1",
+                        "FA2",
+                        "SA1",
+                        "FA3",
+                        "SA2",
+                        "Avg SA1+SA2",
+                      ].map((h, i) => (
+                        <th
+                          key={i}
+                          className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allSubjects.length > 0 ? (
+                      allSubjects.map((subject) => {
+                        const [fa1, fa2, sa1, fa3, sa2, avg] =
+                          getSubjectScores(subject);
+                        return (
+                          <tr key={subject} className="bg-white">
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-center text-[#dc2626] font-bold whitespace-nowrap">
+                              {subject.toUpperCase()}
+                            </td>
+                            {[fa1, fa2, sa1, fa3, sa2, avg].map((score, idx) => (
+                              <td
+                                key={idx}
+                                className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black"
+                              >
+                                {score}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="border border-black px-2 py-4 text-center text-gray-500">
+                          No subjects data available
+                        </td>
+                      </tr>
+                    )}
+                    
+                    {/* Summary Rows */}
+                    {["TOTAL", "PERCENTAGE", "GRADE", "RANK", "ATTENDANCE", "DIVISION"].map((rowLabel) => (
+                      <tr key={rowLabel} className="bg-white">
+                        <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-center text-[#dc2626] font-bold whitespace-nowrap">
+                          {rowLabel}
+                        </td>
+                        {["FA1", "FA2", "SA1", "FA3", "SA2"].map((exam) => {
+                          const examData = getExamData(exam);
+                          switch(rowLabel) {
+                            case "TOTAL":
+                              return (
+                                <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                                  {/* ✅ FIX 5: Changed from total_obtained/total_possible to total/max_marks */}
+                                  {examData ? `${safeString(examData.total)}/${safeString(examData.max_marks)}` : "—"}
+                                </td>
+                              );
+                            case "PERCENTAGE":
+                              const percentage = examData?.percentage;
+                              return (
+                                <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                                  {percentage !== undefined && percentage !== null ? `${percentage}%` : "—"}
+                                </td>
+                              );
+                            case "GRADE":
+                              return (
+                                <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                                  {safeString(examData?.grade)}
+                                </td>
+                              );
+                            case "RANK":
+                              return (
+                                <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                                  {safeString(examData?.rank)}
+                                </td>
+                              );
+                            case "ATTENDANCE":
+                              return (
+                                <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                                  {safeString(examData?.attendance || data.attendance)}
+                                </td>
+                              );
+                            case "DIVISION":
+                              return (
+                                <td key={exam} className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                                  {safeString(examData?.division)}
+                                </td>
+                              );
+                            default:
+                              return null;
+                          }
+                        })}
+                        <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                          {rowLabel === "TOTAL" ? `${totals.totalMarks}/${totals.maxMarks}` :
+                           rowLabel === "PERCENTAGE" ? `${totals.percentage}%` :
+                           "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
 
-          {/* Student Info */}
-          <div className="border border-black text-xxs md:text-xs font-sans">
-            {[
-              [
-                ["Name", data.student_name],
-                ["Scholar No.", safeString(data.scholar_number), true],
-                ["SSSM ID", "1727456484"],
-              ],
-              [
-                ["Father's Name", `Mr. ${data.father_name}`],
-                ["Class", data.standard, true],
-                ["Aadhaar No.", "89675475854"],
-              ],
-              [
-                ["Mother's Name", `Mrs. ${data.mother_name}`],
-                ["DOB", new Date(data.date_of_birth).toLocaleDateString("en-GB"), true],
-                ["Pen No.", "21258294654"],
-              ],
-              [
-                ["Mobile No.", data.contact_number],
-                ["Aapaar ID", "124748344697"],
-              ],
-            ].map((row, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col sm:flex-row border-b border-black last:border-b-0"
-              >
-                {row.map(([label, value, boxed], i) => (
-                  <div
-                    key={i}
-                    className={`flex items-center ${i === 2 ? "sm:w-2/6" : "sm:w-1/3"} px-1 md:px-2 py-0.5 md:py-1`}
-                  >
-                    <span className="w-[40%] sm:w-[45%] text-black tracking-tight font-bold">
-                      {label}:
-                    </span>
-                    <span
-                      className={`w-[60%] sm:w-[55%] text-gray-900 italic font-medium tracking-wide ${boxed ? "border border-black px-0.5 md:px-1 py-0.5 ml-0.5 rounded-sm bg-white" : ""
-                        }`}
-                    >
-                      {value}
+            {/* Non-Scholastic & Personal/Social */}
+            <div className="mb-2 sm:mb-3 md:mb-4">
+              <h2 className="text-center bg-[#dbeafe] text-[#1e40af] font-bold tracking-wider text-xs sm:text-sm border-t border-b border-[#374151] py-1">
+                <span className="block sm:inline">NON-SCHOLASTIC EVALUATION</span>
+                <span className="hidden sm:inline mx-4">|</span>
+                <span className="block sm:inline mt-1 sm:mt-0">PERSONAL & SOCIAL QUALITIES</span>
+              </h2>
+              
+              <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 mt-2 sm:mt-3 overflow-x-auto">
+                <div className="min-w-[800px] flex gap-3 sm:gap-4">
+                  {/* Non-Scholastic Table */}
+                  <div className="flex-1">
+                    <table className="w-full text-[9px] sm:text-xxs md:text-xs border border-black text-center border-collapse">
+                      <thead className="bg-[#e5e7eb]">
+                        <tr>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            SUBJECT
+                          </th>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            I Term
+                          </th>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            II Term
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          "GK/Moral/EVS",
+                          "Conversation",
+                          "Computer",
+                          "Drawing/Craft",
+                        ].map((subj) => (
+                          <tr key={subj} className="bg-white">
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-left text-black">
+                              {subj}
+                            </td>
+                            {/* ✅ FIX 6: Changed term comparison from string to number */}
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-black">
+                              {safeString(
+                                (data.non_scholastic || []).find(
+                                  (item) =>
+                                    item.subject === subj && (item.term === 1 || item.term === "Term 1")
+                                )?.grade
+                              )}
+                            </td>
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-black">
+                              {safeString(
+                                (data.non_scholastic || []).find(
+                                  (item) =>
+                                    item.subject === subj && (item.term === 2 || item.term === "Term 2")
+                                )?.grade
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Personal & Social Table */}
+                  <div className="flex-1">
+                    <table className="w-full text-[9px] sm:text-xxs md:text-xs border border-black border-collapse">
+                      <thead className="bg-[#e5e7eb]">
+                        <tr>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            SUBJECT
+                          </th>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            I Term
+                          </th>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            II Term
+                          </th>
+                          <th className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 whitespace-nowrap text-black">
+                            Remarks
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          "Cleanliness",
+                          "Discipline",
+                          "Punctuality",
+                          "Attention In Class",
+                        ].map((trait, index) => (
+                          <tr key={trait} className="bg-white">
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 text-left text-black">
+                              {trait}
+                            </td>
+                            {/* ✅ FIX 7: Changed term comparison from string to number */}
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-center text-black">
+                              {safeString(
+                                (data.personal_social || []).find(
+                                  (item) =>
+                                    item.quality === trait && (item.term === 1 || item.term === "Term 1")
+                                )?.grade
+                              )}
+                            </td>
+                            <td className="border border-black px-1 py-0.5 sm:px-2 sm:py-1 font-bold text-center text-black">
+                              {safeString(
+                                (data.personal_social || []).find(
+                                  (item) =>
+                                    item.quality === trait && (item.term === 2 || item.term === "Term 2")
+                                )?.grade
+                              )}
+                            </td>
+                            {index === 0 && (
+                              <td
+                                className="border border-black p-1 text-left align-top text-[8px] sm:text-xs italic text-black"
+                                rowSpan={4}
+                              >
+                                {safeString(data.teacher_remark)}
+                              </td>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t-2 border-black pt-2 sm:pt-3 text-[9px] sm:text-xxs md:text-xs mt-2 sm:mt-3 min-w-[800px]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="text-black">
+                  <strong>Pass/Promoted to Class:</strong>{" "}
+                  {safeString(data.promoted_to_class)}
+                </div>
+                <div className="text-black">
+                  <strong>Supplementary In:</strong>{" "}
+                  {data.supplementary_in && Array.isArray(data.supplementary_in) && data.supplementary_in.length > 0
+                    ? data.supplementary_in.join(", ")
+                    : "—"}
+                </div>
+                <div className="text-black">
+                  <strong>School Re-opens on:</strong>{" "}
+                  {data.school_reopen_date
+                    ? new Date(data.school_reopen_date).toLocaleDateString("en-GB")
+                    : "—"}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 text-center pt-2 sm:pt-4 border-t border-[#9ca3af] font-semibold text-[#b91c1c] gap-3 sm:gap-0">
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm text-[#b91c1c]">Sign of Class Teacher</p>
+                  <div className="h-12 sm:h-16 md:h-22 mx-auto flex items-end justify-center border-b-2 border-[#d1d5db] pb-1">
+                    <span className="text-[#9ca3af] text-[8px] sm:text-xs">
+                      (Signature Area)
                     </span>
                   </div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          {/* Scholastic Table */}
-          <div className="mb-2 md:mb-4 overflow-x-auto">
-            <h2 className="text-center bg-blue-100 text-blue-800 font-bold tracking-wider text-xs md:text-sm border-t border-b border-gray-700 py-1">
-              Scholastic Evaluation
-            </h2>
-            <div className="min-w-full">
-              <table className="w-full border border-black text-xxs md:text-xs text-center border-collapse">
-                <thead className="bg-gray-200">
-                  <tr>
-                    {["Subject", "FA1", "FA2", "SA1", "FA3", "SA2", "Avg SA1+SA2"].map((h, i) => (
-                      <th key={i} className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {allSubjects.map((subject) => {
-                    const [fa1, fa2, sa1, fa3, sa2, avg] = getSubjectScores(subject);
-                    return (
-                      <tr key={subject} className="bg-white">
-                        <td className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
-                          {subject.toUpperCase()}
-                        </td>
-                        {[fa1, fa2, sa1, fa3, sa2, avg].map((score, idx) => (
-                          <td key={idx} className={`border border-text-nowrapblack  px-1 py-0.5 md:px-2 md:py-1 ${score !== "-" && score < 40 ? "text-red-600" : ""}`}>
-                            {score}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                  <tr className="bg-white">
-                    <td className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
-                      TOTAL
-                    </td>
-                    {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border text-nowrap border-black px-1 py-0.5 md:px-2 md:py-1">
-                        {data.subjects.find(e => e.exam_type === exam)?.total ?? 0}/500
-                      </td>
-                    ))}
-                    <td className="border border-black text-nowrap px-1 py-0.5 md:px-2 md:py-1">{data.total_marks}/500</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-black text-nowrap px-1 py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
-                      PERCENTAGE
-                    </td>
-                    {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black text-nowrap px-1 py-0.5 md:px-2 md:py-1">{data.subjects.find(e => e.exam_type === exam)?.percentage ?? "-"}%</td>
-                    ))}
-                    <td className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1">{data.percentage}%</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1 text-center text-red-500 font-bold">
-                      GRADE
-                    </td>
-                    {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
-                    ))}
-                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1">{safeString(data.grade)}</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1 text-center text-red-500 font-bold">
-                      RANK
-                    </td>
-                    {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
-                    ))}
-                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1">{safeString(data.grade)}</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1 text-center text-red-500 font-bold">
-                      ATTENDANCE
-                    </td>
-                    {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 py-0.5 text-nowrap md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
-                    ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 text-nowrap md:py-1">{safeString(data.grade)}</td>
-                  </tr>
-                  <tr className="bg-white">
-                    <td className="border border-black px-1 py-0.5 md:px-2 text-nowrap md:py-1 text-center text-red-500 font-bold">
-                      DIVISION
-                    </td>
-                    {["fa1", "fa2", "sa1", "fa3", "sa2"].map((exam) => (
-                      <td key={exam} className="border border-black px-1 text-nowrap py-0.5 md:px-2 md:py-1">{safeString(data.subjects.find(e => e.exam_type === exam)?.grade)}</td>
-                    ))}
-                    <td className="border border-black px-1 py-0.5 md:px-2 text-nowrap md:py-1">{safeString(data.grade)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Non-Scholastic & Personal/Social */}
-          <div>
-            <h2 className="text-center bg-blue-100 text-blue-800 font-bold tracking-wider text-xs md:text-sm border-t border-b border-gray-700 py-1">
-              <span>NON-SCHOLASTIC EVALUATION</span>
-              <span className="hidden sm:inline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-              <span className="sm:hidden"> </span>
-              <span>PERSONAL & SOCIAL QUALITIES</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mb-2 md:mb-4">
-            <div className="overflow-x-auto">
-              <table className="w-full text-xxs md:text-xs border border-black text-center border-collapse">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="border border-black text-nowrap px-1 py-0.5">SUBJECT</th>
-                    <th className="border border-black text-nowrap px-1 py-0.5">I Term</th>
-                    <th className="border border-black text-nowrap px-1 py-0.5">II Term</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {["GK/MORAL/EVS", "Conversation", "Drawing/Craft", "Drawing"].map((subj) => (
-                    <tr key={subj} className="bg-white">
-                      <td className="border border-black  text-nowrap px-1 py-0.5 text-left">{subj}</td>
-                      <td className="border border-black text-nowrap font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 1")?.grade || "-"}</td>
-                      <td className="border border-black text-nowrap font-bold">{data.non_scholastic.find(item => item.subject === subj && item.term === "Term 2")?.grade || "-"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-xxs md:text-xs border border-black border-collapse">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="border border-black text-nowrap px-1 py-0.5">SUBJECT</th>
-                    <th className="border border-black text-nowrap px-1 py-0.5">I Term</th>
-                    <th className="border border-black text-nowrap px-1 py-0.5">II Term</th>
-                    <th className="border border-black px-1 py-0.5 text-nowrap">Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {["Cleanliness", "Discipline", "Piuntuality", "Attention in Class"].map((trait) => (
-                    <tr key={trait} className="bg-white">
-                      <td className="border text-nowrap border-black px-1 py-0.5 text-left">{trait}</td>
-                      <td className="border text-nowrap border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 1")?.grade || "-"}</td>
-                      <td className="border text-nowrap border-black font-bold pl-1">{data.personal_social.find(item => item.quality === trait && item.term === "Term 2")?.grade || "-"}</td>
-                      <td className="border text-nowrap border-black pl-1 text-left">{data.personal_social.find(item => item.quality === trait && item.term === "Term 2")?.remark || "-"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          {/* Footer */}
-          <div className="border-t-2 border-black pt-1 md:pt-3 text-xxs md:text-xs">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 mb-2 md:mb-4">
-              <div>
-                <strong>Pass/Promoted to Class:</strong>{" "}
-                {data.promoted_to_class}
-              </div>
-              <div>
-                <strong>Supplementary In:</strong>{" "}
-                {data.supplementary_in.length > 0
-                  ? data.supplementary_in.join(", ")
-                  : "—"}
-              </div>
-              <div>
-                <strong>School Re-opens on:</strong>{" "}
-                {new Date(data.school_reopen_date).toLocaleDateString("en-GB")}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 text-center pt-2 md:pt-4 border-t border-gray-400 font-semibold text-red-700 gap-2 md:gap-0">
-              <div>
-                <p>Sign of Class Teacher</p>
-                <img
-                  src="https://a.storyblok.com/f/191576/1176x882/0707bde47c/make_signature_hero_after.webp"
-                  alt="Class Teacher Signature"
-                  className="h-16 md:h-22 mx-auto object-contain"
-                />
-              </div>
-              <div>
-                <p>Sign of Principal</p>
-                <img
-                  src="https://www.signwell.com/assets/vip-signatures/muhammad-ali-signature-3f9237f6fc48c3a04ba083117948e16ee7968aae521ae4ccebdfb8f22596ad22.svg"
-                  alt="Principal Signature"
-                  className="h-16 md:h-22 mx-auto object-contain"
-                />
-              </div>
-              <div>
-                <p>Parent's/Guardian's Sign</p>
-                <img
-                  src="https://www.shutterstock.com/image-vector/signature-vector-hand-drawn-autograph-600nw-2387543207.jpg"
-                  alt="Parent/Guardian Signature"
-                  className="h-16 md:h-22 mx-auto object-contain"
-                />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm text-[#b91c1c]">Sign of Principal</p>
+                  <div className="h-12 sm:h-16 md:h-22 mx-auto flex items-end justify-center border-b-2 border-[#d1d5db] pb-1">
+                    <span className="text-[#9ca3af] text-[8px] sm:text-xs">
+                      (Signature Area)
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs sm:text-sm text-[#b91c1c]">Parent's/Guardian's Sign</p>
+                  <div className="h-12 sm:h-16 md:h-22 mx-auto flex items-end justify-center border-b-2 border-[#d1d5db] pb-1">
+                    <span className="text-[#9ca3af] text-[8px] sm:text-xs">
+                      (Signature Area)
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Print Button */}
-      <div className="text-center mb-2 md:mb-4">
-        <button
-          onClick={handlePrint}
-          className="btn bgTheme text-white"
-        >
-          Download Marksheet
-        </button>
+        <div className="md:mt-4 md:mb-10 mt-6">
+          <div className="flex justify-center">
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
+              className="btn bgTheme text-white"
+            >
+              {downloading ? "Downloading..." : "Download PDF"}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Marksheet;
+
+

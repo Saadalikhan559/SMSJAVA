@@ -213,7 +213,8 @@ const TeacherAttendance = () => {
                     <td className="px-4 py-3 text-nowrap text-gray-700 dark:text-gray-300">{index + 1}</td>
 
                     <td className="px-4 py-3  font-bold capitalize text-gray-700 dark:text-gray-300 text-nowrap">
-                      {teacher.firstName} {teacher.lastName}
+                     {[teacher.first_name, teacher.middle_name, teacher.last_name].filter(Boolean).join(" ")}
+
                     </td>
                     <td className="px-4 py-3 text-nowrap  text-gray-700 dark:text-gray-300">{teacher.email}</td>
                     <td className="px-4 py-3">
