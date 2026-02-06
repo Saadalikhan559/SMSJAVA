@@ -54,6 +54,7 @@ export const allRouterLink = {
     allClasses: '/allClasses',
     TeacherSubstitute: '/TeacherSubstitute',
     Marksheet: '/Marksheet/:id',
+    editMarksheet: '/update-marksheet/:id',
     allStudentsperClass: '/allStudentsPerClass/:id',
     studentDetails: '/studentDetails/:id',
     updateStudentdetail: '/updateStudentdetail/:id',

@@ -57,6 +57,7 @@ import StudentMarksFill from "../components/Teacher/StudentMarksFill";
 
 import GuardianChildren from "../components/GuardianDashboard/GuardianChildren";
 import Marksheet from "../components/Student Dashboard/Marksheet";
+import EditMarksheet from "../components/Student Dashboard/EditMarksheet";
 import ClassTeacherAssign from "../components/DirectorDashboard/ClassTeacherAssign";
 import ViewAllocatedClass from "../components/DirectorDashboard/ViewAllocatedClass";
 import MarksheetsTable from "../components/Student Dashboard/MarksheetsTable";
@@ -242,6 +243,16 @@ export const routes = [
       constants.roles.director,
       constants.roles.teacher,
       constants.roles.student,
+    ],
+  },
+    {
+    path: allRouterLink.editMarksheet,
+    element: <EditMarksheet editableRemark={true} />,
+    protected: true,
+    allowedRoles: [
+      constants.roles.director,
+      constants.roles.teacher,
+      constants.roles.officeStaff,
     ],
   },
   {
