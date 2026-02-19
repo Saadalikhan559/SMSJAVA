@@ -485,6 +485,8 @@ export const PaySalaryExpense = () => {
 
   // ✅ FIXED onSubmit — USE axiosInstance ONLY
   const onSubmit = async (data) => {
+      console.log("Form Data:", data); // ✅ Check karo kya aa raha hai
+  console.log("Payment Date:", data.payment_date); // ✅ Specifically payment_date check karo
     try {
       setLoading(true);
 const paymentMethod = data.payment_method?.toUpperCase();
@@ -514,7 +516,8 @@ const payload = {
   deductions: Number(data.deductions) || 0,
   bonus: Number(data.bonus) || 0,
   payment_method: paymentMethod,
-  created_at: data.created_at || new Date().toISOString().split("T")[0],
+  // created_at: data.created_at || new Date().toISOString().split("T")[0],
+    created_at: data.payment_date,
   remarks: data.remarks || "Salary for employees",
 };
 
@@ -799,10 +802,6 @@ if (paymentMethod === "CHEQUE") {
               </div>
             )}
           </div>
-
-
-
-
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Description Field */}
             <div className="form-control">

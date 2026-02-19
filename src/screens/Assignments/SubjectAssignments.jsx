@@ -282,11 +282,19 @@ if (!accessToken) {
       return;
     }
 
+    // const finalPayload = {
+    //   ...data,
+    //   subject_ids,
+    //   period_ids,
+    // };
+
     const finalPayload = {
-      ...data,
-      subject_ids,
-      period_ids,
-    };
+  teacher_id: Number(data.teacher_id),
+  yearlevel_id: Number(data.yearlevel_id),
+  subject_ids: subject_ids.map(Number),
+  period_ids: period_ids.map(Number),
+};
+
 
     setIsSubmitting(true);
 

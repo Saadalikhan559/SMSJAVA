@@ -531,6 +531,25 @@ if (data.roleEntities?.studentId) {
   );
 }
 
+// ✅ STUDENT ID FROM roleEntities
+if (data.roleEntities?.studentId) {
+  setStudentID(data.roleEntities.studentId);
+  localStorage.setItem(
+    "student_id",
+    data.roleEntities.studentId
+  );
+}
+
+// ✅ TEACHER ID FROM roleEntities
+if (data.roleEntities?.teacherId) {
+  setTeacherID(data.roleEntities.teacherId);
+  localStorage.setItem(
+    "teacher_id",
+    data.roleEntities.teacherId
+  );
+}
+
+
       if (data.year_level?.id) localStorage.setItem("stu_year_level_id", data.year_level.id);
       if (data.year_level?.name) localStorage.setItem("stu_year_level_name", data.year_level.name);
 

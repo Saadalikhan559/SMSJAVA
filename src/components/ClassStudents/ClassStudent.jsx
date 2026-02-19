@@ -96,6 +96,45 @@ export const ClassStudent = () => {
     }));
   };
 
+  // const submitBulkAttendance = async () => {
+  //   if (!attendanceDate) {
+  //     setAlertMessage("Please select a date");
+  //     setShowAlert(true);
+  //     return;
+  //   }
+  //   if (!teacherID || !year_level_id) return;
+
+  //   setLoadingSubmit(true); // start loader
+  //   try {
+  //     const payload = { teacher_id: teacherID, marked_at: attendanceDate, year_level_id };
+
+  //     if (attendanceStatus === "present") payload.P = selectedStudents;
+  //     else if (attendanceStatus === "absent") payload.A = selectedStudents;
+  //     else if (attendanceStatus === "leave") payload.L = selectedStudents;
+
+  //     await axios.post(`${BASE_URL}/a/multiple-attendance/`, payload);
+
+  //     setSelectedStudents([]);
+  //     setShowModal(false);
+  //     setAttendanceDate("");
+  //     setAttendanceStatus("present");
+
+  //     document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+  //       checkbox.checked = false;
+  //     });
+
+  //     setAlertMessage("Attendance marked successfully!");
+  //     setShowAlert(true);
+  //   } catch (err) {
+  //     console.error("Error submitting bulk attendance:", err);
+  //     setAlertMessage(err.response?.data?.error || "An error occurred");
+  //     setShowAlert(true);
+  //   } finally {
+  //     setLoadingSubmit(false); // stop loader
+  //   }
+  // };
+
+
   const submitBulkAttendance = async () => {
     if (!attendanceDate) {
       setAlertMessage("Please select a date");
@@ -104,9 +143,17 @@ export const ClassStudent = () => {
     }
     if (!teacherID || !year_level_id) return;
 
-    setLoadingSubmit(true); // start loader
+    setLoadingSubmit(true);
     try {
-      const payload = { teacher_id: teacherID, marked_at: attendanceDate, year_level_id };
+      // ✅ Fixed: Changed teacher_id to teacher, year_level_id to year_level
+      const payload = {
+        teacher: parseInt(teacherID),      // Changed from teacher_id
+        marked_at: attendanceDate,
+        year_level: parseInt(year_level_id), // Changed from year_level_id
+        P: [],
+        A: [],
+        L: []
+      };
 
       if (attendanceStatus === "present") payload.P = selectedStudents;
       else if (attendanceStatus === "absent") payload.A = selectedStudents;
@@ -130,13 +177,41 @@ export const ClassStudent = () => {
       setAlertMessage(err.response?.data?.error || "An error occurred");
       setShowAlert(true);
     } finally {
-      setLoadingSubmit(false); // stop loader
+      setLoadingSubmit(false);
     }
   };
 
 
 
   // Individual attendance submission
+  // const submitIndividualAttendance = async (studentId) => {
+  //   try {
+  //     if (!individualDates[studentId]) {
+  //       setAlertMessage("Please select a date");
+  //       setShowAlert(true);
+  //       return;
+  //     }
+  //     if (!teacherID) return;
+
+  //     const payload = { teacher_id: teacherID, marked_at: individualDates[studentId], year_level_id };
+  //     const status = individualStatuses[studentId];
+  //     if (status === "present") payload.P = [studentId];
+  //     else if (status === "absent") payload.A = [studentId];
+  //     else if (status === "leave") payload.L = [studentId];
+
+  //     await axios.post(`${BASE_URL}/a/multiple-attendance/`, payload);
+
+  //     setAlertMessage("Attendance marked successfully!");
+  //     setShowAlert(true);
+  //   } catch (err) {
+  //     console.error("Error submitting individual attendance:", err);
+  //     setAlertMessage(err.response?.data?.error || "An error occurred");
+  //     setShowAlert(true);
+  //   } finally {
+  //     setLoadingSubmit(false);
+  //   }
+  // };
+
   const submitIndividualAttendance = async (studentId) => {
     try {
       if (!individualDates[studentId]) {
@@ -146,7 +221,16 @@ export const ClassStudent = () => {
       }
       if (!teacherID) return;
 
-      const payload = { teacher_id: teacherID, marked_at: individualDates[studentId], year_level_id };
+      // ✅ Fixed: Changed teacher_id to teacher, year_level_id to year_level
+      const payload = {
+        teacher: parseInt(teacherID),        // Changed from teacher_id
+        marked_at: individualDates[studentId],
+        year_level: parseInt(year_level_id),  // Changed from year_level_id
+        P: [],
+        A: [],
+        L: []
+      };
+
       const status = individualStatuses[studentId];
       if (status === "present") payload.P = [studentId];
       else if (status === "absent") payload.A = [studentId];

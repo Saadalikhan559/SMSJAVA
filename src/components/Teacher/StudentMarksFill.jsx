@@ -1428,6 +1428,7 @@ const UnifiedMarksheet = () => {
 
         payloads = validEntries.map((entry) => ({
           student: Number(selectedStudentId),
+          teacher: Number(entry.teacher_id), 
           school_year: Number(data.school_year),
           year_level: Number(data.year_level),
           term: Number(data.term),
@@ -1478,6 +1479,7 @@ const UnifiedMarksheet = () => {
 
         payloads = validEntries.map((entry) => ({
           student: Number(selectedStudentId),
+          teacher: Number(entry.teacher),
           school_year: Number(data.school_year),
           year_level: Number(data.year_level),
           term: Number(data.term),

@@ -425,10 +425,36 @@ export const fetchStudentById = async (student_id) => {
   }
 };
 
-export const updateStudentById = async (id, formData) => {
+// export const updateStudentById = async (id, formData) => {
+//   try {
+//     const response = await axios.put(
+//       `${BASE_URL}/s/students/${id}/`,
+//       formData,
+//       {
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       }
+//     );
+//     console.log("Student profile updated response:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error(
+//       "Failed to update student profile:",
+//       error.response?.data || error.message
+//     );
+//     throw (
+//       error.response?.data ||
+//       new Error("Something went wrong while updating student profile.")
+//     );
+//   }
+// };
+
+
+export const updateStudentById = async (userId, formData) => {
   try {
     const response = await axios.put(
-      `${BASE_URL}/s/students/${id}/`,
+      `${BASE_URL}/s/students/${userId}/`,
       formData,
       {
         headers: {
@@ -587,35 +613,6 @@ export const fetchAllTeachers = async () => {
 //   }
 // };
 
-export const editTeachersdetails = async (id, formData, authTokens) => {
-  try {
-    const accessToken = authTokens?.access;
-
-    if (!accessToken) {
-      throw new Error("Access token missing");
-    }
-
-    const response = await axios.put(
-      `${BASE_URL}/t/teacher/${id}/`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        },
-      }
-    );
-
-    console.log("Teacher details updated response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Failed to update teacher details:",
-      error.response?.data || error.message
-    );
-    throw error;
-  }
-};
 
 
 export const fetchAllTeacherAssignments = async (accessToken) => {
@@ -715,12 +712,41 @@ export const fetchSubAssignments = async () => {
   return response.data;
 };
 
+// export const assignSubstitute = async (payload) => {
+//   try {
+//     const { data } = await axios.post(
+//       `${BASE_URL}/t/substitute-assign/`,
+//       payload
+//     );
+//     return data;
+//   } catch (error) {
+//     console.error(
+//       "API Error in assignSubstitute:",
+//       error.response?.data || error
+//     );
+//     throw error;
+//   }
+// };
+
 export const assignSubstitute = async (payload) => {
   try {
+    const tokens = localStorage.getItem("authTokens");
+    const accessToken = tokens ? JSON.parse(tokens).access : null;
+
+    if (!accessToken) {
+      throw new Error("No access token found. Please login again.");
+    }
+
     const { data } = await axios.post(
       `${BASE_URL}/t/substitute-assign/`,
-      payload
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
+
     return data;
   } catch (error) {
     console.error(
@@ -730,6 +756,8 @@ export const assignSubstitute = async (payload) => {
     throw error;
   }
 };
+
+
 
 export const fetchOfficeStaff = async (id) => {
   try {
@@ -769,22 +797,88 @@ export const fetchOfficeStaff = async (id) => {
 //   }
 // };
 
-export const editOfficeStaffdetails = async (id, formData, authTokens) => {
+// export const editOfficeStaffdetails = async (id, formData, authTokens) => {
+//   try {
+//     const accessToken = authTokens?.access;
+
+//     if (!accessToken) {
+//       throw new Error("Access token missing");
+//     }
+
+//     const response = await axios.put(
+//       `${BASE_URL}/d/officestaff/${id}/`,
+//       formData,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//           // "Content-Type": "multipart/form-data",
+//              "Content-Type": "application/json"
+//         },
+//       }
+//     );
+
+//     console.log("Office staff updated response:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error(
+//       "Failed to update office staff details:",
+//       error.response?.data || error.message
+//     );
+//     throw error;
+//   }
+// };
+
+export const editTeachersdetails = async (userId, formData) => {
   try {
-    const accessToken = authTokens?.access;
+    const tokens = localStorage.getItem("authTokens");
+    const accessToken = tokens ? JSON.parse(tokens).access : null;
 
     if (!accessToken) {
-      throw new Error("Access token missing");
+      throw new Error("No access token found. Please login again.");
     }
 
     const response = await axios.put(
-      `${BASE_URL}/d/officestaff/${id}/`,
+      `${BASE_URL}/t/teacher/${userId}/`,
       formData,
       {
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${accessToken}`,
-          // "Content-Type": "multipart/form-data",
-             "Content-Type": "application/json"
+        },
+      }
+    );
+    
+    console.log("Teacher details updated response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Failed to update teacher details:",
+      error.response?.data || error.message
+    );
+    throw (
+      error.response?.data ||
+      new Error("Something went wrong while updating teacher.")
+    );
+  }
+};
+
+// ✅ Already has Authorization header
+export const editOfficeStaffdetails = async (userId, formData) => {
+  try {
+    const tokens = localStorage.getItem("authTokens");
+    const accessToken = tokens ? JSON.parse(tokens).access : null;
+
+    if (!accessToken) {
+      throw new Error("No access token found. Please login again.");
+    }
+
+    const response = await axios.put(
+      `${BASE_URL}/d/officestaff/${userId}/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
@@ -796,9 +890,16 @@ export const editOfficeStaffdetails = async (id, formData, authTokens) => {
       "Failed to update office staff details:",
       error.response?.data || error.message
     );
-    throw error;
+
+    throw (
+      error.response?.data ||
+      new Error("Something went wrong while updating office staff.")
+    );
   }
 };
+
+
+
 
 /* ==========================================================================
    GUARDIAN MANAGEMENT
